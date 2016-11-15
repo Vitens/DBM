@@ -89,18 +89,132 @@ Public Class DBM
             End If
         End Sub
 
-        Private Function MedianAbsDevScaleFactor(ByVal n As Integer) As Double
-            ' Median Absolute Deviation scale factor; 1/T.INV(75%,n-1)
-            Return 1.224744871392+CDbl(IIf(n>3,1,0))*0.082628680237+CDbl(IIf(n>4,1,0))*0.042706017265+CDbl(IIf(n>5,1,0))*0.026029010106+CDbl(IIf(n>6,1,0))*0.01750660774+CDbl(IIf(n>7,1,0))*0.012574170743+CDbl(IIf(n>8,1,0))*0.009466010412+CDbl(IIf(n>9,1,0))*0.007382179197+CDbl(IIf(n>10,1,0))*0.005917532826+CDbl(IIf(n>11,1,0))*0.004849062836+CDbl(IIf(n>12,1,0))*0.004045802354+CDbl(IIf(n>13,1,0))*0.00342674052+CDbl(IIf(n>14,1,0))*0.002939587984+CDbl(IIf(n>15,1,0))*0.002549371848+CDbl(IIf(n>16,1,0))*0.002231984311+CDbl(IIf(n>17,1,0))*0.001970370511+CDbl(IIf(n>18,1,0))*0.001752190127+CDbl(IIf(n>19,1,0))*0.001568335873+CDbl(IIf(n>20,1,0))*0.001411967957+CDbl(IIf(n>21,1,0))*0.00127786892+CDbl(IIf(n>22,1,0))*0.0011620029+CDbl(IIf(n>23,1,0))*0.001061208497+CDbl(IIf(n>24,1,0))*0.000972980893+CDbl(IIf(n>25,1,0))*0.000895314775+CDbl(IIf(n>26,1,0))*0.000826589406+CDbl(IIf(n>27,1,0))*0.000765483406+CDbl(IIf(n>28,1,0))*0.000710910769+CDbl(IIf(n>29,1,0))*0.019229364701
+        Private Function MeanAbsDevScaleFactor As Double
+            Return 1.253314137316 ' SQRT(PI()/2)
         End Function
 
-        Private Function MeanAbsDevScaleFactor As Double
-            Return Math.Sqrt(Math.PI/2) ' Mean Absolute Deviation scale factor
+        Private Function MedianAbsDevScaleFactor(ByVal n As Integer) As Double
+            Select Case n
+                Case <=3
+                    MedianAbsDevScaleFactor=1.224744871392 ' n<30 Student's t-distribution: 1/T.INV(75%,n-1)
+                Case 4
+                    MedianAbsDevScaleFactor=1.307373551629
+                Case 5
+                    MedianAbsDevScaleFactor=1.350079568894
+                Case 6
+                    MedianAbsDevScaleFactor=1.376108579000
+                Case 7
+                    MedianAbsDevScaleFactor=1.393615186740
+                Case 8
+                    MedianAbsDevScaleFactor=1.406189357483
+                Case 9
+                    MedianAbsDevScaleFactor=1.415655367895
+                Case 10
+                    MedianAbsDevScaleFactor=1.423037547092
+                Case 11
+                    MedianAbsDevScaleFactor=1.428955079918
+                Case 12
+                    MedianAbsDevScaleFactor=1.433804142754
+                Case 13
+                    MedianAbsDevScaleFactor=1.437849945108
+                Case 14
+                    MedianAbsDevScaleFactor=1.441276685628
+                Case 15
+                    MedianAbsDevScaleFactor=1.444216273612
+                Case 16
+                    MedianAbsDevScaleFactor=1.446765645460
+                Case 17
+                    MedianAbsDevScaleFactor=1.448997629771
+                Case 18
+                    MedianAbsDevScaleFactor=1.450968000282
+                Case 19
+                    MedianAbsDevScaleFactor=1.452720190409
+                Case 20
+                    MedianAbsDevScaleFactor=1.454288526282
+                Case 21
+                    MedianAbsDevScaleFactor=1.455700494239
+                Case 22
+                    MedianAbsDevScaleFactor=1.456978363159
+                Case 23
+                    MedianAbsDevScaleFactor=1.458140366059
+                Case 24
+                    MedianAbsDevScaleFactor=1.459201574556
+                Case 25
+                    MedianAbsDevScaleFactor=1.460174555449
+                Case 26
+                    MedianAbsDevScaleFactor=1.461069870224
+                Case 27
+                    MedianAbsDevScaleFactor=1.461896459630
+                Case 28
+                    MedianAbsDevScaleFactor=1.462661943036
+                Case 29
+                    MedianAbsDevScaleFactor=1.463372853805
+                Case >=30
+                    MedianAbsDevScaleFactor=1.482602218506 ' n>=30 Standard normal distribution: 1/NORM.S.INV(75%)
+            End Select
+            Return MedianAbsDevScaleFactor
         End Function
 
         Private Function ControlLimitRejectionCriterion(ByVal n As Integer) As Double
-            ' Control limit rejection criterion at 99% confidence interval; T.INV.2T(1%,n-1)
-            Return 9.924843200918-CDbl(IIf(n>3,1,0))*4.083933891185-CDbl(IIf(n>4,1,0))*1.236814438383-CDbl(IIf(n>5,1,0))*0.571951887795-CDbl(IIf(n>6,1,0))*0.32471496223-CDbl(IIf(n>7,1,0))*0.207944723975-CDbl(IIf(n>8,1,0))*0.144095966017-CDbl(IIf(n>9,1,0))*0.105551789741-CDbl(IIf(n>10,1,0))*0.080562868975-CDbl(IIf(n>11,1,0))*0.063466157078-CDbl(IIf(n>12,1,0))*0.051266926146-CDbl(IIf(n>13,1,0))*0.042263750676-CDbl(IIf(n>14,1,0))*0.035433104346-CDbl(IIf(n>15,1,0))*0.030129850896-CDbl(IIf(n>16,1,0))*0.02593126105-CDbl(IIf(n>17,1,0))*0.022551102748-CDbl(IIf(n>18,1,0))*0.019790046938-CDbl(IIf(n>19,1,0))*0.017505866274-CDbl(IIf(n>20,1,0))*0.015594896679-CDbl(IIf(n>21,1,0))*0.013980151763-CDbl(IIf(n>22,1,0))*0.012603497423-CDbl(IIf(n>23,1,0))*0.01142037683-CDbl(IIf(n>24,1,0))*0.010396178996-CDbl(IIf(n>25,1,0))*0.009503691097-CDbl(IIf(n>26,1,0))*0.008721280347-CDbl(IIf(n>27,1,0))*0.008031576208-CDbl(IIf(n>28,1,0))*0.007420501661-CDbl(IIf(n>29,1,0))*0.187433151912
+            Select Case n
+                Case <=3
+                    ControlLimitRejectionCriterion=9.924843200918 ' n<30 Student's t-distribution: T.INV.2T(1%,n-1) (P=99%)
+                Case 4
+                    ControlLimitRejectionCriterion=5.840909309733
+                Case 5
+                    ControlLimitRejectionCriterion=4.604094871350
+                Case 6
+                    ControlLimitRejectionCriterion=4.032142983555
+                Case 7
+                    ControlLimitRejectionCriterion=3.707428021325
+                Case 8
+                    ControlLimitRejectionCriterion=3.499483297350
+                Case 9
+                    ControlLimitRejectionCriterion=3.355387331333
+                Case 10
+                    ControlLimitRejectionCriterion=3.249835541592
+                Case 11
+                    ControlLimitRejectionCriterion=3.169272672617
+                Case 12
+                    ControlLimitRejectionCriterion=3.105806515539
+                Case 13
+                    ControlLimitRejectionCriterion=3.054539589393
+                Case 14
+                    ControlLimitRejectionCriterion=3.012275838717
+                Case 15
+                    ControlLimitRejectionCriterion=2.976842734371
+                Case 16
+                    ControlLimitRejectionCriterion=2.946712883475
+                Case 17
+                    ControlLimitRejectionCriterion=2.920781622425
+                Case 18
+                    ControlLimitRejectionCriterion=2.898230519677
+                Case 19
+                    ControlLimitRejectionCriterion=2.878440472739
+                Case 20
+                    ControlLimitRejectionCriterion=2.860934606465
+                Case 21
+                    ControlLimitRejectionCriterion=2.845339709786
+                Case 22
+                    ControlLimitRejectionCriterion=2.831359558023
+                Case 23
+                    ControlLimitRejectionCriterion=2.818756060600
+                Case 24
+                    ControlLimitRejectionCriterion=2.807335683770
+                Case 25
+                    ControlLimitRejectionCriterion=2.796939504774
+                Case 26
+                    ControlLimitRejectionCriterion=2.787435813677
+                Case 27
+                    ControlLimitRejectionCriterion=2.778714533330
+                Case 28
+                    ControlLimitRejectionCriterion=2.770682957122
+                Case 29
+                    ControlLimitRejectionCriterion=2.763262455461
+                Case >=30
+                    ControlLimitRejectionCriterion=2.575829303549 ' n>=30 Standard normal distribution: NORM.S.INV(1-1%/2) (P=99%)
+            End Select
+            Return ControlLimitRejectionCriterion
         End Function
 
         Private Function CalculateMedian(ByVal Data() As Double) As Double
