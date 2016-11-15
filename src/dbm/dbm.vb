@@ -55,12 +55,12 @@ Public Class DBM
         Public Function Value(ByVal Timestamp As DateTime) As Double
             Dim i As Integer
             i=Array.FindIndex(Me.CachedValues,Function(FindCachedValue)FindCachedValue.Timestamp=Timestamp)
-            If i>=0 Then
+            If i>=0 Then ' Found value in cache
                 Array.Reverse(Me.CachedValues,0,i)
-                Array.Reverse(Me.CachedValues,0,i+1)
+                Array.Reverse(Me.CachedValues,0,i+1) ' Move value to beginning of cache
             Else
                 Array.Reverse(Me.CachedValues,0,Me.CachedValues.Length-1)
-                Array.Reverse(Me.CachedValues)
+                Array.Reverse(Me.CachedValues) ' Remove last value from cache
                 Try
                     #If OfflineUnitTests Then
                     Me.CachedValues(0)=New CachedValue(Timestamp,UnitTestData(0))
@@ -84,16 +84,22 @@ Public Class DBM
                 If i>=0 Then
                     Me.CachedValues(i).Invalidate
                     Array.Reverse(Me.CachedValues,i,Me.CachedValues.Length-i)
-                    Array.Reverse(Me.CachedValues,i,Me.CachedValues.Length-i-1)
+                    Array.Reverse(Me.CachedValues,i,Me.CachedValues.Length-i-1) ' Move value to end of cache
                 End If
             End If
         End Sub
 
-        Private Function MedianADScaleFactor(ByVal n As Integer) As Double
+        Private Function MedianAbsDevScaleFactor(ByVal n As Integer) As Double
+            ' Median Absolute Deviation scale factor; 1/T.INV(75%,n-1)
             Return 1.224744871392+CDbl(IIf(n>3,1,0))*0.082628680237+CDbl(IIf(n>4,1,0))*0.042706017265+CDbl(IIf(n>5,1,0))*0.026029010106+CDbl(IIf(n>6,1,0))*0.01750660774+CDbl(IIf(n>7,1,0))*0.012574170743+CDbl(IIf(n>8,1,0))*0.009466010412+CDbl(IIf(n>9,1,0))*0.007382179197+CDbl(IIf(n>10,1,0))*0.005917532826+CDbl(IIf(n>11,1,0))*0.004849062836+CDbl(IIf(n>12,1,0))*0.004045802354+CDbl(IIf(n>13,1,0))*0.00342674052+CDbl(IIf(n>14,1,0))*0.002939587984+CDbl(IIf(n>15,1,0))*0.002549371848+CDbl(IIf(n>16,1,0))*0.002231984311+CDbl(IIf(n>17,1,0))*0.001970370511+CDbl(IIf(n>18,1,0))*0.001752190127+CDbl(IIf(n>19,1,0))*0.001568335873+CDbl(IIf(n>20,1,0))*0.001411967957+CDbl(IIf(n>21,1,0))*0.00127786892+CDbl(IIf(n>22,1,0))*0.0011620029+CDbl(IIf(n>23,1,0))*0.001061208497+CDbl(IIf(n>24,1,0))*0.000972980893+CDbl(IIf(n>25,1,0))*0.000895314775+CDbl(IIf(n>26,1,0))*0.000826589406+CDbl(IIf(n>27,1,0))*0.000765483406+CDbl(IIf(n>28,1,0))*0.000710910769+CDbl(IIf(n>29,1,0))*0.019229364701
         End Function
 
+        Private Function MeanAbsDevScaleFactor As Double
+            Return Math.Sqrt(Math.PI/2) ' Mean Absolute Deviation scale factor
+        End Function
+
         Private Function ControlLimitRejectionCriterion(ByVal n As Integer) As Double
+            ' Control limit rejection criterion at 99% confidence interval; T.INV.2T(1%,n-1)
             Return 9.924843200918-CDbl(IIf(n>3,1,0))*4.083933891185-CDbl(IIf(n>4,1,0))*1.236814438383-CDbl(IIf(n>5,1,0))*0.571951887795-CDbl(IIf(n>6,1,0))*0.32471496223-CDbl(IIf(n>7,1,0))*0.207944723975-CDbl(IIf(n>8,1,0))*0.144095966017-CDbl(IIf(n>9,1,0))*0.105551789741-CDbl(IIf(n>10,1,0))*0.080562868975-CDbl(IIf(n>11,1,0))*0.063466157078-CDbl(IIf(n>12,1,0))*0.051266926146-CDbl(IIf(n>13,1,0))*0.042263750676-CDbl(IIf(n>14,1,0))*0.035433104346-CDbl(IIf(n>15,1,0))*0.030129850896-CDbl(IIf(n>16,1,0))*0.02593126105-CDbl(IIf(n>17,1,0))*0.022551102748-CDbl(IIf(n>18,1,0))*0.019790046938-CDbl(IIf(n>19,1,0))*0.017505866274-CDbl(IIf(n>20,1,0))*0.015594896679-CDbl(IIf(n>21,1,0))*0.013980151763-CDbl(IIf(n>22,1,0))*0.012603497423-CDbl(IIf(n>23,1,0))*0.01142037683-CDbl(IIf(n>24,1,0))*0.010396178996-CDbl(IIf(n>25,1,0))*0.009503691097-CDbl(IIf(n>26,1,0))*0.008721280347-CDbl(IIf(n>27,1,0))*0.008031576208-CDbl(IIf(n>28,1,0))*0.007420501661-CDbl(IIf(n>29,1,0))*0.187433151912
         End Function
 
@@ -109,10 +115,10 @@ Public Class DBM
 
         Public Sub Calculate(ByVal Timestamp As DateTime,ByVal IsInputDBMPoint As Boolean,ByVal HasCorrelationDBMPoint As Boolean,Optional ByRef SubstractDBMPoint As DBMPoint=Nothing)
             Dim CorrelationCounter,EMACounter,PatternCounter,n As Integer
-            Dim EMAWeight,EMATotalWeight,Median,Mean,MedianAD,MeanAD,VarS,StDevS,CurrEMA,PredEMA,UCLEMA,LCLEMA As Double
+            Dim EMAWeight,EMATotalWeight,Median,Mean,MedianAbsDev,MeanAbsDev,VarS,StDevS,CurrEMA,PredEMA,UCLEMA,LCLEMA As Double
             Dim Pattern(ComparePatterns),Data(ComparePatterns-1) As Double
             Dim Stats As Statistics
-            Me.Factor=0
+            Me.Factor=0 ' No event
             For CorrelationCounter=CorrelationPreviousPeriods To 0 Step -1
                 If CorrelationCounter=CorrelationPreviousPeriods Or (IsInputDBMPoint And Me.Factor<>0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
                     EMAWeight=1
@@ -134,22 +140,22 @@ Public Class DBM
                             End If
                         Next PatternCounter
                         Median=CalculateMedian(Data)
-                        MeanAD=0
+                        MeanAbsDev=0
                         For PatternCounter=0 To ComparePatterns-1
-                            MeanAD+=Math.Abs(Pattern(PatternCounter)-Mean)/ComparePatterns
+                            MeanAbsDev+=Math.Abs(Pattern(PatternCounter)-Mean)/ComparePatterns
                             Data(PatternCounter)=Math.Abs(Pattern(PatternCounter)-Median)
                         Next PatternCounter
-                        MedianAD=CalculateMedian(Data)
+                        MedianAbsDev=CalculateMedian(Data)
                         n=0
                         For PatternCounter=0 To ComparePatterns-1
-                            If MedianAD=0 Then
-                                If Math.Abs(Pattern(PatternCounter)-Mean)>MeanAD*Math.Sqrt(Math.PI/2)*ControlLimitRejectionCriterion(ComparePatterns) Then
+                            If MedianAbsDev=0 Then
+                                If Math.Abs(Pattern(PatternCounter)-Mean)>MeanAbsDev*MeanAbsDevScaleFactor*ControlLimitRejectionCriterion(ComparePatterns) Then ' Value is an outlier
                                     Pattern(PatternCounter)=Double.NaN
                                 Else
                                     n+=1
                                 End If
                             Else
-                                If Math.Abs(Pattern(PatternCounter)-Median)>MedianAD*MedianADScaleFactor(ComparePatterns)*ControlLimitRejectionCriterion(ComparePatterns) Then
+                                If Math.Abs(Pattern(PatternCounter)-Median)>MedianAbsDev*MedianAbsDevScaleFactor(ComparePatterns)*ControlLimitRejectionCriterion(ComparePatterns) Then ' Value is an outlier
                                     Pattern(PatternCounter)=Double.NaN
                                 Else
                                     n+=1
@@ -181,10 +187,10 @@ Public Class DBM
                     UCLEMA/=EMATotalWeight
                     LCLEMA/=EMATotalWeight
                     If CorrelationCounter=CorrelationPreviousPeriods Then
-                        If CurrEMA<LCLEMA Then
+                        If CurrEMA<LCLEMA Then ' Lower control limit exceeded
                             Me.Factor=(PredEMA-CurrEMA)/(LCLEMA-PredEMA)
                         End If
-                        If CurrEMA>UCLEMA Then
+                        If CurrEMA>UCLEMA Then ' Upper control limit exceeded
                             Me.Factor=(CurrEMA-PredEMA)/(UCLEMA-PredEMA)
                         End If
                     End If
@@ -219,7 +225,7 @@ Public Class DBM
             Next i
             Me.Slope=(n*SumXY-SumX*SumY)/(n*SumXX-SumX^2)
             Me.Intercept=(SumX*SumXY-SumY*SumXX)/(SumX^2-n*SumXX)
-            Me.ModifiedCorrelation=SumXY/Math.Sqrt(SumXX)/Math.Sqrt(SumYY)
+            Me.ModifiedCorrelation=SumXY/Math.Sqrt(SumXX)/Math.Sqrt(SumYY) ' Average is not removed, as expected average is zero
         End Sub
 
     End Structure
@@ -261,16 +267,16 @@ Public Class DBM
         If Calculate<>0 And Not IsNothing(CorrelationPoint) Then
             CorrelationDBMPointIndex=DBMPointIndex(CorrelationPoint)
             If SubstractInputPointFromCorrelationPoint Then
-                DBMPoints(CorrelationDBMPointIndex).Calculate(Timestamp,False,True,DBMPoints(InputDBMPointIndex))
+                DBMPoints(CorrelationDBMPointIndex).Calculate(Timestamp,False,True,DBMPoints(InputDBMPointIndex)) ' Pattern of correlation point contains input point
             Else
                 DBMPoints(CorrelationDBMPointIndex).Calculate(Timestamp,False,True)
             End If
             AbsErrorStats.Calculate(DBMPoints(CorrelationDBMPointIndex).AbsoluteError,DBMPoints(InputDBMPointIndex).AbsoluteError)
             RelErrorStats.Calculate(DBMPoints(CorrelationDBMPointIndex).RelativeError,DBMPoints(InputDBMPointIndex).RelativeError)
-            If RelErrorStats.ModifiedCorrelation>CorrelationThreshold Then
+            If RelErrorStats.ModifiedCorrelation>CorrelationThreshold Then ' Suppress event due to correlation of relative error
                 Calculate=RelErrorStats.ModifiedCorrelation
             End If
-            If Not SubstractInputPointFromCorrelationPoint And AbsErrorStats.ModifiedCorrelation<-CorrelationThreshold Then
+            If Not SubstractInputPointFromCorrelationPoint And AbsErrorStats.ModifiedCorrelation<-CorrelationThreshold Then ' Suppress event due to anticorrelation of absolute error (unmeasured supply)
                 Calculate=AbsErrorStats.ModifiedCorrelation
             End If
         End If
