@@ -31,7 +31,9 @@ Module DBMUnitTests
         #If OfflineUnitTests Then
         Console.Write(CStr(IIf(_DBM.Calculate(CStr(InputPoint),CStr(CorrelationPoint),Timestamp,SubstractInputPointFromCorrelationPoint)=ExpectedValue,"OK","ERR")) & vbCrLf)
         #Else
-        If Not IsNothing(CorrelationPoint) Then CorrelationPoint=CType(_PISDK.Servers(Split(CStr(CorrelationPoint),"\")(2)).PIPoints(Split(CStr(CorrelationPoint),"\")(3)),PISDK.PIPoint)
+        If Not IsNothing(CorrelationPoint) Then
+            CorrelationPoint=CType(_PISDK.Servers(Split(CStr(CorrelationPoint),"\")(2)).PIPoints(Split(CStr(CorrelationPoint),"\")(3)),PISDK.PIPoint)
+        End If
         Console.Write(CStr(IIf(_DBM.Calculate(CType(_PISDK.Servers(Split(CStr(InputPoint),"\")(2)).PIPoints(Split(CStr(InputPoint),"\")(3)),PISDK.PIPoint),CType(CorrelationPoint,PISDK.PIPoint),Timestamp,SubstractInputPointFromCorrelationPoint)=ExpectedValue,"OK","ERR")) & vbCrLf)
         #End If
     End Sub

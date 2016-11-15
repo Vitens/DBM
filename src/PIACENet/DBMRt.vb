@@ -74,7 +74,9 @@ Public Class DBMRt
                         InputTimestamp.UTCSeconds=Math.Min(InputTimestamp.UTCSeconds,thisCorrelationPIPoint.PIPoint.Data.Snapshot.TimeStamp.UTCSeconds)
                     Next
                     OutputTimestamp=Me.OutputPIPoint.Data.Snapshot.TimeStamp
-                    If DateDiff("d",OutputTimestamp.LocalDate,Now())>MaxCalculationAge Then OutputTimestamp.LocalDate=DateAdd("d",-MaxCalculationAge,Now())
+                    If DateDiff("d",OutputTimestamp.LocalDate,Now())>MaxCalculationAge Then
+                        OutputTimestamp.LocalDate=DateAdd("d",-MaxCalculationAge,Now())
+                    End If
                     OutputTimestamp.UTCSeconds+=DBM.CalculationInterval-OutputTimestamp.UTCSeconds Mod DBM.CalculationInterval
                     Do While InputTimestamp.UTCSeconds>=OutputTimestamp.UTCSeconds
                         Me.CalcTimestamps.Add(OutputTimestamp.LocalDate)
@@ -94,10 +96,14 @@ Public Class DBMRt
                                 Value=0
                                 For Each thisCorrelationPIPoint As CorrelationPIPoint In Me.CorrelationPIPoints
                                     NewValue=DBM.Calculate(Me.InputPIPoint,thisCorrelationPIPoint.PIPoint,Me.CalcTimestamps(Me.CalcTimestamps.Count-1),thisCorrelationPIPoint.SubstractSelf)
-                                    If NewValue=0 Then Exit For
+                                    If NewValue=0 Then
+                                        Exit For
+                                    End If
                                     If (Value=0 And Math.Abs(NewValue)>1) Or (Math.Abs(NewValue)<=1 And ((NewValue<0 And NewValue>=-1 And (NewValue<Value Or Math.Abs(Value)>1)) Or (NewValue>0 And NewValue<=1 And (NewValue>Value Or Math.Abs(Value)>1) And Not(Value<0 And Value>=-1)))) Then
                                         Value=NewValue
-                                        If Math.Abs(Value)>0 And Math.Abs(Value)<=1 Then Annotation="Exception suppressed by \\" & thisCorrelationPIPoint.PIPoint.Server.Name & "\" & thisCorrelationPIPoint.PIPoint.Name & " due to " & CStr(IIf(Value<0,"anti","")) & "correlation (r=" & Value & ")."
+                                        If Math.Abs(Value)>0 And Math.Abs(Value)<=1 Then
+                                            Annotation="Exception suppressed by \\" & thisCorrelationPIPoint.PIPoint.Server.Name & "\" & thisCorrelationPIPoint.PIPoint.Name & " due to " & CStr(IIf(Value<0,"anti","")) & "correlation (r=" & Value & ")."
+                                        End If
                                     End If
                                 Next
                             End If
@@ -162,7 +168,9 @@ Public Class DBMRt
         Public Sub New(Optional ByVal DefaultServerOnly As Boolean=False,Optional ByVal TagFilter As String="*")
             DBMPIServers=New Collections.Generic.List(Of DBMRt.DBMPIServer)
             For Each thisServer As PISDK.Server In PISDK.Servers
-                If Not DefaultServerOnly Or thisServer Is PISDK.Servers.DefaultServer Then DBMPIServers.Add(New DBMPIServer(thisServer,TagFilter))
+                If Not DefaultServerOnly Or thisServer Is PISDK.Servers.DefaultServer Then
+                    DBMPIServers.Add(New DBMPIServer(thisServer,TagFilter))
+                End If
             Next
         End Sub
 

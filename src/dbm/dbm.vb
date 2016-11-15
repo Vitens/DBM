@@ -99,7 +99,11 @@ Public Class DBM
 
         Private Function CalculateMedian(ByVal Data() As Double) As Double
             Array.Sort(Data)
-            If Data.Length Mod 2=0 Then CalculateMedian=(Data(Data.Length\2)+Data(Data.Length\2-1))/2 Else CalculateMedian=Data(Data.Length\2)
+            If Data.Length Mod 2=0 Then
+                CalculateMedian=(Data(Data.Length\2)+Data(Data.Length\2-1))/2
+            Else
+                CalculateMedian=Data(Data.Length\2)
+            End If
             Return CalculateMedian
         End Function
 
@@ -121,7 +125,9 @@ Public Class DBM
                         Mean=0
                         For PatternCounter=0 To ComparePatterns
                             Pattern(PatternCounter)=Me.Value(DateAdd("d",-(ComparePatterns-PatternCounter)*7,DateAdd("s",-((EMAPreviousPeriods-EMACounter)+(CorrelationPreviousPeriods-CorrelationCounter))*CalculationInterval,Timestamp)))
-                            If Not IsNothing(SubstractDBMPoint.Point) Then Pattern(PatternCounter)-=SubstractDBMPoint.Value(DateAdd("d",-(ComparePatterns-PatternCounter)*7,DateAdd("s",-((EMAPreviousPeriods-EMACounter)+(CorrelationPreviousPeriods-CorrelationCounter))*CalculationInterval,Timestamp)))
+                            If Not IsNothing(SubstractDBMPoint.Point) Then
+                                Pattern(PatternCounter)-=SubstractDBMPoint.Value(DateAdd("d",-(ComparePatterns-PatternCounter)*7,DateAdd("s",-((EMAPreviousPeriods-EMACounter)+(CorrelationPreviousPeriods-CorrelationCounter))*CalculationInterval,Timestamp)))
+                            End If
                             If PatternCounter<ComparePatterns Then
                                 Mean+=Pattern(PatternCounter)/ComparePatterns
                                 Data(PatternCounter)=Pattern(PatternCounter)
@@ -137,18 +143,30 @@ Public Class DBM
                         n=0
                         For PatternCounter=0 To ComparePatterns-1
                             If MedianAD=0 Then
-                                If Math.Abs(Pattern(PatternCounter)-Mean)>MeanAD*Math.Sqrt(Math.PI/2)*ControlLimitRejectionCriterion(ComparePatterns) Then Pattern(PatternCounter)=Double.NaN Else n+=1
+                                If Math.Abs(Pattern(PatternCounter)-Mean)>MeanAD*Math.Sqrt(Math.PI/2)*ControlLimitRejectionCriterion(ComparePatterns) Then
+                                    Pattern(PatternCounter)=Double.NaN
+                                Else
+                                    n+=1
+                                End If
                             Else
-                                If Math.Abs(Pattern(PatternCounter)-Median)>MedianAD*MedianADScaleFactor(ComparePatterns)*ControlLimitRejectionCriterion(ComparePatterns) Then Pattern(PatternCounter)=Double.NaN Else n+=1
+                                If Math.Abs(Pattern(PatternCounter)-Median)>MedianAD*MedianADScaleFactor(ComparePatterns)*ControlLimitRejectionCriterion(ComparePatterns) Then
+                                    Pattern(PatternCounter)=Double.NaN
+                                Else
+                                    n+=1
+                                End If
                             End If
                         Next PatternCounter
                         Stats.Calculate(Pattern,Nothing,True)
                         VarS=0
                         StDevS=0
                         For PatternCounter=0 To ComparePatterns-1
-                            If Not Double.IsNaN(Pattern(PatternCounter)) Then VarS+=(Pattern(PatternCounter)-PatternCounter*Stats.Slope-Stats.Intercept)^2/(n-2)
+                            If Not Double.IsNaN(Pattern(PatternCounter)) Then
+                                VarS+=(Pattern(PatternCounter)-PatternCounter*Stats.Slope-Stats.Intercept)^2/(n-2)
+                            End If
                         Next PatternCounter
-                        If VarS<>0 Then StDevS=Math.Sqrt(VarS)
+                        If VarS<>0 Then
+                            StDevS=Math.Sqrt(VarS)
+                        End If
                         CurrEMA+=(Pattern(ComparePatterns))*EMAWeight
                         PredEMA+=(ComparePatterns*Stats.Slope+Stats.Intercept)*EMAWeight
                         UCLEMA+=(ComparePatterns*Stats.Slope+Stats.Intercept+ControlLimitRejectionCriterion(n)*StDevS)*EMAWeight
@@ -162,8 +180,14 @@ Public Class DBM
                     Me.RelativeError(CorrelationCounter)=PredEMA/CurrEMA-1
                     UCLEMA/=EMATotalWeight
                     LCLEMA/=EMATotalWeight
-                    If CorrelationCounter=CorrelationPreviousPeriods And CurrEMA<LCLEMA Then Me.Factor=(PredEMA-CurrEMA)/(LCLEMA-PredEMA)
-                    If CorrelationCounter=CorrelationPreviousPeriods And CurrEMA>UCLEMA Then Me.Factor=(CurrEMA-PredEMA)/(UCLEMA-PredEMA)
+                    If CorrelationCounter=CorrelationPreviousPeriods Then
+                        If CurrEMA<LCLEMA Then
+                            Me.Factor=(PredEMA-CurrEMA)/(LCLEMA-PredEMA)
+                        End If
+                        If CurrEMA>UCLEMA Then
+                            Me.Factor=(CurrEMA-PredEMA)/(UCLEMA-PredEMA)
+                        End If
+                    End If
                 End If
             Next CorrelationCounter
         End Sub
@@ -204,7 +228,9 @@ Public Class DBM
 
     #If OfflineUnitTests Then
     Public Sub New(Optional ByVal Data() As Double=Nothing)
-        If Not IsNothing(Data) Then UnitTestData=Data
+        If Not IsNothing(Data) Then
+            UnitTestData=Data
+        End If
     End Sub
     #End If
 
@@ -241,8 +267,12 @@ Public Class DBM
             End If
             AbsErrorStats.Calculate(DBMPoints(CorrelationDBMPointIndex).AbsoluteError,DBMPoints(InputDBMPointIndex).AbsoluteError)
             RelErrorStats.Calculate(DBMPoints(CorrelationDBMPointIndex).RelativeError,DBMPoints(InputDBMPointIndex).RelativeError)
-            If RelErrorStats.ModifiedCorrelation>CorrelationThreshold Then Calculate=RelErrorStats.ModifiedCorrelation
-            If Not SubstractInputPointFromCorrelationPoint And AbsErrorStats.ModifiedCorrelation<-CorrelationThreshold Then Calculate=AbsErrorStats.ModifiedCorrelation
+            If RelErrorStats.ModifiedCorrelation>CorrelationThreshold Then
+                Calculate=RelErrorStats.ModifiedCorrelation
+            End If
+            If Not SubstractInputPointFromCorrelationPoint And AbsErrorStats.ModifiedCorrelation<-CorrelationThreshold Then
+                Calculate=AbsErrorStats.ModifiedCorrelation
+            End If
         End If
         Return Math.Round(Calculate,3)
     End Function
