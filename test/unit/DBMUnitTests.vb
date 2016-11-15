@@ -27,7 +27,7 @@ Module DBMUnitTests
     #End If
 
     Public Sub UnitTest(ByVal Description As String,ByVal ExpectedValue As Double,ByVal InputPoint As Object,ByVal CorrelationPoint As Object,ByVal Timestamp As DateTime,ByVal SubstractInputPointFromCorrelationPoint As Boolean)
-        Console.Write(Microsoft.VisualBasic.Left(Description & Space(67),67) & ExpectedValue.ToString(" 0.000;-0.000") & " ")
+        Console.Write(Description & Space(67-Description.Length) & ExpectedValue.ToString(" 0.000;-0.000") & " ")
         #If OfflineUnitTests Then
         Console.Write(CStr(IIf(_DBM.Calculate(CStr(InputPoint),CStr(CorrelationPoint),Timestamp,SubstractInputPointFromCorrelationPoint)=ExpectedValue,"OK","ERR")) & vbCrLf)
         #Else
