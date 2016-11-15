@@ -104,50 +104,50 @@ Public Class DBM
         End Function
 
         Public Sub Calculate(ByVal Timestamp As DateTime,ByVal IsInputDBMPoint As Boolean,ByVal HasCorrelationDBMPoint As Boolean,Optional ByRef SubstractDBMPoint As DBMPoint=Nothing)
-            Dim i,j,k,n As Integer
+            Dim CorrelationCounter,EMACounter,PatternCounter,n As Integer
             Dim EMAWeight,EMATotalWeight,Median,Mean,MedianAD,MeanAD,VarS,StDevS,CurrEMA,PredEMA,UCLEMA,LCLEMA As Double
             Dim Pattern(ComparePatterns),Data(ComparePatterns-1) As Double
             Dim Stats As Statistics
             Me.Factor=0
-            For k=CorrelationPreviousPeriods To 0 Step -1
-                If k=CorrelationPreviousPeriods Or (IsInputDBMPoint And Me.Factor<>0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
+            For CorrelationCounter=CorrelationPreviousPeriods To 0 Step -1
+                If CorrelationCounter=CorrelationPreviousPeriods Or (IsInputDBMPoint And Me.Factor<>0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
                     EMAWeight=1
                     EMATotalWeight=0
                     CurrEMA=0
                     PredEMA=0
                     UCLEMA=0
                     LCLEMA=0
-                    For i=0 To EMAPreviousPeriods
+                    For EMACounter=0 To EMAPreviousPeriods
                         Mean=0
-                        For j=0 To ComparePatterns
-                            Pattern(j)=Me.Value(DateAdd("d",-(ComparePatterns-j)*7,DateAdd("s",-((EMAPreviousPeriods-i)+(CorrelationPreviousPeriods-k))*CalculationInterval,Timestamp)))
-                            If Not IsNothing(SubstractDBMPoint.Point) Then Pattern(j)-=SubstractDBMPoint.Value(DateAdd("d",-(ComparePatterns-j)*7,DateAdd("s",-((EMAPreviousPeriods-i)+(CorrelationPreviousPeriods-k))*CalculationInterval,Timestamp)))
-                            If j<ComparePatterns Then
-                                Mean+=Pattern(j)/ComparePatterns
-                                Data(j)=Pattern(j)
+                        For PatternCounter=0 To ComparePatterns
+                            Pattern(PatternCounter)=Me.Value(DateAdd("d",-(ComparePatterns-PatternCounter)*7,DateAdd("s",-((EMAPreviousPeriods-EMACounter)+(CorrelationPreviousPeriods-CorrelationCounter))*CalculationInterval,Timestamp)))
+                            If Not IsNothing(SubstractDBMPoint.Point) Then Pattern(PatternCounter)-=SubstractDBMPoint.Value(DateAdd("d",-(ComparePatterns-PatternCounter)*7,DateAdd("s",-((EMAPreviousPeriods-EMACounter)+(CorrelationPreviousPeriods-CorrelationCounter))*CalculationInterval,Timestamp)))
+                            If PatternCounter<ComparePatterns Then
+                                Mean+=Pattern(PatternCounter)/ComparePatterns
+                                Data(PatternCounter)=Pattern(PatternCounter)
                             End If
-                        Next j
+                        Next PatternCounter
                         Median=CalculateMedian(Data)
                         MeanAD=0
-                        For j=0 To ComparePatterns-1
-                            MeanAD+=Math.Abs(Pattern(j)-Mean)/ComparePatterns
-                            Data(j)=Math.Abs(Pattern(j)-Median)
-                        Next j
+                        For PatternCounter=0 To ComparePatterns-1
+                            MeanAD+=Math.Abs(Pattern(PatternCounter)-Mean)/ComparePatterns
+                            Data(PatternCounter)=Math.Abs(Pattern(PatternCounter)-Median)
+                        Next PatternCounter
                         MedianAD=CalculateMedian(Data)
                         n=0
-                        For j=0 To ComparePatterns-1
+                        For PatternCounter=0 To ComparePatterns-1
                             If MedianAD=0 Then
-                                If MeanAD*Math.Sqrt(Math.PI/2)*ControlLimitRejectionCriterion(ComparePatterns)<Math.Abs(Pattern(j)-Mean) Then Pattern(j)=Double.NaN Else n+=1
+                                If Math.Abs(Pattern(PatternCounter)-Mean)>MeanAD*Math.Sqrt(Math.PI/2)*ControlLimitRejectionCriterion(ComparePatterns) Then Pattern(PatternCounter)=Double.NaN Else n+=1
                             Else
-                                If MedianAD*MedianADScaleFactor(ComparePatterns)*ControlLimitRejectionCriterion(ComparePatterns)<Math.Abs(Pattern(j)-Median) Then Pattern(j)=Double.NaN Else n+=1
+                                If Math.Abs(Pattern(PatternCounter)-Median)>MedianAD*MedianADScaleFactor(ComparePatterns)*ControlLimitRejectionCriterion(ComparePatterns) Then Pattern(PatternCounter)=Double.NaN Else n+=1
                             End If
-                        Next j
+                        Next PatternCounter
                         Stats.Calculate(Pattern,Nothing,True)
                         VarS=0
                         StDevS=0
-                        For j=0 To ComparePatterns-1
-                            If Not Double.IsNaN(Pattern(j)) Then VarS+=(Pattern(j)-j*Stats.Slope-Stats.Intercept)^2/(n-2)
-                        Next j
+                        For PatternCounter=0 To ComparePatterns-1
+                            If Not Double.IsNaN(Pattern(PatternCounter)) Then VarS+=(Pattern(PatternCounter)-PatternCounter*Stats.Slope-Stats.Intercept)^2/(n-2)
+                        Next PatternCounter
                         If VarS<>0 Then StDevS=Math.Sqrt(VarS)
                         CurrEMA+=(Pattern(ComparePatterns))*EMAWeight
                         PredEMA+=(ComparePatterns*Stats.Slope+Stats.Intercept)*EMAWeight
@@ -155,17 +155,17 @@ Public Class DBM
                         LCLEMA+=(ComparePatterns*Stats.Slope+Stats.Intercept-ControlLimitRejectionCriterion(n)*StDevS)*EMAWeight
                         EMATotalWeight+=EMAWeight
                         EMAWeight/=1-2/((EMAPreviousPeriods+1)+1)
-                    Next i
+                    Next EMACounter
                     CurrEMA/=EMATotalWeight
                     PredEMA/=EMATotalWeight
-                    Me.AbsoluteError(k)=PredEMA-CurrEMA
-                    Me.RelativeError(k)=PredEMA/CurrEMA-1
+                    Me.AbsoluteError(CorrelationCounter)=PredEMA-CurrEMA
+                    Me.RelativeError(CorrelationCounter)=PredEMA/CurrEMA-1
                     UCLEMA/=EMATotalWeight
                     LCLEMA/=EMATotalWeight
-                    If k=CorrelationPreviousPeriods And CurrEMA<LCLEMA Then Me.Factor=(PredEMA-CurrEMA)/(LCLEMA-PredEMA)
-                    If k=CorrelationPreviousPeriods And CurrEMA>UCLEMA Then Me.Factor=(CurrEMA-PredEMA)/(UCLEMA-PredEMA)
+                    If CorrelationCounter=CorrelationPreviousPeriods And CurrEMA<LCLEMA Then Me.Factor=(PredEMA-CurrEMA)/(LCLEMA-PredEMA)
+                    If CorrelationCounter=CorrelationPreviousPeriods And CurrEMA>UCLEMA Then Me.Factor=(CurrEMA-PredEMA)/(UCLEMA-PredEMA)
                 End If
-            Next k
+            Next CorrelationCounter
         End Sub
 
     End Structure
