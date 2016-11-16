@@ -15,7 +15,7 @@ Public Class DBM
 
     Public Structure DBMPoint
 
-        Public Structure CachedValue
+        Private Structure CachedValue
 
             Public Timestamp As DateTime
             Public Value As Double
@@ -46,7 +46,7 @@ Public Class DBM
             ReDim Me.RelativeError(CorrelationPreviousPeriods)
         End Sub
 
-        Public Function Value(ByVal Timestamp As DateTime) As Double
+        Private Function Value(ByVal Timestamp As DateTime) As Double
             Dim i As Integer
             i=Array.FindIndex(Me.CachedValues,Function(FindCachedValue)FindCachedValue.Timestamp=Timestamp)
             If i>=0 Then ' Found value in cache
@@ -115,11 +115,11 @@ Public Class DBM
         Public Slope,Intercept,StDevSLinReg,ModifiedCorrelation As Double
         Public n As Integer
 
-        Public Function MeanAbsDevScaleFactor As Double ' Scale factor k
+        Private Function MeanAbsDevScaleFactor As Double ' Scale factor k
             Return 1.253314137316 ' SQRT(PI()/2)
         End Function
 
-        Public Function MedianAbsDevScaleFactor(ByVal n As Integer) As Double ' Scale factor k
+        Private Function MedianAbsDevScaleFactor(ByVal n As Integer) As Double ' Scale factor k
             Select Case n
                 Case <=3
                     MedianAbsDevScaleFactor=1.224744871392 ' n<30 Student's t-distribution: 1/T.INV(75%,n-1)
@@ -243,14 +243,14 @@ Public Class DBM
             Return ControlLimitRejectionCriterion
         End Function
 
-        Public Function CalculateMean(ByVal Data() As Double) As Double
+        Private Function CalculateMean(ByVal Data() As Double) As Double
             For Each Value As Double In Data
                 CalculateMean+=Value/Data.Length
             Next
             Return CalculateMean
         End Function
 
-        Public Function CalculateMedian(ByVal Data() As Double) As Double
+        Private Function CalculateMedian(ByVal Data() As Double) As Double
             Array.Sort(Data)
             If Data.Length Mod 2=0 Then
                 CalculateMedian=(Data(Data.Length\2)+Data(Data.Length\2-1))/2
@@ -260,7 +260,7 @@ Public Class DBM
             Return CalculateMedian
         End Function
 
-        Public Function CalculateMeanAbsDev(ByVal Mean As Double,ByVal Data() As Double) As Double
+        Private Function CalculateMeanAbsDev(ByVal Mean As Double,ByVal Data() As Double) As Double
             Dim i As Integer
             For i=0 to Data.Length-1
                 Data(i)=Math.Abs(Data(i)-Mean)
@@ -269,7 +269,7 @@ Public Class DBM
             Return CalculateMeanAbsDev
         End Function
 
-        Public Function CalculateMedianAbsDev(ByVal Median As Double,ByVal Data() As Double) As Double
+        Private Function CalculateMedianAbsDev(ByVal Median As Double,ByVal Data() As Double) As Double
             Dim i As Integer
             For i=0 to Data.Length-1
                 Data(i)=Math.Abs(Data(i)-Median)
@@ -346,7 +346,7 @@ Public Class DBM
 
     End Structure
 
-    Public DBMPoints(-1) As DBMPoint
+    Private DBMPoints(-1) As DBMPoint
 
     #If OfflineUnitTests Then
     Public Sub New(Optional ByVal Data() As Double=Nothing)
@@ -357,9 +357,9 @@ Public Class DBM
     #End If
 
     #If OfflineUnitTests Then
-    Public Function DBMPointIndex(ByVal Point As String) As Integer
+    Private Function DBMPointIndex(ByVal Point As String) As Integer
     #Else
-    Public Function DBMPointIndex(ByVal Point As PISDK.PIPoint) As Integer
+    Private Function DBMPointIndex(ByVal Point As PISDK.PIPoint) As Integer
     #End If
         DBMPointIndex=Array.FindIndex(DBMPoints,Function(FindDBMPoint)FindDBMPoint.Point Is Point)
         If DBMPointIndex=-1 Then

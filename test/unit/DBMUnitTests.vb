@@ -18,7 +18,7 @@ Module DBMUnitTests
     Dim _PISDK As PISDK.PISDK = New PISDK.PISDK
     #End If
 
-    Public Sub UnitTest(ByVal Description As String,ByVal ExpectedValue As Double,ByVal InputPoint As Object,ByVal CorrelationPoint As Object,ByVal Timestamp As DateTime,ByVal SubstractInputPointFromCorrelationPoint As Boolean)
+    Private Sub UnitTest(ByVal Description As String,ByVal ExpectedValue As Double,ByVal InputPoint As Object,ByVal CorrelationPoint As Object,ByVal Timestamp As DateTime,ByVal SubstractInputPointFromCorrelationPoint As Boolean)
         Console.Write(Description & Space(67-Description.Length) & ExpectedValue.ToString(" 0.000;-0.000") & " ")
         #If OfflineUnitTests Then
         Console.Write(CStr(IIf(_DBM.Calculate(CStr(InputPoint),CStr(CorrelationPoint),Timestamp,SubstractInputPointFromCorrelationPoint)=ExpectedValue,"OK","ERR")) & vbCrLf)
@@ -30,7 +30,7 @@ Module DBMUnitTests
         #End If
     End Sub
 
-    Sub Main
+    Public Sub Main
         UnitTest("Normal situation; Leeuwarden",0,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering",Nothing,New DateTime(2016,2,5,10,0,0),False)
         UnitTest("Cache test 1/2, Normal situation; Leeuwarden",0,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering",Nothing,New DateTime(2016,2,5,10,0,0),False)
         UnitTest("Cache test 2/2, Normal situation; Leeuwarden",0,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering",Nothing,New DateTime(2016,2,5,10,5,0),False)
