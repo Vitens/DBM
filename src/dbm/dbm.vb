@@ -249,9 +249,21 @@ Public Class DBM
             Return CalculateMedianAbsDev
         End Function
 
+        Private Function CalculateStDevSLinReg(ByVal Slope As Double,ByVal Intercept As Double,ByVal Data() As Double) As Double
+            Dim i,n As Integer
+            For i=0 to Data.Length-1
+                If Not Double.IsNaN(Data(i)) Then
+                    CalculateStDevSLinReg+=(Data(i)-i*Slope-Intercept)^2
+                    n+=1
+                End If
+            Next i
+            CalculateStDevSLinReg=Math.Sqrt(CalculateStDevSLinReg/(n-2))
+            Return CalculateStDevSLinReg
+        End Function
+
         Public Sub Calculate(ByVal Timestamp As DateTime,ByVal IsInputDBMPoint As Boolean,ByVal HasCorrelationDBMPoint As Boolean,Optional ByRef SubstractDBMPoint As DBMPoint=Nothing)
             Dim CorrelationCounter,EMACounter,PatternCounter,n As Integer
-            Dim EMAWeight,EMATotalWeight,Median,Mean,MedianAbsDev,MeanAbsDev,VarS,StDevS,CurrEMA,PredEMA,UCLEMA,LCLEMA As Double
+            Dim EMAWeight,EMATotalWeight,Median,Mean,MedianAbsDev,MeanAbsDev,StDevS,CurrEMA,PredEMA,UCLEMA,LCLEMA As Double
             Dim Pattern(ComparePatterns) As Double
             Dim Stats As Statistics
             Me.Factor=0 ' No event
@@ -291,14 +303,7 @@ Public Class DBM
                             End If
                         Next PatternCounter
                         Stats.Calculate(Pattern.Take(Pattern.Length-1).ToArray,Nothing)
-                        VarS=0
-                        StDevS=0
-                        For PatternCounter=0 To ComparePatterns-1
-                            If Not Double.IsNaN(Pattern(PatternCounter)) Then
-                                VarS+=(Pattern(PatternCounter)-PatternCounter*Stats.Slope-Stats.Intercept)^2/(n-2)
-                            End If
-                        Next PatternCounter
-                        StDevS=Math.Sqrt(VarS)
+                        StDevS=CalculateStDevSLinReg(Stats.Slope,Stats.Intercept,Pattern.Take(Pattern.Length-1).ToArray)
                         CurrEMA+=(Pattern(ComparePatterns))*EMAWeight
                         PredEMA+=(ComparePatterns*Stats.Slope+Stats.Intercept)*EMAWeight
                         UCLEMA+=(ComparePatterns*Stats.Slope+Stats.Intercept+ControlLimitRejectionCriterion(n)*StDevS)*EMAWeight
