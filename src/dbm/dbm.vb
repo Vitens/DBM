@@ -232,18 +232,6 @@ Public Class DBM
             Return CalculateMedianAbsDev
         End Function
 
-        Private Function CalculateStDevSLinReg(ByVal Slope As Double,ByVal Intercept As Double,ByVal Data() As Double) As Double
-            Dim i,n As Integer
-            For i=0 to Data.Length-1
-                If Not Double.IsNaN(Data(i)) Then
-                    CalculateStDevSLinReg+=(Data(i)-i*Slope-Intercept)^2
-                    n+=1
-                End If
-            Next i
-            CalculateStDevSLinReg=Math.Sqrt(CalculateStDevSLinReg/(n-2)) ' n-2 is used because two parameters (slope and intercept) were estimated in order to estimate the sum of squares
-            Return CalculateStDevSLinReg
-        End Function
-
         Private Function RemoveOutliers(ByVal Data() As Double) As Double()
             Dim Mean,Median,MeanAbsDev,MedianAbsDev As Double
             Dim i As Integer
@@ -267,8 +255,8 @@ Public Class DBM
 
         Public Sub Calculate(ByVal Timestamp As DateTime,ByVal IsInputDBMPoint As Boolean,ByVal HasCorrelationDBMPoint As Boolean,Optional ByRef SubstractDBMPoint As DBMPoint=Nothing)
             Dim CorrelationCounter,EMACounter,PatternCounter As Integer
-            Dim EMAWeight,EMATotalWeight,StDevS,CurrEMA,PredEMA,UCLEMA,LCLEMA As Double
-            Dim Pattern(ComparePatterns),PatternWithoutOutliers(ComparePatterns-1) As Double
+            Dim EMAWeight,EMATotalWeight,CurrEMA,PredEMA,UCLEMA,LCLEMA As Double
+            Dim Pattern(ComparePatterns) As Double
             Dim Stats As Statistics
             Me.Factor=0 ' No event
             For CorrelationCounter=0 To CorrelationPreviousPeriods
@@ -286,13 +274,11 @@ Public Class DBM
                                 Pattern(ComparePatterns-PatternCounter)-=SubstractDBMPoint.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*CalculationInterval,Timestamp)))
                             End If
                         Next PatternCounter
-                        PatternWithoutOutliers=RemoveOutliers(Pattern.Take(Pattern.Length-1).ToArray)
-                        Stats.Calculate(PatternWithoutOutliers,Nothing)
-                        StDevS=CalculateStDevSLinReg(Stats.Slope,Stats.Intercept,PatternWithoutOutliers)
+                        Stats.Calculate(RemoveOutliers(Pattern.Take(Pattern.Length-1).ToArray),Nothing)
                         CurrEMA+=(Pattern(ComparePatterns))*EMAWeight
                         PredEMA+=(ComparePatterns*Stats.Slope+Stats.Intercept)*EMAWeight
-                        UCLEMA+=(ComparePatterns*Stats.Slope+Stats.Intercept+ControlLimitRejectionCriterion(Stats.n)*StDevS)*EMAWeight
-                        LCLEMA+=(ComparePatterns*Stats.Slope+Stats.Intercept-ControlLimitRejectionCriterion(Stats.n)*StDevS)*EMAWeight
+                        UCLEMA+=(ComparePatterns*Stats.Slope+Stats.Intercept+ControlLimitRejectionCriterion(Stats.n)*Stats.StDevSLinReg)*EMAWeight
+                        LCLEMA+=(ComparePatterns*Stats.Slope+Stats.Intercept-ControlLimitRejectionCriterion(Stats.n)*Stats.StDevSLinReg)*EMAWeight
                         EMATotalWeight+=EMAWeight
                         EMAWeight/=1-2/((EMAPreviousPeriods+1)+1)
                     Next EMACounter
@@ -318,13 +304,13 @@ Public Class DBM
 
     Private Structure Statistics
 
-        Public Slope,Intercept,ModifiedCorrelation As Double
+        Public Slope,Intercept,StDevSLinReg,ModifiedCorrelation As Double
         Public n As Integer
 
         Public Sub Calculate(ByVal DataY() As Double,Optional ByVal DataX() As Double=Nothing)
             Dim SumX,SumXX,SumY,SumYY,SumXY As Double
             Dim i As Integer
-            n=0
+            Me.n=0
             For i=0 To DataY.Length-1
                 If Not Double.IsNaN(DataY(i)) Then
                     If DataX Is Nothing Then
@@ -343,6 +329,13 @@ Public Class DBM
             Next i
             Me.Slope=(Me.n*SumXY-SumX*SumY)/(Me.n*SumXX-SumX^2)
             Me.Intercept=(SumX*SumXY-SumY*SumXX)/(SumX^2-Me.n*SumXX)
+            Me.StDevSLinReg=0
+            For i=0 to DataY.Length-1
+                If Not Double.IsNaN(DataY(i)) Then
+                    Me.StDevSLinReg+=(DataY(i)-i*Me.Slope-Me.Intercept)^2
+                End If
+            Next i
+            Me.StDevSLinReg=Math.Sqrt(Me.StDevSLinReg/(Me.n-2)) ' n-2 is used because two parameters (slope and intercept) were estimated in order to estimate the sum of squares
             Me.ModifiedCorrelation=SumXY/Math.Sqrt(SumXX)/Math.Sqrt(SumYY) ' Average is not removed, as expected average is zero
         End Sub
 
