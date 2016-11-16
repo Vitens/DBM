@@ -234,9 +234,11 @@ Public Class DBM
         End Function
 
         Private Function CalculateMeanAbsDev(ByVal Mean As Double,ByVal Data() As Double) As Double
-            For Each Value As Double In Data
-                CalculateMeanAbsDev+=Math.Abs(Value-Mean)/Data.Length
-            Next
+            Dim i As Integer
+            For i=0 to Data.Length-1
+                Data(i)=Math.Abs(Data(i)-Mean)
+            Next i
+            CalculateMeanAbsDev=CalculateMean(Data)
             Return CalculateMeanAbsDev
         End Function
 
