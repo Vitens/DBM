@@ -25,11 +25,6 @@ Public Class DBM
                 Me.Value=Value
             End Sub
 
-            Public Sub Invalidate
-                Me.Timestamp=Nothing
-                Me.Value=Nothing
-            End Sub
-
         End Structure
 
         #If OfflineUnitTests Then
@@ -46,7 +41,7 @@ Public Class DBM
         Public Sub New(ByVal Point As PISDK.PIPoint)
         #End If
             Me.Point=Point
-            InvalidateCache
+            ReDim Me.CachedValues(CInt((EMAPreviousPeriods+1+CorrelationPreviousPeriods+1+24*(3600/CalculationInterval))*(ComparePatterns+1)-1))
             ReDim Me.AbsoluteError(CorrelationPreviousPeriods)
             ReDim Me.RelativeError(CorrelationPreviousPeriods)
         End Sub
@@ -74,25 +69,11 @@ Public Class DBM
             Return Me.CachedValues(0).Value
         End Function
 
-        Public Sub InvalidateCache(Optional ByVal Timestamp As DateTime=Nothing)
-            Dim i As Integer
-            If Timestamp=DateTime.MinValue Then
-                ReDim Me.CachedValues(CInt((EMAPreviousPeriods+1+CorrelationPreviousPeriods+1+24*(3600/CalculationInterval))*(ComparePatterns+1)-1))
-            Else
-                i=Array.FindIndex(Me.CachedValues,Function(FindCachedValue)FindCachedValue.Timestamp=Timestamp)
-                If i>=0 Then
-                    Me.CachedValues(i).Invalidate
-                    Array.Reverse(Me.CachedValues,i,Me.CachedValues.Length-i)
-                    Array.Reverse(Me.CachedValues,i,Me.CachedValues.Length-i-1) ' Move value to end of cache
-                End If
-            End If
-        End Sub
-
-        Private Function MeanAbsDevScaleFactor As Double
+        Private Function MeanAbsDevScaleFactor As Double ' Scale factor k
             Return 1.253314137316 ' SQRT(PI()/2)
         End Function
 
-        Private Function MedianAbsDevScaleFactor(ByVal n As Integer) As Double
+        Private Function MedianAbsDevScaleFactor(ByVal n As Integer) As Double ' Scale factor k
             Select Case n
                 Case <=3
                     MedianAbsDevScaleFactor=1.224744871392 ' n<30 Student's t-distribution: 1/T.INV(75%,n-1)
@@ -259,7 +240,7 @@ Public Class DBM
                     n+=1
                 End If
             Next i
-            CalculateStDevSLinReg=Math.Sqrt(CalculateStDevSLinReg/(n-2))
+            CalculateStDevSLinReg=Math.Sqrt(CalculateStDevSLinReg/(n-2)) ' n-2 is used because two parameters (slope and intercept) were estimated in order to estimate the sum of squares
             Return CalculateStDevSLinReg
         End Function
 
@@ -269,35 +250,35 @@ Public Class DBM
             Dim Pattern(ComparePatterns) As Double
             Dim Stats As Statistics
             Me.Factor=0 ' No event
-            For CorrelationCounter=CorrelationPreviousPeriods To 0 Step -1
-                If CorrelationCounter=CorrelationPreviousPeriods Or (IsInputDBMPoint And Me.Factor<>0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
+            For CorrelationCounter=0 To CorrelationPreviousPeriods
+                If CorrelationCounter=0 Or (IsInputDBMPoint And Me.Factor<>0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
                     EMAWeight=1
                     EMATotalWeight=0
                     CurrEMA=0
                     PredEMA=0
                     UCLEMA=0
                     LCLEMA=0
-                    For EMACounter=0 To EMAPreviousPeriods
-                        For PatternCounter=0 To ComparePatterns
-                            Pattern(PatternCounter)=Me.Value(DateAdd("d",-(ComparePatterns-PatternCounter)*7,DateAdd("s",-((EMAPreviousPeriods-EMACounter)+(CorrelationPreviousPeriods-CorrelationCounter))*CalculationInterval,Timestamp)))
+                    For EMACounter=EMAPreviousPeriods To 0 Step -1
+                        For PatternCounter=ComparePatterns To 0 Step -1
+                            Pattern(ComparePatterns-PatternCounter)=Me.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*CalculationInterval,Timestamp)))
                             If Not IsNothing(SubstractDBMPoint.Point) Then
-                                Pattern(PatternCounter)-=SubstractDBMPoint.Value(DateAdd("d",-(ComparePatterns-PatternCounter)*7,DateAdd("s",-((EMAPreviousPeriods-EMACounter)+(CorrelationPreviousPeriods-CorrelationCounter))*CalculationInterval,Timestamp)))
+                                Pattern(ComparePatterns-PatternCounter)-=SubstractDBMPoint.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*CalculationInterval,Timestamp)))
                             End If
                         Next PatternCounter
-                        Mean=CalculateMean(Pattern.Take(Pattern.Length-1).ToArray)
+                        Mean=CalculateMean(Pattern.Take(Pattern.Length-1).ToArray) ' Calculate statistics excluding last value (at Timestamp) in array
                         Median=CalculateMedian(Pattern.Take(Pattern.Length-1).ToArray)
                         MeanAbsDev=CalculateMeanAbsDev(Mean,Pattern.Take(Pattern.Length-1).ToArray)
                         MedianAbsDev=CalculateMedianAbsDev(Median,Pattern.Take(Pattern.Length-1).ToArray)
                         n=0
                         For PatternCounter=0 To ComparePatterns-1
-                            If MedianAbsDev=0 Then ' Use Mean Absolute Deviation instead of Median Absolute Deviation
-                                If Math.Abs(Pattern(PatternCounter)-Mean)>MeanAbsDev*MeanAbsDevScaleFactor*ControlLimitRejectionCriterion(ComparePatterns) Then ' Value is an outlier
+                            If MedianAbsDev=0 Then ' Use Mean Absolute Deviation instead of Median Absolute Deviation to detect outliers
+                                If Math.Abs(Pattern(PatternCounter)-Mean)>MeanAbsDev*MeanAbsDevScaleFactor*ControlLimitRejectionCriterion(ComparePatterns) Then ' If value is an outlier
                                     Pattern(PatternCounter)=Double.NaN ' Exclude outlier
                                 Else
                                     n+=1
                                 End If
-                            Else
-                                If Math.Abs(Pattern(PatternCounter)-Median)>MedianAbsDev*MedianAbsDevScaleFactor(ComparePatterns)*ControlLimitRejectionCriterion(ComparePatterns) Then ' Value is an outlier
+                            Else ' Use Median Absolute Deviation to detect outliers
+                                If Math.Abs(Pattern(PatternCounter)-Median)>MedianAbsDev*MedianAbsDevScaleFactor(ComparePatterns)*ControlLimitRejectionCriterion(ComparePatterns) Then ' If value is an outlier
                                     Pattern(PatternCounter)=Double.NaN ' Exclude outlier
                                 Else
                                     n+=1
@@ -315,11 +296,11 @@ Public Class DBM
                     Next EMACounter
                     CurrEMA/=EMATotalWeight
                     PredEMA/=EMATotalWeight
-                    Me.AbsoluteError(CorrelationCounter)=PredEMA-CurrEMA
-                    Me.RelativeError(CorrelationCounter)=PredEMA/CurrEMA-1
+                    Me.AbsoluteError(CorrelationPreviousPeriods-CorrelationCounter)=PredEMA-CurrEMA
+                    Me.RelativeError(CorrelationPreviousPeriods-CorrelationCounter)=PredEMA/CurrEMA-1
                     UCLEMA/=EMATotalWeight
                     LCLEMA/=EMATotalWeight
-                    If CorrelationCounter=CorrelationPreviousPeriods Then
+                    If CorrelationCounter=0 Then
                         If CurrEMA<LCLEMA Then ' Lower control limit exceeded
                             Me.Factor=(PredEMA-CurrEMA)/(LCLEMA-PredEMA)
                         End If
@@ -397,7 +378,7 @@ Public Class DBM
         InputDBMPointIndex=DBMPointIndex(InputPoint)
         DBMPoints(InputDBMPointIndex).Calculate(Timestamp,True,Not IsNothing(CorrelationPoint))
         Calculate=DBMPoints(InputDBMPointIndex).Factor
-        If Calculate<>0 And Not IsNothing(CorrelationPoint) Then
+        If Calculate<>0 And Not IsNothing(CorrelationPoint) Then ' If an event is found and a correlation point is available
             CorrelationDBMPointIndex=DBMPointIndex(CorrelationPoint)
             If SubstractInputPointFromCorrelationPoint Then
                 DBMPoints(CorrelationDBMPointIndex).Calculate(Timestamp,False,True,DBMPoints(InputDBMPointIndex)) ' Pattern of correlation point contains input point
