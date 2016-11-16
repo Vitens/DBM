@@ -77,10 +77,10 @@ Public Class DBMRt
                     If DateDiff("d",OutputTimestamp.LocalDate,Now())>MaxCalculationAge Then
                         OutputTimestamp.LocalDate=DateAdd("d",-MaxCalculationAge,Now())
                     End If
-                    OutputTimestamp.UTCSeconds+=DBM.CalculationInterval-OutputTimestamp.UTCSeconds Mod DBM.CalculationInterval
+                    OutputTimestamp.UTCSeconds+=DBMPoint.CalculationInterval-OutputTimestamp.UTCSeconds Mod DBMPoint.CalculationInterval
                     Do While InputTimestamp.UTCSeconds>=OutputTimestamp.UTCSeconds
                         Me.CalcTimestamps.Add(OutputTimestamp.LocalDate)
-                        OutputTimestamp.UTCSeconds+=DBM.CalculationInterval
+                        OutputTimestamp.UTCSeconds+=DBMPoint.CalculationInterval
                     Loop
                     If Me.CalcTimestamps.Count>0 Then
                         Me.CalcTimestamps.Sort
