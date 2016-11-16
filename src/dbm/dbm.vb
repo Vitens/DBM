@@ -69,11 +69,57 @@ Public Class DBM
             Return Me.CachedValues(0).Value
         End Function
 
-        Private Function MeanAbsDevScaleFactor As Double ' Scale factor k
+        Public Sub Calculate(ByVal Timestamp As DateTime,ByVal IsInputDBMPoint As Boolean,ByVal HasCorrelationDBMPoint As Boolean,Optional ByRef SubstractDBMPoint As DBMPoint=Nothing)
+            Dim CorrelationCounter,EMACounter,PatternCounter As Integer
+            Dim Pattern(ComparePatterns),CurrValueEMA(EMAPreviousPeriods),PredValueEMA(EMAPreviousPeriods),LowContrLimitEMA(EMAPreviousPeriods),UppContrLimitEMA(EMAPreviousPeriods) As Double
+            Dim CurrValue,PredValue,LowContrLimit,UppContrLimit As Double
+            Dim Stats As Statistics
+            Me.Factor=0 ' No event
+            For CorrelationCounter=0 To CorrelationPreviousPeriods
+                If CorrelationCounter=0 Or (IsInputDBMPoint And Me.Factor<>0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
+                    For EMACounter=EMAPreviousPeriods To 0 Step -1
+                        For PatternCounter=ComparePatterns To 0 Step -1
+                            Pattern(ComparePatterns-PatternCounter)=Me.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*CalculationInterval,Timestamp)))
+                            If Not IsNothing(SubstractDBMPoint.Point) Then
+                                Pattern(ComparePatterns-PatternCounter)-=SubstractDBMPoint.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*CalculationInterval,Timestamp)))
+                            End If
+                        Next PatternCounter
+                        Stats.Calculate(Stats.RemoveOutliers(Pattern.Take(Pattern.Length-1).ToArray),Nothing)
+                        CurrValueEMA(EMAPreviousPeriods-EMACounter)=Pattern(ComparePatterns)
+                        PredValueEMA(EMAPreviousPeriods-EMACounter)=ComparePatterns*Stats.Slope+Stats.Intercept
+                        LowContrLimitEMA(EMAPreviousPeriods-EMACounter)=PredValueEMA(EMAPreviousPeriods-EMACounter)-Stats.ControlLimitRejectionCriterion(Stats.n)*Stats.StDevSLinReg
+                        UppContrLimitEMA(EMAPreviousPeriods-EMACounter)=PredValueEMA(EMAPreviousPeriods-EMACounter)+Stats.ControlLimitRejectionCriterion(Stats.n)*Stats.StDevSLinReg
+                    Next EMACounter
+                    CurrValue=Stats.CalculateExpMovingAvg(CurrValueEMA)
+                    PredValue=Stats.CalculateExpMovingAvg(PredValueEMA)
+                    LowContrLimit=Stats.CalculateExpMovingAvg(LowContrLimitEMA)
+                    UppContrLimit=Stats.CalculateExpMovingAvg(UppContrLimitEMA)
+                    Me.AbsoluteError(CorrelationPreviousPeriods-CorrelationCounter)=PredValue-CurrValue
+                    Me.RelativeError(CorrelationPreviousPeriods-CorrelationCounter)=PredValue/CurrValue-1
+                    If CorrelationCounter=0 Then
+                        If CurrValue<LowContrLimit Then ' Lower control limit exceeded
+                            Me.Factor=(PredValue-CurrValue)/(LowContrLimit-PredValue)
+                        End If
+                        If CurrValue>UppContrLimit Then ' Upper control limit exceeded
+                            Me.Factor=(CurrValue-PredValue)/(UppContrLimit-PredValue)
+                        End If
+                    End If
+                End If
+            Next CorrelationCounter
+        End Sub
+
+    End Structure
+
+    Private Structure Statistics
+
+        Public Slope,Intercept,StDevSLinReg,ModifiedCorrelation As Double
+        Public n As Integer
+
+        Public Function MeanAbsDevScaleFactor As Double ' Scale factor k
             Return 1.253314137316 ' SQRT(PI()/2)
         End Function
 
-        Private Function MedianAbsDevScaleFactor(ByVal n As Integer) As Double ' Scale factor k
+        Public Function MedianAbsDevScaleFactor(ByVal n As Integer) As Double ' Scale factor k
             Select Case n
                 Case <=3
                     MedianAbsDevScaleFactor=1.224744871392 ' n<30 Student's t-distribution: 1/T.INV(75%,n-1)
@@ -135,7 +181,7 @@ Public Class DBM
             Return MedianAbsDevScaleFactor
         End Function
 
-        Private Function ControlLimitRejectionCriterion(ByVal n As Integer) As Double
+        Public Function ControlLimitRejectionCriterion(ByVal n As Integer) As Double
             Select Case n
                 Case <=3
                     ControlLimitRejectionCriterion=9.924843200918 ' n<30 Student's t-distribution: T.INV.2T(1%,n-1) (P=99%)
@@ -197,14 +243,14 @@ Public Class DBM
             Return ControlLimitRejectionCriterion
         End Function
 
-        Private Function CalculateMean(ByVal Data() As Double) As Double
+        Public Function CalculateMean(ByVal Data() As Double) As Double
             For Each Value As Double In Data
                 CalculateMean+=Value/Data.Length
             Next
             Return CalculateMean
         End Function
 
-        Private Function CalculateMedian(ByVal Data() As Double) As Double
+        Public Function CalculateMedian(ByVal Data() As Double) As Double
             Array.Sort(Data)
             If Data.Length Mod 2=0 Then
                 CalculateMedian=(Data(Data.Length\2)+Data(Data.Length\2-1))/2
@@ -214,7 +260,7 @@ Public Class DBM
             Return CalculateMedian
         End Function
 
-        Private Function CalculateMeanAbsDev(ByVal Mean As Double,ByVal Data() As Double) As Double
+        Public Function CalculateMeanAbsDev(ByVal Mean As Double,ByVal Data() As Double) As Double
             Dim i As Integer
             For i=0 to Data.Length-1
                 Data(i)=Math.Abs(Data(i)-Mean)
@@ -223,7 +269,7 @@ Public Class DBM
             Return CalculateMeanAbsDev
         End Function
 
-        Private Function CalculateMedianAbsDev(ByVal Median As Double,ByVal Data() As Double) As Double
+        Public Function CalculateMedianAbsDev(ByVal Median As Double,ByVal Data() As Double) As Double
             Dim i As Integer
             For i=0 to Data.Length-1
                 Data(i)=Math.Abs(Data(i)-Median)
@@ -232,7 +278,7 @@ Public Class DBM
             Return CalculateMedianAbsDev
         End Function
 
-        Private Function RemoveOutliers(ByVal Data() As Double) As Double()
+        Public Function RemoveOutliers(ByVal Data() As Double) As Double()
             Dim Mean,Median,MeanAbsDev,MedianAbsDev As Double
             Dim i As Integer
             Mean=CalculateMean(Data.ToArray)
@@ -253,59 +299,18 @@ Public Class DBM
             Return Data
         End Function
 
-        Public Sub Calculate(ByVal Timestamp As DateTime,ByVal IsInputDBMPoint As Boolean,ByVal HasCorrelationDBMPoint As Boolean,Optional ByRef SubstractDBMPoint As DBMPoint=Nothing)
-            Dim CorrelationCounter,EMACounter,PatternCounter As Integer
-            Dim EMAWeight,EMATotalWeight,CurrEMA,PredEMA,UCLEMA,LCLEMA As Double
-            Dim Pattern(ComparePatterns) As Double
-            Dim Stats As Statistics
-            Me.Factor=0 ' No event
-            For CorrelationCounter=0 To CorrelationPreviousPeriods
-                If CorrelationCounter=0 Or (IsInputDBMPoint And Me.Factor<>0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
-                    EMAWeight=1
-                    EMATotalWeight=0
-                    CurrEMA=0
-                    PredEMA=0
-                    UCLEMA=0
-                    LCLEMA=0
-                    For EMACounter=EMAPreviousPeriods To 0 Step -1
-                        For PatternCounter=ComparePatterns To 0 Step -1
-                            Pattern(ComparePatterns-PatternCounter)=Me.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*CalculationInterval,Timestamp)))
-                            If Not IsNothing(SubstractDBMPoint.Point) Then
-                                Pattern(ComparePatterns-PatternCounter)-=SubstractDBMPoint.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*CalculationInterval,Timestamp)))
-                            End If
-                        Next PatternCounter
-                        Stats.Calculate(RemoveOutliers(Pattern.Take(Pattern.Length-1).ToArray),Nothing)
-                        CurrEMA+=(Pattern(ComparePatterns))*EMAWeight
-                        PredEMA+=(ComparePatterns*Stats.Slope+Stats.Intercept)*EMAWeight
-                        UCLEMA+=(ComparePatterns*Stats.Slope+Stats.Intercept+ControlLimitRejectionCriterion(Stats.n)*Stats.StDevSLinReg)*EMAWeight
-                        LCLEMA+=(ComparePatterns*Stats.Slope+Stats.Intercept-ControlLimitRejectionCriterion(Stats.n)*Stats.StDevSLinReg)*EMAWeight
-                        EMATotalWeight+=EMAWeight
-                        EMAWeight/=1-2/((EMAPreviousPeriods+1)+1)
-                    Next EMACounter
-                    CurrEMA/=EMATotalWeight
-                    PredEMA/=EMATotalWeight
-                    Me.AbsoluteError(CorrelationPreviousPeriods-CorrelationCounter)=PredEMA-CurrEMA
-                    Me.RelativeError(CorrelationPreviousPeriods-CorrelationCounter)=PredEMA/CurrEMA-1
-                    UCLEMA/=EMATotalWeight
-                    LCLEMA/=EMATotalWeight
-                    If CorrelationCounter=0 Then
-                        If CurrEMA<LCLEMA Then ' Lower control limit exceeded
-                            Me.Factor=(PredEMA-CurrEMA)/(LCLEMA-PredEMA)
-                        End If
-                        If CurrEMA>UCLEMA Then ' Upper control limit exceeded
-                            Me.Factor=(CurrEMA-PredEMA)/(UCLEMA-PredEMA)
-                        End If
-                    End If
-                End If
-            Next CorrelationCounter
-        End Sub
-
-    End Structure
-
-    Private Structure Statistics
-
-        Public Slope,Intercept,StDevSLinReg,ModifiedCorrelation As Double
-        Public n As Integer
+        Public Function CalculateExpMovingAvg(ByVal Data() As Double) As Double ' Filter high frequency variation
+            Dim Weight,TotalWeight As Double
+            Weight=1
+            TotalWeight=0
+            For Each Value As Double In Data
+                CalculateExpMovingAvg+=Value*Weight
+                TotalWeight+=Weight
+                Weight/=1-2/((Data.Length)+1)
+            Next
+            CalculateExpMovingAvg/=TotalWeight
+            Return CalculateExpMovingAvg
+        End Function
 
         Public Sub Calculate(ByVal DataY() As Double,Optional ByVal DataX() As Double=Nothing)
             Dim SumX,SumXX,SumY,SumYY,SumXY As Double
