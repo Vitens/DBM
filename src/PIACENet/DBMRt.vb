@@ -112,7 +112,7 @@ Public Class DBMRt
                             Annotation="Calculation error."
                         End Try
                         If Annotation<>"" Then
-                            PIAnnotations.Add(DBM.DBMVersion,"",Annotation,False,"String")
+                            PIAnnotations.Add("","",Annotation,False,"String")
                             PINamedValues.Add("Annotations",CObj(PIAnnotations))
                         End If
                         PIValues.Add(Me.CalcTimestamps(Me.CalcTimestamps.Count-1),Value,PINamedValues)

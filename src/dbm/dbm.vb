@@ -3,7 +3,6 @@ Option Strict
 
 Public Class DBM
 
-    Public Const DBMVersion As String =                     "DBM v1.16 161102 J.H. Fitié, Vitens N.V."
     Public Const CalculationInterval As Integer =           300 ' seconds; 300 = 5 minutes
     Public Const ComparePatterns As Integer =               12 ' weeks
     Public Const EMAPreviousPeriods As Integer =            6 ' previous periods; 6 = 35 minutes, current value inclusive
@@ -217,6 +216,13 @@ Public Class DBM
             Return ControlLimitRejectionCriterion
         End Function
 
+        Private Function CalculateMean(ByVal Data() As Double) As Double
+            For Each Value As Double In Data
+                CalculateMean+=Value/Data.Length
+            Next
+            Return CalculateMean
+        End Function
+
         Private Function CalculateMedian(ByVal Data() As Double) As Double
             Array.Sort(Data)
             If Data.Length Mod 2=0 Then
@@ -227,10 +233,26 @@ Public Class DBM
             Return CalculateMedian
         End Function
 
+        Private Function CalculateMeanAbsDev(ByVal Mean As Double,ByVal Data() As Double) As Double
+            For Each Value As Double In Data
+                CalculateMeanAbsDev+=Math.Abs(Value-Mean)/Data.Length
+            Next
+            Return CalculateMeanAbsDev
+        End Function
+
+        Private Function CalculateMedianAbsDev(ByVal Median As Double,ByVal Data() As Double) As Double
+            Dim i As Integer
+            For i=0 to Data.Length-1
+                Data(i)=Math.Abs(Data(i)-Median)
+            Next i
+            CalculateMedianAbsDev=CalculateMedian(Data)
+            Return CalculateMedianAbsDev
+        End Function
+
         Public Sub Calculate(ByVal Timestamp As DateTime,ByVal IsInputDBMPoint As Boolean,ByVal HasCorrelationDBMPoint As Boolean,Optional ByRef SubstractDBMPoint As DBMPoint=Nothing)
             Dim CorrelationCounter,EMACounter,PatternCounter,n As Integer
             Dim EMAWeight,EMATotalWeight,Median,Mean,MedianAbsDev,MeanAbsDev,VarS,StDevS,CurrEMA,PredEMA,UCLEMA,LCLEMA As Double
-            Dim Pattern(ComparePatterns),Data(ComparePatterns-1) As Double
+            Dim Pattern(ComparePatterns) As Double
             Dim Stats As Statistics
             Me.Factor=0 ' No event
             For CorrelationCounter=CorrelationPreviousPeriods To 0 Step -1
@@ -242,41 +264,33 @@ Public Class DBM
                     UCLEMA=0
                     LCLEMA=0
                     For EMACounter=0 To EMAPreviousPeriods
-                        Mean=0
                         For PatternCounter=0 To ComparePatterns
                             Pattern(PatternCounter)=Me.Value(DateAdd("d",-(ComparePatterns-PatternCounter)*7,DateAdd("s",-((EMAPreviousPeriods-EMACounter)+(CorrelationPreviousPeriods-CorrelationCounter))*CalculationInterval,Timestamp)))
                             If Not IsNothing(SubstractDBMPoint.Point) Then
                                 Pattern(PatternCounter)-=SubstractDBMPoint.Value(DateAdd("d",-(ComparePatterns-PatternCounter)*7,DateAdd("s",-((EMAPreviousPeriods-EMACounter)+(CorrelationPreviousPeriods-CorrelationCounter))*CalculationInterval,Timestamp)))
                             End If
-                            If PatternCounter<ComparePatterns Then
-                                Mean+=Pattern(PatternCounter)/ComparePatterns
-                                Data(PatternCounter)=Pattern(PatternCounter)
-                            End If
                         Next PatternCounter
-                        Median=CalculateMedian(Data)
-                        MeanAbsDev=0
-                        For PatternCounter=0 To ComparePatterns-1
-                            MeanAbsDev+=Math.Abs(Pattern(PatternCounter)-Mean)/ComparePatterns
-                            Data(PatternCounter)=Math.Abs(Pattern(PatternCounter)-Median)
-                        Next PatternCounter
-                        MedianAbsDev=CalculateMedian(Data)
+                        Mean=CalculateMean(Pattern.Take(Pattern.Length-1).ToArray)
+                        Median=CalculateMedian(Pattern.Take(Pattern.Length-1).ToArray)
+                        MeanAbsDev=CalculateMeanAbsDev(Mean,Pattern.Take(Pattern.Length-1).ToArray)
+                        MedianAbsDev=CalculateMedianAbsDev(Median,Pattern.Take(Pattern.Length-1).ToArray)
                         n=0
                         For PatternCounter=0 To ComparePatterns-1
-                            If MedianAbsDev=0 Then
+                            If MedianAbsDev=0 Then ' Use Mean Absolute Deviation instead of Median Absolute Deviation
                                 If Math.Abs(Pattern(PatternCounter)-Mean)>MeanAbsDev*MeanAbsDevScaleFactor*ControlLimitRejectionCriterion(ComparePatterns) Then ' Value is an outlier
-                                    Pattern(PatternCounter)=Double.NaN
+                                    Pattern(PatternCounter)=Double.NaN ' Exclude outlier
                                 Else
                                     n+=1
                                 End If
                             Else
                                 If Math.Abs(Pattern(PatternCounter)-Median)>MedianAbsDev*MedianAbsDevScaleFactor(ComparePatterns)*ControlLimitRejectionCriterion(ComparePatterns) Then ' Value is an outlier
-                                    Pattern(PatternCounter)=Double.NaN
+                                    Pattern(PatternCounter)=Double.NaN ' Exclude outlier
                                 Else
                                     n+=1
                                 End If
                             End If
                         Next PatternCounter
-                        Stats.Calculate(Pattern,Nothing,True)
+                        Stats.Calculate(Pattern.Take(Pattern.Length-1).ToArray,Nothing)
                         VarS=0
                         StDevS=0
                         For PatternCounter=0 To ComparePatterns-1
@@ -284,9 +298,7 @@ Public Class DBM
                                 VarS+=(Pattern(PatternCounter)-PatternCounter*Stats.Slope-Stats.Intercept)^2/(n-2)
                             End If
                         Next PatternCounter
-                        If VarS<>0 Then
-                            StDevS=Math.Sqrt(VarS)
-                        End If
+                        StDevS=Math.Sqrt(VarS)
                         CurrEMA+=(Pattern(ComparePatterns))*EMAWeight
                         PredEMA+=(ComparePatterns*Stats.Slope+Stats.Intercept)*EMAWeight
                         UCLEMA+=(ComparePatterns*Stats.Slope+Stats.Intercept+ControlLimitRejectionCriterion(n)*StDevS)*EMAWeight
@@ -318,10 +330,10 @@ Public Class DBM
 
         Public Slope,Intercept,ModifiedCorrelation As Double
 
-        Public Sub Calculate(ByVal DataY() As Double,Optional ByVal DataX() As Double=Nothing,Optional ByVal ExcludeLastValue As Boolean=False)
+        Public Sub Calculate(ByVal DataY() As Double,Optional ByVal DataX() As Double=Nothing)
             Dim SumX,SumXX,SumY,SumYY,SumXY As Double
             Dim i,n As Integer
-            For i=0 To CInt(IIf(ExcludeLastValue,DataY.Length-2,DataY.Length-1))
+            For i=0 To DataY.Length-1
                 If Not Double.IsNaN(DataY(i)) Then
                     If DataX Is Nothing Then
                         SumX+=i
