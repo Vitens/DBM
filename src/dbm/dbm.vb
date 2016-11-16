@@ -244,10 +244,31 @@ Public Class DBM
             Return CalculateStDevSLinReg
         End Function
 
+        Private Function RemoveOutliers(ByVal Data() As Double) As Double()
+            Dim Mean,Median,MeanAbsDev,MedianAbsDev As Double
+            Dim i As Integer
+            Mean=CalculateMean(Data.ToArray)
+            Median=CalculateMedian(Data.ToArray)
+            MeanAbsDev=CalculateMeanAbsDev(Mean,Data.ToArray)
+            MedianAbsDev=CalculateMedianAbsDev(Median,Data.ToArray)
+            For i=0 to Data.Length-1
+                If MedianAbsDev=0 Then ' Use Mean Absolute Deviation instead of Median Absolute Deviation to detect outliers
+                    If Math.Abs(Data(i)-Mean)>MeanAbsDev*MeanAbsDevScaleFactor*ControlLimitRejectionCriterion(ComparePatterns) Then ' If value is an outlier
+                        Data(i)=Double.NaN ' Exclude outlier
+                    End If
+                Else ' Use Median Absolute Deviation to detect outliers
+                    If Math.Abs(Data(i)-Median)>MedianAbsDev*MedianAbsDevScaleFactor(ComparePatterns)*ControlLimitRejectionCriterion(ComparePatterns) Then ' If value is an outlier
+                        Data(i)=Double.NaN ' Exclude outlier
+                    End If
+                End If
+            Next i
+            Return Data
+        End Function
+
         Public Sub Calculate(ByVal Timestamp As DateTime,ByVal IsInputDBMPoint As Boolean,ByVal HasCorrelationDBMPoint As Boolean,Optional ByRef SubstractDBMPoint As DBMPoint=Nothing)
-            Dim CorrelationCounter,EMACounter,PatternCounter,n As Integer
-            Dim EMAWeight,EMATotalWeight,Median,Mean,MedianAbsDev,MeanAbsDev,StDevS,CurrEMA,PredEMA,UCLEMA,LCLEMA As Double
-            Dim Pattern(ComparePatterns) As Double
+            Dim CorrelationCounter,EMACounter,PatternCounter As Integer
+            Dim EMAWeight,EMATotalWeight,StDevS,CurrEMA,PredEMA,UCLEMA,LCLEMA As Double
+            Dim Pattern(ComparePatterns),PatternWithoutOutliers(ComparePatterns-1) As Double
             Dim Stats As Statistics
             Me.Factor=0 ' No event
             For CorrelationCounter=0 To CorrelationPreviousPeriods
@@ -265,32 +286,13 @@ Public Class DBM
                                 Pattern(ComparePatterns-PatternCounter)-=SubstractDBMPoint.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*CalculationInterval,Timestamp)))
                             End If
                         Next PatternCounter
-                        Mean=CalculateMean(Pattern.Take(Pattern.Length-1).ToArray) ' Calculate statistics excluding last value (at Timestamp) in array
-                        Median=CalculateMedian(Pattern.Take(Pattern.Length-1).ToArray)
-                        MeanAbsDev=CalculateMeanAbsDev(Mean,Pattern.Take(Pattern.Length-1).ToArray)
-                        MedianAbsDev=CalculateMedianAbsDev(Median,Pattern.Take(Pattern.Length-1).ToArray)
-                        n=0
-                        For PatternCounter=0 To ComparePatterns-1
-                            If MedianAbsDev=0 Then ' Use Mean Absolute Deviation instead of Median Absolute Deviation to detect outliers
-                                If Math.Abs(Pattern(PatternCounter)-Mean)>MeanAbsDev*MeanAbsDevScaleFactor*ControlLimitRejectionCriterion(ComparePatterns) Then ' If value is an outlier
-                                    Pattern(PatternCounter)=Double.NaN ' Exclude outlier
-                                Else
-                                    n+=1
-                                End If
-                            Else ' Use Median Absolute Deviation to detect outliers
-                                If Math.Abs(Pattern(PatternCounter)-Median)>MedianAbsDev*MedianAbsDevScaleFactor(ComparePatterns)*ControlLimitRejectionCriterion(ComparePatterns) Then ' If value is an outlier
-                                    Pattern(PatternCounter)=Double.NaN ' Exclude outlier
-                                Else
-                                    n+=1
-                                End If
-                            End If
-                        Next PatternCounter
-                        Stats.Calculate(Pattern.Take(Pattern.Length-1).ToArray,Nothing)
-                        StDevS=CalculateStDevSLinReg(Stats.Slope,Stats.Intercept,Pattern.Take(Pattern.Length-1).ToArray)
+                        PatternWithoutOutliers=RemoveOutliers(Pattern.Take(Pattern.Length-1).ToArray)
+                        Stats.Calculate(PatternWithoutOutliers,Nothing)
+                        StDevS=CalculateStDevSLinReg(Stats.Slope,Stats.Intercept,PatternWithoutOutliers)
                         CurrEMA+=(Pattern(ComparePatterns))*EMAWeight
                         PredEMA+=(ComparePatterns*Stats.Slope+Stats.Intercept)*EMAWeight
-                        UCLEMA+=(ComparePatterns*Stats.Slope+Stats.Intercept+ControlLimitRejectionCriterion(n)*StDevS)*EMAWeight
-                        LCLEMA+=(ComparePatterns*Stats.Slope+Stats.Intercept-ControlLimitRejectionCriterion(n)*StDevS)*EMAWeight
+                        UCLEMA+=(ComparePatterns*Stats.Slope+Stats.Intercept+ControlLimitRejectionCriterion(Stats.n)*StDevS)*EMAWeight
+                        LCLEMA+=(ComparePatterns*Stats.Slope+Stats.Intercept-ControlLimitRejectionCriterion(Stats.n)*StDevS)*EMAWeight
                         EMATotalWeight+=EMAWeight
                         EMAWeight/=1-2/((EMAPreviousPeriods+1)+1)
                     Next EMACounter
@@ -317,10 +319,12 @@ Public Class DBM
     Private Structure Statistics
 
         Public Slope,Intercept,ModifiedCorrelation As Double
+        Public n As Integer
 
         Public Sub Calculate(ByVal DataY() As Double,Optional ByVal DataX() As Double=Nothing)
             Dim SumX,SumXX,SumY,SumYY,SumXY As Double
-            Dim i,n As Integer
+            Dim i As Integer
+            n=0
             For i=0 To DataY.Length-1
                 If Not Double.IsNaN(DataY(i)) Then
                     If DataX Is Nothing Then
@@ -334,11 +338,11 @@ Public Class DBM
                     End If
                     SumY+=DataY(i)
                     SumYY+=DataY(i)^2
-                    n+=1
+                    Me.n+=1
                 End If
             Next i
-            Me.Slope=(n*SumXY-SumX*SumY)/(n*SumXX-SumX^2)
-            Me.Intercept=(SumX*SumXY-SumY*SumXX)/(SumX^2-n*SumXX)
+            Me.Slope=(Me.n*SumXY-SumX*SumY)/(Me.n*SumXX-SumX^2)
+            Me.Intercept=(SumX*SumXY-SumY*SumXX)/(SumX^2-Me.n*SumXX)
             Me.ModifiedCorrelation=SumXY/Math.Sqrt(SumXX)/Math.Sqrt(SumYY) ' Average is not removed, as expected average is zero
         End Sub
 
