@@ -32,16 +32,17 @@ Public Class DBM
     End Function
 
     #If OfflineUnitTests Then
-    Public Function Calculate(ByVal InputPoint As String,ByVal CorrelationPoint As String,ByVal Timestamp As DateTime,Optional ByVal SubstractInputPointFromCorrelationPoint As Boolean=False) As Double
+    Public Function Calculate(ByVal InputPoint As String,ByVal CorrelationPoint As String,ByVal Timestamp As DateTime,Optional ByVal SubstractInputPointFromCorrelationPoint As Boolean=False) As DBMResult
     #Else
-    Public Function Calculate(ByVal InputPoint As PISDK.PIPoint,ByVal CorrelationPoint As PISDK.PIPoint,ByVal Timestamp As DateTime,Optional ByVal SubstractInputPointFromCorrelationPoint As Boolean=False) As Double
+    Public Function Calculate(ByVal InputPoint As PISDK.PIPoint,ByVal CorrelationPoint As PISDK.PIPoint,ByVal Timestamp As DateTime,Optional ByVal SubstractInputPointFromCorrelationPoint As Boolean=False) As DBMResult
     #End If
         Dim InputDBMPointIndex,CorrelationDBMPointIndex As Integer
         Dim AbsErrorStats,RelErrorStats As New DBMStatistics
+        Dim InputDBMResult As DBMResult
         InputDBMPointIndex=DBMPointIndex(InputPoint)
         DBMPoints(InputDBMPointIndex).Calculate(Timestamp,True,Not IsNothing(CorrelationPoint)) ' Calculate for input point
-        Calculate=DBMPoints(InputDBMPointIndex).Factor
-        If Calculate<>0 And Not IsNothing(CorrelationPoint) Then ' If an event is found and a correlation point is available
+        InputDBMResult=New DBMResult(DBMPoints(InputDBMPointIndex).Factor,DBMPoints(InputDBMPointIndex).CurrValue,DBMPoints(InputDBMPointIndex).PredValue,DBMPoints(InputDBMPointIndex).LowContrLimit,DBMPoints(InputDBMPointIndex).UppContrLimit)
+        If InputDBMResult.Factor<>0 And Not IsNothing(CorrelationPoint) Then ' If an event is found and a correlation point is available
             CorrelationDBMPointIndex=DBMPointIndex(CorrelationPoint)
             If SubstractInputPointFromCorrelationPoint Then ' If pattern of correlation point contains input point
                 DBMPoints(CorrelationDBMPointIndex).Calculate(Timestamp,False,True,DBMPoints(InputDBMPointIndex)) ' Calculate for correlation point, substract input point
@@ -51,13 +52,13 @@ Public Class DBM
             AbsErrorStats.Calculate(DBMPoints(CorrelationDBMPointIndex).AbsoluteError,DBMPoints(InputDBMPointIndex).AbsoluteError) ' Absolute error compared to prediction
             RelErrorStats.Calculate(DBMPoints(CorrelationDBMPointIndex).RelativeError,DBMPoints(InputDBMPointIndex).RelativeError) ' Relative error compared to prediction
             If RelErrorStats.ModifiedCorrelation>DBMConstants.CorrelationThreshold Then ' Suppress event due to correlation of relative error
-                Calculate=RelErrorStats.ModifiedCorrelation
+                InputDBMResult.Factor=RelErrorStats.ModifiedCorrelation
             End If
             If Not SubstractInputPointFromCorrelationPoint And AbsErrorStats.ModifiedCorrelation<-DBMConstants.CorrelationThreshold Then ' Suppress event due to anticorrelation of absolute error (unmeasured supply)
-                Calculate=AbsErrorStats.ModifiedCorrelation
+                InputDBMResult.Factor=AbsErrorStats.ModifiedCorrelation
             End If
         End If
-        Return Math.Round(Calculate,3)
+        Return InputDBMResult
     End Function
 
 End Class

@@ -14,11 +14,11 @@ Public Class DBMRt
 
     Private Class DBMRt
 
-        Private Structure DBMPIServer
+        Private Class DBMPIServer
 
-            Private Structure DBMPIPoint
+            Private Class DBMPIPoint
 
-                Private Structure CorrelationPIPoint
+                Private Class CorrelationPIPoint
 
                     Public PIPoint As PISDK.PIPoint
                     Public SubstractSelf As Boolean
@@ -28,7 +28,7 @@ Public Class DBMRt
                         Me.SubstractSelf=SubstractSelf
                     End Sub
 
-                End Structure
+                End Class
 
                 Private InputPIPoint,OutputPIPoint As PISDK.PIPoint
                 Private CorrelationPIPoints As Collections.Generic.List(Of CorrelationPIPoint)
@@ -88,11 +88,11 @@ Public Class DBMRt
                         PIValues.ReadOnly=False
                         Try
                             If Me.CorrelationPIPoints.Count=0 Then
-                                Value=DBM.Calculate(Me.InputPIPoint,Nothing,Me.CalcTimestamps(Me.CalcTimestamps.Count-1))
+                                Value=DBM.Calculate(Me.InputPIPoint,Nothing,Me.CalcTimestamps(Me.CalcTimestamps.Count-1)).Factor
                             Else
                                 Value=0
                                 For Each thisCorrelationPIPoint As CorrelationPIPoint In Me.CorrelationPIPoints
-                                    NewValue=DBM.Calculate(Me.InputPIPoint,thisCorrelationPIPoint.PIPoint,Me.CalcTimestamps(Me.CalcTimestamps.Count-1),thisCorrelationPIPoint.SubstractSelf)
+                                    NewValue=DBM.Calculate(Me.InputPIPoint,thisCorrelationPIPoint.PIPoint,Me.CalcTimestamps(Me.CalcTimestamps.Count-1),thisCorrelationPIPoint.SubstractSelf).Factor
                                     If NewValue=0 Then
                                         Exit For
                                     End If
@@ -121,7 +121,7 @@ Public Class DBMRt
                     End If
                 End Sub
 
-            End Structure
+            End Class
 
             Private PIServer As PISDK.Server
             Private DBMPIPoints As Collections.Generic.List(Of DBMPIPoint)
@@ -156,7 +156,7 @@ Public Class DBMRt
                 Next
             End Sub
 
-        End Structure
+        End Class
 
         Private Shared PISDK As New PISDK.PISDK
         Private Shared DBM As New DBM

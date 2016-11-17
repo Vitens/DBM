@@ -9,7 +9,7 @@ Public Class DBMPoint
     Public Point As PISDK.PIPoint
     #End If
     Private CachedValues() As DBMCachedValue
-    Public Factor,AbsoluteError(),RelativeError() As Double
+    Public Factor,CurrValue,PredValue,LowContrLimit,UppContrLimit,AbsoluteError(),RelativeError() As Double
 
     #If OfflineUnitTests Then
     Public Sub New(ByVal Point As String)
@@ -58,7 +58,6 @@ Public Class DBMPoint
     Public Sub Calculate(ByVal Timestamp As DateTime,ByVal IsInputDBMPoint As Boolean,ByVal HasCorrelationDBMPoint As Boolean,Optional ByRef SubstractDBMPoint As DBMPoint=Nothing)
         Dim CorrelationCounter,EMACounter,PatternCounter As Integer
         Dim Pattern(DBMConstants.ComparePatterns),CurrValueEMA(DBMConstants.EMAPreviousPeriods),PredValueEMA(DBMConstants.EMAPreviousPeriods),LowContrLimitEMA(DBMConstants.EMAPreviousPeriods),UppContrLimitEMA(DBMConstants.EMAPreviousPeriods) As Double
-        Dim CurrValue,PredValue,LowContrLimit,UppContrLimit As Double
         Dim DBMStatistics As New DBMStatistics
         Dim DBMMath As New DBMMath
         Me.Factor=0 ' No event
@@ -85,18 +84,18 @@ Public Class DBMPoint
                         UppContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)+DBMMath.ControlLimitRejectionCriterion(DBMStatistics.Count)*DBMStatistics.StDevSLinReg
                     End If
                 Next EMACounter
-                CurrValue=DBMMath.CalculateExpMovingAvg(CurrValueEMA)
-                PredValue=DBMMath.CalculateExpMovingAvg(PredValueEMA)
-                LowContrLimit=DBMMath.CalculateExpMovingAvg(LowContrLimitEMA)
-                UppContrLimit=DBMMath.CalculateExpMovingAvg(UppContrLimitEMA)
-                Me.AbsoluteError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=PredValue-CurrValue ' Absolute error compared to prediction
-                Me.RelativeError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=PredValue/CurrValue-1 ' Relative error compared to prediction
+                Me.CurrValue=DBMMath.CalculateExpMovingAvg(CurrValueEMA)
+                Me.PredValue=DBMMath.CalculateExpMovingAvg(PredValueEMA)
+                Me.LowContrLimit=DBMMath.CalculateExpMovingAvg(LowContrLimitEMA)
+                Me.UppContrLimit=DBMMath.CalculateExpMovingAvg(UppContrLimitEMA)
+                Me.AbsoluteError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=Me.PredValue-Me.CurrValue ' Absolute error compared to prediction
+                Me.RelativeError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=Me.PredValue/Me.CurrValue-1 ' Relative error compared to prediction
                 If CorrelationCounter=0 Then
-                    If CurrValue<LowContrLimit Then ' Lower control limit exceeded
-                        Me.Factor=(PredValue-CurrValue)/(LowContrLimit-PredValue)
+                    If Me.CurrValue<Me.LowContrLimit Then ' Lower control limit exceeded
+                        Me.Factor=(Me.PredValue-Me.CurrValue)/(Me.LowContrLimit-Me.PredValue)
                     End If
-                    If CurrValue>UppContrLimit Then ' Upper control limit exceeded
-                        Me.Factor=(CurrValue-PredValue)/(UppContrLimit-PredValue)
+                    If Me.CurrValue>Me.UppContrLimit Then ' Upper control limit exceeded
+                        Me.Factor=(Me.CurrValue-Me.PredValue)/(Me.UppContrLimit-Me.PredValue)
                     End If
                 End If
             End If
