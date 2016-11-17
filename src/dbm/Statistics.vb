@@ -4,7 +4,7 @@ Option Strict
 Public Class Statistics
 
     Public Slope,Intercept,StDevSLinReg,ModifiedCorrelation As Double
-    Public n As Integer
+    Public Count As Integer
 
     Private Function MeanAbsDevScaleFactor As Double ' Scale factor k
         Return 1.253314137316 ' SQRT(PI()/2)
@@ -206,7 +206,7 @@ Public Class Statistics
     Public Sub Calculate(ByVal DataY() As Double,Optional ByVal DataX() As Double=Nothing)
         Dim SumX,SumXX,SumY,SumYY,SumXY As Double
         Dim i As Integer
-        Me.n=0
+        Me.Count=0
         For i=0 To DataY.Length-1
             If Not Double.IsNaN(DataY(i)) Then
                 If DataX Is Nothing Then
@@ -220,18 +220,18 @@ Public Class Statistics
                 End If
                 SumY+=DataY(i)
                 SumYY+=DataY(i)^2
-                Me.n+=1
+                Me.Count+=1
             End If
         Next i
-        Me.Slope=(Me.n*SumXY-SumX*SumY)/(Me.n*SumXX-SumX^2)
-        Me.Intercept=(SumX*SumXY-SumY*SumXX)/(SumX^2-Me.n*SumXX)
+        Me.Slope=(Me.Count*SumXY-SumX*SumY)/(Me.Count*SumXX-SumX^2)
+        Me.Intercept=(SumX*SumXY-SumY*SumXX)/(SumX^2-Me.Count*SumXX)
         Me.StDevSLinReg=0
         For i=0 to DataY.Length-1
             If Not Double.IsNaN(DataY(i)) Then
                 Me.StDevSLinReg+=(DataY(i)-i*Me.Slope-Me.Intercept)^2
             End If
         Next i
-        Me.StDevSLinReg=Math.Sqrt(Me.StDevSLinReg/(Me.n-2)) ' n-2 is used because two parameters (slope and intercept) were estimated in order to estimate the sum of squares
+        Me.StDevSLinReg=Math.Sqrt(Me.StDevSLinReg/(Me.Count-2)) ' n-2 is used because two parameters (slope and intercept) were estimated in order to estimate the sum of squares
         Me.ModifiedCorrelation=SumXY/Math.Sqrt(SumXX)/Math.Sqrt(SumYY) ' Average is not removed, as expected average is zero
     End Sub
 
