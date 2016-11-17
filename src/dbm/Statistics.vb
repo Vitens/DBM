@@ -170,14 +170,14 @@ Public Class Statistics
     End Function
 
     Public Function RemoveOutliers(ByVal Data() As Double) As Double()
-        Dim Mean,Median,MeanAbsDev,MedianAbsDev As Double
+        Dim Median,MedianAbsDev,Mean,MeanAbsDev As Double
         Dim i As Integer
-        Mean=CalculateMean(Data.ToArray)
         Median=CalculateMedian(Data.ToArray)
-        MeanAbsDev=CalculateMeanAbsDev(Mean,Data.ToArray)
         MedianAbsDev=CalculateMedianAbsDev(Median,Data.ToArray)
         For i=0 to Data.Length-1
             If MedianAbsDev=0 Then ' Use Mean Absolute Deviation instead of Median Absolute Deviation to detect outliers
+                Mean=CalculateMean(Data.ToArray)
+                MeanAbsDev=CalculateMeanAbsDev(Mean,Data.ToArray)
                 If Math.Abs(Data(i)-Mean)>MeanAbsDev*MeanAbsDevScaleFactor*ControlLimitRejectionCriterion(Data.Length) Then ' If value is an outlier
                     Data(i)=Double.NaN ' Exclude outlier
                 End If
