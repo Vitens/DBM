@@ -197,7 +197,7 @@ Public Class Statistics
         For Each Value As Double In Data
             CalculateExpMovingAvg+=Value*Weight
             TotalWeight+=Weight
-            Weight/=1-2/((Data.Length)+1)
+            Weight*=1-2/((Data.Length)+1)
         Next
         CalculateExpMovingAvg/=TotalWeight
         Return CalculateExpMovingAvg

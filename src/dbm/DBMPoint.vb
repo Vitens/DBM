@@ -78,10 +78,10 @@ Public Class DBMPoint
                         End If
                     Next PatternCounter
                     Stats.Calculate(Stats.RemoveOutliers(Pattern.Take(Pattern.Length-1).ToArray),Nothing)
-                    CurrValueEMA(EMAPreviousPeriods-EMACounter)=Pattern(ComparePatterns)
-                    PredValueEMA(EMAPreviousPeriods-EMACounter)=ComparePatterns*Stats.Slope+Stats.Intercept
-                    LowContrLimitEMA(EMAPreviousPeriods-EMACounter)=PredValueEMA(EMAPreviousPeriods-EMACounter)-Stats.ControlLimitRejectionCriterion(Stats.Count)*Stats.StDevSLinReg
-                    UppContrLimitEMA(EMAPreviousPeriods-EMACounter)=PredValueEMA(EMAPreviousPeriods-EMACounter)+Stats.ControlLimitRejectionCriterion(Stats.Count)*Stats.StDevSLinReg
+                    CurrValueEMA(EMACounter)=Pattern(ComparePatterns)
+                    PredValueEMA(EMACounter)=ComparePatterns*Stats.Slope+Stats.Intercept
+                    LowContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)-Stats.ControlLimitRejectionCriterion(Stats.Count)*Stats.StDevSLinReg
+                    UppContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)+Stats.ControlLimitRejectionCriterion(Stats.Count)*Stats.StDevSLinReg
                 Next EMACounter
                 CurrValue=Stats.CalculateExpMovingAvg(CurrValueEMA)
                 PredValue=Stats.CalculateExpMovingAvg(PredValueEMA)
