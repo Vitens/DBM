@@ -41,7 +41,7 @@ Public Class DBM
         Dim InputDBMResult As DBMResult
         InputDBMPointIndex=DBMPointIndex(InputPoint)
         DBMPoints(InputDBMPointIndex).Calculate(Timestamp,True,Not IsNothing(CorrelationPoint)) ' Calculate for input point
-        InputDBMResult=New DBMResult(DBMPoints(InputDBMPointIndex).Factor,DBMPoints(InputDBMPointIndex).CurrValue,DBMPoints(InputDBMPointIndex).PredValue,DBMPoints(InputDBMPointIndex).LowContrLimit,DBMPoints(InputDBMPointIndex).UppContrLimit)
+        InputDBMResult=New DBMResult(DBMPoints(InputDBMPointIndex).DBMResult.Factor,DBMPoints(InputDBMPointIndex).DBMResult.CurrValue,DBMPoints(InputDBMPointIndex).DBMResult.PredValue,DBMPoints(InputDBMPointIndex).DBMResult.LowContrLimit,DBMPoints(InputDBMPointIndex).DBMResult.UppContrLimit)
         If InputDBMResult.Factor<>0 And Not IsNothing(CorrelationPoint) Then ' If an event is found and a correlation point is available
             CorrelationDBMPointIndex=DBMPointIndex(CorrelationPoint)
             If SubstractInputPointFromCorrelationPoint Then ' If pattern of correlation point contains input point
