@@ -3,24 +3,12 @@ Option Strict
 
 Public Class DBMPoint
 
-    Private Structure CachedValue
-
-        Public Timestamp As DateTime
-        Public Value As Double
-
-        Public Sub New(ByVal Timestamp As DateTime,ByVal Value As Double)
-            Me.Timestamp=Timestamp
-            Me.Value=Value
-        End Sub
-
-    End Structure
-
     #If OfflineUnitTests Then
     Public Point As String
     #Else
     Public Point As PISDK.PIPoint
     #End If
-    Private CachedValues() As CachedValue
+    Private CachedValues() As DBMCachedValue
     Public Factor,AbsoluteError(),RelativeError() As Double
 
     #If OfflineUnitTests Then
@@ -28,10 +16,14 @@ Public Class DBMPoint
     #Else
     Public Sub New(ByVal Point As PISDK.PIPoint)
     #End If
+        Dim i As Integer
         Me.Point=Point
         ReDim Me.CachedValues(CInt((DBMConstants.EMAPreviousPeriods+1+DBMConstants.CorrelationPreviousPeriods+1+24*(3600/DBMConstants.CalculationInterval))*(DBMConstants.ComparePatterns+1)-1))
         ReDim Me.AbsoluteError(DBMConstants.CorrelationPreviousPeriods)
         ReDim Me.RelativeError(DBMConstants.CorrelationPreviousPeriods)
+        For i=0 to Me.CachedValues.Length-1
+            Me.CachedValues(i)=New DBMCachedValue(Nothing,Nothing)
+        Next i
     End Sub
 
     Public Function ArrRemoveFirstValue(ByVal Data() As Double) As Double()
@@ -51,13 +43,13 @@ Public Class DBMPoint
             Array.Reverse(Me.CachedValues) ' DCBAE -> EABCD
             Try
                 #If OfflineUnitTests Then
-                Me.CachedValues(0)=New CachedValue(Timestamp,DBM.UnitTestData(0))
+                Me.CachedValues(0)=New DBMCachedValue(Timestamp,DBM.UnitTestData(0))
                 DBM.UnitTestData=DBM.UnitTestData.Skip(1).ToArray
                 #Else
-                Me.CachedValues(0)=New CachedValue(Timestamp,CDbl(Me.Point.Data.Summary(Timestamp,DateAdd("s",DBMConstants.CalculationInterval,Timestamp),PISDK.ArchiveSummaryTypeConstants.astAverage,PISDK.CalculationBasisConstants.cbTimeWeighted).Value))
+                Me.CachedValues(0)=New DBMCachedValue(Timestamp,CDbl(Me.Point.Data.Summary(Timestamp,DateAdd("s",DBMConstants.CalculationInterval,Timestamp),PISDK.ArchiveSummaryTypeConstants.astAverage,PISDK.CalculationBasisConstants.cbTimeWeighted).Value))
                 #End If
             Catch
-                Me.CachedValues(0)=New CachedValue(Timestamp,Double.NaN)
+                Me.CachedValues(0)=New DBMCachedValue(Timestamp,Double.NaN)
             End Try
         End If
         Return Me.CachedValues(0).Value
