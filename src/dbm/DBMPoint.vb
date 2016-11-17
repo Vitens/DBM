@@ -61,7 +61,8 @@ Public Class DBMPoint
         Dim CorrelationCounter,EMACounter,PatternCounter As Integer
         Dim Pattern(DBMConstants.ComparePatterns),CurrValueEMA(DBMConstants.EMAPreviousPeriods),PredValueEMA(DBMConstants.EMAPreviousPeriods),LowContrLimitEMA(DBMConstants.EMAPreviousPeriods),UppContrLimitEMA(DBMConstants.EMAPreviousPeriods) As Double
         Dim CurrValue,PredValue,LowContrLimit,UppContrLimit As Double
-        Dim Stats As New Statistics
+        Dim DBMStatistics As New DBMStatistics
+        Dim DBMMath As New DBMMath
         Me.Factor=0 ' No event
         For CorrelationCounter=0 To DBMConstants.CorrelationPreviousPeriods
             If CorrelationCounter=0 Or (IsInputDBMPoint And Me.Factor<>0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
@@ -72,16 +73,16 @@ Public Class DBMPoint
                             Pattern(DBMConstants.ComparePatterns-PatternCounter)-=SubstractDBMPoint.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*DBMConstants.CalculationInterval,Timestamp)))
                         End If
                     Next PatternCounter
-                    Stats.Calculate(Stats.RemoveOutliers(Pattern.Take(Pattern.Length-1).ToArray),Nothing)
+                    DBMStatistics.Calculate(DBMMath.RemoveOutliers(Pattern.Take(Pattern.Length-1).ToArray),Nothing)
                     CurrValueEMA(EMACounter)=Pattern(DBMConstants.ComparePatterns)
-                    PredValueEMA(EMACounter)=DBMConstants.ComparePatterns*Stats.Slope+Stats.Intercept
-                    LowContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)-Stats.ControlLimitRejectionCriterion(Stats.Count)*Stats.StDevSLinReg
-                    UppContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)+Stats.ControlLimitRejectionCriterion(Stats.Count)*Stats.StDevSLinReg
+                    PredValueEMA(EMACounter)=DBMConstants.ComparePatterns*DBMStatistics.Slope+DBMStatistics.Intercept
+                    LowContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)-DBMMath.ControlLimitRejectionCriterion(DBMStatistics.Count)*DBMStatistics.StDevSLinReg
+                    UppContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)+DBMMath.ControlLimitRejectionCriterion(DBMStatistics.Count)*DBMStatistics.StDevSLinReg
                 Next EMACounter
-                CurrValue=Stats.CalculateExpMovingAvg(CurrValueEMA)
-                PredValue=Stats.CalculateExpMovingAvg(PredValueEMA)
-                LowContrLimit=Stats.CalculateExpMovingAvg(LowContrLimitEMA)
-                UppContrLimit=Stats.CalculateExpMovingAvg(UppContrLimitEMA)
+                CurrValue=DBMMath.CalculateExpMovingAvg(CurrValueEMA)
+                PredValue=DBMMath.CalculateExpMovingAvg(PredValueEMA)
+                LowContrLimit=DBMMath.CalculateExpMovingAvg(LowContrLimitEMA)
+                UppContrLimit=DBMMath.CalculateExpMovingAvg(UppContrLimitEMA)
                 Me.AbsoluteError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=PredValue-CurrValue
                 Me.RelativeError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=PredValue/CurrValue-1
                 If CorrelationCounter=0 Then

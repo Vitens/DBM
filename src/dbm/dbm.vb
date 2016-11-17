@@ -37,7 +37,7 @@ Public Class DBM
     Public Function Calculate(ByVal InputPoint As PISDK.PIPoint,ByVal CorrelationPoint As PISDK.PIPoint,ByVal Timestamp As DateTime,Optional ByVal SubstractInputPointFromCorrelationPoint As Boolean=False) As Double
     #End If
         Dim InputDBMPointIndex,CorrelationDBMPointIndex As Integer
-        Dim AbsErrorStats,RelErrorStats As New Statistics
+        Dim AbsErrorStats,RelErrorStats As New DBMStatistics
         InputDBMPointIndex=DBMPointIndex(InputPoint)
         DBMPoints(InputDBMPointIndex).Calculate(Timestamp,True,Not IsNothing(CorrelationPoint))
         Calculate=DBMPoints(InputDBMPointIndex).Factor
