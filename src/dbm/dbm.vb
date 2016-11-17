@@ -3,8 +3,6 @@ Option Strict
 
 Public Class DBM
 
-    Public Const CorrelationThreshold As Double =           0.83666 ' absolute correlation lower limit for detecting (anti)correlation
-
     #If OfflineUnitTests Then
     Public Shared UnitTestData() As Double
     #End If
@@ -52,10 +50,10 @@ Public Class DBM
             End If
             AbsErrorStats.Calculate(DBMPoints(CorrelationDBMPointIndex).AbsoluteError,DBMPoints(InputDBMPointIndex).AbsoluteError)
             RelErrorStats.Calculate(DBMPoints(CorrelationDBMPointIndex).RelativeError,DBMPoints(InputDBMPointIndex).RelativeError)
-            If RelErrorStats.ModifiedCorrelation>CorrelationThreshold Then ' Suppress event due to correlation of relative error
+            If RelErrorStats.ModifiedCorrelation>DBMConstants.CorrelationThreshold Then ' Suppress event due to correlation of relative error
                 Calculate=RelErrorStats.ModifiedCorrelation
             End If
-            If Not SubstractInputPointFromCorrelationPoint And AbsErrorStats.ModifiedCorrelation<-CorrelationThreshold Then ' Suppress event due to anticorrelation of absolute error (unmeasured supply)
+            If Not SubstractInputPointFromCorrelationPoint And AbsErrorStats.ModifiedCorrelation<-DBMConstants.CorrelationThreshold Then ' Suppress event due to anticorrelation of absolute error (unmeasured supply)
                 Calculate=AbsErrorStats.ModifiedCorrelation
             End If
         End If

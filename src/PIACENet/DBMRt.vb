@@ -14,9 +14,6 @@ Public Class DBMRt
 
     Private Class DBMRt
 
-        Public Const MaxCalculationAge As Integer =         30 ' days
-        Public Const CalculationDelay As Integer =          10 ' seconds
-
         Private Structure DBMPIServer
 
             Private Structure DBMPIPoint
@@ -74,13 +71,13 @@ Public Class DBMRt
                         InputTimestamp.UTCSeconds=Math.Min(InputTimestamp.UTCSeconds,thisCorrelationPIPoint.PIPoint.Data.Snapshot.TimeStamp.UTCSeconds)
                     Next
                     OutputTimestamp=Me.OutputPIPoint.Data.Snapshot.TimeStamp
-                    If DateDiff("d",OutputTimestamp.LocalDate,Now())>MaxCalculationAge Then
-                        OutputTimestamp.LocalDate=DateAdd("d",-MaxCalculationAge,Now())
+                    If DateDiff("d",OutputTimestamp.LocalDate,Now())>DBMRtConstants.MaxCalculationAge Then
+                        OutputTimestamp.LocalDate=DateAdd("d",-DBMRtConstants.MaxCalculationAge,Now())
                     End If
-                    OutputTimestamp.UTCSeconds+=DBMPoint.CalculationInterval-OutputTimestamp.UTCSeconds Mod DBMPoint.CalculationInterval
+                    OutputTimestamp.UTCSeconds+=DBMConstants.CalculationInterval-OutputTimestamp.UTCSeconds Mod DBMConstants.CalculationInterval
                     Do While InputTimestamp.UTCSeconds>=OutputTimestamp.UTCSeconds
                         Me.CalcTimestamps.Add(OutputTimestamp.LocalDate)
-                        OutputTimestamp.UTCSeconds+=DBMPoint.CalculationInterval
+                        OutputTimestamp.UTCSeconds+=DBMConstants.CalculationInterval
                     Loop
                     If Me.CalcTimestamps.Count>0 Then
                         Me.CalcTimestamps.Sort
@@ -192,7 +189,7 @@ Public Class DBMRt
         Dim _DBMRt As New DBMRt(True)
         Do While True
             _DBMRt.CalculateServers
-            Threading.Thread.Sleep(DBMRt.CalculationDelay*1000)
+            Threading.Thread.Sleep(DBMRtConstants.CalculationDelay*1000)
         Loop
     End Sub
 

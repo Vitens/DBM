@@ -3,11 +3,6 @@ Option Strict
 
 Public Class DBMPoint
 
-    Public Const CalculationInterval As Integer =           300 ' seconds; 300 = 5 minutes
-    Public Const ComparePatterns As Integer =               12 ' weeks
-    Public Const EMAPreviousPeriods As Integer =            6 ' previous periods; 6 = 35 minutes, current value inclusive
-    Public Const CorrelationPreviousPeriods As Integer =    CInt(2*3600/CalculationInterval-1) ' previous periods; 23 = 2 hours, current value inclusive
-
     Private Structure CachedValue
 
         Public Timestamp As DateTime
@@ -34,9 +29,9 @@ Public Class DBMPoint
     Public Sub New(ByVal Point As PISDK.PIPoint)
     #End If
         Me.Point=Point
-        ReDim Me.CachedValues(CInt((EMAPreviousPeriods+1+CorrelationPreviousPeriods+1+24*(3600/CalculationInterval))*(ComparePatterns+1)-1))
-        ReDim Me.AbsoluteError(CorrelationPreviousPeriods)
-        ReDim Me.RelativeError(CorrelationPreviousPeriods)
+        ReDim Me.CachedValues(CInt((DBMConstants.EMAPreviousPeriods+1+DBMConstants.CorrelationPreviousPeriods+1+24*(3600/DBMConstants.CalculationInterval))*(DBMConstants.ComparePatterns+1)-1))
+        ReDim Me.AbsoluteError(DBMConstants.CorrelationPreviousPeriods)
+        ReDim Me.RelativeError(DBMConstants.CorrelationPreviousPeriods)
     End Sub
 
     Private Function Value(ByVal Timestamp As DateTime) As Double
@@ -53,7 +48,7 @@ Public Class DBMPoint
                 Me.CachedValues(0)=New CachedValue(Timestamp,DBM.UnitTestData(0))
                 DBM.UnitTestData=DBM.UnitTestData.Skip(1).ToArray
                 #Else
-                Me.CachedValues(0)=New CachedValue(Timestamp,CDbl(Me.Point.Data.Summary(Timestamp,DateAdd("s",CalculationInterval,Timestamp),PISDK.ArchiveSummaryTypeConstants.astAverage,PISDK.CalculationBasisConstants.cbTimeWeighted).Value))
+                Me.CachedValues(0)=New CachedValue(Timestamp,CDbl(Me.Point.Data.Summary(Timestamp,DateAdd("s",DBMConstants.CalculationInterval,Timestamp),PISDK.ArchiveSummaryTypeConstants.astAverage,PISDK.CalculationBasisConstants.cbTimeWeighted).Value))
                 #End If
             Catch
                 Me.CachedValues(0)=New CachedValue(Timestamp,Double.NaN)
@@ -64,22 +59,22 @@ Public Class DBMPoint
 
     Public Sub Calculate(ByVal Timestamp As DateTime,ByVal IsInputDBMPoint As Boolean,ByVal HasCorrelationDBMPoint As Boolean,Optional ByRef SubstractDBMPoint As DBMPoint=Nothing)
         Dim CorrelationCounter,EMACounter,PatternCounter As Integer
-        Dim Pattern(ComparePatterns),CurrValueEMA(EMAPreviousPeriods),PredValueEMA(EMAPreviousPeriods),LowContrLimitEMA(EMAPreviousPeriods),UppContrLimitEMA(EMAPreviousPeriods) As Double
+        Dim Pattern(DBMConstants.ComparePatterns),CurrValueEMA(DBMConstants.EMAPreviousPeriods),PredValueEMA(DBMConstants.EMAPreviousPeriods),LowContrLimitEMA(DBMConstants.EMAPreviousPeriods),UppContrLimitEMA(DBMConstants.EMAPreviousPeriods) As Double
         Dim CurrValue,PredValue,LowContrLimit,UppContrLimit As Double
         Dim Stats As New Statistics
         Me.Factor=0 ' No event
-        For CorrelationCounter=0 To CorrelationPreviousPeriods
+        For CorrelationCounter=0 To DBMConstants.CorrelationPreviousPeriods
             If CorrelationCounter=0 Or (IsInputDBMPoint And Me.Factor<>0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
-                For EMACounter=EMAPreviousPeriods To 0 Step -1
-                    For PatternCounter=ComparePatterns To 0 Step -1
-                        Pattern(ComparePatterns-PatternCounter)=Me.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*CalculationInterval,Timestamp)))
+                For EMACounter=DBMConstants.EMAPreviousPeriods To 0 Step -1
+                    For PatternCounter=DBMConstants.ComparePatterns To 0 Step -1
+                        Pattern(DBMConstants.ComparePatterns-PatternCounter)=Me.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*DBMConstants.CalculationInterval,Timestamp)))
                         If Not IsNothing(SubstractDBMPoint) Then
-                            Pattern(ComparePatterns-PatternCounter)-=SubstractDBMPoint.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*CalculationInterval,Timestamp)))
+                            Pattern(DBMConstants.ComparePatterns-PatternCounter)-=SubstractDBMPoint.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*DBMConstants.CalculationInterval,Timestamp)))
                         End If
                     Next PatternCounter
                     Stats.Calculate(Stats.RemoveOutliers(Pattern.Take(Pattern.Length-1).ToArray),Nothing)
-                    CurrValueEMA(EMACounter)=Pattern(ComparePatterns)
-                    PredValueEMA(EMACounter)=ComparePatterns*Stats.Slope+Stats.Intercept
+                    CurrValueEMA(EMACounter)=Pattern(DBMConstants.ComparePatterns)
+                    PredValueEMA(EMACounter)=DBMConstants.ComparePatterns*Stats.Slope+Stats.Intercept
                     LowContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)-Stats.ControlLimitRejectionCriterion(Stats.Count)*Stats.StDevSLinReg
                     UppContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)+Stats.ControlLimitRejectionCriterion(Stats.Count)*Stats.StDevSLinReg
                 Next EMACounter
@@ -87,8 +82,8 @@ Public Class DBMPoint
                 PredValue=Stats.CalculateExpMovingAvg(PredValueEMA)
                 LowContrLimit=Stats.CalculateExpMovingAvg(LowContrLimitEMA)
                 UppContrLimit=Stats.CalculateExpMovingAvg(UppContrLimitEMA)
-                Me.AbsoluteError(CorrelationPreviousPeriods-CorrelationCounter)=PredValue-CurrValue
-                Me.RelativeError(CorrelationPreviousPeriods-CorrelationCounter)=PredValue/CurrValue-1
+                Me.AbsoluteError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=PredValue-CurrValue
+                Me.RelativeError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=PredValue/CurrValue-1
                 If CorrelationCounter=0 Then
                     If CurrValue<LowContrLimit Then ' Lower control limit exceeded
                         Me.Factor=(PredValue-CurrValue)/(LowContrLimit-PredValue)
