@@ -34,6 +34,12 @@ Public Class DBMPoint
         ReDim Me.RelativeError(DBMConstants.CorrelationPreviousPeriods)
     End Sub
 
+    Public Function ArrRemoveFirstValue(ByVal Data() As Double) As Double()
+        Array.Reverse(Data) ' ABCDE -> EDCBA
+        Array.Reverse(Data,0,Data.Length-1) ' EDCBA -> BCDEA
+        Return Data
+    End Function
+
     Private Function Value(ByVal Timestamp As DateTime) As Double
         Dim i As Integer
         i=Array.FindIndex(Me.CachedValues,Function(FindCachedValue)FindCachedValue.Timestamp=Timestamp)
@@ -41,8 +47,8 @@ Public Class DBMPoint
             Array.Reverse(Me.CachedValues,0,i)
             Array.Reverse(Me.CachedValues,0,i+1) ' Move value to beginning of cache
         Else
-            Array.Reverse(Me.CachedValues,0,Me.CachedValues.Length-1)
-            Array.Reverse(Me.CachedValues) ' Remove last value from cache
+            Array.Reverse(Me.CachedValues,0,Me.CachedValues.Length-1) ' Remove last value from cache, ABCDE -> DCBAE
+            Array.Reverse(Me.CachedValues) ' DCBAE -> EABCD
             Try
                 #If OfflineUnitTests Then
                 Me.CachedValues(0)=New CachedValue(Timestamp,DBM.UnitTestData(0))
@@ -67,17 +73,25 @@ Public Class DBMPoint
         For CorrelationCounter=0 To DBMConstants.CorrelationPreviousPeriods
             If CorrelationCounter=0 Or (IsInputDBMPoint And Me.Factor<>0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
                 For EMACounter=DBMConstants.EMAPreviousPeriods To 0 Step -1
-                    For PatternCounter=DBMConstants.ComparePatterns To 0 Step -1
-                        Pattern(DBMConstants.ComparePatterns-PatternCounter)=Me.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*DBMConstants.CalculationInterval,Timestamp)))
-                        If Not IsNothing(SubstractDBMPoint) Then
-                            Pattern(DBMConstants.ComparePatterns-PatternCounter)-=SubstractDBMPoint.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*DBMConstants.CalculationInterval,Timestamp)))
+                    If CorrelationCounter=0 Or (CorrelationCounter>0 And EMACounter=DBMConstants.EMAPreviousPeriods) Then
+                        If CorrelationCounter>0 And EMACounter=DBMConstants.EMAPreviousPeriods Then
+                            CurrValueEMA=ArrRemoveFirstValue(CurrValueEMA)
+                            PredValueEMA=ArrRemoveFirstValue(PredValueEMA)
+                            LowContrLimitEMA=ArrRemoveFirstValue(LowContrLimitEMA)
+                            UppContrLimitEMA=ArrRemoveFirstValue(UppContrLimitEMA)
                         End If
-                    Next PatternCounter
-                    DBMStatistics.Calculate(DBMMath.RemoveOutliers(Pattern.Take(Pattern.Length-1).ToArray),Nothing)
-                    CurrValueEMA(EMACounter)=Pattern(DBMConstants.ComparePatterns)
-                    PredValueEMA(EMACounter)=DBMConstants.ComparePatterns*DBMStatistics.Slope+DBMStatistics.Intercept
-                    LowContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)-DBMMath.ControlLimitRejectionCriterion(DBMStatistics.Count)*DBMStatistics.StDevSLinReg
-                    UppContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)+DBMMath.ControlLimitRejectionCriterion(DBMStatistics.Count)*DBMStatistics.StDevSLinReg
+                        For PatternCounter=DBMConstants.ComparePatterns To 0 Step -1
+                            Pattern(DBMConstants.ComparePatterns-PatternCounter)=Me.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*DBMConstants.CalculationInterval,Timestamp)))
+                            If Not IsNothing(SubstractDBMPoint) Then
+                                Pattern(DBMConstants.ComparePatterns-PatternCounter)-=SubstractDBMPoint.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*DBMConstants.CalculationInterval,Timestamp)))
+                            End If
+                        Next PatternCounter
+                        DBMStatistics.Calculate(DBMMath.RemoveOutliers(Pattern.Take(Pattern.Length-1).ToArray),Nothing)
+                        CurrValueEMA(EMACounter)=Pattern(DBMConstants.ComparePatterns)
+                        PredValueEMA(EMACounter)=DBMConstants.ComparePatterns*DBMStatistics.Slope+DBMStatistics.Intercept
+                        LowContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)-DBMMath.ControlLimitRejectionCriterion(DBMStatistics.Count)*DBMStatistics.StDevSLinReg
+                        UppContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)+DBMMath.ControlLimitRejectionCriterion(DBMStatistics.Count)*DBMStatistics.StDevSLinReg
+                    End If
                 Next EMACounter
                 CurrValue=DBMMath.CalculateExpMovingAvg(CurrValueEMA)
                 PredValue=DBMMath.CalculateExpMovingAvg(PredValueEMA)
