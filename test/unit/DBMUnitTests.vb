@@ -19,15 +19,17 @@ Module DBMUnitTests
     #End If
 
     Private Sub UnitTest(ByVal Description As String,ByVal ExpectedValue As Double,ByVal InputPoint As Object,ByVal CorrelationPoint As Object,ByVal Timestamp As DateTime,ByVal SubstractInputPointFromCorrelationPoint As Boolean)
-        Console.Write(Description & Space(67-Description.Length) & ExpectedValue.ToString(" 0.000;-0.000") & " ")
+        Dim Ticks As Int64=DateTime.Now.Ticks
+        Console.Write(Description & Space(Math.Max(0,57-Description.Length)) & ExpectedValue.ToString(" 0.000;-0.000") & " ")
         #If OfflineUnitTests Then
-        Console.Write(CStr(IIf(_DBM.Calculate(CStr(InputPoint),CStr(CorrelationPoint),Timestamp,SubstractInputPointFromCorrelationPoint)=ExpectedValue,"OK","ERR")) & vbCrLf)
+        Console.Write(CStr(IIf(_DBM.Calculate(CStr(InputPoint),CStr(CorrelationPoint),Timestamp,SubstractInputPointFromCorrelationPoint)=ExpectedValue,"OK","ERR")))
         #Else
         If Not IsNothing(CorrelationPoint) Then
             CorrelationPoint=CType(_PISDK.Servers(Split(CStr(CorrelationPoint),"\")(2)).PIPoints(Split(CStr(CorrelationPoint),"\")(3)),PISDK.PIPoint)
         End If
-        Console.Write(CStr(IIf(_DBM.Calculate(CType(_PISDK.Servers(Split(CStr(InputPoint),"\")(2)).PIPoints(Split(CStr(InputPoint),"\")(3)),PISDK.PIPoint),CType(CorrelationPoint,PISDK.PIPoint),Timestamp,SubstractInputPointFromCorrelationPoint)=ExpectedValue,"OK","ERR")) & vbCrLf)
+        Console.Write(CStr(IIf(_DBM.Calculate(CType(_PISDK.Servers(Split(CStr(InputPoint),"\")(2)).PIPoints(Split(CStr(InputPoint),"\")(3)),PISDK.PIPoint),CType(CorrelationPoint,PISDK.PIPoint),Timestamp,SubstractInputPointFromCorrelationPoint)=ExpectedValue,"OK","ERR")))
         #End If
+        Console.WriteLine(" (" & (DateTime.Now.Ticks-Ticks)/10000 & " ms)")
     End Sub
 
     Public Sub Main
@@ -37,15 +39,15 @@ Module DBMUnitTests
         UnitTest("Normal situation; Vitens",0,"\\sr-16634\Reinwaterafgifte",Nothing,New DateTime(2015,5,23,2,0,0),False)
         UnitTest("Cache test, Normal situation; Vitens",0,"\\sr-16634\Reinwaterafgifte",Nothing,New DateTime(2015,5,23,2,0,0),False)
         UnitTest("New year's day; Leeuwarden",1.206,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering",Nothing,New DateTime(2016,1,1,1,50,0),False)
-        UnitTest("New year's day (correlation relative error); Leeuwarden/Franeker",0.849,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering","\\sr-16635\ACE-FR-Deelbalansgebied-Franeker-levering",New DateTime(2016,1,1,1,50,0),False)
+        UnitTest("New year's day (corr. rel. error); Leeuwarden/Franeker",0.849,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering","\\sr-16635\ACE-FR-Deelbalansgebied-Franeker-levering",New DateTime(2016,1,1,1,50,0),False)
         UnitTest("New year's day (self-correlation); Leeuwarden",1,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering","\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering",New DateTime(2016,1,1,1,50,0),False)
         UnitTest("Substract self test, New year's day; Leeuwarden",1.206,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering","\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering",New DateTime(2016,1,1,1,50,0),True)
         UnitTest("Unmeasured flow; Heerenveen",1.511,"\\sr-16635\PE-ACE-FR-Deelbalansgebied-Heerenveen-levering",Nothing,New DateTime(2015,8,21,1,0,0),False)
-        UnitTest("Unmeasured flow (anticorrelation absolute error); Heerenveen/Joure",-0.996,"\\sr-16635\PE-ACE-FR-Deelbalansgebied-Heerenveen-levering","\\sr-16635\PE-ACE-FR-Deelbalansgebied-Joure-levering",New DateTime(2015,8,21,1,0,0),False)
+        UnitTest("Unmeasured flow (anticorr. abs. error); Heerenveen/Joure",-0.996,"\\sr-16635\PE-ACE-FR-Deelbalansgebied-Heerenveen-levering","\\sr-16635\PE-ACE-FR-Deelbalansgebied-Joure-levering",New DateTime(2015,8,21,1,0,0),False)
         UnitTest("Pipe burst; Leeuwarden",6.793,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering",Nothing,New DateTime(2013,3,12,19,30,0),False)
         UnitTest("Cache test, Pipe burst; Leeuwarden",5.818,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering",Nothing,New DateTime(2013,3,12,19,35,0),False)
         UnitTest("Pipe burst; Leeuwarden/Vitens",6.793,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering","\\sr-16634\Reinwaterafgifte",New DateTime(2013,3,12,19,30,0),True)
-        UnitTest("Sbst. test 1/2, Pipe burst (corr. rel. err.); Leeuwarden/Vitens",0.846,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering","\\sr-16634\Reinwaterafgifte",New DateTime(2013,3,12,20,10,0),False)
+        UnitTest("Sbst. test 1/2, Pipe burst (corr. rel. err.); Lwd/Vitens",0.846,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering","\\sr-16634\Reinwaterafgifte",New DateTime(2013,3,12,20,10,0),False)
         UnitTest("Substract test 2/2, Pipe burst; Leeuwarden/Vitens",6.717,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering","\\sr-16634\Reinwaterafgifte",New DateTime(2013,3,12,20,10,0),True)
         UnitTest("Pipe burst; Sneek",3.206,"\\sr-16635\ACE-FR-Deelbalansgebied-Sneek-levering",Nothing,New DateTime(2016,1,4,4,0,0),False)
         UnitTest("Pipe burst; Sneek/Leeuwarden",3.206,"\\sr-16635\ACE-FR-Deelbalansgebied-Sneek-levering","\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering",New DateTime(2016,1,4,4,0,0),False)
@@ -54,17 +56,17 @@ Module DBMUnitTests
         UnitTest("Maintenance; Drachten",5.831,"\\sr-16635\ACE-FR-Deelbalansgebied-Drachten-levering",Nothing,New DateTime(2015,4,9,13,30,0),False)
         UnitTest("Maintenance; Drachten/Gorredijk",5.831,"\\sr-16635\ACE-FR-Deelbalansgebied-Drachten-levering","\\sr-16635\ACE-FR-Deelbalansgebied-Gorredijk-levering",New DateTime(2015,4,9,13,30,0),False)
         UnitTest("Week after summer break; Leeuwarden",1.399,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering",Nothing,New DateTime(2015,8,21,7,30,0),False)
-        UnitTest("Week after summer break (corr. rel. err.); Leeuwarden/Franeker",0.866,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering","\\sr-16635\ACE-FR-Deelbalansgebied-Franeker-levering",New DateTime(2015,8,21,7,30,0),False)
+        UnitTest("Week after summer break (corr. rel. err.); Lwd/Franeker",0.866,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering","\\sr-16635\ACE-FR-Deelbalansgebied-Franeker-levering",New DateTime(2015,8,21,7,30,0),False)
         UnitTest("Christmas morning; Leeuwarden",-1.041,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering",Nothing,New DateTime(2015,12,25,9,0,0),False)
-        UnitTest("Christmas morning (correlation relative error); Leeuwarden/Vitens",0.991,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering","\\sr-16634\Reinwaterafgifte",New DateTime(2015,12,25,9,0,0),True)
+        UnitTest("Christmas morning (corr. rel. error); Leeuwarden/Vitens",0.991,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering","\\sr-16634\Reinwaterafgifte",New DateTime(2015,12,25,9,0,0),True)
         UnitTest("Sequential cache test 1/4; Heerenveen",2.346,"\\sr-16635\PE-ACE-FR-Deelbalansgebied-Heerenveen-levering",Nothing,New DateTime(2015,8,21,2,0,0),False)
         UnitTest("Sequential cache test 2/4; Heerenveen",2.369,"\\sr-16635\PE-ACE-FR-Deelbalansgebied-Heerenveen-levering",Nothing,New DateTime(2015,8,21,2,5,0),False)
         UnitTest("Sequential cache test 3/4; Heerenveen",1.928,"\\sr-16635\PE-ACE-FR-Deelbalansgebied-Heerenveen-levering",Nothing,New DateTime(2015,8,21,2,10,0),False)
         UnitTest("Sequential cache test 4/4; Heerenveen",1.676,"\\sr-16635\PE-ACE-FR-Deelbalansgebied-Heerenveen-levering",Nothing,New DateTime(2015,8,21,2,15,0),False)
-        UnitTest("Sequential cache test 1/4 (anticorr. abs. error); Heerenveen/Joure",-0.998,"\\sr-16635\PE-ACE-FR-Deelbalansgebied-Heerenveen-levering","\\sr-16635\PE-ACE-FR-Deelbalansgebied-Joure-levering",New DateTime(2015,8,21,3,0,0),False)
-        UnitTest("Sequential cache test 2/4 (anticorr. abs. error); Heerenveen/Joure",-0.998,"\\sr-16635\PE-ACE-FR-Deelbalansgebied-Heerenveen-levering","\\sr-16635\PE-ACE-FR-Deelbalansgebied-Joure-levering",New DateTime(2015,8,21,3,5,0),False)
-        UnitTest("Sequential cache test 3/4 (anticorr. abs. error); Heerenveen/Joure",-0.998,"\\sr-16635\PE-ACE-FR-Deelbalansgebied-Heerenveen-levering","\\sr-16635\PE-ACE-FR-Deelbalansgebied-Joure-levering",New DateTime(2015,8,21,3,10,0),False)
-        UnitTest("Sequential cache test 4/4 (anticorr. abs. error); Heerenveen/Joure",-0.999,"\\sr-16635\PE-ACE-FR-Deelbalansgebied-Heerenveen-levering","\\sr-16635\PE-ACE-FR-Deelbalansgebied-Joure-levering",New DateTime(2015,8,21,3,15,0),False)
+        UnitTest("Seq. cache test 1/4 (anticorr. abs. error); Hrv/Joure",-0.998,"\\sr-16635\PE-ACE-FR-Deelbalansgebied-Heerenveen-levering","\\sr-16635\PE-ACE-FR-Deelbalansgebied-Joure-levering",New DateTime(2015,8,21,3,0,0),False)
+        UnitTest("Seq. cache test 2/4 (anticorr. abs. error); Hrv/Joure",-0.998,"\\sr-16635\PE-ACE-FR-Deelbalansgebied-Heerenveen-levering","\\sr-16635\PE-ACE-FR-Deelbalansgebied-Joure-levering",New DateTime(2015,8,21,3,5,0),False)
+        UnitTest("Seq. cache test 3/4 (anticorr. abs. error); Hrv/Joure",-0.998,"\\sr-16635\PE-ACE-FR-Deelbalansgebied-Heerenveen-levering","\\sr-16635\PE-ACE-FR-Deelbalansgebied-Joure-levering",New DateTime(2015,8,21,3,10,0),False)
+        UnitTest("Seq. cache test 4/4 (anticorr. abs. error); Hrv/Joure",-0.999,"\\sr-16635\PE-ACE-FR-Deelbalansgebied-Heerenveen-levering","\\sr-16635\PE-ACE-FR-Deelbalansgebied-Joure-levering",New DateTime(2015,8,21,3,15,0),False)
         UnitTest("MeanAD/MedianAD test 1/2 (mean); Vlieland",1.049,"\\sr-16635\ACE-FR-Deelbalansgebied-Vlieland-levering",Nothing,New DateTime(2014,12,31,9,15,0),False)
         UnitTest("MeanAD/MedianAD test 2/2 (median); Vlieland",1.082,"\\sr-16635\ACE-FR-Deelbalansgebied-Vlieland-levering",Nothing,New DateTime(2014,12,31,9,20,0),False)
         UnitTest("Daylight saving time test 1/5; Wageningseberg",1.112,"\\sr-16637\ACE-GE-Balansgebied-Wageningseberg-levering",Nothing,New DateTime(2016,4,3,1,30,0),False)
