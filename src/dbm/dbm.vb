@@ -23,7 +23,7 @@ Public Class DBM
     Private Function DBMPointIndex(ByVal Point As PISDK.PIPoint) As Integer
     #End If
         DBMPointIndex=Array.FindIndex(DBMPoints,Function(FindDBMPoint)FindDBMPoint.Point Is Point)
-        If DBMPointIndex=-1 Then
+        If DBMPointIndex=-1 Then ' Point not found
             ReDim Preserve DBMPoints(DBMPoints.Length)
             DBMPointIndex=DBMPoints.Length-1
             DBMPoints(DBMPointIndex)=New DBMPoint(Point)
@@ -39,17 +39,17 @@ Public Class DBM
         Dim InputDBMPointIndex,CorrelationDBMPointIndex As Integer
         Dim AbsErrorStats,RelErrorStats As New DBMStatistics
         InputDBMPointIndex=DBMPointIndex(InputPoint)
-        DBMPoints(InputDBMPointIndex).Calculate(Timestamp,True,Not IsNothing(CorrelationPoint))
+        DBMPoints(InputDBMPointIndex).Calculate(Timestamp,True,Not IsNothing(CorrelationPoint)) ' Calculate for input point
         Calculate=DBMPoints(InputDBMPointIndex).Factor
         If Calculate<>0 And Not IsNothing(CorrelationPoint) Then ' If an event is found and a correlation point is available
             CorrelationDBMPointIndex=DBMPointIndex(CorrelationPoint)
-            If SubstractInputPointFromCorrelationPoint Then
-                DBMPoints(CorrelationDBMPointIndex).Calculate(Timestamp,False,True,DBMPoints(InputDBMPointIndex)) ' Pattern of correlation point contains input point
+            If SubstractInputPointFromCorrelationPoint Then ' If pattern of correlation point contains input point
+                DBMPoints(CorrelationDBMPointIndex).Calculate(Timestamp,False,True,DBMPoints(InputDBMPointIndex)) ' Calculate for correlation point, substract input point
             Else
-                DBMPoints(CorrelationDBMPointIndex).Calculate(Timestamp,False,True)
+                DBMPoints(CorrelationDBMPointIndex).Calculate(Timestamp,False,True) ' Calculate for correlation point
             End If
-            AbsErrorStats.Calculate(DBMPoints(CorrelationDBMPointIndex).AbsoluteError,DBMPoints(InputDBMPointIndex).AbsoluteError)
-            RelErrorStats.Calculate(DBMPoints(CorrelationDBMPointIndex).RelativeError,DBMPoints(InputDBMPointIndex).RelativeError)
+            AbsErrorStats.Calculate(DBMPoints(CorrelationDBMPointIndex).AbsoluteError,DBMPoints(InputDBMPointIndex).AbsoluteError) ' Absolute error compared to prediction
+            RelErrorStats.Calculate(DBMPoints(CorrelationDBMPointIndex).RelativeError,DBMPoints(InputDBMPointIndex).RelativeError) ' Relative error compared to prediction
             If RelErrorStats.ModifiedCorrelation>DBMConstants.CorrelationThreshold Then ' Suppress event due to correlation of relative error
                 Calculate=RelErrorStats.ModifiedCorrelation
             End If

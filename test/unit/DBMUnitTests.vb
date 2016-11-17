@@ -35,7 +35,7 @@ Module DBMUnitTests
     Public Sub Main
         Dim Ticks As Int64=DateTime.Now.Ticks
         Dim i As Integer
-        For i=0 To 1
+        For i=0 To 1 ' Run all cases twice to test cache
             UnitTest("Normal situation; Leeuwarden",0,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering",Nothing,New DateTime(2016,2,5,10,0,0),False)
             UnitTest("Cache test 1/2, Normal situation; Leeuwarden",0,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering",Nothing,New DateTime(2016,2,5,10,0,0),False)
             UnitTest("Cache test 2/2, Normal situation; Leeuwarden",0,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering",Nothing,New DateTime(2016,2,5,10,5,0),False)

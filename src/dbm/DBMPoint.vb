@@ -21,7 +21,7 @@ Public Class DBMPoint
         ReDim Me.CachedValues(CInt((DBMConstants.EMAPreviousPeriods+1+DBMConstants.CorrelationPreviousPeriods+1+24*(3600/DBMConstants.CalculationInterval))*(DBMConstants.ComparePatterns+1)-1))
         ReDim Me.AbsoluteError(DBMConstants.CorrelationPreviousPeriods)
         ReDim Me.RelativeError(DBMConstants.CorrelationPreviousPeriods)
-        For i=0 to Me.CachedValues.Length-1
+        For i=0 to Me.CachedValues.Length-1 ' Initialise cache
             Me.CachedValues(i)=New DBMCachedValue(Nothing,Nothing)
         Next i
     End Sub
@@ -34,22 +34,22 @@ Public Class DBMPoint
 
     Private Function Value(ByVal Timestamp As DateTime) As Double
         Dim i As Integer
-        i=Array.FindIndex(Me.CachedValues,Function(FindCachedValue)FindCachedValue.Timestamp=Timestamp)
-        If i>=0 Then ' Found value in cache
+        i=Array.FindIndex(Me.CachedValues,Function(FindCachedValue)FindCachedValue.Timestamp=Timestamp) ' Find timestamp in cache
+        If i>=0 Then ' Found timestamp in cache
             Array.Reverse(Me.CachedValues,0,i)
-            Array.Reverse(Me.CachedValues,0,i+1) ' Move value to beginning of cache
+            Array.Reverse(Me.CachedValues,0,i+1) ' Move item to beginning of cache
         Else
-            Array.Reverse(Me.CachedValues,0,Me.CachedValues.Length-1) ' Remove last value from cache, ABCDE -> DCBAE
+            Array.Reverse(Me.CachedValues,0,Me.CachedValues.Length-1) ' Remove last item from cache, ABCDE -> DCBAE
             Array.Reverse(Me.CachedValues) ' DCBAE -> EABCD
             Try
                 #If OfflineUnitTests Then
                 Me.CachedValues(0)=New DBMCachedValue(Timestamp,DBM.UnitTestData(0))
                 DBM.UnitTestData=DBM.UnitTestData.Skip(1).ToArray
                 #Else
-                Me.CachedValues(0)=New DBMCachedValue(Timestamp,CDbl(Me.Point.Data.Summary(Timestamp,DateAdd("s",DBMConstants.CalculationInterval,Timestamp),PISDK.ArchiveSummaryTypeConstants.astAverage,PISDK.CalculationBasisConstants.cbTimeWeighted).Value))
+                Me.CachedValues(0)=New DBMCachedValue(Timestamp,CDbl(Me.Point.Data.Summary(Timestamp,DateAdd("s",DBMConstants.CalculationInterval,Timestamp),PISDK.ArchiveSummaryTypeConstants.astAverage,PISDK.CalculationBasisConstants.cbTimeWeighted).Value)) ' Get data from OSIsoft PI
                 #End If
             Catch
-                Me.CachedValues(0)=New DBMCachedValue(Timestamp,Double.NaN)
+                Me.CachedValues(0)=New DBMCachedValue(Timestamp,Double.NaN) ' Error, return Not a Number
             End Try
         End If
         Return Me.CachedValues(0).Value
@@ -66,7 +66,7 @@ Public Class DBMPoint
             If CorrelationCounter=0 Or (IsInputDBMPoint And Me.Factor<>0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
                 For EMACounter=DBMConstants.EMAPreviousPeriods To 0 Step -1
                     If CorrelationCounter=0 Or (CorrelationCounter>0 And EMACounter=DBMConstants.EMAPreviousPeriods) Then
-                        If CorrelationCounter>0 And EMACounter=DBMConstants.EMAPreviousPeriods Then
+                        If CorrelationCounter>0 And EMACounter=DBMConstants.EMAPreviousPeriods Then ' Reuse calculation results when moving back for correlation calculation
                             CurrValueEMA=ArrRemoveFirstValue(CurrValueEMA)
                             PredValueEMA=ArrRemoveFirstValue(PredValueEMA)
                             LowContrLimitEMA=ArrRemoveFirstValue(LowContrLimitEMA)
@@ -78,9 +78,9 @@ Public Class DBMPoint
                                 Pattern(DBMConstants.ComparePatterns-PatternCounter)-=SubstractDBMPoint.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*DBMConstants.CalculationInterval,Timestamp)))
                             End If
                         Next PatternCounter
-                        DBMStatistics.Calculate(DBMMath.RemoveOutliers(Pattern.Take(Pattern.Length-1).ToArray),Nothing)
+                        DBMStatistics.Calculate(DBMMath.RemoveOutliers(Pattern.Take(Pattern.Length-1).ToArray),Nothing) ' Calculate statistics for data after removing outliers
                         CurrValueEMA(EMACounter)=Pattern(DBMConstants.ComparePatterns)
-                        PredValueEMA(EMACounter)=DBMConstants.ComparePatterns*DBMStatistics.Slope+DBMStatistics.Intercept
+                        PredValueEMA(EMACounter)=DBMConstants.ComparePatterns*DBMStatistics.Slope+DBMStatistics.Intercept ' Extrapolate linear regression
                         LowContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)-DBMMath.ControlLimitRejectionCriterion(DBMStatistics.Count)*DBMStatistics.StDevSLinReg
                         UppContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)+DBMMath.ControlLimitRejectionCriterion(DBMStatistics.Count)*DBMStatistics.StDevSLinReg
                     End If
@@ -89,8 +89,8 @@ Public Class DBMPoint
                 PredValue=DBMMath.CalculateExpMovingAvg(PredValueEMA)
                 LowContrLimit=DBMMath.CalculateExpMovingAvg(LowContrLimitEMA)
                 UppContrLimit=DBMMath.CalculateExpMovingAvg(UppContrLimitEMA)
-                Me.AbsoluteError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=PredValue-CurrValue
-                Me.RelativeError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=PredValue/CurrValue-1
+                Me.AbsoluteError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=PredValue-CurrValue ' Absolute error compared to prediction
+                Me.RelativeError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=PredValue/CurrValue-1 ' Relative error compared to prediction
                 If CorrelationCounter=0 Then
                     If CurrValue<LowContrLimit Then ' Lower control limit exceeded
                         Me.Factor=(PredValue-CurrValue)/(LowContrLimit-PredValue)

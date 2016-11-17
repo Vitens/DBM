@@ -189,12 +189,12 @@ Public Class DBMMath
 
     Public Function CalculateExpMovingAvg(ByVal Data() As Double) As Double ' Filter high frequency variation
         Dim Weight,TotalWeight As Double
-        Weight=1
+        Weight=1 ' Initial weight
         TotalWeight=0
         For Each Value As Double In Data
             CalculateExpMovingAvg+=Value*Weight
             TotalWeight+=Weight
-            Weight*=1-2/((Data.Length)+1)
+            Weight*=1-2/((Data.Length)+1) ' Decrease weight for older values
         Next
         CalculateExpMovingAvg/=TotalWeight
         Return CalculateExpMovingAvg
