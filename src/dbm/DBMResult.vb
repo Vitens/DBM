@@ -1,7 +1,7 @@
 Option Explicit
 Option Strict
 
-Public Class DBMResult
+Public Structure DBMResult
 
     Public Factor,CurrValue,PredValue,LowContrLimit,UppContrLimit As Double
 
@@ -13,4 +13,4 @@ Public Class DBMResult
         Me.UppContrLimit=UppContrLimit
     End Sub
 
-End Class
+End Structure

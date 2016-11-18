@@ -10,7 +10,6 @@ Public Class DBMPoint
     #End If
     Private CachedValues() As DBMCachedValue
     Public AbsoluteError(),RelativeError() As Double
-    Public DBMResult As DBMResult
 
     #If OfflineUnitTests Then
     Public Sub New(ByVal Point As String)
@@ -56,15 +55,14 @@ Public Class DBMPoint
         Return Me.CachedValues(0).Value
     End Function
 
-    Public Sub Calculate(ByVal Timestamp As DateTime,ByVal IsInputDBMPoint As Boolean,ByVal HasCorrelationDBMPoint As Boolean,Optional ByRef SubstractDBMPoint As DBMPoint=Nothing)
+    Public Function Calculate(ByVal Timestamp As DateTime,ByVal IsInputDBMPoint As Boolean,ByVal HasCorrelationDBMPoint As Boolean,Optional ByRef SubstractDBMPoint As DBMPoint=Nothing) As DBMResult
         Dim CorrelationCounter,EMACounter,PatternCounter As Integer
         Dim Pattern(DBMConstants.ComparePatterns),CurrValueEMA(DBMConstants.EMAPreviousPeriods),PredValueEMA(DBMConstants.EMAPreviousPeriods),LowContrLimitEMA(DBMConstants.EMAPreviousPeriods),UppContrLimitEMA(DBMConstants.EMAPreviousPeriods) As Double
         Dim DBMStatistics As New DBMStatistics
         Dim DBMMath As New DBMMath
-        Me.DBMResult=New DBMResult(Nothing,Nothing,Nothing,Nothing,Nothing)
-        Me.DBMResult.Factor=0 ' No event
+        Calculate.Factor=0 ' No event
         For CorrelationCounter=0 To DBMConstants.CorrelationPreviousPeriods
-            If CorrelationCounter=0 Or (IsInputDBMPoint And Me.DBMResult.Factor<>0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
+            If CorrelationCounter=0 Or (IsInputDBMPoint And Calculate.Factor<>0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
                 For EMACounter=DBMConstants.EMAPreviousPeriods To 0 Step -1
                     If CorrelationCounter=0 Or (CorrelationCounter>0 And EMACounter=DBMConstants.EMAPreviousPeriods) Then
                         If CorrelationCounter>0 And EMACounter=DBMConstants.EMAPreviousPeriods Then ' Reuse calculation results when moving back for correlation calculation
@@ -86,22 +84,23 @@ Public Class DBMPoint
                         UppContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)+DBMMath.ControlLimitRejectionCriterion(DBMStatistics.Count)*DBMStatistics.StDevSLinReg
                     End If
                 Next EMACounter
-                Me.DBMResult.CurrValue=DBMMath.CalculateExpMovingAvg(CurrValueEMA)
-                Me.DBMResult.PredValue=DBMMath.CalculateExpMovingAvg(PredValueEMA)
-                Me.DBMResult.LowContrLimit=DBMMath.CalculateExpMovingAvg(LowContrLimitEMA)
-                Me.DBMResult.UppContrLimit=DBMMath.CalculateExpMovingAvg(UppContrLimitEMA)
-                Me.AbsoluteError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=Me.DBMResult.PredValue-Me.DBMResult.CurrValue ' Absolute error compared to prediction
-                Me.RelativeError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=Me.DBMResult.PredValue/Me.DBMResult.CurrValue-1 ' Relative error compared to prediction
+                Calculate.CurrValue=DBMMath.CalculateExpMovingAvg(CurrValueEMA)
+                Calculate.PredValue=DBMMath.CalculateExpMovingAvg(PredValueEMA)
+                Calculate.LowContrLimit=DBMMath.CalculateExpMovingAvg(LowContrLimitEMA)
+                Calculate.UppContrLimit=DBMMath.CalculateExpMovingAvg(UppContrLimitEMA)
+                Me.AbsoluteError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=Calculate.PredValue-Calculate.CurrValue ' Absolute error compared to prediction
+                Me.RelativeError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=Calculate.PredValue/Calculate.CurrValue-1 ' Relative error compared to prediction
                 If CorrelationCounter=0 Then
-                    If Me.DBMResult.CurrValue<Me.DBMResult.LowContrLimit Then ' Lower control limit exceeded
-                        Me.DBMResult.Factor=(Me.DBMResult.PredValue-Me.DBMResult.CurrValue)/(Me.DBMResult.LowContrLimit-Me.DBMResult.PredValue)
+                    If Calculate.CurrValue<Calculate.LowContrLimit Then ' Lower control limit exceeded
+                        Calculate.Factor=(Calculate.PredValue-Calculate.CurrValue)/(Calculate.LowContrLimit-Calculate.PredValue)
                     End If
-                    If Me.DBMResult.CurrValue>Me.DBMResult.UppContrLimit Then ' Upper control limit exceeded
-                        Me.DBMResult.Factor=(Me.DBMResult.CurrValue-Me.DBMResult.PredValue)/(Me.DBMResult.UppContrLimit-Me.DBMResult.PredValue)
+                    If Calculate.CurrValue>Calculate.UppContrLimit Then ' Upper control limit exceeded
+                        Calculate.Factor=(Calculate.CurrValue-Calculate.PredValue)/(Calculate.UppContrLimit-Calculate.PredValue)
                     End If
                 End If
             End If
         Next CorrelationCounter
-    End Sub
+        Return Calculate
+    End Function
 
 End Class
