@@ -10,6 +10,7 @@ Public Class DBMPoint
     #End If
     Private CachedValues() As DBMCachedValue
     Public AbsoluteError(),RelativeError() As Double
+    Private DBMFunctions As New DBMFunctions
 
     #If OfflineUnitTests Then
     Public Sub New(ByVal Point As String)
@@ -26,21 +27,13 @@ Public Class DBMPoint
         ReDim Me.RelativeError(DBMConstants.CorrelationPreviousPeriods)
     End Sub
 
-    Public Function ArrRemoveFirstValue(ByVal Data() As Double) As Double()
-        Array.Reverse(Data) ' ABCDE -> EDCBA
-        Array.Reverse(Data,0,Data.Length-1) ' EDCBA -> BCDEA
-        Return Data
-    End Function
-
     Private Function Value(ByVal Timestamp As DateTime) As Double
         Dim i As Integer
         i=Array.FindIndex(Me.CachedValues,Function(FindCachedValue)FindCachedValue.Timestamp=Timestamp) ' Find timestamp in cache
         If i>=0 Then ' Found timestamp in cache
-            Array.Reverse(Me.CachedValues,0,i)
-            Array.Reverse(Me.CachedValues,0,i+1) ' Move item to beginning of cache
+            DBMFunctions.ArrayMoveItemToFront(Me.CachedValues,i) ' Move to first item in cache
         Else
-            Array.Reverse(Me.CachedValues,0,Me.CachedValues.Length-1) ' Remove last item from cache, ABCDE -> DCBAE
-            Array.Reverse(Me.CachedValues) ' DCBAE -> EABCD
+            DBMFunctions.ArrayRotateRight(Me.CachedValues) ' Remove last item from cache
             Try
                 #If OfflineUnitTests Then
                 Me.CachedValues(0)=New DBMCachedValue(Timestamp,DBM.UnitTestData(0))
@@ -66,10 +59,10 @@ Public Class DBMPoint
                 For EMACounter=DBMConstants.EMAPreviousPeriods To 0 Step -1
                     If CorrelationCounter=0 Or (CorrelationCounter>0 And EMACounter=DBMConstants.EMAPreviousPeriods) Then
                         If CorrelationCounter>0 And EMACounter=DBMConstants.EMAPreviousPeriods Then ' Reuse calculation results when moving back for correlation calculation
-                            CurrValueEMA=ArrRemoveFirstValue(CurrValueEMA)
-                            PredValueEMA=ArrRemoveFirstValue(PredValueEMA)
-                            LowContrLimitEMA=ArrRemoveFirstValue(LowContrLimitEMA)
-                            UppContrLimitEMA=ArrRemoveFirstValue(UppContrLimitEMA)
+                            CurrValueEMA=DBMFunctions.ArrayRotateLeft(CurrValueEMA)
+                            PredValueEMA=DBMFunctions.ArrayRotateLeft(PredValueEMA)
+                            LowContrLimitEMA=DBMFunctions.ArrayRotateLeft(LowContrLimitEMA)
+                            UppContrLimitEMA=DBMFunctions.ArrayRotateLeft(UppContrLimitEMA)
                         End If
                         For PatternCounter=DBMConstants.ComparePatterns To 0 Step -1
                             Pattern(DBMConstants.ComparePatterns-PatternCounter)=Me.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*DBMConstants.CalculationInterval,Timestamp)))
