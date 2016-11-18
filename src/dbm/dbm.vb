@@ -10,26 +10,15 @@ Imports System.Reflection
 
 Public Class DBM
 
-    #If OfflineUnitTests Then
-    Public Shared UnitTestData() As Double
-    #End If
-
+    Private DBMDriver As DBMDriver
     Private DBMPoints(-1) As DBMPoint
 
-    #If OfflineUnitTests Then
     Public Sub New(Optional ByVal Data() As Double=Nothing)
-        If Not IsNothing(Data) Then
-            UnitTestData=Data
-        End If
+        DBMDriver=New DBMDriver(Data)
     End Sub
-    #End If
 
-    #If OfflineUnitTests Then
-    Private Function DBMPointIndex(ByVal Point As String) As Integer
-    #Else
-    Private Function DBMPointIndex(ByVal Point As PISDK.PIPoint) As Integer
-    #End If
-        DBMPointIndex=Array.FindIndex(DBMPoints,Function(FindDBMPoint)FindDBMPoint.Point Is Point)
+    Private Function DBMPointIndex(ByVal Point As DBMPointDriver) As Integer
+        DBMPointIndex=Array.FindIndex(DBMPoints,Function(FindDBMPoint)FindDBMPoint.DBMPointDriver.Point Is Point.Point)
         If DBMPointIndex=-1 Then ' Point not found
             ReDim Preserve DBMPoints(DBMPoints.Length)
             DBMPointIndex=DBMPoints.Length-1
@@ -38,11 +27,7 @@ Public Class DBM
         Return DBMPointIndex
     End Function
 
-    #If OfflineUnitTests Then
-    Public Function Calculate(ByVal InputPoint As String,ByVal CorrelationPoint As String,ByVal Timestamp As DateTime,Optional ByVal SubstractInputPointFromCorrelationPoint As Boolean=False) As DBMResult
-    #Else
-    Public Function Calculate(ByVal InputPoint As PISDK.PIPoint,ByVal CorrelationPoint As PISDK.PIPoint,ByVal Timestamp As DateTime,Optional ByVal SubstractInputPointFromCorrelationPoint As Boolean=False) As DBMResult
-    #End If
+    Public Function Calculate(ByVal InputPoint As DBMPointDriver,ByVal CorrelationPoint As DBMPointDriver,ByVal Timestamp As DateTime,Optional ByVal SubstractInputPointFromCorrelationPoint As Boolean=False) As DBMResult
         Dim InputDBMPointIndex,CorrelationDBMPointIndex As Integer
         Dim InputDBMResult,CorrelationDBMResult As DBMResult
         Dim AbsErrorStats,RelErrorStats As New DBMStatistics

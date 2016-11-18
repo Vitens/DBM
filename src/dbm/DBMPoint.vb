@@ -3,22 +3,14 @@ Option Strict
 
 Public Class DBMPoint
 
-    #If OfflineUnitTests Then
-    Public Point As String
-    #Else
-    Public Point As PISDK.PIPoint
-    #End If
+    Public DBMPointDriver As New DBMPointDriver
     Private CachedValues() As DBMCachedValue
     Public AbsoluteError(),RelativeError() As Double
     Private DBMFunctions As New DBMFunctions
 
-    #If OfflineUnitTests Then
-    Public Sub New(ByVal Point As String)
-    #Else
-    Public Sub New(ByVal Point As PISDK.PIPoint)
-    #End If
+    Public Sub New(ByVal DBMPointDriver As DBMPointDriver)
         Dim i As Integer
-        Me.Point=Point
+        Me.DBMPointDriver=DBMPointDriver
         ReDim Me.CachedValues(CInt((DBMConstants.EMAPreviousPeriods+1+DBMConstants.CorrelationPreviousPeriods+1+24*(3600/DBMConstants.CalculationInterval))*(DBMConstants.ComparePatterns+1)-1))
         For i=0 to Me.CachedValues.Length-1 ' Initialise cache
             Me.CachedValues(i)=New DBMCachedValue(Nothing,Nothing)
@@ -35,12 +27,7 @@ Public Class DBMPoint
         Else
             DBMFunctions.ArrayRotateRight(Me.CachedValues) ' Remove last item from cache
             Try
-                #If OfflineUnitTests Then
-                Me.CachedValues(0)=New DBMCachedValue(Timestamp,DBM.UnitTestData(0))
-                DBM.UnitTestData=DBM.UnitTestData.Skip(1).ToArray
-                #Else
-                Me.CachedValues(0)=New DBMCachedValue(Timestamp,CDbl(Me.Point.Data.Summary(Timestamp,DateAdd("s",DBMConstants.CalculationInterval,Timestamp),PISDK.ArchiveSummaryTypeConstants.astAverage,PISDK.CalculationBasisConstants.cbTimeWeighted).Value)) ' Get data from OSIsoft PI
-                #End If
+                Me.CachedValues(0)=New DBMCachedValue(Timestamp,Me.DBMPointDriver.GetData(Timestamp,DateAdd("s",DBMConstants.CalculationInterval,Timestamp))) ' Get data using driver
             Catch
                 Me.CachedValues(0)=New DBMCachedValue(Timestamp,Double.NaN) ' Error, return Not a Number
             End Try

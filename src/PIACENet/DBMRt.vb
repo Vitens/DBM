@@ -88,11 +88,11 @@ Public Class DBMRt
                         PIValues.ReadOnly=False
                         Try
                             If Me.CorrelationPIPoints.Count=0 Then
-                                Value=DBM.Calculate(Me.InputPIPoint,Nothing,Me.CalcTimestamps(Me.CalcTimestamps.Count-1)).Factor
+                                Value=DBM.Calculate(New DBMPointDriver(Me.InputPIPoint),Nothing,Me.CalcTimestamps(Me.CalcTimestamps.Count-1)).Factor
                             Else
                                 Value=0
                                 For Each thisCorrelationPIPoint As CorrelationPIPoint In Me.CorrelationPIPoints
-                                    NewValue=DBM.Calculate(Me.InputPIPoint,thisCorrelationPIPoint.PIPoint,Me.CalcTimestamps(Me.CalcTimestamps.Count-1),thisCorrelationPIPoint.SubstractSelf).Factor
+                                    NewValue=DBM.Calculate(New DBMPointDriver(Me.InputPIPoint),New DBMPointDriver(thisCorrelationPIPoint.PIPoint),Me.CalcTimestamps(Me.CalcTimestamps.Count-1),thisCorrelationPIPoint.SubstractSelf).Factor
                                     If NewValue=0 Then
                                         Exit For
                                     End If

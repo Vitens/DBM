@@ -24,12 +24,17 @@ Module DBMUnitTests
         Dim DBMResult As DBMResult
         Console.Write(Description & Space(Math.Max(0,33-Description.Length)))
         #If OfflineUnitTests Then
-        DBMResult=_DBM.Calculate(CStr(InputPoint),CStr(CorrelationPoint),Timestamp,SubstractInputPointFromCorrelationPoint)
-        #Else
-        If Not IsNothing(CorrelationPoint) Then
-            CorrelationPoint=CType(_PISDK.Servers(Split(CStr(CorrelationPoint),"\")(2)).PIPoints(Split(CStr(CorrelationPoint),"\")(3)),PISDK.PIPoint)
+        If IsNothing(CorrelationPoint) Then
+            DBMResult=_DBM.Calculate(New DBMPointDriver(CStr(InputPoint)),Nothing,Timestamp,SubstractInputPointFromCorrelationPoint)
+        Else
+            DBMResult=_DBM.Calculate(New DBMPointDriver(CStr(InputPoint)),New DBMPointDriver(CStr(CorrelationPoint)),Timestamp,SubstractInputPointFromCorrelationPoint)
         End If
-        DBMResult=_DBM.Calculate(CType(_PISDK.Servers(Split(CStr(InputPoint),"\")(2)).PIPoints(Split(CStr(InputPoint),"\")(3)),PISDK.PIPoint),CType(CorrelationPoint,PISDK.PIPoint),Timestamp,SubstractInputPointFromCorrelationPoint)
+        #Else
+        If IsNothing(CorrelationPoint) Then
+            DBMResult=_DBM.Calculate(New DBMPointDriver(CType(_PISDK.Servers(Split(CStr(InputPoint),"\")(2)).PIPoints(Split(CStr(InputPoint),"\")(3)),PISDK.PIPoint)),Nothing,Timestamp,SubstractInputPointFromCorrelationPoint)
+        Else
+            DBMResult=_DBM.Calculate(New DBMPointDriver(CType(_PISDK.Servers(Split(CStr(InputPoint),"\")(2)).PIPoints(Split(CStr(InputPoint),"\")(3)),PISDK.PIPoint)),New DBMPointDriver(CType(CType(_PISDK.Servers(Split(CStr(CorrelationPoint),"\")(2)).PIPoints(Split(CStr(CorrelationPoint),"\")(3)),PISDK.PIPoint),PISDK.PIPoint)),Timestamp,SubstractInputPointFromCorrelationPoint)
+        End If
         #End If
         If Math.Round(DBMResult.Factor,3)=ExpectedValue Then
             ResultOK+=1
