@@ -6,7 +6,7 @@ if not exist build mkdir build
 
 call clean.bat
 
-set IncludeFiles=src\dbm\DBMConstants.vb src\dbm\DBMStatistics.vb src\dbm\DBMMath.vb src\dbm\DBMCachedValue.vb src\dbm\DBMPoint.vb src\dbm\DBMResult.vb src\dbm\dbm.vb
+set IncludeFiles=src\dbm\dbm.vb src\dbm\DBMCachedValue.vb src\dbm\DBMConstants.vb src\dbm\DBMMath.vb src\dbm\DBMPoint.vb src\dbm\DBMResult.vb src\dbm\DBMStatistics.vb
 
 "%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\Vbc.exe" /out:build\DBMUnitTests-offline.exe /define:OfflineUnitTests=True %IncludeFiles% test\unit\DBMUnitTests.vb
 if not %errorlevel% equ 0 pause
