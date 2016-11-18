@@ -1,6 +1,13 @@
 Option Explicit
 Option Strict
 
+Imports System.Reflection
+<assembly:AssemblyTitle("DBM")>
+<assembly:AssemblyCompany("Vitens N.V.")>
+<assembly:AssemblyProduct("Dynamic Bandwidth Monitor")>
+<assembly:AssemblyCopyright("J.H. Fitié, Vitens N.V.")>
+<assembly:AssemblyVersion("1.2.*")>
+
 Public Class DBM
 
     #If OfflineUnitTests Then
