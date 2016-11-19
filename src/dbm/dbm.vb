@@ -27,14 +27,14 @@ Public Class DBM
         Return DBMPointIndex
     End Function
 
-    Public Function Calculate(ByVal InputPoint As DBMPointDriver,ByVal CorrelationPoint As DBMPointDriver,ByVal Timestamp As DateTime,Optional ByVal SubstractInputPointFromCorrelationPoint As Boolean=False) As DBMResult
+    Public Function Calculate(ByVal InputDBMPointDriver As DBMPointDriver,ByVal CorrelationDBMPointDriver As DBMPointDriver,ByVal Timestamp As DateTime,Optional ByVal SubstractInputPointFromCorrelationPoint As Boolean=False) As DBMResult
         Dim InputDBMPointIndex,CorrelationDBMPointIndex As Integer
         Dim InputDBMResult,CorrelationDBMResult As DBMResult
         Dim AbsErrorStats,RelErrorStats As New DBMStatistics
-        InputDBMPointIndex=DBMPointIndex(InputPoint)
-        InputDBMResult=DBMPoints(InputDBMPointIndex).Calculate(Timestamp,True,Not IsNothing(CorrelationPoint)) ' Calculate for input point
-        If InputDBMResult.Factor<>0 And Not IsNothing(CorrelationPoint) Then ' If an event is found and a correlation point is available
-            CorrelationDBMPointIndex=DBMPointIndex(CorrelationPoint)
+        InputDBMPointIndex=DBMPointIndex(InputDBMPointDriver)
+        InputDBMResult=DBMPoints(InputDBMPointIndex).Calculate(Timestamp,True,Not IsNothing(CorrelationDBMPointDriver)) ' Calculate for input point
+        If InputDBMResult.Factor<>0 And Not IsNothing(CorrelationDBMPointDriver) Then ' If an event is found and a correlation point is available
+            CorrelationDBMPointIndex=DBMPointIndex(CorrelationDBMPointDriver)
             If SubstractInputPointFromCorrelationPoint Then ' If pattern of correlation point contains input point
                 CorrelationDBMResult=DBMPoints(CorrelationDBMPointIndex).Calculate(Timestamp,False,True,DBMPoints(InputDBMPointIndex)) ' Calculate for correlation point, substract input point
             Else
