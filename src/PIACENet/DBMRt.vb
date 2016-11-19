@@ -20,26 +20,26 @@ Public Class DBMRt
 
                 Private Class CorrelationPIPoint
 
-                    Public PIPoint As PISDK.PIPoint
+                    Public DBMPointDriver As DBMPointDriver
                     Public SubstractSelf As Boolean
 
                     Public Sub New(ByVal PIPoint As PISDK.PIPoint,ByVal SubstractSelf As Boolean)
-                        Me.PIPoint=PIPoint
+                        Me.DBMPointDriver=New DBMPointDriver(PIPoint)
                         Me.SubstractSelf=SubstractSelf
                     End Sub
 
                 End Class
 
-                Private InputPIPoint,OutputPIPoint As PISDK.PIPoint
+                Private InputDBMPointDriver,OutputDBMPointDriver As DBMPointDriver
                 Private CorrelationPIPoints As Collections.Generic.List(Of CorrelationPIPoint)
                 Private CalcTimestamps As Collections.Generic.List(Of Date)
 
                 Public Sub New(ByVal InputPIPoint As PISDK.PIPoint,ByVal OutputPIPoint As PISDK.PIPoint)
                     Dim ExDesc,FieldsA(),FieldsB() As String
-                    Me.InputPIPoint=InputPIPoint
-                    Me.OutputPIPoint=OutputPIPoint
+                    Me.InputDBMPointDriver=New DBMPointDriver(InputPIPoint)
+                    Me.OutputDBMPointDriver=New DBMPointDriver(OutputPIPoint)
                     Me.CorrelationPIPoints=New Collections.Generic.List(Of CorrelationPIPoint)
-                    ExDesc=Me.OutputPIPoint.PointAttributes("ExDesc").Value.ToString
+                    ExDesc=Me.OutputDBMPointDriver.Point.PointAttributes("ExDesc").Value.ToString
                     If Text.RegularExpressions.Regex.IsMatch(ExDesc,"^[-]{0,1}[a-zA-Z0-9][a-zA-Z0-9_\.-]{0,}:[^:?*&]{1,}(&[-]{0,1}[a-zA-Z0-9][a-zA-Z0-9_\.-]{0,}:[^:?*&]{1,}){0,}$") Then
                         FieldsA=Split(ExDesc.ToString,"&")
                         For Each thisField As String In FieldsA
@@ -66,11 +66,11 @@ Public Class DBMRt
                     Dim PIAnnotations As PISDK.PIAnnotations
                     Dim PINamedValues As PISDKCommon.NamedValues
                     Dim PIValues As PISDK.PIValues
-                    InputTimestamp=Me.InputPIPoint.Data.Snapshot.TimeStamp
+                    InputTimestamp=Me.InputDBMPointDriver.Point.Data.Snapshot.TimeStamp
                     For Each thisCorrelationPIPoint As CorrelationPIPoint In Me.CorrelationPIPoints
-                        InputTimestamp.UTCSeconds=Math.Min(InputTimestamp.UTCSeconds,thisCorrelationPIPoint.PIPoint.Data.Snapshot.TimeStamp.UTCSeconds)
+                        InputTimestamp.UTCSeconds=Math.Min(InputTimestamp.UTCSeconds,thisCorrelationPIPoint.DBMPointDriver.Point.Data.Snapshot.TimeStamp.UTCSeconds)
                     Next
-                    OutputTimestamp=Me.OutputPIPoint.Data.Snapshot.TimeStamp
+                    OutputTimestamp=Me.OutputDBMPointDriver.Point.Data.Snapshot.TimeStamp
                     If DateDiff("d",OutputTimestamp.LocalDate,Now())>DBMRtConstants.MaxCalculationAge Then
                         OutputTimestamp.LocalDate=DateAdd("d",-DBMRtConstants.MaxCalculationAge,Now())
                     End If
@@ -88,18 +88,18 @@ Public Class DBMRt
                         PIValues.ReadOnly=False
                         Try
                             If Me.CorrelationPIPoints.Count=0 Then
-                                Value=DBM.Calculate(New DBMPointDriver(Me.InputPIPoint),Nothing,Me.CalcTimestamps(Me.CalcTimestamps.Count-1)).Factor
+                                Value=DBM.Calculate(Me.InputDBMPointDriver,Nothing,Me.CalcTimestamps(Me.CalcTimestamps.Count-1)).Factor
                             Else
                                 Value=0
                                 For Each thisCorrelationPIPoint As CorrelationPIPoint In Me.CorrelationPIPoints
-                                    NewValue=DBM.Calculate(New DBMPointDriver(Me.InputPIPoint),New DBMPointDriver(thisCorrelationPIPoint.PIPoint),Me.CalcTimestamps(Me.CalcTimestamps.Count-1),thisCorrelationPIPoint.SubstractSelf).Factor
+                                    NewValue=DBM.Calculate(Me.InputDBMPointDriver,thisCorrelationPIPoint.DBMPointDriver,Me.CalcTimestamps(Me.CalcTimestamps.Count-1),thisCorrelationPIPoint.SubstractSelf).Factor
                                     If NewValue=0 Then
                                         Exit For
                                     End If
                                     If (Value=0 And Math.Abs(NewValue)>1) Or (Math.Abs(NewValue)<=1 And ((NewValue<0 And NewValue>=-1 And (NewValue<Value Or Math.Abs(Value)>1)) Or (NewValue>0 And NewValue<=1 And (NewValue>Value Or Math.Abs(Value)>1) And Not(Value<0 And Value>=-1)))) Then
                                         Value=NewValue
                                         If Math.Abs(Value)>0 And Math.Abs(Value)<=1 Then
-                                            Annotation="Exception suppressed by \\" & thisCorrelationPIPoint.PIPoint.Server.Name & "\" & thisCorrelationPIPoint.PIPoint.Name & " due to " & CStr(IIf(Value<0,"anti","")) & "correlation (r=" & Value & ")."
+                                            Annotation="Exception suppressed by \\" & thisCorrelationPIPoint.DBMPointDriver.Point.Server.Name & "\" & thisCorrelationPIPoint.DBMPointDriver.Point.Name & " due to " & CStr(IIf(Value<0,"anti","")) & "correlation (r=" & Value & ")."
                                         End If
                                     End If
                                 Next
@@ -114,7 +114,7 @@ Public Class DBMRt
                         End If
                         PIValues.Add(Me.CalcTimestamps(Me.CalcTimestamps.Count-1),Value,PINamedValues)
                         Try
-                            Me.OutputPIPoint.Data.UpdateValues(PIValues)
+                            Me.OutputDBMPointDriver.Point.Data.UpdateValues(PIValues)
                         Catch
                         End Try
                         Me.CalcTimestamps.RemoveAt(Me.CalcTimestamps.Count-1)
