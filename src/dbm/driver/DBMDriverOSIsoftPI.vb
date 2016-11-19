@@ -3,7 +3,7 @@ Option Strict
 
 Public Class DBMDriver
 
-    Public Sub New(Optional ByVal Data() As Double=Nothing)
+    Public Sub New(Optional ByVal Data() As Object=Nothing)
     End Sub
 
 End Class

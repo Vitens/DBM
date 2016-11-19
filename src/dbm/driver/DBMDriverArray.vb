@@ -3,10 +3,10 @@ Option Strict
 
 Public Class DBMDriver
 
-    Public Shared UnitTestData() As Double
+    Public Shared Data() As Object
 
-    Public Sub New(Optional ByVal Data() As Double=Nothing)
-        UnitTestData=Data
+    Public Sub New(Optional ByVal Data() As Object=Nothing)
+        DBMDriver.Data=Data
     End Sub
 
 End Class
@@ -23,8 +23,8 @@ Public Class DBMPointDriver
     End Sub
 
     Public Function GetData(ByVal StartTimestamp As DateTime,ByVal EndTimestamp As DateTime) As Double
-        GetData=DBMDriver.UnitTestData(0)
-        DBMDriver.UnitTestData=DBMDriver.UnitTestData.Skip(1).ToArray
+        GetData=CDbl(DBMDriver.Data(0))
+        DBMDriver.Data=DBMDriver.Data.Skip(1).ToArray
         Return GetData
     End Function
 

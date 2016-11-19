@@ -13,7 +13,7 @@ Public Class DBM
     Private DBMDriver As DBMDriver
     Private DBMPoints(-1) As DBMPoint
 
-    Public Sub New(Optional ByVal Data() As Double=Nothing)
+    Public Sub New(Optional ByVal Data() As Object=Nothing)
         DBMDriver=New DBMDriver(Data)
     End Sub
 
