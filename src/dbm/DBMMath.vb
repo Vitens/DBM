@@ -132,9 +132,9 @@ Public Class DBMMath
     Public Function ControlLimitRejectionCriterion(ByVal n As Integer) As Double
         Select Case n
             Case <30
-                ControlLimitRejectionCriterion=TInv2T(1-DBMConstants.ConfidenceInterval,Math.Max(3,n)-1) ' n<30 Student's t-distribution: T.INV.2T(1%,n-1) (P=99%)
+                ControlLimitRejectionCriterion=TInv2T(1-DBMConstants.ConfidenceInterval,Math.Max(2,n)) ' n<30 Student's t-distribution
             Case >=30
-                ControlLimitRejectionCriterion=NormSInv((DBMConstants.ConfidenceInterval+1)/2) ' n>=30 Standard normal distribution: NORM.S.INV(1-1%/2) (P=99%)
+                ControlLimitRejectionCriterion=NormSInv((DBMConstants.ConfidenceInterval+1)/2) ' n>=30 Standard normal distribution
         End Select
         Return ControlLimitRejectionCriterion
     End Function
@@ -183,11 +183,11 @@ Public Class DBMMath
             If MedianAbsDev=0 Then ' Use Mean Absolute Deviation instead of Median Absolute Deviation to detect outliers
                 Mean=CalculateMean(Data.ToArray)
                 MeanAbsDev=CalculateMeanAbsDev(Mean,Data.ToArray)
-                If Math.Abs(Data(i)-Mean)>MeanAbsDev*MeanAbsDevScaleFactor*ControlLimitRejectionCriterion(Data.Length) Then ' If value is an outlier
+                If Math.Abs(Data(i)-Mean)>MeanAbsDev*MeanAbsDevScaleFactor*ControlLimitRejectionCriterion(Data.Length-1) Then ' If value is an outlier
                     Data(i)=Double.NaN ' Exclude outlier
                 End If
             Else ' Use Median Absolute Deviation to detect outliers
-                If Math.Abs(Data(i)-Median)>MedianAbsDev*MedianAbsDevScaleFactor(Data.Length)*ControlLimitRejectionCriterion(Data.Length) Then ' If value is an outlier
+                If Math.Abs(Data(i)-Median)>MedianAbsDev*MedianAbsDevScaleFactor(Data.Length)*ControlLimitRejectionCriterion(Data.Length-1) Then ' If value is an outlier
                     Data(i)=Double.NaN ' Exclude outlier
                 End If
             End If
