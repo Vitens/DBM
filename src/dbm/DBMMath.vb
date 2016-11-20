@@ -69,7 +69,7 @@ Public Class DBMMath
 
     Private Function MedianAbsDevScaleFactor(ByVal n As Integer) As Double ' Scale factor k
         If n<30 Then
-            MedianAbsDevScaleFactor=1/TInv2T(1-(1-0.75)*2,n) ' n<30 Student's t-distribution
+            MedianAbsDevScaleFactor=1/TInv2T(1-(1-0.75)*2,Math.Max(2,n)) ' n<30 Student's t-distribution
         Else
             MedianAbsDevScaleFactor=1/NormSInv(0.75) ' n>=30 Standard normal distribution
         End If
