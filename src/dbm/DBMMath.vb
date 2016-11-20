@@ -9,6 +9,7 @@ Option Strict
 Public Class DBMMath
 
     Private Function NormSInv(ByVal p As Double) As Double
+        ' http://www.source-code.biz/snippets/vbasic/9.htm
         Const a1=-39.6968302866538,a2=220.946098424521,a3=-275.928510446969
         Const a4=138.357751867269,a5=-30.6647980661472,a6=2.50662827745924
         Const b1=-54.4760987982241,b2=161.585836858041,b3=-155.698979859887
@@ -30,6 +31,36 @@ Public Class DBMMath
             NormSInv=-(((((c1*q+c2)*q+c3)*q+c4)*q+c5)*q+c6)/((((d1*q+d2)*q+d3)*q+d4)*q+1)
         End If
         Return NormSInv
+    End Function
+
+    Private Function TInv2T(ByVal p As Double,ByVal dof As Integer) As Double
+        ' https://gist.github.com/shuhaowu/6177897
+        Dim a,b,c,d,x,y As Double
+        If dof=1 Then
+            p*=Math.PI/2
+            TInv2T=Math.Cos(p)/Math.Sin(p)
+        Else
+            a=1/(dof-0.5)
+            b=48/(a^2)
+            c=((20700*a/b-98)*a-16)*a+96.36
+            d=((94.5/(b+c)-3)/b+1)*Math.Sqrt(a*Math.PI/2)*dof
+            x=d*p
+            y=x^(2/dof)
+            If y>a+0.05 Then
+                x=NormSInv(p/2)
+                y=x^2
+                If dof<5 Then
+                    c+=0.3*(dof-4.5)*(x+0.6)
+                End If
+                c=(((d/2*x-0.5)*x-7)*x-2)*x+b+c
+                y=(((((0.4*y+6.3)*y+36)*y+94.5)/c-y-3)/b+1)*x
+                y=Math.Exp(a*y^2)-1
+            Else
+                y=((1/(((dof+6)/(dof*y)-0.089*d-0.822)*(dof+2)*3)+0.5/(dof+4))*y-1)*(dof+1)/(dof+2)+1/y
+            End If
+            TInv2T=Math.Sqrt(dof*y)
+        End If
+        Return TInv2T
     End Function
 
     Private Function MeanAbsDevScaleFactor As Double ' Scale factor k
@@ -100,60 +131,8 @@ Public Class DBMMath
 
     Public Function ControlLimitRejectionCriterion(ByVal n As Integer) As Double
         Select Case n
-            Case <=3
-                ControlLimitRejectionCriterion=9.924843200918 ' n<30 Student's t-distribution: T.INV.2T(1%,n-1) (P=99%)
-            Case 4
-                ControlLimitRejectionCriterion=5.840909309733
-            Case 5
-                ControlLimitRejectionCriterion=4.604094871350
-            Case 6
-                ControlLimitRejectionCriterion=4.032142983555
-            Case 7
-                ControlLimitRejectionCriterion=3.707428021325
-            Case 8
-                ControlLimitRejectionCriterion=3.499483297350
-            Case 9
-                ControlLimitRejectionCriterion=3.355387331333
-            Case 10
-                ControlLimitRejectionCriterion=3.249835541592
-            Case 11
-                ControlLimitRejectionCriterion=3.169272672617
-            Case 12
-                ControlLimitRejectionCriterion=3.105806515539
-            Case 13
-                ControlLimitRejectionCriterion=3.054539589393
-            Case 14
-                ControlLimitRejectionCriterion=3.012275838717
-            Case 15
-                ControlLimitRejectionCriterion=2.976842734371
-            Case 16
-                ControlLimitRejectionCriterion=2.946712883475
-            Case 17
-                ControlLimitRejectionCriterion=2.920781622425
-            Case 18
-                ControlLimitRejectionCriterion=2.898230519677
-            Case 19
-                ControlLimitRejectionCriterion=2.878440472739
-            Case 20
-                ControlLimitRejectionCriterion=2.860934606465
-            Case 21
-                ControlLimitRejectionCriterion=2.845339709786
-            Case 22
-                ControlLimitRejectionCriterion=2.831359558023
-            Case 23
-                ControlLimitRejectionCriterion=2.818756060600
-            Case 24
-                ControlLimitRejectionCriterion=2.807335683770
-            Case 25
-                ControlLimitRejectionCriterion=2.796939504774
-            Case 26
-                ControlLimitRejectionCriterion=2.787435813677
-            Case 27
-                ControlLimitRejectionCriterion=2.778714533330
-            Case 28
-                ControlLimitRejectionCriterion=2.770682957122
-            Case 29
-                ControlLimitRejectionCriterion=2.763262455461
+            Case <30
+                ControlLimitRejectionCriterion=TInv2T(1-DBMConstants.ConfidenceInterval,Math.Max(3,n)-1) ' n<30 Student's t-distribution: T.INV.2T(1%,n-1) (P=99%)
             Case >=30
                 ControlLimitRejectionCriterion=NormSInv((DBMConstants.ConfidenceInterval+1)/2) ' n>=30 Standard normal distribution: NORM.S.INV(1-1%/2) (P=99%)
         End Select
