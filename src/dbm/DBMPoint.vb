@@ -1,6 +1,11 @@
 Option Explicit
 Option Strict
 
+' DBM
+' Dynamic Bandwidth Monitor
+' Leak detection method implemented in a real-time data historian
+' J.H. Fitié, Vitens N.V.
+
 Public Class DBMPoint
 
     Public DBMPointDriver As New DBMPointDriver
@@ -58,7 +63,7 @@ Public Class DBMPoint
                                 Pattern(DBMConstants.ComparePatterns-PatternCounter)-=SubstractDBMPoint.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*DBMConstants.CalculationInterval,Timestamp)))
                             End If
                         Next PatternCounter
-                        DBMStatistics.Calculate(DBMMath.RemoveOutliers(Pattern.Take(Pattern.Length-1).ToArray),Nothing) ' Calculate statistics for data after removing outliers
+                        DBMStatistics.Calculate(DBMMath.RemoveOutliers(Pattern.Take(Pattern.Length-1).ToArray)) ' Calculate statistics for data after removing outliers
                         CurrValueEMA(EMACounter)=Pattern(DBMConstants.ComparePatterns)
                         PredValueEMA(EMACounter)=DBMConstants.ComparePatterns*DBMStatistics.Slope+DBMStatistics.Intercept ' Extrapolate linear regression
                         LowContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)-DBMMath.ControlLimitRejectionCriterion(DBMStatistics.Count)*DBMStatistics.StDevSLinReg

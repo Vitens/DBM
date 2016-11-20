@@ -1,6 +1,11 @@
 Option Explicit
 Option Strict
 
+' DBM
+' Dynamic Bandwidth Monitor
+' Leak detection method implemented in a real-time data historian
+' J.H. Fitié, Vitens N.V.
+
 Public Class DBMFunctions
 
     Public Function ArrayRotateLeft(ByVal Data() As Double) As Double() ' Rotate array left, first item becomes last

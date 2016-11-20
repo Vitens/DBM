@@ -1,6 +1,11 @@
 Option Explicit
 Option Strict
 
+' DBM
+' Dynamic Bandwidth Monitor
+' Leak detection method implemented in a real-time data historian
+' J.H. Fitié, Vitens N.V.
+
 Public Class DBMConstants
 
     Public Const CalculationInterval As Integer =           300 ' seconds; 300 = 5 minutes

@@ -1,15 +1,21 @@
 Option Explicit
 Option Strict
 
+' DBM
+' Dynamic Bandwidth Monitor
+' Leak detection method implemented in a real-time data historian
+' J.H. Fitié, Vitens N.V.
+
 Public Class DBMDriver
 
     Public Shared Data(-1) As Double
 
     Public Sub New(Optional ByVal Data() As Object=Nothing)
-        For Each Value In Data
-            ReDim Preserve DBMDriver.Data(DBMDriver.Data.Length)
-            DBMDriver.Data(DBMDriver.Data.Length-1)=CDbl(Value)
-        Next
+        Dim i As Integer
+        ReDim DBMDriver.Data(Data.Length-1)
+        For i=0 To Data.Length-1
+            DBMDriver.Data(i)=CDbl(Data(i))
+        Next i
     End Sub
 
 End Class

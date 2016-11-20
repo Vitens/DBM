@@ -1,6 +1,11 @@
 ﻿Option Explicit
 Option Strict
 
+' DBM
+' Dynamic Bandwidth Monitor
+' Leak detection method implemented in a real-time data historian
+' J.H. Fitié, Vitens N.V.
+
 Imports System.Reflection
 <assembly:AssemblyTitle("DBMRt")>
 <assembly:AssemblyCompany("Vitens N.V.")>
