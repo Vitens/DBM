@@ -3,10 +3,13 @@ Option Strict
 
 Public Class DBMDriver
 
-    Public Shared Data() As Object
+    Public Shared Data(-1) As Double
 
     Public Sub New(Optional ByVal Data() As Object=Nothing)
-        DBMDriver.Data=Data
+        For Each Value In Data
+            ReDim Preserve DBMDriver.Data(DBMDriver.Data.Length)
+            DBMDriver.Data(DBMDriver.Data.Length-1)=CDbl(Value)
+        Next
     End Sub
 
 End Class
@@ -23,7 +26,7 @@ Public Class DBMPointDriver
     End Sub
 
     Public Function GetData(ByVal StartTimestamp As DateTime,ByVal EndTimestamp As DateTime) As Double
-        GetData=CDbl(DBMDriver.Data(0))
+        GetData=DBMDriver.Data(0)
         DBMDriver.Data=DBMDriver.Data.Skip(1).ToArray
         Return GetData
     End Function
