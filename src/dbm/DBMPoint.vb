@@ -24,7 +24,7 @@ Public Class DBMPoint
         ReDim Me.RelativeError(DBMConstants.CorrelationPreviousPeriods)
     End Sub
 
-    Private Function Value(ByVal Timestamp As DateTime) As Double
+    Private Function Value(ByVal Timestamp As DateTime) As Double ' Returns value at timestamp, either from cache or using driver
         Dim i As Integer
         i=Array.FindIndex(Me.CachedValues,Function(FindCachedValue)FindCachedValue.Timestamp=Timestamp) ' Find timestamp in cache
         If i>=0 Then ' Found timestamp in cache

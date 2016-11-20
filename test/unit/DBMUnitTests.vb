@@ -100,8 +100,8 @@ Module DBMUnitTests
             UnitTest("Coming/going test 1/3; Eibergen",0,"\\sr-16637\ACE-GE-Balansgebied-Eibergen-levering",Nothing,New DateTime(2016,4,28,17,50,0),False)
             UnitTest("Coming/going test 2/3; Eibergen",-1.024,"\\sr-16637\ACE-GE-Balansgebied-Eibergen-levering",Nothing,New DateTime(2016,4,28,17,55,0),False)
             UnitTest("Coming/going test 3/3; Eibergen",0,"\\sr-16637\ACE-GE-Balansgebied-Eibergen-levering",Nothing,New DateTime(2016,4,28,18,0,0),False)
+            Console.WriteLine(Math.Round((DateTime.Now.Ticks-Ticks)/10000) & "ms OK:" & ResultOK & " Error:" & ResultErr)
         Next i
-        Console.WriteLine(Math.Round((DateTime.Now.Ticks-Ticks)/10000) & "ms OK:" & ResultOK & " Error:" & ResultErr)
     End Sub
 
 End Module

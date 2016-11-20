@@ -9,7 +9,8 @@ Option Strict
 Public Class DBMMath
 
     Private Function NormSInv(ByVal p As Double) As Double
-        ' http://www.source-code.biz/snippets/vbasic/9.htm
+        ' Approximation of inverse standard normal CDF developed by Peter J. Acklam
+        ' Returns the inverse of the standard normal cumulative distribution
         Const a1=-39.6968302866538,a2=220.946098424521,a3=-275.928510446969
         Const a4=138.357751867269,a5=-30.6647980661472,a6=2.50662827745924
         Const b1=-54.4760987982241,b2=161.585836858041,b3=-155.698979859887
@@ -34,7 +35,8 @@ Public Class DBMMath
     End Function
 
     Private Function TInv2T(ByVal p As Double,ByVal dof As Integer) As Double
-        ' https://gist.github.com/shuhaowu/6177897
+        ' Hill's approx. inverse t-dist.: Comm. of A.C.M Vol.13 No.10 1970 pg 620
+        ' Returns the quantile for the two-tailed student's t distribution
         Dim a,b,c,d,x,y As Double
         If dof=1 Then
             p*=Math.PI/2
@@ -120,15 +122,15 @@ Public Class DBMMath
         Return CalculateMedianAbsDev
     End Function
 
-    Public Function RemoveOutliers(ByVal Data() As Double) As Double()
+    Public Function RemoveOutliers(ByVal Data() As Double) As Double() ' Returns an array which contains the input data from which outliers are removed (NaN)
         Dim Median,MedianAbsDev,Mean,MeanAbsDev As Double
         Dim i As Integer
         Median=CalculateMedian(Data.ToArray)
         MedianAbsDev=CalculateMedianAbsDev(Median,Data.ToArray)
+        Mean=CalculateMean(Data.ToArray)
+        MeanAbsDev=CalculateMeanAbsDev(Mean,Data.ToArray)
         For i=0 to Data.Length-1
             If MedianAbsDev=0 Then ' Use Mean Absolute Deviation instead of Median Absolute Deviation to detect outliers
-                Mean=CalculateMean(Data.ToArray)
-                MeanAbsDev=CalculateMeanAbsDev(Mean,Data.ToArray)
                 If Math.Abs(Data(i)-Mean)>MeanAbsDev*MeanAbsDevScaleFactor*ControlLimitRejectionCriterion(Data.Length-1) Then ' If value is an outlier
                     Data(i)=Double.NaN ' Exclude outlier
                 End If

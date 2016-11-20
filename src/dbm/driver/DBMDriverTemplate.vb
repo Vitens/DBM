@@ -8,23 +8,16 @@ Option Strict
 
 Public Class DBMDriver
 
-    Public Shared Data(-1) As Double
-
     Public Sub New(Optional ByVal Data() As Object=Nothing)
-        Dim i As Integer
-        ReDim DBMDriver.Data(Data.Length-1)
-        For i=0 To Data.Length-1
-            DBMDriver.Data(i)=CDbl(Data(i))
-        Next i
     End Sub
 
 End Class
 
 Public Class DBMPointDriver
 
-    Public Point As String
+    Public Point As Object
 
-    Public Sub New(Optional ByVal Point As String=Nothing)
+    Public Sub New(Optional ByVal Point As Object=Nothing)
         Me.Point=Point
     End Sub
 
@@ -32,9 +25,6 @@ Public Class DBMPointDriver
     End Sub
 
     Public Function GetData(ByVal StartTimestamp As DateTime,ByVal EndTimestamp As DateTime) As Double
-        GetData=DBMDriver.Data(0) ' Return first item from data array passed to DBMDriver
-        DBMDriver.Data=DBMDriver.Data.Skip(1).ToArray ' Remove first item from data array
-        Return GetData
     End Function
 
     Public Sub PostCalculate(Optional ByVal Timestamp As DateTime=Nothing)
