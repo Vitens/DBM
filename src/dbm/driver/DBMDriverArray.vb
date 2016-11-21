@@ -24,7 +24,7 @@ Public Class DBMPointDriver
 
     Public Point As String
 
-    Public Sub New(Optional ByVal Point As String=Nothing)
+    Public Sub New(ByVal Point As String)
         Me.Point=Point
     End Sub
 

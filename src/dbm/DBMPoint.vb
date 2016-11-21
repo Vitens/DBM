@@ -8,7 +8,7 @@ Option Strict
 
 Public Class DBMPoint
 
-    Public DBMPointDriver As New DBMPointDriver
+    Public DBMPointDriver As New DBMPointDriver(Nothing)
     Private CachedValues() As DBMCachedValue
     Public AbsoluteError(),RelativeError() As Double
     Private DBMFunctions As New DBMFunctions

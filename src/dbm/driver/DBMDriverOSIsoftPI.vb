@@ -17,7 +17,7 @@ Public Class DBMPointDriver
 
     Public Point As PISDK.PIPoint
 
-    Public Sub New(Optional ByVal Point As PISDK.PIPoint=Nothing)
+    Public Sub New(ByVal Point As PISDK.PIPoint)
         Me.Point=Point
     End Sub
 
