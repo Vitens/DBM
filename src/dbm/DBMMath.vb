@@ -41,6 +41,8 @@ Public Class DBMMath
         If dof=1 Then
             p*=Math.PI/2
             TInv2T=Math.Cos(p)/Math.Sin(p)
+        ElseIf dof=2 Then
+            TInv2T=Math.Sqrt(2/(p*(2-p))-2)
         Else
             a=1/(dof-0.5)
             b=48/(a^2)
@@ -71,7 +73,7 @@ Public Class DBMMath
 
     Private Function MedianAbsDevScaleFactor(ByVal n As Integer) As Double ' Scale factor k
         If n<30 Then
-            MedianAbsDevScaleFactor=1/TInv2T(1-(1-0.75)*2,Math.Max(2,n)) ' n<30 Student's t-distribution
+            MedianAbsDevScaleFactor=1/TInv2T(1-(1-0.75)*2,n) ' n<30 Student's t-distribution
         Else
             MedianAbsDevScaleFactor=1/NormSInv(0.75) ' n>=30 Standard normal distribution
         End If
@@ -80,7 +82,7 @@ Public Class DBMMath
 
     Public Function ControlLimitRejectionCriterion(ByVal n As Integer) As Double
         If n<30 Then
-            ControlLimitRejectionCriterion=TInv2T(1-DBMConstants.ConfidenceInterval,Math.Max(2,n)) ' n<30 Student's t-distribution
+            ControlLimitRejectionCriterion=TInv2T(1-DBMConstants.ConfidenceInterval,n) ' n<30 Student's t-distribution
         Else
             ControlLimitRejectionCriterion=NormSInv((DBMConstants.ConfidenceInterval+1)/2) ' n>=30 Standard normal distribution
         End If
