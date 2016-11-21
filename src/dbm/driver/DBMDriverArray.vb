@@ -28,16 +28,10 @@ Public Class DBMPointDriver
         Me.Point=Point
     End Sub
 
-    Public Sub PreCalculate(Optional ByVal Timestamp As DateTime=Nothing)
-    End Sub
-
     Public Function GetData(ByVal StartTimestamp As DateTime,ByVal EndTimestamp As DateTime) As Double
         GetData=DBMDriver.Data(0) ' Return first item from data array passed to DBMDriver
         DBMDriver.Data=DBMDriver.Data.Skip(1).ToArray ' Remove first item from data array
         Return GetData
     End Function
-
-    Public Sub PostCalculate(Optional ByVal Timestamp As DateTime=Nothing)
-    End Sub
 
 End Class

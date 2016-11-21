@@ -45,7 +45,6 @@ Public Class DBMPoint
         Dim Pattern(DBMConstants.ComparePatterns),CurrValueEMA(DBMConstants.EMAPreviousPeriods),PredValueEMA(DBMConstants.EMAPreviousPeriods),LowContrLimitEMA(DBMConstants.EMAPreviousPeriods),UppContrLimitEMA(DBMConstants.EMAPreviousPeriods) As Double
         Dim DBMStatistics As New DBMStatistics
         Dim DBMMath As New DBMMath
-        Me.DBMPointDriver.PreCalculate(Timestamp) ' Call precalculation sub in driver
         Calculate.Factor=0 ' No event
         For CorrelationCounter=0 To DBMConstants.CorrelationPreviousPeriods
             If CorrelationCounter=0 Or (IsInputDBMPoint And Calculate.Factor<>0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
@@ -86,7 +85,6 @@ Public Class DBMPoint
                 End If
             End If
         Next CorrelationCounter
-        Me.DBMPointDriver.PostCalculate(Timestamp) ' Call postcalculation sub in driver
         Return Calculate
     End Function
 
