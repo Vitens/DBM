@@ -54,7 +54,7 @@ Module DBMUnitTests
 
     Private Sub CalculationTest(ByVal Result As Double,ByVal Expected As Double)
         If Result<>Expected Then
-            Console.WriteLine("ERR: " & Result & vbTab & Expected)
+            Console.WriteLine("ERR: " & Result & " " & Expected)
         End If
     End Sub
 
@@ -128,6 +128,53 @@ Module DBMUnitTests
         CalculationTest(Math.Round(DBMMath.TInv(0.5809,13),4),0.2083)
         CalculationTest(Math.Round(DBMMath.TInv(0.3776,11),4),-0.3197)
         CalculationTest(Math.Round(DBMMath.TInv(0.5267,15),4),0.0681)
+
+        ' Test MeanAbsDevScaleFactor function
+        CalculationTest(Math.Round(DBMMath.MeanAbsDevScaleFactor,4),1.2533)
+
+        ' Test MedianAbsDevScaleFactor function
+        CalculationTest(Math.Round(DBMMath.MedianAbsDevScaleFactor(1),4),1)
+        CalculationTest(Math.Round(DBMMath.MedianAbsDevScaleFactor(2),4),1.2247)
+        CalculationTest(Math.Round(DBMMath.MedianAbsDevScaleFactor(4),4),1.3501)
+        CalculationTest(Math.Round(DBMMath.MedianAbsDevScaleFactor(6),4),1.3936)
+        CalculationTest(Math.Round(DBMMath.MedianAbsDevScaleFactor(8),4),1.4157)
+        CalculationTest(Math.Round(DBMMath.MedianAbsDevScaleFactor(10),4),1.429)
+        CalculationTest(Math.Round(DBMMath.MedianAbsDevScaleFactor(12),4),1.4378)
+        CalculationTest(Math.Round(DBMMath.MedianAbsDevScaleFactor(14),4),1.4442)
+        CalculationTest(Math.Round(DBMMath.MedianAbsDevScaleFactor(16),4),1.449)
+        CalculationTest(Math.Round(DBMMath.MedianAbsDevScaleFactor(18),4),1.4527)
+        CalculationTest(Math.Round(DBMMath.MedianAbsDevScaleFactor(20),4),1.4557)
+        CalculationTest(Math.Round(DBMMath.MedianAbsDevScaleFactor(22),4),1.4581)
+        CalculationTest(Math.Round(DBMMath.MedianAbsDevScaleFactor(24),4),1.4602)
+        CalculationTest(Math.Round(DBMMath.MedianAbsDevScaleFactor(26),4),1.4619)
+        CalculationTest(Math.Round(DBMMath.MedianAbsDevScaleFactor(28),4),1.4634)
+        CalculationTest(Math.Round(DBMMath.MedianAbsDevScaleFactor(30),4),1.4826)
+        CalculationTest(Math.Round(DBMMath.MedianAbsDevScaleFactor(32),4),1.4826)
+        CalculationTest(Math.Round(DBMMath.MedianAbsDevScaleFactor(34),4),1.4826)
+        CalculationTest(Math.Round(DBMMath.MedianAbsDevScaleFactor(36),4),1.4826)
+        CalculationTest(Math.Round(DBMMath.MedianAbsDevScaleFactor(38),4),1.4826)
+
+        ' Test ControlLimitRejectionCriterion function
+        CalculationTest(Math.Round(DBMMath.ControlLimitRejectionCriterion(1),4),63.6567)
+        CalculationTest(Math.Round(DBMMath.ControlLimitRejectionCriterion(2),4),9.9248)
+        CalculationTest(Math.Round(DBMMath.ControlLimitRejectionCriterion(4),4),4.6041)
+        CalculationTest(Math.Round(DBMMath.ControlLimitRejectionCriterion(6),4),3.7074)
+        CalculationTest(Math.Round(DBMMath.ControlLimitRejectionCriterion(8),4),3.3554)
+        CalculationTest(Math.Round(DBMMath.ControlLimitRejectionCriterion(10),4),3.1693)
+        CalculationTest(Math.Round(DBMMath.ControlLimitRejectionCriterion(12),4),3.0545)
+        CalculationTest(Math.Round(DBMMath.ControlLimitRejectionCriterion(14),4),2.9768)
+        CalculationTest(Math.Round(DBMMath.ControlLimitRejectionCriterion(16),4),2.9208)
+        CalculationTest(Math.Round(DBMMath.ControlLimitRejectionCriterion(18),4),2.8784)
+        CalculationTest(Math.Round(DBMMath.ControlLimitRejectionCriterion(20),4),2.8453)
+        CalculationTest(Math.Round(DBMMath.ControlLimitRejectionCriterion(22),4),2.8188)
+        CalculationTest(Math.Round(DBMMath.ControlLimitRejectionCriterion(24),4),2.7969)
+        CalculationTest(Math.Round(DBMMath.ControlLimitRejectionCriterion(26),4),2.7787)
+        CalculationTest(Math.Round(DBMMath.ControlLimitRejectionCriterion(28),4),2.7633)
+        CalculationTest(Math.Round(DBMMath.ControlLimitRejectionCriterion(30),4),2.5758)
+        CalculationTest(Math.Round(DBMMath.ControlLimitRejectionCriterion(32),4),2.5758)
+        CalculationTest(Math.Round(DBMMath.ControlLimitRejectionCriterion(34),4),2.5758)
+        CalculationTest(Math.Round(DBMMath.ControlLimitRejectionCriterion(36),4),2.5758)
+        CalculationTest(Math.Round(DBMMath.ControlLimitRejectionCriterion(38),4),2.5758)
 
         Ticks=DateTime.Now.Ticks
         For i=0 To 1 ' Run all cases twice to test cache

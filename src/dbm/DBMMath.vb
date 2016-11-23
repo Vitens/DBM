@@ -68,15 +68,15 @@ Public Class DBMMath
     End Function
 
     Public Shared Function TInv(ByVal p As Double,ByVal dof As Integer) As Double
-        TInv=TInv2T((1-(Math.Abs(0.5-p))*2),dof)*-Math.Sign(0.5-p)
+        TInv=TInv2T(1-(Math.Abs(0.5-p))*2,dof)*-Math.Sign(0.5-p)
         Return TInv
     End Function
 
-    Private Shared Function MeanAbsDevScaleFactor As Double ' Scale factor k
+    Public Shared Function MeanAbsDevScaleFactor As Double ' Scale factor k
         Return Math.Sqrt(Math.PI/2)
     End Function
 
-    Private Shared Function MedianAbsDevScaleFactor(ByVal n As Integer) As Double ' Scale factor k
+    Public Shared Function MedianAbsDevScaleFactor(ByVal n As Integer) As Double ' Scale factor k
         If n<30 Then
             MedianAbsDevScaleFactor=1/TInv(0.75,n) ' n<30 Student's t-distribution
         Else
