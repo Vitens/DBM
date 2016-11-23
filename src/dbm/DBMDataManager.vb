@@ -32,7 +32,7 @@ Public Class DBMDataManager
             Catch
                 Me.CachedValues(i)=New DBMCachedValue(Timestamp,Double.NaN) ' Error, return Not a Number
             End Try
-            CacheIndex=(CacheIndex+1) Mod CachedValues.length
+            CacheIndex=(CacheIndex+1) Mod CachedValues.Length
         End If
         Return Me.CachedValues(i).Value
     End Function
