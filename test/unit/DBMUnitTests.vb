@@ -71,10 +71,10 @@ Module DBMUnitTests
     End Sub
 
     Public Sub Main
-        Dim Ticks As Int64
-        Dim DBMStatistics As New DBMStatistics
         Dim i,j As Integer
         Dim Results(-1) As Double
+        Dim DBMStatistics As New DBMStatistics
+        Dim Ticks As Int64
         Console.Writeline(DBMFunctions.DBMVersion & vbCrLf)
 
         Console.Write("Testing ArrayMultiplier ")
@@ -90,10 +90,6 @@ Module DBMUnitTests
         CheckEqual(ArrayMultiplier(DBMFunctions.ArrayRotateLeft({4,5,1,2,3})),ArrayMultiplier({5,1,2,3,4}))
         CheckEqual(ArrayMultiplier(DBMFunctions.ArrayRotateLeft({5,1,2,3,4})),ArrayMultiplier({1,2,3,4,5}))
         Console.WriteLine(" Done")
-
-        ' TODO: DBMFunctions.ArrayRotateRight
-
-        ' TODO: DBMFunctions.ArrayMoveItemToFront
 
         Console.Write("Testing DBMMath.NormSInv ")
         CheckEqual(Math.Round(DBMMath.NormSInv(0.7451),4),0.6591)
@@ -355,53 +351,54 @@ Module DBMUnitTests
         For i=1 To 4
             If i=1 Then
                 Console.Write("Testing DBMStatistics.Slope ")
-                Results={-24.1399,-67.5699,51.3427,-56.9825,27.3182,-2.6573,32.1923,-46.8462,-11.1224,-61.5455,76.479,-12.4476,58.7413,20.3986,-30.2448,-10.8147,-47.2972,11.3147,71.1224,-57.1259}
+                Results={-24.1399,-67.5699,51.3427,-56.9825,27.3182,-2.6573,32.1923,-46.8462,-11.1224,-61.5455,9.4424,-0.1602,10.7659,4.8889,-4.6572,-0.4548,-6.6652,2.2442,8.6539,-12.0462}
             ElseIf i=2 Then
                 Console.Write("Testing DBMStatistics.Intercept ")
-                Results={3123.1026,3566.2179,2875.6154,3284.6538,2664.3333,2877.4487,3016.6923,3116.4872,2851.9231,3380.5,2272.2821,2990.9615,2593.0897,2492.141,3235.6795,3010.8974,3448.7179,3026.6026,2512.7436,3215.5256}
+                Results={3123.1026,3566.2179,2875.6154,3284.6538,2664.3333,2877.4487,3016.6923,3116.4872,2851.9231,3380.5,2332.5305,2930.2549,2585.1154,2427.9251,3229.618,2967.1468,3472.9635,2986.3475,2469.7771,3320.9411}
             ElseIf i=3 Then
                 Console.Write("Testing DBMStatistics.StDevSLinReg ")
-                Results={582.4218,633.706,535.0359,720.9024,619.3358,506.8629,525.9328,483.3154,527.9273,573.7699,528.6655,521.4415,582.2071,439.4615,639.2073,697.136,469.3447,386.0643,415.3838,657.4408}
+                Results={582.4218,633.706,535.0359,720.9024,619.3358,506.8629,525.9328,483.3154,527.9273,573.7699,676.6992,523.5618,678.6414,472.6452,663.1077,698.3863,563.5002,399.9662,638.4709,781.7412}
             ElseIf i=4 Then
                 Console.Write("Testing DBMStatistics.ModifiedCorrelation ")
-                Results={0.819,0.7932,0.8652,0.7909,0.8474,0.8345,0.8554,0.8061,0.8274,0.7962,0.8809,0.8282,0.8676,0.851,0.8139,0.8213,0.8114,0.8481,0.8813,0.7923}
+                Results={0.819,0.7932,0.8652,0.7909,0.8474,0.8345,0.8554,0.8061,0.8274,0.7962,0.8665,0.9037,0.8892,0.908,0.887,0.8274,0.8714,0.8915,0.9047,0.8561}
             End If
-            For j=1 To 20
-                If j=1 Then DBMStatistics.Calculate({3411,3067,3159,2579,2604,3549,2028,3521,3629,3418,2091,2828})
-                If j=2 Then DBMStatistics.Calculate({3725,3581,2747,3924,3743,2112,3899,2728,3050,3534,2107,3185})
-                If j=3 Then DBMStatistics.Calculate({2937,2596,3245,3296,2528,2559,3660,3649,3178,3972,3822,2454})
-                If j=4 Then DBMStatistics.Calculate({3390,3960,2488,3068,2213,3999,3352,2031,3150,2200,2206,3598})
-                If j=5 Then DBMStatistics.Calculate({2569,2091,2592,2764,2602,3897,3960,2803,2557,2321,2326,3293})
-                If j=6 Then DBMStatistics.Calculate({2820,2826,3425,2652,3266,2415,2372,3167,2161,2916,3811,2523})
-                If j=7 Then DBMStatistics.Calculate({3570,2758,2579,3839,3263,3255,2857,2196,3122,3389,3827,3670})
-                If j=8 Then DBMStatistics.Calculate({2045,3087,3832,2861,3356,3005,3027,2926,2707,2810,2539,2111})
-                If j=9 Then DBMStatistics.Calculate({2488,3958,2122,2781,2730,2980,2311,2949,2515,3258,3084,2313})
-                If j=10 Then DBMStatistics.Calculate({3877,3309,3012,2781,2215,3568,2919,3507,3192,3665,2038,2421})
-                If j=11 Then DBMStatistics.Calculate({2148,2211,2663,2256,2000,3074,3314,3088,3655,2164,2384,3358})
-                If j=12 Then DBMStatistics.Calculate({2908,2714,2300,3409,3858,3060,2179,3515,2804,2924,2984,2415})
-                If j=13 Then DBMStatistics.Calculate({2659,2191,3180,2340,3855,2196,2888,2546,3745,3501,2546,3347})
-                If j=14 Then DBMStatistics.Calculate({2513,2180,2062,2645,3580,2595,2471,2961,2509,2681,2090,2965})
-                If j=15 Then DBMStatistics.Calculate({2412,3729,3177,3510,3856,2662,3086,2161,3269,2820,3921,2229})
-                If j=16 Then DBMStatistics.Calculate({3847,3240,2695,2298,2960,2439,3987,2261,2058,2691,3095,3846})
-                If j=17 Then DBMStatistics.Calculate({3076,2813,3694,3652,3345,3444,3994,2680,2990,2826,3391,2358})
-                If j=18 Then DBMStatistics.Calculate({2846,3086,3629,3082,2855,3018,2456,3238,2980,3362,3773,2741})
-                If j=19 Then DBMStatistics.Calculate({2605,2586,2301,3060,2447,3169,2727,3752,2956,2381,3368,3495})
-                If j=20 Then DBMStatistics.Calculate({3228,3564,2323,3616,2405,3914,2132,2123,3586,2759,2927,2239})
+            For j=0 To 19
+                If j=0 Then DBMStatistics.Calculate({3411,3067,3159,2579,2604,3549,2028,3521,3629,3418,2091,2828})
+                If j=1 Then DBMStatistics.Calculate({3725,3581,2747,3924,3743,2112,3899,2728,3050,3534,2107,3185})
+                If j=2 Then DBMStatistics.Calculate({2937,2596,3245,3296,2528,2559,3660,3649,3178,3972,3822,2454})
+                If j=3 Then DBMStatistics.Calculate({3390,3960,2488,3068,2213,3999,3352,2031,3150,2200,2206,3598})
+                If j=4 Then DBMStatistics.Calculate({2569,2091,2592,2764,2602,3897,3960,2803,2557,2321,2326,3293})
+                If j=5 Then DBMStatistics.Calculate({2820,2826,3425,2652,3266,2415,2372,3167,2161,2916,3811,2523})
+                If j=6 Then DBMStatistics.Calculate({3570,2758,2579,3839,3263,3255,2857,2196,3122,3389,3827,3670})
+                If j=7 Then DBMStatistics.Calculate({2045,3087,3832,2861,3356,3005,3027,2926,2707,2810,2539,2111})
+                If j=8 Then DBMStatistics.Calculate({2488,3958,2122,2781,2730,2980,2311,2949,2515,3258,3084,2313})
+                If j=9 Then DBMStatistics.Calculate({3877,3309,3012,2781,2215,3568,2919,3507,3192,3665,2038,2421})
+                If j=10 Then DBMStatistics.Calculate({2148,2211,2663,2256,2000,3074,3314,3088,3655,2164,2384,3358},{3,5,10,20,28,32,41,46,57,66,74,76})
+                If j=11 Then DBMStatistics.Calculate({2908,2714,2300,3409,3858,3060,2179,3515,2804,2924,2984,2415},{10,18,28,35,44,50,51,62,63,66,74,80})
+                If j=12 Then DBMStatistics.Calculate({2659,2191,3180,2340,3855,2196,2888,2546,3745,3501,2546,3347},{9,11,13,18,21,26,28,37,42,47,56,61})
+                If j=13 Then DBMStatistics.Calculate({2513,2180,2062,2645,3580,2595,2471,2961,2509,2681,2090,2965},{6,14,23,26,32,35,37,41,45,48,58,68})
+                If j=14 Then DBMStatistics.Calculate({2412,3729,3177,3510,3856,2662,3086,2161,3269,2820,3921,2229},{7,12,23,29,30,32,36,38,41,49,55,61})
+                If j=15 Then DBMStatistics.Calculate({3847,3240,2695,2298,2960,2439,3987,2261,2058,2691,3095,3846},{4,9,15,18,20,26,36,45,49,58,64,71})
+                If j=16 Then DBMStatistics.Calculate({3076,2813,3694,3652,3345,3444,3994,2680,2990,2826,3391,2358},{7,14,24,28,37,40,49,51,55,61,69,77})
+                If j=17 Then DBMStatistics.Calculate({2846,3086,3629,3082,2855,3018,2456,3238,2980,3362,3773,2741},{6,16,23,29,35,40,49,60,64,73,75,78})
+                If j=18 Then DBMStatistics.Calculate({2605,2586,2301,3060,2447,3169,2727,3752,2956,2381,3368,3495},{6,13,24,30,38,47,57,59,69,77,86,96})
+                If j=19 Then DBMStatistics.Calculate({3228,3564,2323,3616,2405,3914,2132,2123,3586,2759,2927,2239},{10,15,21,22,24,32,34,43,46,53,55,63})
                 If i=1 Then
-                    CheckEqual(Math.Round(DBMStatistics.Slope,4),Results(j-1))
+                    CheckEqual(Math.Round(DBMStatistics.Slope,4),Results(j))
                 ElseIf i=2 Then
-                    CheckEqual(Math.Round(DBMStatistics.Intercept,4),Results(j-1))
+                    CheckEqual(Math.Round(DBMStatistics.Intercept,4),Results(j))
                 ElseIf i=3 Then
-                    CheckEqual(Math.Round(DBMStatistics.StDevSLinReg,4),Results(j-1))
+                    CheckEqual(Math.Round(DBMStatistics.StDevSLinReg,4),Results(j))
                 ElseIf i=4 Then
-                    CheckEqual(Math.Round(DBMStatistics.ModifiedCorrelation,4),Results(j-1))
+                    CheckEqual(Math.Round(DBMStatistics.ModifiedCorrelation,4),Results(j))
                 End If
             Next j
             Console.WriteLine(" Done")
         Next i
 
-        Ticks=DateTime.Now.Ticks
         Console.WriteLine()
+
+        Ticks=DateTime.Now.Ticks
         For i=0 To 1 ' Run all cases twice to test cache
             UnitTest("Normal situation; Leeuwarden",0,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering",Nothing,New DateTime(2016,2,5,10,0,0),False)
             UnitTest("Cache test 1/2, Normal sit.; Lwd",0,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering",Nothing,New DateTime(2016,2,5,10,0,0),False)
@@ -449,6 +446,7 @@ Module DBMUnitTests
             UnitTest("Coming/going test 3/3; Eibergen",0,"\\sr-16637\ACE-GE-Balansgebied-Eibergen-levering",Nothing,New DateTime(2016,4,28,18,0,0),False)
             Console.WriteLine(Math.Round((DateTime.Now.Ticks-Ticks)/10000) & "ms OK:" & ResultOK & " Error:" & ResultErr)
         Next i
+
     End Sub
 
 End Module
