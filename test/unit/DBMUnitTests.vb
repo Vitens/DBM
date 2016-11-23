@@ -64,28 +64,38 @@ Module DBMUnitTests
 
     Private Sub CheckEqual(ByVal Result As Double,ByVal Expected As Double)
         If Result<>Expected Then
-            Console.WriteLine("ERR: " & Result & " " & Expected)
+            Console.Write("[ERR:" & Result & "/" & Expected & "]")
+        Else
+            Console.Write(".")
         End If
     End Sub
 
     Public Sub Main
         Dim Ticks As Int64
-        Dim i As Integer
+        Dim DBMStatistics As New DBMStatistics
+        Dim i,j As Integer
+        Dim Results(-1) As Double
         Console.Writeline(DBMFunctions.DBMVersion & vbCrLf)
 
-        ' Test ArrayMultiplier function
+        Console.Write("Testing ArrayMultiplier ")
         CheckEqual(ArrayMultiplier({6,4,7,1,1,4,2,4}),1552)
         CheckEqual(ArrayMultiplier({8,4,7,3,2,6,5,7}),1865)
         CheckEqual(ArrayMultiplier({1,5,4,7,7,8,5,1}),1043)
+        Console.WriteLine(" Done")
 
-        ' Test ArrayRotateLeft function
+        Console.Write("Testing DBMFunctions.ArrayRotateLeft ")
         CheckEqual(ArrayMultiplier(DBMFunctions.ArrayRotateLeft({1,2,3,4,5})),ArrayMultiplier({2,3,4,5,1}))
         CheckEqual(ArrayMultiplier(DBMFunctions.ArrayRotateLeft({2,3,4,5,1})),ArrayMultiplier({3,4,5,1,2}))
         CheckEqual(ArrayMultiplier(DBMFunctions.ArrayRotateLeft({3,4,5,1,2})),ArrayMultiplier({4,5,1,2,3}))
         CheckEqual(ArrayMultiplier(DBMFunctions.ArrayRotateLeft({4,5,1,2,3})),ArrayMultiplier({5,1,2,3,4}))
         CheckEqual(ArrayMultiplier(DBMFunctions.ArrayRotateLeft({5,1,2,3,4})),ArrayMultiplier({1,2,3,4,5}))
+        Console.WriteLine(" Done")
 
-        ' Test NormSInv function
+        ' TODO: DBMFunctions.ArrayRotateRight
+
+        ' TODO: DBMFunctions.ArrayMoveItemToFront
+
+        Console.Write("Testing DBMMath.NormSInv ")
         CheckEqual(Math.Round(DBMMath.NormSInv(0.7451),4),0.6591)
         CheckEqual(Math.Round(DBMMath.NormSInv(0.4188),4),-0.205)
         CheckEqual(Math.Round(DBMMath.NormSInv(0.1385),4),-1.0871)
@@ -106,8 +116,9 @@ Module DBMUnitTests
         CheckEqual(Math.Round(DBMMath.NormSInv(0.6243),4),0.3168)
         CheckEqual(Math.Round(DBMMath.NormSInv(0.0353),4),-1.808)
         CheckEqual(Math.Round(DBMMath.NormSInv(0.9767),4),1.9899)
+        Console.WriteLine(" Done")
 
-        ' Test TInv2T function
+        Console.Write("Testing DBMMath.TInv2T ")
         CheckEqual(Math.Round(DBMMath.TInv2T(0.3353,16),4),0.9934)
         CheckEqual(Math.Round(DBMMath.TInv2T(0.4792,12),4),0.7303)
         CheckEqual(Math.Round(DBMMath.TInv2T(0.4384,9),4),0.8108)
@@ -128,8 +139,9 @@ Module DBMUnitTests
         CheckEqual(Math.Round(DBMMath.TInv2T(0.5546,2),4),0.7035)
         CheckEqual(Math.Round(DBMMath.TInv2T(0.0862,6),4),2.0504)
         CheckEqual(Math.Round(DBMMath.TInv2T(0.6041,10),4),0.5354)
+        Console.WriteLine(" Done")
 
-        ' Test TInv function
+        Console.Write("Testing DBMMath.TInv ")
         CheckEqual(Math.Round(DBMMath.TInv(0.4097,8),4),-0.2359)
         CheckEqual(Math.Round(DBMMath.TInv(0.174,19),4),-0.9623)
         CheckEqual(Math.Round(DBMMath.TInv(0.6545,15),4),0.4053)
@@ -150,11 +162,13 @@ Module DBMUnitTests
         CheckEqual(Math.Round(DBMMath.TInv(0.5809,13),4),0.2083)
         CheckEqual(Math.Round(DBMMath.TInv(0.3776,11),4),-0.3197)
         CheckEqual(Math.Round(DBMMath.TInv(0.5267,15),4),0.0681)
+        Console.WriteLine(" Done")
 
-        ' Test MeanAbsDevScaleFactor function
+        Console.Write("Testing DBMMath.MeanAbsDevScaleFactor ")
         CheckEqual(Math.Round(DBMMath.MeanAbsDevScaleFactor,4),1.2533)
+        Console.WriteLine(" Done")
 
-        ' Test MedianAbsDevScaleFactor function
+        Console.Write("Testing DBMMath.MedianAbsDevScaleFactor ")
         CheckEqual(Math.Round(DBMMath.MedianAbsDevScaleFactor(1),4),1)
         CheckEqual(Math.Round(DBMMath.MedianAbsDevScaleFactor(2),4),1.2247)
         CheckEqual(Math.Round(DBMMath.MedianAbsDevScaleFactor(4),4),1.3501)
@@ -175,8 +189,9 @@ Module DBMUnitTests
         CheckEqual(Math.Round(DBMMath.MedianAbsDevScaleFactor(34),4),1.4826)
         CheckEqual(Math.Round(DBMMath.MedianAbsDevScaleFactor(36),4),1.4826)
         CheckEqual(Math.Round(DBMMath.MedianAbsDevScaleFactor(38),4),1.4826)
+        Console.WriteLine(" Done")
 
-        ' Test ControlLimitRejectionCriterion function
+        Console.Write("Testing DBMMath.ControlLimitRejectionCriterion ")
         CheckEqual(Math.Round(DBMMath.ControlLimitRejectionCriterion(1),4),63.6567)
         CheckEqual(Math.Round(DBMMath.ControlLimitRejectionCriterion(2),4),9.9248)
         CheckEqual(Math.Round(DBMMath.ControlLimitRejectionCriterion(4),4),4.6041)
@@ -197,8 +212,9 @@ Module DBMUnitTests
         CheckEqual(Math.Round(DBMMath.ControlLimitRejectionCriterion(34),4),2.5758)
         CheckEqual(Math.Round(DBMMath.ControlLimitRejectionCriterion(36),4),2.5758)
         CheckEqual(Math.Round(DBMMath.ControlLimitRejectionCriterion(38),4),2.5758)
+        Console.WriteLine(" Done")
 
-        ' Test CalculateMean function
+        Console.Write("Testing DBMMath.CalculateMean ")
         CheckEqual(Math.Round(DBMMath.CalculateMean({60}),4),60)
         CheckEqual(Math.Round(DBMMath.CalculateMean({72}),4),72)
         CheckEqual(Math.Round(DBMMath.CalculateMean({32,95}),4),63.5)
@@ -219,8 +235,9 @@ Module DBMUnitTests
         CheckEqual(Math.Round(DBMMath.CalculateMean({12,84,12,94,52,17,1,13,37}),4),35.7778)
         CheckEqual(Math.Round(DBMMath.CalculateMean({18,14,54,40,73,77,4,91,53,10}),4),43.4)
         CheckEqual(Math.Round(DBMMath.CalculateMean({80,30,1,92,44,61,18,72,63,41}),4),50.2)
+        Console.WriteLine(" Done")
 
-        ' Test CalculateMedian function
+        Console.Write("Testing DBMMath.CalculateMedian ")
         CheckEqual(DBMMath.CalculateMedian({57}),57)
         CheckEqual(DBMMath.CalculateMedian({46}),46)
         CheckEqual(DBMMath.CalculateMedian({79,86}),82.5)
@@ -241,8 +258,9 @@ Module DBMUnitTests
         CheckEqual(DBMMath.CalculateMedian({81,64,5,23,48,18,19,87,15}),23)
         CheckEqual(DBMMath.CalculateMedian({33,82,42,33,81,56,13,13,54,6}),37.5)
         CheckEqual(DBMMath.CalculateMedian({55,40,75,23,53,85,59,9,72,44}),54)
+        Console.WriteLine(" Done")
 
-        ' Test CalculateMeanAbsDev function
+        Console.Write("Testing DBMMath.CalculateMeanAbsDev ")
         CheckEqual(Math.Round(DBMMath.CalculateMeanAbsDev(19,{19}),4),0)
         CheckEqual(Math.Round(DBMMath.CalculateMeanAbsDev(86,{86}),4),0)
         CheckEqual(Math.Round(DBMMath.CalculateMeanAbsDev(15.5,{7,24}),4),8.5)
@@ -263,8 +281,9 @@ Module DBMUnitTests
         CheckEqual(Math.Round(DBMMath.CalculateMeanAbsDev(63.6667,{64,63,54,94,25,80,97,45,51}),4),17.8519)
         CheckEqual(Math.Round(DBMMath.CalculateMeanAbsDev(46.5,{47,22,52,22,10,38,94,85,54,41}),4),19.9)
         CheckEqual(Math.Round(DBMMath.CalculateMeanAbsDev(31.4,{7,12,84,29,41,8,18,15,16,84}),4),22.96)
+        Console.WriteLine(" Done")
 
-        ' Test CalculateMedianAbsDev function
+        Console.Write("Testing DBMMath.CalculateMedianAbsDev ")
         CheckEqual(DBMMath.CalculateMedianAbsDev(2,{2}),0)
         CheckEqual(DBMMath.CalculateMedianAbsDev(37,{37}),0)
         CheckEqual(DBMMath.CalculateMedianAbsDev(62,{87,37}),25)
@@ -285,8 +304,9 @@ Module DBMUnitTests
         CheckEqual(DBMMath.CalculateMedianAbsDev(15,{48,6,14,2,74,89,15,8,83}),13)
         CheckEqual(DBMMath.CalculateMedianAbsDev(32.5,{2,22,91,84,43,96,55,3,9,11}),26.5)
         CheckEqual(DBMMath.CalculateMedianAbsDev(53.5,{6,96,82,26,47,84,34,39,60,99}),28)
+        Console.WriteLine(" Done")
 
-        ' Test RemoveOutliers function
+        Console.Write("Testing DBMMath.RemoveOutliers ")
         CheckEqual(ArrayMultiplier(DBMMath.RemoveOutliers({2282.4634,3233.9927,2313.853,2145.928,2809.7371,2213.207,2193.105,2557.4885,3927.1062,2304.9473,2086.3416,2872.4075})),ArrayMultiplier({2282.4634,Double.NaN,2313.853,2145.928,2809.7371,2213.207,2193.105,2557.4885,Double.NaN,2304.9473,2086.3416,2872.4075}))
         CheckEqual(ArrayMultiplier(DBMMath.RemoveOutliers({2922.467,2654.3137,2531.8938,2554.7935,2894.1758,2526.7852,2051.6868,3083.7932,2542.0398,2378.6038,2610.0007,3567.543})),ArrayMultiplier({2922.467,2654.3137,2531.8938,2554.7935,2894.1758,2526.7852,2051.6868,3083.7932,2542.0398,2378.6038,2610.0007,Double.NaN}))
         CheckEqual(ArrayMultiplier(DBMMath.RemoveOutliers({2223.6946,2770.1624,2125.7544,3948.9927,2184.2341,2238.6421,2170.0227,2967.0674,2177.3738,3617.1328,2460.8193,3315.8684})),ArrayMultiplier({2223.6946,2770.1624,2125.7544,Double.NaN,2184.2341,2238.6421,2170.0227,2967.0674,2177.3738,Double.NaN,2460.8193,Double.NaN}))
@@ -307,8 +327,9 @@ Module DBMUnitTests
         CheckEqual(ArrayMultiplier(DBMMath.RemoveOutliers({2038.1091,2248.3057,2427.1646,2337.2427,2642.043,3497.5393,3996.3579,2178.979,3968.8848,3460.8613,2774.8486,2338.1362})),ArrayMultiplier({2038.1091,2248.3057,2427.1646,2337.2427,2642.043,3497.5393,Double.NaN,2178.979,Double.NaN,3460.8613,2774.8486,2338.1362}))
         CheckEqual(ArrayMultiplier(DBMMath.RemoveOutliers({3010.9485,2517.2876,2057.7188,2133.0801,3192.0308,2035.0759,3821.248,2391.8086,2267.896,3751.3276,2340.9497,2327.333})),ArrayMultiplier({3010.9485,2517.2876,2057.7188,2133.0801,3192.0308,2035.0759,Double.NaN,2391.8086,2267.896,Double.NaN,2340.9497,2327.333}))
         CheckEqual(ArrayMultiplier(DBMMath.RemoveOutliers({3009.2004,3779.3677,3500.9705,3114.8486,3312.1548,3478.4153,3080.0972,2848.6597,3197.1477,3064.1587,3100.6992,2953.3582})),ArrayMultiplier({3009.2004,Double.NaN,3500.9705,3114.8486,3312.1548,3478.4153,3080.0972,2848.6597,3197.1477,3064.1587,3100.6992,2953.3582}))
+        Console.WriteLine(" Done")
 
-        ' Test CalculateExpMovingAvg function
+        Console.Write("Testing DBMMath.CalculateExpMovingAvg ")
         CheckEqual(Math.Round(DBMMath.CalculateExpMovingAvg({70.5547}),4),70.5547)
         CheckEqual(Math.Round(DBMMath.CalculateExpMovingAvg({53.3424,57.9519}),4),54.4948)
         CheckEqual(Math.Round(DBMMath.CalculateExpMovingAvg({28.9562,30.1948}),4),29.2658)
@@ -329,8 +350,58 @@ Module DBMUnitTests
         CheckEqual(Math.Round(DBMMath.CalculateExpMovingAvg({64.6587,41.0073,41.2767,71.273,32.6206,63.3179}),4),53.1265)
         CheckEqual(Math.Round(DBMMath.CalculateExpMovingAvg({20.7561,18.6014,58.3359,8.0715,45.7971,90.573}),4),31.4677)
         CheckEqual(Math.Round(DBMMath.CalculateExpMovingAvg({26.1368,78.5212,37.8903,28.9665,91.9377,63.1742}),4),48.6925)
+        Console.WriteLine(" Done")
+
+        For i=1 To 4
+            If i=1 Then
+                Console.Write("Testing DBMStatistics.Slope ")
+                Results={-24.1399,-67.5699,51.3427,-56.9825,27.3182,-2.6573,32.1923,-46.8462,-11.1224,-61.5455,76.479,-12.4476,58.7413,20.3986,-30.2448,-10.8147,-47.2972,11.3147,71.1224,-57.1259}
+            ElseIf i=2 Then
+                Console.Write("Testing DBMStatistics.Intercept ")
+                Results={3123.1026,3566.2179,2875.6154,3284.6538,2664.3333,2877.4487,3016.6923,3116.4872,2851.9231,3380.5,2272.2821,2990.9615,2593.0897,2492.141,3235.6795,3010.8974,3448.7179,3026.6026,2512.7436,3215.5256}
+            ElseIf i=3 Then
+                Console.Write("Testing DBMStatistics.StDevSLinReg ")
+                Results={582.4218,633.706,535.0359,720.9024,619.3358,506.8629,525.9328,483.3154,527.9273,573.7699,528.6655,521.4415,582.2071,439.4615,639.2073,697.136,469.3447,386.0643,415.3838,657.4408}
+            ElseIf i=4 Then
+                Console.Write("Testing DBMStatistics.ModifiedCorrelation ")
+                Results={0.819,0.7932,0.8652,0.7909,0.8474,0.8345,0.8554,0.8061,0.8274,0.7962,0.8809,0.8282,0.8676,0.851,0.8139,0.8213,0.8114,0.8481,0.8813,0.7923}
+            End If
+            For j=1 To 20
+                If j=1 Then DBMStatistics.Calculate({3411,3067,3159,2579,2604,3549,2028,3521,3629,3418,2091,2828})
+                If j=2 Then DBMStatistics.Calculate({3725,3581,2747,3924,3743,2112,3899,2728,3050,3534,2107,3185})
+                If j=3 Then DBMStatistics.Calculate({2937,2596,3245,3296,2528,2559,3660,3649,3178,3972,3822,2454})
+                If j=4 Then DBMStatistics.Calculate({3390,3960,2488,3068,2213,3999,3352,2031,3150,2200,2206,3598})
+                If j=5 Then DBMStatistics.Calculate({2569,2091,2592,2764,2602,3897,3960,2803,2557,2321,2326,3293})
+                If j=6 Then DBMStatistics.Calculate({2820,2826,3425,2652,3266,2415,2372,3167,2161,2916,3811,2523})
+                If j=7 Then DBMStatistics.Calculate({3570,2758,2579,3839,3263,3255,2857,2196,3122,3389,3827,3670})
+                If j=8 Then DBMStatistics.Calculate({2045,3087,3832,2861,3356,3005,3027,2926,2707,2810,2539,2111})
+                If j=9 Then DBMStatistics.Calculate({2488,3958,2122,2781,2730,2980,2311,2949,2515,3258,3084,2313})
+                If j=10 Then DBMStatistics.Calculate({3877,3309,3012,2781,2215,3568,2919,3507,3192,3665,2038,2421})
+                If j=11 Then DBMStatistics.Calculate({2148,2211,2663,2256,2000,3074,3314,3088,3655,2164,2384,3358})
+                If j=12 Then DBMStatistics.Calculate({2908,2714,2300,3409,3858,3060,2179,3515,2804,2924,2984,2415})
+                If j=13 Then DBMStatistics.Calculate({2659,2191,3180,2340,3855,2196,2888,2546,3745,3501,2546,3347})
+                If j=14 Then DBMStatistics.Calculate({2513,2180,2062,2645,3580,2595,2471,2961,2509,2681,2090,2965})
+                If j=15 Then DBMStatistics.Calculate({2412,3729,3177,3510,3856,2662,3086,2161,3269,2820,3921,2229})
+                If j=16 Then DBMStatistics.Calculate({3847,3240,2695,2298,2960,2439,3987,2261,2058,2691,3095,3846})
+                If j=17 Then DBMStatistics.Calculate({3076,2813,3694,3652,3345,3444,3994,2680,2990,2826,3391,2358})
+                If j=18 Then DBMStatistics.Calculate({2846,3086,3629,3082,2855,3018,2456,3238,2980,3362,3773,2741})
+                If j=19 Then DBMStatistics.Calculate({2605,2586,2301,3060,2447,3169,2727,3752,2956,2381,3368,3495})
+                If j=20 Then DBMStatistics.Calculate({3228,3564,2323,3616,2405,3914,2132,2123,3586,2759,2927,2239})
+                If i=1 Then
+                    CheckEqual(Math.Round(DBMStatistics.Slope,4),Results(j-1))
+                ElseIf i=2 Then
+                    CheckEqual(Math.Round(DBMStatistics.Intercept,4),Results(j-1))
+                ElseIf i=3 Then
+                    CheckEqual(Math.Round(DBMStatistics.StDevSLinReg,4),Results(j-1))
+                ElseIf i=4 Then
+                    CheckEqual(Math.Round(DBMStatistics.ModifiedCorrelation,4),Results(j-1))
+                End If
+            Next j
+            Console.WriteLine(" Done")
+        Next i
 
         Ticks=DateTime.Now.Ticks
+        Console.WriteLine()
         For i=0 To 1 ' Run all cases twice to test cache
             UnitTest("Normal situation; Leeuwarden",0,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering",Nothing,New DateTime(2016,2,5,10,0,0),False)
             UnitTest("Cache test 1/2, Normal sit.; Lwd",0,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering",Nothing,New DateTime(2016,2,5,10,0,0),False)
