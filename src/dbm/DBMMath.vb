@@ -94,14 +94,14 @@ Public Class DBMMath
         Return ControlLimitRejectionCriterion
     End Function
 
-    Private Shared Function CalculateMean(ByVal Data() As Double) As Double
+    Public Shared Function CalculateMean(ByVal Data() As Double) As Double
         For Each Value As Double In Data
             CalculateMean+=Value/Data.Length
         Next
         Return CalculateMean
     End Function
 
-    Private Shared Function CalculateMedian(ByVal Data() As Double) As Double
+    Public Shared Function CalculateMedian(ByVal Data() As Double) As Double
         Array.Sort(Data)
         If Data.Length Mod 2=0 Then
             CalculateMedian=(Data(Data.Length\2)+Data(Data.Length\2-1))/2
@@ -111,7 +111,7 @@ Public Class DBMMath
         Return CalculateMedian
     End Function
 
-    Private Shared Function CalculateMeanAbsDev(ByVal Mean As Double,ByVal Data() As Double) As Double
+    Public Shared Function CalculateMeanAbsDev(ByVal Mean As Double,ByVal Data() As Double) As Double
         Dim i As Integer
         For i=0 to Data.Length-1
             Data(i)=Math.Abs(Data(i)-Mean)
@@ -120,7 +120,7 @@ Public Class DBMMath
         Return CalculateMeanAbsDev
     End Function
 
-    Private Shared Function CalculateMedianAbsDev(ByVal Median As Double,ByVal Data() As Double) As Double
+    Public Shared Function CalculateMedianAbsDev(ByVal Median As Double,ByVal Data() As Double) As Double
         Dim i As Integer
         For i=0 to Data.Length-1
             Data(i)=Math.Abs(Data(i)-Median)
