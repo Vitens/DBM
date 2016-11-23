@@ -56,7 +56,7 @@ Module DBMUnitTests
         ArrayMultiplier=1
         For Each Value In Data
             If Not Double.IsNaN(Value) Then
-                ArrayMultiplier*=Value
+                ArrayMultiplier=ArrayMultiplier*2+Value
             End If
         Next
         Return ArrayMultiplier
@@ -72,6 +72,18 @@ Module DBMUnitTests
         Dim Ticks As Int64
         Dim i As Integer
         Console.Writeline(DBMFunctions.DBMVersion & vbCrLf)
+
+        ' Test ArrayMultiplier function
+        CheckEqual(ArrayMultiplier({6,4,7,1,1,4,2,4}),1552)
+        CheckEqual(ArrayMultiplier({8,4,7,3,2,6,5,7}),1865)
+        CheckEqual(ArrayMultiplier({1,5,4,7,7,8,5,1}),1043)
+
+        ' Test ArrayRotateLeft function
+        CheckEqual(ArrayMultiplier(DBMFunctions.ArrayRotateLeft({1,2,3,4,5})),ArrayMultiplier({2,3,4,5,1}))
+        CheckEqual(ArrayMultiplier(DBMFunctions.ArrayRotateLeft({2,3,4,5,1})),ArrayMultiplier({3,4,5,1,2}))
+        CheckEqual(ArrayMultiplier(DBMFunctions.ArrayRotateLeft({3,4,5,1,2})),ArrayMultiplier({4,5,1,2,3}))
+        CheckEqual(ArrayMultiplier(DBMFunctions.ArrayRotateLeft({4,5,1,2,3})),ArrayMultiplier({5,1,2,3,4}))
+        CheckEqual(ArrayMultiplier(DBMFunctions.ArrayRotateLeft({5,1,2,3,4})),ArrayMultiplier({1,2,3,4,5}))
 
         ' Test NormSInv function
         CheckEqual(Math.Round(DBMMath.NormSInv(0.7451),4),0.6591)
