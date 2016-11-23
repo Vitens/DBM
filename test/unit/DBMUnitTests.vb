@@ -52,10 +52,84 @@ Module DBMUnitTests
         Console.WriteLine("F:" & Math.Round(DBMResult.Factor,3) & " C:" & Math.Round(DBMResult.CurrValue) & " P:" & Math.Round(DBMResult.PredValue) & " L:" & Math.Round(DBMResult.LowContrLimit) & " U:" & Math.Round(DBMResult.UppContrLimit))
     End Sub
 
+    Private Sub CalculationTest(ByVal Result As Double,ByVal Expected As Double)
+        If Result<>Expected Then
+            Console.WriteLine("ERR: " & Result & vbTab & Expected)
+        End If
+    End Sub
+
     Public Sub Main
-        Dim Ticks As Int64=DateTime.Now.Ticks
+        Dim Ticks As Int64
         Dim i As Integer
         Console.Writeline(DBMFunctions.DBMVersion & vbCrLf)
+
+        ' Test NormSInv function
+        CalculationTest(Math.Round(DBMMath.NormSInv(0.7451),4),0.6591)
+        CalculationTest(Math.Round(DBMMath.NormSInv(0.4188),4),-0.205)
+        CalculationTest(Math.Round(DBMMath.NormSInv(0.1385),4),-1.0871)
+        CalculationTest(Math.Round(DBMMath.NormSInv(0.8974),4),1.2669)
+        CalculationTest(Math.Round(DBMMath.NormSInv(0.7663),4),0.7267)
+        CalculationTest(Math.Round(DBMMath.NormSInv(0.2248),4),-0.7561)
+        CalculationTest(Math.Round(DBMMath.NormSInv(0.9372),4),1.5317)
+        CalculationTest(Math.Round(DBMMath.NormSInv(0.4135),4),-0.2186)
+        CalculationTest(Math.Round(DBMMath.NormSInv(0.2454),4),-0.689)
+        CalculationTest(Math.Round(DBMMath.NormSInv(0.2711),4),-0.6095)
+        CalculationTest(Math.Round(DBMMath.NormSInv(0.2287),4),-0.7431)
+        CalculationTest(Math.Round(DBMMath.NormSInv(0.6517),4),0.3899)
+        CalculationTest(Math.Round(DBMMath.NormSInv(0.8663),4),1.1091)
+        CalculationTest(Math.Round(DBMMath.NormSInv(0.9275),4),1.4574)
+        CalculationTest(Math.Round(DBMMath.NormSInv(0.7089),4),0.5502)
+        CalculationTest(Math.Round(DBMMath.NormSInv(0.1234),4),-1.1582)
+        CalculationTest(Math.Round(DBMMath.NormSInv(0.0837),4),-1.3806)
+        CalculationTest(Math.Round(DBMMath.NormSInv(0.6243),4),0.3168)
+        CalculationTest(Math.Round(DBMMath.NormSInv(0.0353),4),-1.808)
+        CalculationTest(Math.Round(DBMMath.NormSInv(0.9767),4),1.9899)
+
+        ' Test TInv2T function
+        CalculationTest(Math.Round(DBMMath.TInv2T(0.3353,16),4),0.9934)
+        CalculationTest(Math.Round(DBMMath.TInv2T(0.4792,12),4),0.7303)
+        CalculationTest(Math.Round(DBMMath.TInv2T(0.4384,9),4),0.8108)
+        CalculationTest(Math.Round(DBMMath.TInv2T(0.0905,6),4),2.0152)
+        CalculationTest(Math.Round(DBMMath.TInv2T(0.63,16),4),0.4911)
+        CalculationTest(Math.Round(DBMMath.TInv2T(0.1533,11),4),1.5339)
+        CalculationTest(Math.Round(DBMMath.TInv2T(0.6297,12),4),0.4948)
+        CalculationTest(Math.Round(DBMMath.TInv2T(0.1512,4),4),1.7714)
+        CalculationTest(Math.Round(DBMMath.TInv2T(0.4407,18),4),0.7884)
+        CalculationTest(Math.Round(DBMMath.TInv2T(0.6169,15),4),0.5108)
+        CalculationTest(Math.Round(DBMMath.TInv2T(0.6077,18),4),0.5225)
+        CalculationTest(Math.Round(DBMMath.TInv2T(0.4076,20),4),0.8459)
+        CalculationTest(Math.Round(DBMMath.TInv2T(0.1462,18),4),1.5187)
+        CalculationTest(Math.Round(DBMMath.TInv2T(0.3421,6),4),1.0315)
+        CalculationTest(Math.Round(DBMMath.TInv2T(0.6566,6),4),0.4676)
+        CalculationTest(Math.Round(DBMMath.TInv2T(0.2986,1),4),1.9733)
+        CalculationTest(Math.Round(DBMMath.TInv2T(0.2047,14),4),1.3303)
+        CalculationTest(Math.Round(DBMMath.TInv2T(0.5546,2),4),0.7035)
+        CalculationTest(Math.Round(DBMMath.TInv2T(0.0862,6),4),2.0504)
+        CalculationTest(Math.Round(DBMMath.TInv2T(0.6041,10),4),0.5354)
+
+        ' Test TInv function
+        CalculationTest(Math.Round(DBMMath.TInv(0.4097,8),4),-0.2359)
+        CalculationTest(Math.Round(DBMMath.TInv(0.174,19),4),-0.9623)
+        CalculationTest(Math.Round(DBMMath.TInv(0.6545,15),4),0.4053)
+        CalculationTest(Math.Round(DBMMath.TInv(0.7876,5),4),0.8686)
+        CalculationTest(Math.Round(DBMMath.TInv(0.2995,3),4),-0.5861)
+        CalculationTest(Math.Round(DBMMath.TInv(0.0184,2),4),-5.0679)
+        CalculationTest(Math.Round(DBMMath.TInv(0.892,1),4),2.8333)
+        CalculationTest(Math.Round(DBMMath.TInv(0.7058,18),4),0.551)
+        CalculationTest(Math.Round(DBMMath.TInv(0.3783,2),4),-0.3549)
+        CalculationTest(Math.Round(DBMMath.TInv(0.2774,15),4),-0.6041)
+        CalculationTest(Math.Round(DBMMath.TInv(0.0406,8),4),-1.9945)
+        CalculationTest(Math.Round(DBMMath.TInv(0.1271,4),4),-1.3303)
+        CalculationTest(Math.Round(DBMMath.TInv(0.241,18),4),-0.718)
+        CalculationTest(Math.Round(DBMMath.TInv(0.0035,1),4),-90.942)
+        CalculationTest(Math.Round(DBMMath.TInv(0.1646,10),4),-1.0257)
+        CalculationTest(Math.Round(DBMMath.TInv(0.279,11),4),-0.6041)
+        CalculationTest(Math.Round(DBMMath.TInv(0.8897,4),4),1.4502)
+        CalculationTest(Math.Round(DBMMath.TInv(0.5809,13),4),0.2083)
+        CalculationTest(Math.Round(DBMMath.TInv(0.3776,11),4),-0.3197)
+        CalculationTest(Math.Round(DBMMath.TInv(0.5267,15),4),0.0681)
+
+        Ticks=DateTime.Now.Ticks
         For i=0 To 1 ' Run all cases twice to test cache
             UnitTest("Normal situation; Leeuwarden",0,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering",Nothing,New DateTime(2016,2,5,10,0,0),False)
             UnitTest("Cache test 1/2, Normal sit.; Lwd",0,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering",Nothing,New DateTime(2016,2,5,10,0,0),False)

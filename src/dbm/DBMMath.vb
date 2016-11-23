@@ -8,7 +8,7 @@ Option Strict
 
 Public Class DBMMath
 
-    Private Shared Function NormSInv(ByVal p As Double) As Double
+    Public Shared Function NormSInv(ByVal p As Double) As Double
         ' Approximation of inverse standard normal CDF developed by Peter J. Acklam
         ' Returns the inverse of the standard normal cumulative distribution
         Const a1=-39.6968302866538,a2=220.946098424521,a3=-275.928510446969
@@ -34,7 +34,7 @@ Public Class DBMMath
         Return NormSInv
     End Function
 
-    Private Shared Function TInv2T(ByVal p As Double,ByVal dof As Integer) As Double
+    Public Shared Function TInv2T(ByVal p As Double,ByVal dof As Integer) As Double
         ' Hill's approx. inverse t-dist.: Comm. of A.C.M Vol.13 No.10 1970 pg 620
         ' Returns the quantile for the two-tailed student's t distribution
         Dim a,b,c,d,x,y As Double
@@ -67,7 +67,7 @@ Public Class DBMMath
         Return TInv2T
     End Function
 
-    Private Shared Function TInv(ByVal p As Double,ByVal dof As Integer) As Double
+    Public Shared Function TInv(ByVal p As Double,ByVal dof As Integer) As Double
         TInv=TInv2T((1-(Math.Abs(0.5-p))*2),dof)*-Math.Sign(0.5-p)
         Return TInv
     End Function
