@@ -67,13 +67,18 @@ Public Class DBMMath
         Return TInv2T
     End Function
 
+    Private Function TInv(ByVal p As Double,ByVal dof As Integer) As Double
+        TInv=TInv2T((1-p)*2,dof)
+        Return TInv
+    End Function
+
     Private Function MeanAbsDevScaleFactor As Double ' Scale factor k
         Return Math.Sqrt(Math.PI/2)
     End Function
 
     Private Function MedianAbsDevScaleFactor(ByVal n As Integer) As Double ' Scale factor k
         If n<30 Then
-            MedianAbsDevScaleFactor=1/TInv2T(1-(1-0.75)*2,n) ' n<30 Student's t-distribution
+            MedianAbsDevScaleFactor=1/TInv(0.75,n) ' n<30 Student's t-distribution
         Else
             MedianAbsDevScaleFactor=1/NormSInv(0.75) ' n>=30 Standard normal distribution
         End If
