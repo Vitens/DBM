@@ -22,16 +22,4 @@ Public Class DBMFunctions
         Return Data
     End Function
 
-    Public Shared Function ArrayRotateRight(ByVal Data() As Object) As Object() ' Rotate array right, last item becomes first
-        Array.Reverse(Data,0,Data.Length-1) ' ABCDE -> DCBAE
-        Array.Reverse(Data) ' DCBAE -> EABCD
-        Return Data
-    End Function
-
-    Public Shared Function ArrayMoveItemToFront(ByVal Data() As Object,ByVal Item As Integer) As Object() ' Move item to front
-        Array.Reverse(Data,0,Item)
-        Array.Reverse(Data,0,Item+1)
-        Return Data
-    End Function
-
 End Class

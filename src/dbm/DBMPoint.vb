@@ -8,36 +8,14 @@ Option Strict
 
 Public Class DBMPoint
 
-    Public DBMPointDriver As New DBMPointDriver(Nothing)
-    Private CachedValues() As DBMCachedValue
+    Public DBMDataManager As DBMDataManager
     Public AbsoluteError(),RelativeError() As Double
 
     Public Sub New(ByVal DBMPointDriver As DBMPointDriver)
-        Dim i As Integer
-        Me.DBMPointDriver=DBMPointDriver
-        ReDim Me.CachedValues(CInt((DBMConstants.EMAPreviousPeriods+1+DBMConstants.CorrelationPreviousPeriods+1+24*(3600/DBMConstants.CalculationInterval))*(DBMConstants.ComparePatterns+1)-1))
-        For i=0 to Me.CachedValues.Length-1 ' Initialise cache
-            Me.CachedValues(i)=New DBMCachedValue(Nothing,Nothing)
-        Next i
+        Me.DBMDataManager=New DBMDataManager(DBMPointDriver)
         ReDim Me.AbsoluteError(DBMConstants.CorrelationPreviousPeriods)
         ReDim Me.RelativeError(DBMConstants.CorrelationPreviousPeriods)
     End Sub
-
-    Private Function Value(ByVal Timestamp As DateTime) As Double ' Returns value at timestamp, either from cache or using driver
-        Dim i As Integer
-        i=Array.FindIndex(Me.CachedValues,Function(FindCachedValue)FindCachedValue.Timestamp=Timestamp) ' Find timestamp in cache
-        If i>=0 Then ' Found timestamp in cache
-            DBMFunctions.ArrayMoveItemToFront(Me.CachedValues,i) ' Move to first item in cache
-        Else
-            DBMFunctions.ArrayRotateRight(Me.CachedValues) ' Remove last item from cache
-            Try
-                Me.CachedValues(0)=New DBMCachedValue(Timestamp,Me.DBMPointDriver.GetData(Timestamp,DateAdd("s",DBMConstants.CalculationInterval,Timestamp))) ' Get data using driver
-            Catch
-                Me.CachedValues(0)=New DBMCachedValue(Timestamp,Double.NaN) ' Error, return Not a Number
-            End Try
-        End If
-        Return Me.CachedValues(0).Value
-    End Function
 
     Public Function Calculate(ByVal Timestamp As DateTime,ByVal IsInputDBMPoint As Boolean,ByVal HasCorrelationDBMPoint As Boolean,Optional ByRef SubstractDBMPoint As DBMPoint=Nothing) As DBMResult
         Dim CorrelationCounter,EMACounter,PatternCounter As Integer
@@ -55,9 +33,9 @@ Public Class DBMPoint
                             UppContrLimitEMA=DBMFunctions.ArrayRotateLeft(UppContrLimitEMA)
                         End If
                         For PatternCounter=DBMConstants.ComparePatterns To 0 Step -1
-                            Pattern(DBMConstants.ComparePatterns-PatternCounter)=Me.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*DBMConstants.CalculationInterval,Timestamp)))
+                            Pattern(DBMConstants.ComparePatterns-PatternCounter)=Me.DBMDataManager.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*DBMConstants.CalculationInterval,Timestamp)))
                             If Not IsNothing(SubstractDBMPoint) Then
-                                Pattern(DBMConstants.ComparePatterns-PatternCounter)-=SubstractDBMPoint.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*DBMConstants.CalculationInterval,Timestamp)))
+                                Pattern(DBMConstants.ComparePatterns-PatternCounter)-=SubstractDBMPoint.DBMDataManager.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*DBMConstants.CalculationInterval,Timestamp)))
                             End If
                         Next PatternCounter
                         DBMStatistics.Calculate(DBMMath.RemoveOutliers(Pattern.Take(Pattern.Length-1).ToArray)) ' Calculate statistics for data after removing outliers

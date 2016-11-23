@@ -23,7 +23,7 @@ Public Class DBM
     End Sub
 
     Private Function DBMPointDriverIndex(ByVal DBMPointDriver As DBMPointDriver) As Integer
-        DBMPointDriverIndex=Array.FindIndex(DBMPoints,Function(FindDBMPoint)FindDBMPoint.DBMPointDriver.Point Is DBMPointDriver.Point)
+        DBMPointDriverIndex=Array.FindIndex(DBMPoints,Function(FindDBMPoint)FindDBMPoint.DBMDataManager.DBMPointDriver.Point Is DBMPointDriver.Point)
         If DBMPointDriverIndex=-1 Then ' PointDriver not found
             ReDim Preserve DBMPoints(DBMPoints.Length) ' Add to array
             DBMPointDriverIndex=DBMPoints.Length-1
