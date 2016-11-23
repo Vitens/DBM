@@ -11,7 +11,6 @@ Public Class DBMPoint
     Public DBMPointDriver As New DBMPointDriver(Nothing)
     Private CachedValues() As DBMCachedValue
     Public AbsoluteError(),RelativeError() As Double
-    Private DBMFunctions As New DBMFunctions
 
     Public Sub New(ByVal DBMPointDriver As DBMPointDriver)
         Dim i As Integer
@@ -44,7 +43,6 @@ Public Class DBMPoint
         Dim CorrelationCounter,EMACounter,PatternCounter As Integer
         Dim Pattern(DBMConstants.ComparePatterns),CurrValueEMA(DBMConstants.EMAPreviousPeriods),PredValueEMA(DBMConstants.EMAPreviousPeriods),LowContrLimitEMA(DBMConstants.EMAPreviousPeriods),UppContrLimitEMA(DBMConstants.EMAPreviousPeriods) As Double
         Dim DBMStatistics As New DBMStatistics
-        Dim DBMMath As New DBMMath
         Calculate.Factor=0 ' No event
         For CorrelationCounter=0 To DBMConstants.CorrelationPreviousPeriods
             If CorrelationCounter=0 Or (IsInputDBMPoint And Calculate.Factor<>0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then

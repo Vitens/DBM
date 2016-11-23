@@ -8,7 +8,7 @@ Option Strict
 
 Public Class DBMMath
 
-    Private Function NormSInv(ByVal p As Double) As Double
+    Private Shared Function NormSInv(ByVal p As Double) As Double
         ' Approximation of inverse standard normal CDF developed by Peter J. Acklam
         ' Returns the inverse of the standard normal cumulative distribution
         Const a1=-39.6968302866538,a2=220.946098424521,a3=-275.928510446969
@@ -34,7 +34,7 @@ Public Class DBMMath
         Return NormSInv
     End Function
 
-    Private Function TInv2T(ByVal p As Double,ByVal dof As Integer) As Double
+    Private Shared Function TInv2T(ByVal p As Double,ByVal dof As Integer) As Double
         ' Hill's approx. inverse t-dist.: Comm. of A.C.M Vol.13 No.10 1970 pg 620
         ' Returns the quantile for the two-tailed student's t distribution
         Dim a,b,c,d,x,y As Double
@@ -67,16 +67,16 @@ Public Class DBMMath
         Return TInv2T
     End Function
 
-    Private Function TInv(ByVal p As Double,ByVal dof As Integer) As Double
+    Private Shared Function TInv(ByVal p As Double,ByVal dof As Integer) As Double
         TInv=TInv2T((1-(Math.Abs(0.5-p))*2),dof)*-Math.Sign(0.5-p)
         Return TInv
     End Function
 
-    Private Function MeanAbsDevScaleFactor As Double ' Scale factor k
+    Private Shared Function MeanAbsDevScaleFactor As Double ' Scale factor k
         Return Math.Sqrt(Math.PI/2)
     End Function
 
-    Private Function MedianAbsDevScaleFactor(ByVal n As Integer) As Double ' Scale factor k
+    Private Shared Function MedianAbsDevScaleFactor(ByVal n As Integer) As Double ' Scale factor k
         If n<30 Then
             MedianAbsDevScaleFactor=1/TInv(0.75,n) ' n<30 Student's t-distribution
         Else
@@ -85,7 +85,7 @@ Public Class DBMMath
         Return MedianAbsDevScaleFactor
     End Function
 
-    Public Function ControlLimitRejectionCriterion(ByVal n As Integer) As Double
+    Public Shared Function ControlLimitRejectionCriterion(ByVal n As Integer) As Double
         If n<30 Then
             ControlLimitRejectionCriterion=TInv2T(1-DBMConstants.ConfidenceInterval,n) ' n<30 Student's t-distribution
         Else
@@ -94,14 +94,14 @@ Public Class DBMMath
         Return ControlLimitRejectionCriterion
     End Function
 
-    Private Function CalculateMean(ByVal Data() As Double) As Double
+    Private Shared Function CalculateMean(ByVal Data() As Double) As Double
         For Each Value As Double In Data
             CalculateMean+=Value/Data.Length
         Next
         Return CalculateMean
     End Function
 
-    Private Function CalculateMedian(ByVal Data() As Double) As Double
+    Private Shared Function CalculateMedian(ByVal Data() As Double) As Double
         Array.Sort(Data)
         If Data.Length Mod 2=0 Then
             CalculateMedian=(Data(Data.Length\2)+Data(Data.Length\2-1))/2
@@ -111,7 +111,7 @@ Public Class DBMMath
         Return CalculateMedian
     End Function
 
-    Private Function CalculateMeanAbsDev(ByVal Mean As Double,ByVal Data() As Double) As Double
+    Private Shared Function CalculateMeanAbsDev(ByVal Mean As Double,ByVal Data() As Double) As Double
         Dim i As Integer
         For i=0 to Data.Length-1
             Data(i)=Math.Abs(Data(i)-Mean)
@@ -120,7 +120,7 @@ Public Class DBMMath
         Return CalculateMeanAbsDev
     End Function
 
-    Private Function CalculateMedianAbsDev(ByVal Median As Double,ByVal Data() As Double) As Double
+    Private Shared Function CalculateMedianAbsDev(ByVal Median As Double,ByVal Data() As Double) As Double
         Dim i As Integer
         For i=0 to Data.Length-1
             Data(i)=Math.Abs(Data(i)-Median)
@@ -129,7 +129,7 @@ Public Class DBMMath
         Return CalculateMedianAbsDev
     End Function
 
-    Public Function RemoveOutliers(ByVal Data() As Double) As Double() ' Returns an array which contains the input data from which outliers are removed (NaN)
+    Public Shared Function RemoveOutliers(ByVal Data() As Double) As Double() ' Returns an array which contains the input data from which outliers are removed (NaN)
         Dim Median,MedianAbsDev,Mean,MeanAbsDev As Double
         Dim i As Integer
         Median=CalculateMedian(Data.ToArray)
@@ -150,7 +150,7 @@ Public Class DBMMath
         Return Data
     End Function
 
-    Public Function CalculateExpMovingAvg(ByVal Data() As Double) As Double ' Filter high frequency variation
+    Public Shared Function CalculateExpMovingAvg(ByVal Data() As Double) As Double ' Filter high frequency variation
         Dim Weight,TotalWeight As Double
         Weight=1 ' Initial weight
         TotalWeight=0
