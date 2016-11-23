@@ -52,6 +52,16 @@ Module DBMUnitTests
         Console.WriteLine("F:" & Math.Round(DBMResult.Factor,3) & " C:" & Math.Round(DBMResult.CurrValue) & " P:" & Math.Round(DBMResult.PredValue) & " L:" & Math.Round(DBMResult.LowContrLimit) & " U:" & Math.Round(DBMResult.UppContrLimit))
     End Sub
 
+    Private Function ArrayMultiplier(ByVal Data() As Double) As Double
+        ArrayMultiplier=1
+        For Each Value In Data
+            If Not Double.IsNaN(Value) Then
+                ArrayMultiplier*=Value
+            End If
+        Next
+        Return ArrayMultiplier
+    End Function
+
     Private Sub CalculationTest(ByVal Result As Double,ByVal Expected As Double)
         If Result<>Expected Then
             Console.WriteLine("ERR: " & Result & " " & Expected)
@@ -263,6 +273,50 @@ Module DBMUnitTests
         CalculationTest(Math.Round(DBMMath.CalculateMedianAbsDev(15,{48,6,14,2,74,89,15,8,83}),4),13)
         CalculationTest(Math.Round(DBMMath.CalculateMedianAbsDev(32.5,{2,22,91,84,43,96,55,3,9,11}),4),26.5)
         CalculationTest(Math.Round(DBMMath.CalculateMedianAbsDev(53.5,{6,96,82,26,47,84,34,39,60,99}),4),28)
+
+        ' Test RemoveOutliers function
+        CalculationTest(Math.Round(ArrayMultiplier(DBMMath.RemoveOutliers({941.463})),4),Math.Round(ArrayMultiplier({941.463}),4))
+        CalculationTest(Math.Round(ArrayMultiplier(DBMMath.RemoveOutliers({834.817,50.2454})),4),Math.Round(ArrayMultiplier({834.817,50.2454}),4))
+        CalculationTest(Math.Round(ArrayMultiplier(DBMMath.RemoveOutliers({111.186,48.9895})),4),Math.Round(ArrayMultiplier({111.186,48.9895}),4))
+        CalculationTest(Math.Round(ArrayMultiplier(DBMMath.RemoveOutliers({15.6302,3.136})),4),Math.Round(ArrayMultiplier({15.6302,3.136}),4))
+        CalculationTest(Math.Round(ArrayMultiplier(DBMMath.RemoveOutliers({8.4148,5.3679,67.8913})),4),Math.Round(ArrayMultiplier({8.4148,5.3679,Double.NaN}),4))
+        CalculationTest(Math.Round(ArrayMultiplier(DBMMath.RemoveOutliers({20209.41,1.189,48.2428})),4),Math.Round(ArrayMultiplier({Double.NaN,1.189,48.2428}),4))
+        CalculationTest(Math.Round(ArrayMultiplier(DBMMath.RemoveOutliers({74.7416,14351.43,239.088})),4),Math.Round(ArrayMultiplier({74.7416,Double.NaN,239.088}),4))
+        CalculationTest(Math.Round(ArrayMultiplier(DBMMath.RemoveOutliers({41.7599,0.4862,43.276})),4),Math.Round(ArrayMultiplier({41.7599,Double.NaN,43.276}),4))
+        CalculationTest(Math.Round(ArrayMultiplier(DBMMath.RemoveOutliers({489.216,32.5205,41.6648})),4),Math.Round(ArrayMultiplier({Double.NaN,32.5205,41.6648}),4))
+        CalculationTest(Math.Round(ArrayMultiplier(DBMMath.RemoveOutliers({11.1433,44.1216,3.2616,2.7701})),4),Math.Round(ArrayMultiplier({11.1433,Double.NaN,3.2616,2.7701}),4))
+        CalculationTest(Math.Round(ArrayMultiplier(DBMMath.RemoveOutliers({80.333,3.4418,20.6485,3.2211})),4),Math.Round(ArrayMultiplier({Double.NaN,3.4418,20.6485,3.2211}),4))
+        CalculationTest(Math.Round(ArrayMultiplier(DBMMath.RemoveOutliers({40.6934,178.308,43.8739,31.1837})),4),Math.Round(ArrayMultiplier({40.6934,Double.NaN,43.8739,31.1837}),4))
+        CalculationTest(Math.Round(ArrayMultiplier(DBMMath.RemoveOutliers({5.4649,676.4985,58.0387,6.9335,95.0413})),4),Math.Round(ArrayMultiplier({5.4649,Double.NaN,58.0387,6.9335,95.0413}),4))
+        CalculationTest(Math.Round(ArrayMultiplier(DBMMath.RemoveOutliers({673.949,42.5534,7.1983,28.3584,261.5955})),4),Math.Round(ArrayMultiplier({Double.NaN,42.5534,7.1983,28.3584,261.5955}),4))
+        CalculationTest(Math.Round(ArrayMultiplier(DBMMath.RemoveOutliers({3.2038,375.399,26.8835,45.8703,86.8004})),4),Math.Round(ArrayMultiplier({3.2038,Double.NaN,26.8835,45.8703,86.8004}),4))
+        CalculationTest(Math.Round(ArrayMultiplier(DBMMath.RemoveOutliers({8.0704,257.985,36.3467,2.47,4.4668})),4),Math.Round(ArrayMultiplier({8.0704,Double.NaN,36.3467,2.47,4.4668}),4))
+        CalculationTest(Math.Round(ArrayMultiplier(DBMMath.RemoveOutliers({8.3638,16.2838,12.9642,9.7556,83.4396})),4),Math.Round(ArrayMultiplier({8.3638,16.2838,12.9642,9.7556,Double.NaN}),4))
+        CalculationTest(Math.Round(ArrayMultiplier(DBMMath.RemoveOutliers({57.6853,40.7695,17.7621,46.8034,41.2441,549.928})),4),Math.Round(ArrayMultiplier({57.6853,40.7695,17.7621,46.8034,41.2441,Double.NaN}),4))
+        CalculationTest(Math.Round(ArrayMultiplier(DBMMath.RemoveOutliers({94.5071,594.762,8.8165,0.5834,69.2577,6.8091})),4),Math.Round(ArrayMultiplier({94.5071,Double.NaN,8.8165,0.5834,69.2577,6.8091}),4))
+        CalculationTest(Math.Round(ArrayMultiplier(DBMMath.RemoveOutliers({38.4383,5.4916,92.1605,36.2675,898.667,46.6828})),4),Math.Round(ArrayMultiplier({38.4383,5.4916,92.1605,36.2675,Double.NaN,46.6828}),4))
+
+        ' Test CalculateExpMovingAvg function
+        CalculationTest(Math.Round(DBMMath.CalculateExpMovingAvg({70.5547}),4),70.5547)
+        CalculationTest(Math.Round(DBMMath.CalculateExpMovingAvg({53.3424,57.9519}),4),54.4948)
+        CalculationTest(Math.Round(DBMMath.CalculateExpMovingAvg({28.9562,30.1948}),4),29.2658)
+        CalculationTest(Math.Round(DBMMath.CalculateExpMovingAvg({77.474,1.4018}),4),58.456)
+        CalculationTest(Math.Round(DBMMath.CalculateExpMovingAvg({76.0724,81.449,70.9038}),4),76.8702)
+        CalculationTest(Math.Round(DBMMath.CalculateExpMovingAvg({4.5353,41.4033,86.2619}),4),26.7442)
+        CalculationTest(Math.Round(DBMMath.CalculateExpMovingAvg({79.048,37.3536,96.1953}),4),69.5849)
+        CalculationTest(Math.Round(DBMMath.CalculateExpMovingAvg({87.1446,5.6237,94.9557}),4),64.9688)
+        CalculationTest(Math.Round(DBMMath.CalculateExpMovingAvg({36.4019,52.4868,76.7112}),4),46.7561)
+        CalculationTest(Math.Round(DBMMath.CalculateExpMovingAvg({5.3505,59.2458,46.87,29.8165}),4),29.509)
+        CalculationTest(Math.Round(DBMMath.CalculateExpMovingAvg({62.2697,64.7821,26.3793,27.9342}),4),53.6164)
+        CalculationTest(Math.Round(DBMMath.CalculateExpMovingAvg({82.9802,82.4602,58.9163,98.6093}),4),80.4071)
+        CalculationTest(Math.Round(DBMMath.CalculateExpMovingAvg({91.0964,22.6866,69.5116,98.0003,24.3931}),4),65.6332)
+        CalculationTest(Math.Round(DBMMath.CalculateExpMovingAvg({53.3873,10.637,99.9415,67.6176,1.5704}),4),48.0787)
+        CalculationTest(Math.Round(DBMMath.CalculateExpMovingAvg({57.5184,10.0052,10.3023,79.8884,28.448}),4),37.6429)
+        CalculationTest(Math.Round(DBMMath.CalculateExpMovingAvg({4.5649,29.5773,38.2011,30.097,94.8571}),4),26.456)
+        CalculationTest(Math.Round(DBMMath.CalculateExpMovingAvg({97.9829,40.1374,27.828,16.0442,16.2822}),4),55.6939)
+        CalculationTest(Math.Round(DBMMath.CalculateExpMovingAvg({64.6587,41.0073,41.2767,71.273,32.6206,63.3179}),4),53.1265)
+        CalculationTest(Math.Round(DBMMath.CalculateExpMovingAvg({20.7561,18.6014,58.3359,8.0715,45.7971,90.573}),4),31.4677)
+        CalculationTest(Math.Round(DBMMath.CalculateExpMovingAvg({26.1368,78.5212,37.8903,28.9665,91.9377,63.1742}),4),48.6925)
 
         Ticks=DateTime.Now.Ticks
         For i=0 To 1 ' Run all cases twice to test cache
