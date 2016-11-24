@@ -29,7 +29,7 @@ Public Class DBMRt
                     Public SubstractSelf As Boolean
 
                     Public Sub New(ByVal PIPoint As PISDK.PIPoint,ByVal SubstractSelf As Boolean)
-                        Me.DBMPointDriver=New DBMPointDriver(PIPoint)
+                        DBMPointDriver=New DBMPointDriver(PIPoint)
                         Me.SubstractSelf=SubstractSelf
                     End Sub
 
@@ -41,10 +41,10 @@ Public Class DBMRt
 
                 Public Sub New(ByVal InputPIPoint As PISDK.PIPoint,ByVal OutputPIPoint As PISDK.PIPoint)
                     Dim ExDesc,FieldsA(),FieldsB() As String
-                    Me.InputDBMPointDriver=New DBMPointDriver(InputPIPoint)
-                    Me.OutputDBMPointDriver=New DBMPointDriver(OutputPIPoint)
-                    Me.CorrelationPIPoints=New Collections.Generic.List(Of CorrelationPIPoint)
-                    ExDesc=Me.OutputDBMPointDriver.Point.PointAttributes("ExDesc").Value.ToString
+                    InputDBMPointDriver=New DBMPointDriver(InputPIPoint)
+                    OutputDBMPointDriver=New DBMPointDriver(OutputPIPoint)
+                    CorrelationPIPoints=New Collections.Generic.List(Of CorrelationPIPoint)
+                    ExDesc=OutputDBMPointDriver.Point.PointAttributes("ExDesc").Value.ToString
                     If Text.RegularExpressions.Regex.IsMatch(ExDesc,"^[-]{0,1}[a-zA-Z0-9][a-zA-Z0-9_\.-]{0,}:[^:?*&]{1,}(&[-]{0,1}[a-zA-Z0-9][a-zA-Z0-9_\.-]{0,}:[^:?*&]{1,}){0,}$") Then
                         FieldsA=Split(ExDesc.ToString,"&")
                         For Each thisField As String In FieldsA
@@ -57,11 +57,11 @@ Public Class DBMRt
                             End Try
                         Next
                     End If
-                    Me.CalcTimestamps=New Collections.Generic.List(Of Date)
+                    CalcTimestamps=New Collections.Generic.List(Of Date)
                 End Sub
 
                 Private Sub AddCorrelationPIPoint(ByVal PIPoint As PISDK.PIPoint,ByVal SubstractSelf As Boolean)
-                    Me.CorrelationPIPoints.Add(New CorrelationPIPoint(PIPoint,SubstractSelf))
+                    CorrelationPIPoints.Add(New CorrelationPIPoint(PIPoint,SubstractSelf))
                 End Sub
 
                 Public Sub CalculatePoint
@@ -71,33 +71,33 @@ Public Class DBMRt
                     Dim PIAnnotations As PISDK.PIAnnotations
                     Dim PINamedValues As PISDKCommon.NamedValues
                     Dim PIValues As PISDK.PIValues
-                    InputTimestamp=Me.InputDBMPointDriver.Point.Data.Snapshot.TimeStamp
-                    For Each thisCorrelationPIPoint As CorrelationPIPoint In Me.CorrelationPIPoints
+                    InputTimestamp=InputDBMPointDriver.Point.Data.Snapshot.TimeStamp
+                    For Each thisCorrelationPIPoint As CorrelationPIPoint In CorrelationPIPoints
                         InputTimestamp.UTCSeconds=Math.Min(InputTimestamp.UTCSeconds,thisCorrelationPIPoint.DBMPointDriver.Point.Data.Snapshot.TimeStamp.UTCSeconds)
                     Next
-                    OutputTimestamp=Me.OutputDBMPointDriver.Point.Data.Snapshot.TimeStamp
+                    OutputTimestamp=OutputDBMPointDriver.Point.Data.Snapshot.TimeStamp
                     If DateDiff("d",OutputTimestamp.LocalDate,Now())>DBMRtConstants.MaxCalculationAge Then
                         OutputTimestamp.LocalDate=DateAdd("d",-DBMRtConstants.MaxCalculationAge,Now())
                     End If
                     OutputTimestamp.UTCSeconds+=DBMConstants.CalculationInterval-OutputTimestamp.UTCSeconds Mod DBMConstants.CalculationInterval
                     Do While InputTimestamp.UTCSeconds>=OutputTimestamp.UTCSeconds
-                        Me.CalcTimestamps.Add(OutputTimestamp.LocalDate)
+                        CalcTimestamps.Add(OutputTimestamp.LocalDate)
                         OutputTimestamp.UTCSeconds+=DBMConstants.CalculationInterval
                     Loop
-                    If Me.CalcTimestamps.Count>0 Then
-                        Me.CalcTimestamps.Sort
+                    If CalcTimestamps.Count>0 Then
+                        CalcTimestamps.Sort
                         Annotation=""
                         PIAnnotations=New PISDK.PIAnnotations
                         PINamedValues=New PISDKCommon.NamedValues
                         PIValues=New PISDK.PIValues
                         PIValues.ReadOnly=False
                         Try
-                            If Me.CorrelationPIPoints.Count=0 Then
-                                Value=DBM.Calculate(Me.InputDBMPointDriver,Nothing,Me.CalcTimestamps(Me.CalcTimestamps.Count-1)).Factor
+                            If CorrelationPIPoints.Count=0 Then
+                                Value=DBM.Calculate(InputDBMPointDriver,Nothing,CalcTimestamps(CalcTimestamps.Count-1)).Factor
                             Else
                                 Value=0
-                                For Each thisCorrelationPIPoint As CorrelationPIPoint In Me.CorrelationPIPoints
-                                    NewValue=DBM.Calculate(Me.InputDBMPointDriver,thisCorrelationPIPoint.DBMPointDriver,Me.CalcTimestamps(Me.CalcTimestamps.Count-1),thisCorrelationPIPoint.SubstractSelf).Factor
+                                For Each thisCorrelationPIPoint As CorrelationPIPoint In CorrelationPIPoints
+                                    NewValue=DBM.Calculate(InputDBMPointDriver,thisCorrelationPIPoint.DBMPointDriver,CalcTimestamps(CalcTimestamps.Count-1),thisCorrelationPIPoint.SubstractSelf).Factor
                                     If NewValue=0 Then
                                         Exit For
                                     End If
@@ -117,12 +117,12 @@ Public Class DBMRt
                             PIAnnotations.Add("","",Annotation,False,"String")
                             PINamedValues.Add("Annotations",CObj(PIAnnotations))
                         End If
-                        PIValues.Add(Me.CalcTimestamps(Me.CalcTimestamps.Count-1),Value,PINamedValues)
+                        PIValues.Add(CalcTimestamps(CalcTimestamps.Count-1),Value,PINamedValues)
                         Try
-                            Me.OutputDBMPointDriver.Point.Data.UpdateValues(PIValues)
+                            OutputDBMPointDriver.Point.Data.UpdateValues(PIValues)
                         Catch
                         End Try
-                        Me.CalcTimestamps.RemoveAt(Me.CalcTimestamps.Count-1)
+                        CalcTimestamps.RemoveAt(CalcTimestamps.Count-1)
                     End If
                 End Sub
 
@@ -134,7 +134,7 @@ Public Class DBMRt
             Public Sub New(ByVal PIServer As PISDK.Server,Optional ByVal TagFilter As String="*")
                 Dim InstrTag,Fields() As String
                 Me.PIServer=PIServer
-                Me.DBMPIPoints=New Collections.Generic.List(Of DBMPIPoint)
+                DBMPIPoints=New Collections.Generic.List(Of DBMPIPoint)
                 Try
                     For Each thisPIPoint As PISDK.PIPoint In Me.PIServer.GetPointsSQL("PIpoint.Tag='" & TagFilter & "' AND PIpoint.PointSource='dbmrt' AND PIpoint.Scan=1")
                         InstrTag=thisPIPoint.PointAttributes("InstrumentTag").Value.ToString
@@ -142,7 +142,7 @@ Public Class DBMRt
                             Fields=Split(InstrTag.ToString,":")
                             Try
                                 If PISDK.Servers(Fields(0)).PIPoints(Fields(1)).Name<>"" Then
-                                    Me.DBMPIPoints.Add(New DBMPIPoint(PISDK.Servers(Fields(0)).PIPoints(Fields(1)),thisPIPoint))
+                                    DBMPIPoints.Add(New DBMPIPoint(PISDK.Servers(Fields(0)).PIPoints(Fields(1)),thisPIPoint))
                                 End If
                             Catch
                             End Try
@@ -153,7 +153,7 @@ Public Class DBMRt
             End Sub
 
             Public Sub CalculatePoints
-                For Each thisDBMPIPoint As DBMPIPoint In Me.DBMPIPoints
+                For Each thisDBMPIPoint As DBMPIPoint In DBMPIPoints
                     Try
                         thisDBMPIPoint.CalculatePoint
                     Catch
@@ -168,16 +168,16 @@ Public Class DBMRt
         Private DBMPIServers As Collections.Generic.List(Of DBMRt.DBMPIServer)
 
         Public Sub New(Optional ByVal DefaultServerOnly As Boolean=False,Optional ByVal TagFilter As String="*")
-            Me.DBMPIServers=New Collections.Generic.List(Of DBMRt.DBMPIServer)
+            DBMPIServers=New Collections.Generic.List(Of DBMRt.DBMPIServer)
             For Each thisServer As PISDK.Server In PISDK.Servers
                 If Not DefaultServerOnly Or thisServer Is PISDK.Servers.DefaultServer Then
-                    Me.DBMPIServers.Add(New DBMPIServer(thisServer,TagFilter))
+                    DBMPIServers.Add(New DBMPIServer(thisServer,TagFilter))
                 End If
             Next
         End Sub
 
         Public Sub CalculateServers
-            For Each thisDBMPIServer As DBMPIServer In Me.DBMPIServers
+            For Each thisDBMPIServer As DBMPIServer In DBMPIServers
                 thisDBMPIServer.CalculatePoints
             Next
         End Sub

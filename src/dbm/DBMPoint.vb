@@ -12,9 +12,9 @@ Public Class DBMPoint
     Public AbsoluteError(),RelativeError() As Double
 
     Public Sub New(ByVal DBMPointDriver As DBMPointDriver)
-        Me.DBMDataManager=New DBMDataManager(DBMPointDriver)
-        ReDim Me.AbsoluteError(DBMConstants.CorrelationPreviousPeriods)
-        ReDim Me.RelativeError(DBMConstants.CorrelationPreviousPeriods)
+        DBMDataManager=New DBMDataManager(DBMPointDriver)
+        ReDim AbsoluteError(DBMConstants.CorrelationPreviousPeriods)
+        ReDim RelativeError(DBMConstants.CorrelationPreviousPeriods)
     End Sub
 
     Public Function Calculate(ByVal Timestamp As DateTime,ByVal IsInputDBMPoint As Boolean,ByVal HasCorrelationDBMPoint As Boolean,Optional ByRef SubstractDBMPoint As DBMPoint=Nothing) As DBMResult
@@ -33,7 +33,7 @@ Public Class DBMPoint
                             UppContrLimitEMA=DBMFunctions.ArrayRotateLeft(UppContrLimitEMA)
                         End If
                         For PatternCounter=DBMConstants.ComparePatterns To 0 Step -1
-                            Pattern(DBMConstants.ComparePatterns-PatternCounter)=Me.DBMDataManager.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*DBMConstants.CalculationInterval,Timestamp)))
+                            Pattern(DBMConstants.ComparePatterns-PatternCounter)=DBMDataManager.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*DBMConstants.CalculationInterval,Timestamp)))
                             If Not IsNothing(SubstractDBMPoint) Then
                                 Pattern(DBMConstants.ComparePatterns-PatternCounter)-=SubstractDBMPoint.DBMDataManager.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*DBMConstants.CalculationInterval,Timestamp)))
                             End If
@@ -49,8 +49,8 @@ Public Class DBMPoint
                 Calculate.PredValue=DBMMath.CalculateExpMovingAvg(PredValueEMA)
                 Calculate.LowContrLimit=DBMMath.CalculateExpMovingAvg(LowContrLimitEMA)
                 Calculate.UppContrLimit=DBMMath.CalculateExpMovingAvg(UppContrLimitEMA)
-                Me.AbsoluteError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=Calculate.PredValue-Calculate.CurrValue ' Absolute error compared to prediction
-                Me.RelativeError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=Calculate.PredValue/Calculate.CurrValue-1 ' Relative error compared to prediction
+                AbsoluteError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=Calculate.PredValue-Calculate.CurrValue ' Absolute error compared to prediction
+                RelativeError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=Calculate.PredValue/Calculate.CurrValue-1 ' Relative error compared to prediction
                 If CorrelationCounter=0 Then
                     If Calculate.CurrValue<Calculate.LowContrLimit Then ' Lower control limit exceeded
                         Calculate.Factor=(Calculate.PredValue-Calculate.CurrValue)/(Calculate.LowContrLimit-Calculate.PredValue)
