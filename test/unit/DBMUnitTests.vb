@@ -22,7 +22,6 @@ Module DBMUnitTests
     Dim _DBM As New DBM
     Dim _PISDK As PISDK.PISDK=New PISDK.PISDK
     #End If
-    Dim ResultOK,ResultErr As Integer
 
     Private Sub UnitTest(ByVal Description As String,ByVal ExpectedValue As Double,ByVal InputPoint As Object,ByVal CorrelationPoint As Object,ByVal Timestamp As DateTime,ByVal SubstractInputPointFromCorrelationPoint As Boolean)
         Dim Ticks As Int64=DateTime.Now.Ticks
@@ -42,11 +41,10 @@ Module DBMUnitTests
         End If
         #End If
         If Math.Round(DBMResult.Factor,3)=ExpectedValue Then
-            ResultOK+=1
             Console.Write("OK")
         Else
-            ResultErr+=1
-            Console.Write("ER")
+            Console.WriteLine("ERR")
+            End
         End If
         Console.Write(" " & Math.Round((DateTime.Now.Ticks-Ticks)/10000) & "ms ")
         Console.WriteLine("F:" & Math.Round(DBMResult.Factor,3) & " C:" & Math.Round(DBMResult.CurrValue) & " P:" & Math.Round(DBMResult.PredValue) & " L:" & Math.Round(DBMResult.LowContrLimit) & " U:" & Math.Round(DBMResult.UppContrLimit))
@@ -64,7 +62,8 @@ Module DBMUnitTests
 
     Private Sub CheckEqual(ByVal Result As Double,ByVal Expected As Double)
         If Result<>Expected Then
-            Console.Write("[ERR]")
+            Console.WriteLine("ERR")
+            End
         Else
             Console.Write(".")
         End If
@@ -401,8 +400,6 @@ Module DBMUnitTests
 
         For i=0 To 1 ' Run all cases twice to test cache
             Console.WriteLine()
-            ResultOK=0
-            ResultErr=0
             Ticks=DateTime.Now.Ticks
             UnitTest("Normal situation; Leeuwarden",0,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering",Nothing,New DateTime(2016,2,5,10,0,0),False)
             UnitTest("Cache test 1/2, Normal sit.; Lwd",0,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering",Nothing,New DateTime(2016,2,5,10,0,0),False)
@@ -448,7 +445,7 @@ Module DBMUnitTests
             UnitTest("Coming/going test 1/3; Eibergen",0,"\\sr-16637\ACE-GE-Balansgebied-Eibergen-levering",Nothing,New DateTime(2016,4,28,17,50,0),False)
             UnitTest("Coming/going test 2/3; Eibergen",-1.024,"\\sr-16637\ACE-GE-Balansgebied-Eibergen-levering",Nothing,New DateTime(2016,4,28,17,55,0),False)
             UnitTest("Coming/going test 3/3; Eibergen",0,"\\sr-16637\ACE-GE-Balansgebied-Eibergen-levering",Nothing,New DateTime(2016,4,28,18,0,0),False)
-            Console.WriteLine(Math.Round((DateTime.Now.Ticks-Ticks)/10000) & "ms OK:" & ResultOK & " Error:" & ResultErr)
+            Console.WriteLine(Math.Round((DateTime.Now.Ticks-Ticks)/10000) & "ms")
         Next i
 
     End Sub

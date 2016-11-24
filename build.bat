@@ -12,21 +12,29 @@ set PIRefs="%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDK.dll","%PIHOME%\pisdk\P
 set PIACERefs="%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PITimeServer.dll","%PIHOME%\ACE\OSISoft.PIACENet.dll"
 
 %vbc% /target:library /out:build\DBMDriverArray.dll src\dbm\driver\DBMDriverArray.vb %IncludeFiles%
+if not exist build\DBMDriverArray.dll goto ExitBuild
+
 %vbc% /reference:build\DBMDriverArray.dll /out:build\DBMUnitTestsArray.exe /define:OfflineUnitTests=True test\unit\DBMUnitTests.vb
+if not exist build\DBMDriverArray.dll goto ExitBuild
 
 if exist "%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDK.dll" (
 
     %vbc% /reference:%PIRefs% /target:library /out:build\DBMDriverOSIsoftPI.dll src\dbm\driver\DBMDriverOSIsoftPI.vb %IncludeFiles%
+    if not exist build\DBMDriverOSIsoftPI.dll equ 0 goto ExitBuild
+
     %vbc% /reference:%PIRefs%,build\DBMDriverOSIsoftPI.dll /out:build\DBMUnitTestsOSIsoftPI.exe test\unit\DBMUnitTests.vb
+    if not exist build\DBMUnitTestsOSIsoftPI.exe goto ExitBuild
 
     if exist "%PIHOME%\ACE\OSISoft.PIACENet.dll" (
 
         %vbc% /reference:%PIRefs%,%PIACERefs%,build\DBMDriverOSIsoftPI.dll /rootnamespace:PIACE.DBMRt /target:library /out:build\DBMRt.dll src\PIACENet\DBMRt.vb src\PIACENet\DBMRtConstants.vb
+        if not exist build\DBMRt.dll goto ExitBuild
 
     )
 
 )
 
-if exist build\DBMUnitTestsArray.exe build\DBMUnitTestsArray.exe
+build\DBMUnitTestsArray.exe
 
+:ExitBuild
 pause
