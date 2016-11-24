@@ -20,7 +20,7 @@ if not exist build\DBMUnitTestsArray.exe goto ExitBuild
 if exist "%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDK.dll" (
 
     %vbc% /reference:%PIRefs% /target:library /out:build\DBMDriverOSIsoftPI.dll src\dbm\driver\DBMDriverOSIsoftPI.vb %IncludeFiles%
-    if not exist build\DBMDriverOSIsoftPI.dll equ 0 goto ExitBuild
+    if not exist build\DBMDriverOSIsoftPI.dll goto ExitBuild
 
     %vbc% /reference:%PIRefs%,build\DBMDriverOSIsoftPI.dll /out:build\DBMUnitTestsOSIsoftPI.exe test\unit\DBMUnitTests.vb
     if not exist build\DBMUnitTestsOSIsoftPI.exe goto ExitBuild

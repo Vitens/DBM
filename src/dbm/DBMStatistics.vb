@@ -8,8 +8,8 @@ Option Strict
 
 Public Class DBMStatistics
 
-    Public Slope,Intercept,StDevSLinReg,ModifiedCorrelation As Double
     Public Count As Integer
+    Public Slope,Intercept,StDevSLinReg,ModifiedCorrelation As Double
 
     Public Sub Calculate(ByVal DataY() As Double,Optional ByVal DataX() As Double=Nothing)
         Dim SumX,SumXX,SumY,SumYY,SumXY As Double

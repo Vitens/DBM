@@ -134,7 +134,7 @@ Public Class DBMRt
             Public Sub New(ByVal PIServer As PISDK.Server,Optional ByVal TagFilter As String="*")
                 Dim InstrTag,Fields() As String
                 Me.PIServer=PIServer
-                DBMPIPoints=New Collections.Generic.List(Of DBMPIPoint)
+                Me.DBMPIPoints=New Collections.Generic.List(Of DBMPIPoint)
                 Try
                     For Each thisPIPoint As PISDK.PIPoint In Me.PIServer.GetPointsSQL("PIpoint.Tag='" & TagFilter & "' AND PIpoint.PointSource='dbmrt' AND PIpoint.Scan=1")
                         InstrTag=thisPIPoint.PointAttributes("InstrumentTag").Value.ToString
@@ -142,7 +142,7 @@ Public Class DBMRt
                             Fields=Split(InstrTag.ToString,":")
                             Try
                                 If PISDK.Servers(Fields(0)).PIPoints(Fields(1)).Name<>"" Then
-                                    DBMPIPoints.Add(New DBMPIPoint(PISDK.Servers(Fields(0)).PIPoints(Fields(1)),thisPIPoint))
+                                    Me.DBMPIPoints.Add(New DBMPIPoint(PISDK.Servers(Fields(0)).PIPoints(Fields(1)),thisPIPoint))
                                 End If
                             Catch
                             End Try
@@ -153,7 +153,7 @@ Public Class DBMRt
             End Sub
 
             Public Sub CalculatePoints
-                For Each thisDBMPIPoint As DBMPIPoint In DBMPIPoints
+                For Each thisDBMPIPoint As DBMPIPoint In Me.DBMPIPoints
                     Try
                         thisDBMPIPoint.CalculatePoint
                     Catch
@@ -168,16 +168,16 @@ Public Class DBMRt
         Private DBMPIServers As Collections.Generic.List(Of DBMRt.DBMPIServer)
 
         Public Sub New(Optional ByVal DefaultServerOnly As Boolean=False,Optional ByVal TagFilter As String="*")
-            DBMPIServers=New Collections.Generic.List(Of DBMRt.DBMPIServer)
+            Me.DBMPIServers=New Collections.Generic.List(Of DBMRt.DBMPIServer)
             For Each thisServer As PISDK.Server In PISDK.Servers
                 If Not DefaultServerOnly Or thisServer Is PISDK.Servers.DefaultServer Then
-                    DBMPIServers.Add(New DBMPIServer(thisServer,TagFilter))
+                    Me.DBMPIServers.Add(New DBMPIServer(thisServer,TagFilter))
                 End If
             Next
         End Sub
 
         Public Sub CalculateServers
-            For Each thisDBMPIServer As DBMPIServer In DBMPIServers
+            For Each thisDBMPIServer As DBMPIServer In Me.DBMPIServers
                 thisDBMPIServer.CalculatePoints
             Next
         End Sub
