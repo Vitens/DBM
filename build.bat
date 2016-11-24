@@ -15,7 +15,7 @@ set PIACERefs="%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PITimeServer.dll","%PIHOM
 if not exist build\DBMDriverArray.dll goto ExitBuild
 
 %vbc% /reference:build\DBMDriverArray.dll /out:build\DBMUnitTestsArray.exe /define:OfflineUnitTests=True test\unit\DBMUnitTests.vb
-if not exist build\DBMDriverArray.dll goto ExitBuild
+if not exist build\DBMUnitTestsArray.exe goto ExitBuild
 
 if exist "%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDK.dll" (
 
