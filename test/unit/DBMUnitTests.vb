@@ -64,7 +64,7 @@ Module DBMUnitTests
 
     Private Sub CheckEqual(ByVal Result As Double,ByVal Expected As Double)
         If Result<>Expected Then
-            Console.Write("[ERR:" & Result & "/" & Expected & "]")
+            Console.Write("[ERR]")
         Else
             Console.Write(".")
         End If
@@ -74,7 +74,8 @@ Module DBMUnitTests
         Dim i,j As Integer
         Dim Results(-1) As Double
         Dim DBMStatistics As New DBMStatistics
-        Dim Ticks As Int64
+        Dim Ticks As Int64=DateTime.Now.Ticks
+
         Console.Writeline(DBMFunctions.DBMVersion & vbCrLf)
 
         Console.Write("Testing ArrayMultiplier ")
@@ -396,10 +397,13 @@ Module DBMUnitTests
             Console.WriteLine(" Done")
         Next i
 
-        Console.WriteLine()
+        Console.WriteLine(Math.Round((DateTime.Now.Ticks-Ticks)/10000) & "ms")
 
-        Ticks=DateTime.Now.Ticks
         For i=0 To 1 ' Run all cases twice to test cache
+            Console.WriteLine()
+            ResultOK=0
+            ResultErr=0
+            Ticks=DateTime.Now.Ticks
             UnitTest("Normal situation; Leeuwarden",0,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering",Nothing,New DateTime(2016,2,5,10,0,0),False)
             UnitTest("Cache test 1/2, Normal sit.; Lwd",0,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering",Nothing,New DateTime(2016,2,5,10,0,0),False)
             UnitTest("Cache test 2/2, Normal sit.; Lwd",0,"\\sr-16635\ACE-FR-Deelbalansgebied-Leeuwarden-levering",Nothing,New DateTime(2016,2,5,10,5,0),False)

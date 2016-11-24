@@ -31,8 +31,8 @@ Public Class DBMPointDriver
     End Sub
 
     Public Function GetData(ByVal StartTimestamp As DateTime,ByVal EndTimestamp As DateTime) As Double
-        GetData=DBMDriver.Data(DBMDriver.DataIndex) ' Return first item from data array passed to DBMDriver
-        DBMDriver.DataIndex=(DBMDriver.DataIndex+1) Mod DBMDriver.Data.Length
+        GetData=DBMDriver.Data(DBMDriver.DataIndex) ' Return item from data array passed to DBMDriver
+        DBMDriver.DataIndex=(DBMDriver.DataIndex+1) Mod DBMDriver.Data.Length ' Increase index
         Return GetData
     End Function
 

@@ -17,22 +17,22 @@ Public Class DBMDataManager
         Me.DBMPointDriver=DBMPointDriver
         ReDim Me.CachedValues(CInt((DBMConstants.EMAPreviousPeriods+1+DBMConstants.CorrelationPreviousPeriods+1+24*(3600/DBMConstants.CalculationInterval))*(DBMConstants.ComparePatterns+1)-1))
         For i=0 to Me.CachedValues.Length-1 ' Initialise cache
-            Me.CachedValues(i)=New DBMCachedValue(Nothing,Nothing)
+            Me.CachedValues(i)=New DBMCachedValue
         Next i
-        CacheIndex=0
+        Me.CacheIndex=0
     End Sub
 
     Public Function Value(ByVal Timestamp As DateTime) As Double ' Returns value at timestamp, either from cache or using driver
         Dim i As Integer
         i=Array.FindIndex(Me.CachedValues,Function(FindCachedValue)FindCachedValue.Timestamp=Timestamp) ' Find timestamp in cache
         If i=-1 Then ' Not in cache
-            i=CacheIndex
+            i=Me.CacheIndex
             Try
                 Me.CachedValues(i)=New DBMCachedValue(Timestamp,Me.DBMPointDriver.GetData(Timestamp,DateAdd("s",DBMConstants.CalculationInterval,Timestamp))) ' Get data using driver
             Catch
                 Me.CachedValues(i)=New DBMCachedValue(Timestamp,Double.NaN) ' Error, return Not a Number
             End Try
-            CacheIndex=(CacheIndex+1) Mod CachedValues.Length
+            Me.CacheIndex=(Me.CacheIndex+1) Mod Me.CachedValues.Length ' Increase index
         End If
         Return Me.CachedValues(i).Value
     End Function
