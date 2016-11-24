@@ -11,7 +11,7 @@ Imports System.Reflection
 <assembly:AssemblyCompany("Vitens N.V.")>
 <assembly:AssemblyProduct("Dynamic Bandwidth Monitor")>
 <assembly:AssemblyCopyright("J.H. Fitié, Vitens N.V.")>
-<assembly:AssemblyVersion("1.2.*")>
+<assembly:AssemblyVersion("1.2.1.*")>
 
 Public Class DBM
 

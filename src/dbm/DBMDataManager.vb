@@ -15,7 +15,7 @@ Public Class DBMDataManager
     Public Sub New(ByVal DBMPointDriver As DBMPointDriver)
         Dim i As Integer
         Me.DBMPointDriver=DBMPointDriver
-        ReDim CachedValues(CInt((DBMConstants.EMAPreviousPeriods+1+DBMConstants.CorrelationPreviousPeriods+1+24*(3600/DBMConstants.CalculationInterval))*(DBMConstants.ComparePatterns+1)-1))
+        ReDim CachedValues(CInt((DBMConstants.ComparePatterns+1)*(DBMConstants.EMAPreviousPeriods+DBMConstants.CorrelationPreviousPeriods+24*3600/DBMConstants.CalculationInterval)-1)) ' Large enough for at least one day
         For i=0 to CachedValues.Length-1 ' Initialise cache
             CachedValues(i)=New DBMCachedValue
         Next i

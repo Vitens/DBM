@@ -11,7 +11,7 @@ Imports System.Reflection
 <assembly:AssemblyCompany("Vitens N.V.")>
 <assembly:AssemblyProduct("Dynamic Bandwidth Monitor Unit Tests")>
 <assembly:AssemblyCopyright("J.H. Fitié, Vitens N.V.")>
-<assembly:AssemblyVersion("1.0.*")>
+<assembly:AssemblyVersion("1.0.0.*")>
 
 Module DBMUnitTests
 

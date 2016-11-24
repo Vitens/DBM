@@ -11,7 +11,7 @@ Imports System.Reflection
 <assembly:AssemblyCompany("Vitens N.V.")>
 <assembly:AssemblyProduct("Dynamic Bandwidth Monitor Real-time")>
 <assembly:AssemblyCopyright("J.H. Fitié, Vitens N.V.")>
-<assembly:AssemblyVersion("2.5.*")>
+<assembly:AssemblyVersion("2.5.1.*")>
 
 Public Class DBMRt
 
