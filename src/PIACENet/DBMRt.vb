@@ -5,7 +5,7 @@ Option Strict
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
 '
-' Copyright (C) 2014, 2015, 2016 J.H. Fitié
+' Copyright (C) 2014, 2015, 2016 J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -26,7 +26,7 @@ Imports System.Reflection
 <assembly:AssemblyTitle("DBMRt")>
 <assembly:AssemblyCompany("Vitens N.V.")>
 <assembly:AssemblyProduct("Dynamic Bandwidth Monitor Real-time")>
-<assembly:AssemblyCopyright("Copyright (C) 2014, 2015, 2016 J.H. Fitié")>
+<assembly:AssemblyCopyright("Copyright (C) 2014, 2015, 2016 J.H. Fitié, Vitens N.V.")>
 <assembly:AssemblyVersion("2.5.1.*")>
 
 Public Class DBMRt
