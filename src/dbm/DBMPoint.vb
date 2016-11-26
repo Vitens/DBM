@@ -45,13 +45,13 @@ Public Class DBMPoint
                         UppContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)+DBMMath.ControlLimitRejectionCriterion(DBMStatistics.Count-1)*DBMStatistics.StDevSLinReg
                     End If
                 Next EMACounter
-                Calculate.CurrValue=DBMMath.CalculateExpMovingAvg(CurrValueEMA)
-                Calculate.PredValue=DBMMath.CalculateExpMovingAvg(PredValueEMA)
-                Calculate.LowContrLimit=DBMMath.CalculateExpMovingAvg(LowContrLimitEMA)
-                Calculate.UppContrLimit=DBMMath.CalculateExpMovingAvg(UppContrLimitEMA)
-                AbsoluteError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=Calculate.PredValue-Calculate.CurrValue ' Absolute error compared to prediction
-                RelativeError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=Calculate.PredValue/Calculate.CurrValue-1 ' Relative error compared to prediction
+                AbsoluteError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=DBMMath.CalculateExpMovingAvg(PredValueEMA)-DBMMath.CalculateExpMovingAvg(CurrValueEMA) ' Absolute error compared to prediction
+                RelativeError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=DBMMath.CalculateExpMovingAvg(PredValueEMA)/DBMMath.CalculateExpMovingAvg(CurrValueEMA)-1 ' Relative error compared to prediction
                 If CorrelationCounter=0 Then
+                    Calculate.CurrValue=DBMMath.CalculateExpMovingAvg(CurrValueEMA)
+                    Calculate.PredValue=DBMMath.CalculateExpMovingAvg(PredValueEMA)
+                    Calculate.LowContrLimit=DBMMath.CalculateExpMovingAvg(LowContrLimitEMA)
+                    Calculate.UppContrLimit=DBMMath.CalculateExpMovingAvg(UppContrLimitEMA)
                     If Calculate.CurrValue<Calculate.LowContrLimit Then ' Lower control limit exceeded
                         Calculate.Factor=(Calculate.PredValue-Calculate.CurrValue)/(Calculate.LowContrLimit-Calculate.PredValue)
                     End If
