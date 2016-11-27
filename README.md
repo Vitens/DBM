@@ -24,7 +24,7 @@ Module Module1
         Dim _PISDK As New PISDK.PISDK
         Dim s,e As DateTime
         Dim r As New DBMResult
-        Dim PD As DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Leeuwarden-levering"))
+        Dim PD As New DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Leeuwarden-levering"))
         s=DateAdd("d",-2,DateTime.Today)
         e=DateAdd("d",5,s)
         Do While s<e
@@ -51,7 +51,7 @@ Module Module1
         Dim _PISDK As New PISDK.PISDK
         Dim s,e As DateTime
         Dim r As New DBMResult
-        Dim PD As DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Leeuwarden-levering"))
+        Dim PD As New DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Leeuwarden-levering"))
         s=New DateTime(2013,3,12)
         e=DateAdd("d",1,s)
         Do While s<e
@@ -79,8 +79,8 @@ Module Module1
         Dim _PISDK As New PISDK.PISDK
         Dim s,e As DateTime
         Dim r As New DBMResult
-        Dim PDA As DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Leeuwarden-levering"))
-        Dim PDB As DBMPointDriver(_PISDK.Servers("sr-16634").PIPoints("Reinwaterafgifte"))
+        Dim PDA As New DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Leeuwarden-levering"))
+        Dim PDB As New DBMPointDriver(_PISDK.Servers("sr-16634").PIPoints("Reinwaterafgifte"))
         s=New DateTime(2016,1,1)
         e=DateAdd("d",1,s)
         Do While s<e
