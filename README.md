@@ -12,6 +12,7 @@ https://github.com/jfitie/DBM
 ### Sample 1 - Prediction
 ![Sample 1](docs/sample1.png)
 [Sample 1 data](docs/sample1.csv)
+In this example, two days before and after the current day are shown. For historic values, the measured data (black) is shown along the with predicted value (red). The upper and lower control limits (gray) were not crossed, so the DBM factor value (blue) equals zero. For future values, the prediction is shown along with the upper and lower control limits.
 ```
 Option Explicit
 Option Strict
@@ -36,6 +37,7 @@ End Module
 ### Sample 2 - Exception
 ![Sample 2](docs/sample2.png)
 [Sample 2 data](docs/sample2.csv)
+In this example, an exception causes the measured value (black) to cross the upper control limit (gray). The DBM factor value (blue) is greater than one during this time (calculated as _(measured value - predicted value)/(upper control limit - predicted value)_).
 ```
 Option Explicit
 Option Strict
@@ -61,6 +63,7 @@ End Module
 ![Sample 3a](docs/sample3a.png)
 ![Sample 3b](docs/sample3b.png)
 [Sample 3 data](docs/sample3.csv)
+In this example, an exception causes the measured value (black) to cross the upper control limit (gray). Because the pattern is checked against a similar pattern which has a comparable relative prediction error (calculated as _(predicted value / measured value) - 1_), the exception is suppressed. The DBM factor value is greater than zero and less than, or equal to one (correlation coefficient of the relative prediction error) during this time.
 ```
 Option Explicit
 Option Strict
