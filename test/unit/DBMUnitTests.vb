@@ -34,7 +34,7 @@ Module DBMUnitTests
 
     Dim _DBM As DBM
     #If Not OfflineUnitTests Then
-    Dim _PISDK As PISDK.PISDK=New PISDK.PISDK
+    Dim _PISDK As New PISDK.PISDK
     #End If
 
     Private Sub UnitTest(ByVal Description As String,ByVal ExpFact As Double,ByVal ExpCurr As Double,ByVal ExpPred As Double,ByVal ExpLCL As Double,ByVal ExpUCL As Double,ByVal InputPoint As Object,ByVal CorrelationPoint As Object,ByVal Timestamp As DateTime,ByVal SubstractInputPointFromCorrelationPoint As Boolean)
