@@ -24,10 +24,11 @@ Option Strict
 
 Imports System.Reflection
 <assembly:AssemblyTitle("DBMRt")>
-<assembly:AssemblyCompany("Vitens N.V.")>
+<assembly:AssemblyVersion("2.6.0.*")>
 <assembly:AssemblyProduct("Dynamic Bandwidth Monitor Real-time")>
+<assembly:AssemblyDescription("Leak detection method implemented in a real-time data historian")>
 <assembly:AssemblyCopyright("Copyright (C) 2014, 2015, 2016 J.H. Fitié, Vitens N.V.")>
-<assembly:AssemblyVersion("2.5.1.*")>
+<assembly:AssemblyCompany("Vitens N.V.")>
 
 Public Class DBMRt
 

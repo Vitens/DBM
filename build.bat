@@ -26,7 +26,7 @@ cd %~dp0
 
 if not exist build mkdir build
 
-call clean.bat
+del /Q build\*
 
 set vbc="%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\Vbc.exe"
 set IncludeFiles=src\dbm\dbm.vb src\dbm\DBMCachedValue.vb src\dbm\DBMConstants.vb src\dbm\DBMDataManager.vb src\dbm\DBMFunctions.vb src\dbm\DBMMath.vb src\dbm\DBMPoint.vb src\dbm\DBMResult.vb src\dbm\DBMStatistics.vb

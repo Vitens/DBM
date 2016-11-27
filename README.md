@@ -94,7 +94,8 @@ https://www.vitens.nl/
 
 ## License
 DBM  
-Dynamic Bandwidth Monitor
+Dynamic Bandwidth Monitor  
+Leak detection method implemented in a real-time data historian
 
 Copyright (C) 2014, 2015, 2016 J.H. Fitié, Vitens N.V.
 
