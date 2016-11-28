@@ -13,7 +13,7 @@ https://github.com/jfitie/DBM
 ![Sample 1](docs/sample1.png)
 [Sample 1 data](docs/sample1.csv)
 
-In this example, two days before and after the current day are shown. For historic values, the measured data (black) is shown along the with predicted value (red). The upper and lower control limits (gray) were not crossed, so the DBM factor value (blue) equals zero. For future values, the prediction is shown along with the upper and lower control limits.
+In this example, two days before and after the current day are shown. For historic values, the measured data (black) is shown along with the predicted value (red). The upper and lower control limits (gray) were not crossed, so the DBM factor value (blue) equals zero. For future values, the prediction is shown along with the upper and lower control limits.
 
 ```
 Option Explicit
@@ -63,7 +63,7 @@ Module Module1
 End Module
 ```
 
-### Sample 3 - Suppressed exception
+### Sample 3 - Suppressed exception (correlation)
 ![Sample 3a](docs/sample3a.png)
 ![Sample 3b](docs/sample3b.png)
 [Sample 3 data](docs/sample3.csv)
@@ -82,6 +82,37 @@ Module Module1
         Dim PDA As New DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Leeuwarden-levering"))
         Dim PDB As New DBMPointDriver(_PISDK.Servers("sr-16634").PIPoints("Reinwaterafgifte"))
         s=New DateTime(2016,1,1)
+        e=DateAdd("d",1,s)
+        Do While s<e
+            r=_DBM.Calculate(PDA,PDB,s,False)
+            Console.Write(s.ToString & vbTab & r.Factor & vbTab & r.CurrValue & vbTab & r.PredValue & vbTab & r.LowContrLimit & vbTab & r.UppContrLimit)
+            r=_DBM.Calculate(PDB,Nothing,s,False)
+            Console.WriteLine(vbTab & r.CurrValue & vbTab & r.PredValue & vbTab & r.LowContrLimit & vbTab & r.UppContrLimit)
+            s=DateAdd("s",DBMConstants.CalculationInterval,s)
+        Loop
+    End Sub
+End Module
+```
+
+### Sample 4 - Suppressed exception (anticorrelation)
+![Sample 4a](docs/sample4a.png)
+![Sample 4b](docs/sample4b.png)
+[Sample 4 data](docs/sample4.csv)
+
+In this example, an exception causes the measured value (black) to cross the lower control limit (gray). Because the pattern is checked against a similar, adjacent, pattern which has a comparable, but inverted, absolute prediction error (calculated as _predicted value - measured value_), the exception is suppressed. The DBM factor value is less than zero and greater than, or equal to negative one (correlation coefficient of the absolute prediction error) during this time.
+
+```
+Option Explicit
+Option Strict
+Module Module1
+    Public Sub Main
+        Dim _DBM As New DBM
+        Dim _PISDK As New PISDK.PISDK
+        Dim s,e As DateTime
+        Dim r As New DBMResult
+        Dim PDA As New DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Drachten-levering"))
+        Dim PDB As New DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Oosterwolde-levering"))
+        s=New DateTime(2014,11,13)
         e=DateAdd("d",1,s)
         Do While s<e
             r=_DBM.Calculate(PDA,PDB,s,False)
