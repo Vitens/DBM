@@ -25,7 +25,6 @@ Option Strict
 Public Class DBMRtPIPoint
 
     Private InputDBMPointDriver,OutputDBMPointDriver As DBMPointDriver
-    Private DBMRtEventPipeWatchers As Collections.Generic.List(Of DBMRtEventPipeWatcher)
     Private DBMRtCorrelationPIPoints As Collections.Generic.List(Of DBMRtCorrelationPIPoint)
     Private CalcTimestamps As Collections.Generic.List(Of Date)
 
@@ -33,8 +32,6 @@ Public Class DBMRtPIPoint
         Dim ExDesc,FieldsA(),FieldsB() As String
         InputDBMPointDriver=New DBMPointDriver(InputPIPoint)
         OutputDBMPointDriver=New DBMPointDriver(OutputPIPoint)
-        DBMRtEventPipeWatchers=New Collections.Generic.List(Of DBMRtEventPipeWatcher)
-        DBMRtEventPipeWatchers.Add(New DBMRtEventPipeWatcher(InputPIPoint))
         DBMRtCorrelationPIPoints=New Collections.Generic.List(Of DBMRtCorrelationPIPoint)
         ExDesc=OutputDBMPointDriver.Point.PointAttributes("ExDesc").Value.ToString
         If Text.RegularExpressions.Regex.IsMatch(ExDesc,"^[-]{0,1}[a-zA-Z0-9][a-zA-Z0-9_\.-]{0,}:[^:?*&]{1,}(&[-]{0,1}[a-zA-Z0-9][a-zA-Z0-9_\.-]{0,}:[^:?*&]{1,}){0,}$") Then
@@ -54,65 +51,7 @@ Public Class DBMRtPIPoint
 
     Private Sub AddCorrelationPIPoint(ByVal PIPoint As PISDK.PIPoint,ByVal SubstractSelf As Boolean)
         DBMRtCorrelationPIPoints.Add(New DBMRtCorrelationPIPoint(PIPoint,SubstractSelf))
-        DBMRtEventPipeWatchers.Add(New DBMRtEventPipeWatcher(PIPoint))
     End Sub
-
-    Public Sub GetCalculationTimestamps(ByVal InputTimestamp As PITimeServer.PITime,OutputTimestamp As PITimeServer.PITime)
-        Do While InputTimestamp.UTCSeconds>=OutputTimestamp.UTCSeconds
-            If Not CalcTimestamps.Contains(OutputTimestamp.LocalDate) Then
-                CalcTimestamps.Add(OutputTimestamp.LocalDate)
-            End If
-            OutputTimestamp.UTCSeconds+=DBMConstants.CalculationInterval
-        Loop
-    End Sub
-
-    Public Sub GetRecalculationTimestamps(OutputTimestamp As PITimeServer.PITime)
-        Dim EventObject As PISDK.PIEventObject
-        Dim PointValue As PISDK.PointValue
-        Dim RecalcBaseTimestamp As PITimeServer.PITime
-        Dim DBMRtEventPipeWatcherDBMPointIndex,PatternCounter,OffsetCounter As Integer
-        Dim RecalcTimestamp As Date
-        For Each thisDBMRtEventPipeWatcher As DBMRtEventPipeWatcher In DBMRtEventPipeWatchers
-            Do While thisDBMRtEventPipeWatcher.EventPipe.Count>0 And CalcTimestamps.Count<DBMRtConstants.MaxCalcTimestamps
-                EventObject=thisDBMRtEventPipeWatcher.EventPipe.Take
-                PointValue=CType(EventObject.EventData,PISDK.PointValue)
-                If PointValue.PIValue.TimeStamp.UTCSeconds<OutputTimestamp.UTCSeconds Then
-                    ' TODO: Calculate from previous to next value per interval
-                    RecalcBaseTimestamp=PointValue.PIValue.TimeStamp
-                    RecalcBaseTimestamp.UTCSeconds-=RecalcBaseTimestamp.UTCSeconds Mod DBMConstants.CalculationInterval
-                    DBMRtEventPipeWatcherDBMPointIndex=DBMRtCalculator.DBM.DBMPointDriverIndex(New DBMPointDriver(thisDBMRtEventPipeWatcher.PIPoint))
-                    DBMRtCalculator.DBM.DBMPoints(DBMRtEventPipeWatcherDBMPointIndex).DBMDataManager.InvalidateCache(RecalcBaseTimestamp.LocalDate)
-                    For PatternCounter=0 To DBMConstants.ComparePatterns
-                        For OffsetCounter=0 To DBMConstants.EMAPreviousPeriods+DBMConstants.CorrelationPreviousPeriods
-                            RecalcTimestamp=DateAdd("d",PatternCounter*7,DateAdd("s",OffsetCounter*DBMConstants.CalculationInterval,RecalcBaseTimestamp.LocalDate))
-                            If DateDiff("d",RecalcTimestamp,Now())<=DBMRtConstants.MaxCalculationAge And RecalcTimestamp<OutputTimestamp.LocalDate Then
-                                If Not CalcTimestamps.Contains(RecalcTimestamp) Then
-                                    CalcTimestamps.Add(RecalcTimestamp)
-                                End If
-                            End If
-                        Next OffsetCounter
-                    Next PatternCounter
-                End If
-            Loop
-        Next
-    End Sub
-
-    Public Function GetInputTimestamp As PITimeServer.PITime
-        GetInputTimestamp=InputDBMPointDriver.Point.Data.Snapshot.TimeStamp
-        For Each thisDBMRtCorrelationPIPoint As DBMRtCorrelationPIPoint In DBMRtCorrelationPIPoints
-            GetInputTimestamp.UTCSeconds=Math.Min(GetInputTimestamp.UTCSeconds,thisDBMRtCorrelationPIPoint.DBMPointDriver.Point.Data.Snapshot.TimeStamp.UTCSeconds)
-        Next
-        Return GetInputTimestamp
-    End Function
-
-    Public Function GetNextOutputTimestamp As PITimeServer.PITime
-        GetNextOutputTimestamp=OutputDBMPointDriver.Point.Data.Snapshot.TimeStamp
-        If DateDiff("d",GetNextOutputTimestamp.LocalDate,Now())>DBMRtConstants.MaxCalculationAge Then
-            GetNextOutputTimestamp.LocalDate=DateAdd("d",-DBMRtConstants.MaxCalculationAge,Now())
-        End If
-        GetNextOutputTimestamp.UTCSeconds+=DBMConstants.CalculationInterval-GetNextOutputTimestamp.UTCSeconds Mod DBMConstants.CalculationInterval
-        Return GetNextOutputTimestamp
-    End Function
 
     Public Sub Calculate
         Dim InputTimestamp,OutputTimestamp As PITimeServer.PITime
@@ -121,10 +60,19 @@ Public Class DBMRtPIPoint
         Dim PINamedValues As PISDKCommon.NamedValues
         Dim PIValues As PISDK.PIValues
         Dim Value,NewValue As Double
-        InputTimestamp=GetInputTimestamp
-        OutputTimestamp=GetNextOutputTimestamp
-        GetCalculationTimestamps(InputTimestamp,OutputTimestamp)
-        GetRecalculationTimestamps(OutputTimestamp)
+        InputTimestamp=InputDBMPointDriver.Point.Data.Snapshot.TimeStamp
+        For Each thisDBMRtCorrelationPIPoint As DBMRtCorrelationPIPoint In DBMRtCorrelationPIPoints
+            InputTimestamp.UTCSeconds=Math.Min(InputTimestamp.UTCSeconds,thisDBMRtCorrelationPIPoint.DBMPointDriver.Point.Data.Snapshot.TimeStamp.UTCSeconds)
+        Next
+        OutputTimestamp=OutputDBMPointDriver.Point.Data.Snapshot.TimeStamp
+        If DateDiff("d",OutputTimestamp.LocalDate,Now())>DBMRtConstants.MaxCalculationAge Then
+            OutputTimestamp.LocalDate=DateAdd("d",-DBMRtConstants.MaxCalculationAge,Now())
+        End If
+        OutputTimestamp.UTCSeconds+=DBMConstants.CalculationInterval-OutputTimestamp.UTCSeconds Mod DBMConstants.CalculationInterval
+        Do While InputTimestamp.UTCSeconds>=OutputTimestamp.UTCSeconds
+            CalcTimestamps.Add(OutputTimestamp.LocalDate)
+            OutputTimestamp.UTCSeconds+=DBMConstants.CalculationInterval
+        Loop
         If CalcTimestamps.Count>0 Then
             CalcTimestamps.Sort
             Annotation=""

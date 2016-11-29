@@ -49,7 +49,7 @@ if exist "%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDK.dll" (
 
     if exist "%PIHOME%\ACE\OSISoft.PIACENet.dll" (
 
-        %vbc% /reference:%PIRefs%,%PIACERefs%,build\DBMDriverOSIsoftPI.dll /rootnamespace:PIACE.DBMRt /target:library /out:build\DBMRt.dll src\PIACENet\DBMRt.vb src\PIACENet\DBMRtCalculator.vb src\PIACENet\DBMRtConstants.vb src\PIACENet\DBMRtCorrelationPIPoint.vb src\PIACENet\DBMRtEventPipeWatcher.vb src\PIACENet\DBMRtPIPoint.vb src\PIACENet\DBMRtPIServer.vb
+        %vbc% /reference:%PIRefs%,%PIACERefs%,build\DBMDriverOSIsoftPI.dll /rootnamespace:PIACE.DBMRt /target:library /out:build\DBMRt.dll src\PIACENet\DBMRt.vb src\PIACENet\DBMRtCalculator.vb src\PIACENet\DBMRtConstants.vb src\PIACENet\DBMRtCorrelationPIPoint.vb src\PIACENet\DBMRtPIPoint.vb src\PIACENet\DBMRtPIServer.vb
         if not exist build\DBMRt.dll goto ExitBuild
 
     )

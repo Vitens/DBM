@@ -25,7 +25,6 @@ Option Strict
 Public Class DBMRtConstants
 
     Public Const MaxCalculationAge As Integer=              30 ' days
-    Public Const MaxCalcTimestamps As Integer=              CInt(24*3600/DBMConstants.CalculationInterval) ' 288 = 1 day
     Public Const CalculationDelay As Integer=               10 ' seconds
 
 End Class
