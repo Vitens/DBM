@@ -24,13 +24,13 @@ Option Strict
 
 Public Class DBMRtEventPipeWatcher
 
-    Public DBMRtPIPoint As PISDK.PIPoint
+    Public PIPoint As PISDK.PIPoint
     Public EventPipe As PISDK.IEventPipe2
 
-    Public Sub New(ByVal DBMRtPIPoint As PISDK.PIPoint)
+    Public Sub New(ByVal PIPoint As PISDK.PIPoint)
         Dim PIData2 As PISDK.IPIData2
-        Me.DBMRtPIPoint=DBMRtPIPoint
-        PIData2=CType(Me.DBMRtPIPoint.Data,PISDK.IPIData2)
+        Me.PIPoint=PIPoint
+        PIData2=CType(Me.PIPoint.Data,PISDK.IPIData2)
         EventPipe=CType(PIData2.ArchiveEventPipe,PISDK.IEventPipe2)
     End Sub
 

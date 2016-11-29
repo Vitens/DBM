@@ -85,7 +85,7 @@ Public Class DBMRtPIPoint
                     ' TODO: Calculate from previous to next value per interval
                     RecalcBaseTimestamp=PointValue.PIValue.TimeStamp
                     RecalcBaseTimestamp.UTCSeconds-=RecalcBaseTimestamp.UTCSeconds Mod DBMConstants.CalculationInterval
-                    DBMRtEventPipeWatcherDBMPointIndex=DBMRtCalculator.DBM.DBMPointDriverIndex(New DBMPointDriver(thisDBMRtEventPipeWatcher.DBMRtPIPoint))
+                    DBMRtEventPipeWatcherDBMPointIndex=DBMRtCalculator.DBM.DBMPointDriverIndex(New DBMPointDriver(thisDBMRtEventPipeWatcher.PIPoint))
                     DBMRtCalculator.DBM.DBMPoints(DBMRtEventPipeWatcherDBMPointIndex).DBMDataManager.InvalidateCache(RecalcBaseTimestamp.LocalDate)
                     For i=0 To DBMConstants.ComparePatterns
                         For j=0 To DBMConstants.EMAPreviousPeriods+DBMConstants.CorrelationPreviousPeriods
