@@ -29,12 +29,8 @@ Public Class DBMDataManager
     Private CacheIndex As Integer
 
     Public Sub New(ByVal DBMPointDriver As DBMPointDriver)
-        Dim i As Integer
         Me.DBMPointDriver=DBMPointDriver
-        ReDim CachedValues(CInt((DBMConstants.ComparePatterns+1)*(DBMConstants.EMAPreviousPeriods+DBMConstants.CorrelationPreviousPeriods+24*3600/DBMConstants.CalculationInterval)-1)) ' Large enough for at least one day
-        For i=0 to CachedValues.Length-1 ' Initialise cache
-            CachedValues(i)=New DBMCachedValue
-        Next i
+        InvalidateCache
         CacheIndex=0
     End Sub
 
@@ -52,5 +48,20 @@ Public Class DBMDataManager
         End If
         Return CachedValues(i).Value
     End Function
+
+    Public Sub InvalidateCache(Optional ByVal Timestamp As DateTime=Nothing)
+        Dim i As Integer
+        If Timestamp=DateTime.MinValue Then
+            ReDim CachedValues(CInt((DBMConstants.ComparePatterns+1)*(DBMConstants.EMAPreviousPeriods+DBMConstants.CorrelationPreviousPeriods+24*3600/DBMConstants.CalculationInterval)-1)) ' Large enough for at least one day
+            For i=0 to CachedValues.Length-1 ' Initialise cache
+                CachedValues(i)=New DBMCachedValue
+            Next i
+        Else
+            i=Array.FindIndex(CachedValues,Function(FindCachedValue)FindCachedValue.Timestamp=Timestamp)
+            If i>=0 Then
+                CachedValues(i).Invalidate
+            End If
+        End If
+    End Sub
 
 End Class

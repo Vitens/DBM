@@ -68,7 +68,7 @@ End Module
 ![Sample 3b](docs/sample3b.png)
 [Sample 3 data](docs/sample3.csv)
 
-In this example, an exception causes the measured value (black) to cross the upper control limit (gray). Because the pattern is checked against a similar pattern which has a comparable relative prediction error (calculated as _(predicted value / measured value) - 1_), the exception is suppressed. The DBM factor value is greater than zero and less than, or equal to one (correlation coefficient of the relative prediction error) during this time.
+In this example, an exception causes the measured value (black) to cross the upper and lower control limits (gray). Because the pattern is checked against a similar pattern which has a comparable relative prediction error (calculated as _(predicted value / measured value) - 1_), the exception is suppressed. The DBM factor value is greater than zero and less than, or equal to one (correlation coefficient of the relative prediction error) during this time.
 
 ```
 Option Explicit
