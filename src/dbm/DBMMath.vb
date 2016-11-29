@@ -127,8 +127,10 @@ Public Class DBMMath
         Return CalculateMedian
     End Function
 
-    Public Shared Function CalculateMeanAbsDev(ByVal Mean As Double,ByVal Data() As Double) As Double
+    Public Shared Function CalculateMeanAbsDev(ByVal Data() As Double) As Double
+        Dim Mean As Double
         Dim i As Integer
+        Mean=CalculateMean(Data)
         For i=0 to Data.Length-1
             Data(i)=Math.Abs(Data(i)-Mean)
         Next i
@@ -136,8 +138,10 @@ Public Class DBMMath
         Return CalculateMeanAbsDev
     End Function
 
-    Public Shared Function CalculateMedianAbsDev(ByVal Median As Double,ByVal Data() As Double) As Double
+    Public Shared Function CalculateMedianAbsDev(ByVal Data() As Double) As Double
+        Dim Median As Double
         Dim i As Integer
+        Median=CalculateMedian(Data)
         For i=0 to Data.Length-1
             Data(i)=Math.Abs(Data(i)-Median)
         Next i
@@ -149,9 +153,9 @@ Public Class DBMMath
         Dim Median,MedianAbsDev,Mean,MeanAbsDev As Double
         Dim i As Integer
         Median=CalculateMedian(Data.ToArray)
-        MedianAbsDev=CalculateMedianAbsDev(Median,Data.ToArray)
+        MedianAbsDev=CalculateMedianAbsDev(Data.ToArray)
         Mean=CalculateMean(Data.ToArray)
-        MeanAbsDev=CalculateMeanAbsDev(Mean,Data.ToArray)
+        MeanAbsDev=CalculateMeanAbsDev(Data.ToArray)
         For i=0 to Data.Length-1
             If MedianAbsDev=0 Then ' Use Mean Absolute Deviation instead of Median Absolute Deviation to detect outliers
                 If Math.Abs(Data(i)-Mean)>MeanAbsDev*MeanAbsDevScaleFactor*ControlLimitRejectionCriterion(Data.Length-1) Then ' If value is an outlier
