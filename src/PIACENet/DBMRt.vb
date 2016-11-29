@@ -67,6 +67,7 @@ Public Class DBMRt
                 End Class
 
                 Private InputDBMPointDriver,OutputDBMPointDriver As DBMPointDriver
+                Private EventPipeWatchers As Collections.Generic.List(Of EventPipeWatcher)
                 Private CorrelationPIPoints As Collections.Generic.List(Of CorrelationPIPoint)
                 Private CalcTimestamps As Collections.Generic.List(Of Date)
 
@@ -74,6 +75,8 @@ Public Class DBMRt
                     Dim ExDesc,FieldsA(),FieldsB() As String
                     InputDBMPointDriver=New DBMPointDriver(InputPIPoint)
                     OutputDBMPointDriver=New DBMPointDriver(OutputPIPoint)
+                    EventPipeWatchers=New Collections.Generic.List(Of EventPipeWatcher)
+                    EventPipeWatchers.Add(New EventPipeWatcher(InputPIPoint))
                     CorrelationPIPoints=New Collections.Generic.List(Of CorrelationPIPoint)
                     ExDesc=OutputDBMPointDriver.Point.PointAttributes("ExDesc").Value.ToString
                     If Text.RegularExpressions.Regex.IsMatch(ExDesc,"^[-]{0,1}[a-zA-Z0-9][a-zA-Z0-9_\.-]{0,}:[^:?*&]{1,}(&[-]{0,1}[a-zA-Z0-9][a-zA-Z0-9_\.-]{0,}:[^:?*&]{1,}){0,}$") Then
@@ -93,6 +96,7 @@ Public Class DBMRt
 
                 Private Sub AddCorrelationPIPoint(ByVal PIPoint As PISDK.PIPoint,ByVal SubstractSelf As Boolean)
                     CorrelationPIPoints.Add(New CorrelationPIPoint(PIPoint,SubstractSelf))
+                    EventPipeWatchers.Add(New EventPipeWatcher(PIPoint))
                 End Sub
 
                 Public Sub CalculatePoint
