@@ -43,7 +43,7 @@ Public Class DBMRt
     Protected Overrides Sub ModuleDependentInitialization()
         Dim DBMRtCalculator As New DBMRtCalculator(True)
         Do While True
-            DBMRtCalculator.CalculateServers
+            DBMRtCalculator.Calculate
             Threading.Thread.Sleep(DBMRtConstants.CalculationDelay*1000)
         Loop
     End Sub

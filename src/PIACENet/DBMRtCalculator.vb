@@ -37,9 +37,9 @@ Public Class DBMRtCalculator
         Next
     End Sub
 
-    Public Sub CalculateServers
+    Public Sub Calculate
         For Each thisDBMRtPIServer As DBMRtPIServer In DBMRtPIServers
-            thisDBMRtPIServer.CalculatePoints
+            thisDBMRtPIServer.Calculate
         Next
     End Sub
 

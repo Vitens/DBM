@@ -48,10 +48,10 @@ Public Class DBMRtPIServer
         End Try
     End Sub
 
-    Public Sub CalculatePoints
+    Public Sub Calculate
         For Each thisDBMRtPIPoint As DBMRtPIPoint In DBMRtPIPoints
             Try
-                thisDBMRtPIPoint.CalculatePoint
+                thisDBMRtPIPoint.Calculate
             Catch
             End Try
         Next
