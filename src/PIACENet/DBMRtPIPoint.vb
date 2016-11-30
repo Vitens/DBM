@@ -49,10 +49,6 @@ Public Class DBMRtPIPoint
 
     Public Sub Calculate
         Dim InputTimestamp,OutputTimestamp As PITimeServer.PITime
-        Dim Annotation As String
-        Dim PIAnnotations As PISDK.PIAnnotations
-        Dim PINamedValues As PISDKCommon.NamedValues
-        Dim PIValues As PISDK.PIValues
         Dim Value,NewValue As Double
         InputTimestamp=InputDBMPointDriver.Point.Data.Snapshot.TimeStamp ' Timestamp of input point
         For Each thisDBMRtCorrelationPIPoint As DBMRtCorrelationPIPoint In DBMRtCorrelationPIPoints ' Check timestamp of correlation points
@@ -62,11 +58,6 @@ Public Class DBMRtPIPoint
         OutputTimestamp=OutputDBMPointDriver.Point.Data.Snapshot.TimeStamp ' Timestamp of output point
         OutputTimestamp.UTCSeconds+=DBMConstants.CalculationInterval-OutputTimestamp.UTCSeconds Mod DBMConstants.CalculationInterval ' Next calculation timestamp
         If InputTimestamp.UTCSeconds>=OutputTimestamp.UTCSeconds Then ' If calculation timestamp can be calculated
-            Annotation=""
-            PIAnnotations=New PISDK.PIAnnotations
-            PINamedValues=New PISDKCommon.NamedValues
-            PIValues=New PISDK.PIValues
-            PIValues.ReadOnly=False
             Try
                 If DBMRtCorrelationPIPoints.Count=0 Then
                     Value=DBMRtCalculator.DBM.Calculate(InputDBMPointDriver,Nothing,InputTimestamp.LocalDate).Factor
@@ -79,23 +70,14 @@ Public Class DBMRtPIPoint
                         End If
                         If (Value=0 And Math.Abs(NewValue)>1) Or (Math.Abs(NewValue)<=1 And ((NewValue<0 And NewValue>=-1 And (NewValue<Value Or Math.Abs(Value)>1)) Or (NewValue>0 And NewValue<=1 And (NewValue>Value Or Math.Abs(Value)>1) And Not(Value<0 And Value>=-1)))) Then
                             Value=NewValue
-                            If Math.Abs(Value)>0 And Math.Abs(Value)<=1 Then
-                                Annotation="Exception suppressed by \\" & thisDBMRtCorrelationPIPoint.DBMPointDriver.Point.Server.Name & "\" & thisDBMRtCorrelationPIPoint.DBMPointDriver.Point.Name & " due to " & CStr(IIf(Value<0,"anti","")) & "correlation (r=" & Value & ")."
-                            End If
                         End If
                     Next
                 End If
             Catch
-                Value=Double.NaN
-                Annotation="Calculation error."
+                Value=Double.NaN ' Calculation error
             End Try
-            If Annotation<>"" Then
-                PIAnnotations.Add("","",Annotation,False,"String")
-                PINamedValues.Add("Annotations",CObj(PIAnnotations))
-            End If
-            PIValues.Add(InputTimestamp.LocalDate,Value,PINamedValues)
             Try
-                OutputDBMPointDriver.Point.Data.UpdateValues(PIValues)
+                OutputDBMPointDriver.Point.Data.UpdateValue(Value,InputTimestamp.LocalDate) ' Write value to output point
             Catch
             End Try
         End If
