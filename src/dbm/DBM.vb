@@ -24,7 +24,7 @@ Option Strict
 
 Imports System.Reflection
 <assembly:AssemblyTitle("DBM")>
-<assembly:AssemblyVersion("1.3.0.*")>
+<assembly:AssemblyVersion("1.3.1.*")>
 <assembly:AssemblyProduct("Dynamic Bandwidth Monitor")>
 <assembly:AssemblyDescription("Leak detection method implemented in a real-time data historian")>
 <assembly:AssemblyCopyright("Copyright (C) 2014, 2015, 2016 J.H. Fitié, Vitens N.V.")>
