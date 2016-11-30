@@ -34,18 +34,17 @@ Public Class DBMRt
 
     Inherits OSIsoft.PI.ACE.PIACENetClassModule
 
+    Private DBMRtCalculator As DBMRtCalculator
+
     Public Overrides Sub ACECalculations()
+        DBMRtCalculator.Calculate
     End Sub
 
     Protected Overrides Sub InitializePIACEPoints()
     End Sub
 
     Protected Overrides Sub ModuleDependentInitialization()
-        Dim DBMRtCalculator As New DBMRtCalculator(True)
-        Do While True
-            DBMRtCalculator.Calculate
-            Threading.Thread.Sleep(DBMRtConstants.CalculationDelay*1000)
-        Loop
+        DBMRtCalculator=New DBMRtCalculator(True)
     End Sub
 
     Protected Overrides Sub ModuleDependentTermination()

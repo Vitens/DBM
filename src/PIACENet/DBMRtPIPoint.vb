@@ -26,7 +26,6 @@ Public Class DBMRtPIPoint
 
     Private InputDBMPointDriver,OutputDBMPointDriver As DBMPointDriver
     Private DBMRtCorrelationPIPoints As Collections.Generic.List(Of DBMRtCorrelationPIPoint)
-    Private CalcTimestamps As Collections.Generic.List(Of Date)
 
     Public Sub New(ByVal InputPIPoint As PISDK.PIPoint,ByVal OutputPIPoint As PISDK.PIPoint)
         Dim ExDesc,FieldsA(),FieldsB() As String
@@ -46,7 +45,6 @@ Public Class DBMRtPIPoint
                 End Try
             Next
         End If
-        CalcTimestamps=New Collections.Generic.List(Of Date)
     End Sub
 
     Private Sub AddCorrelationPIPoint(ByVal PIPoint As PISDK.PIPoint,ByVal SubstractSelf As Boolean)
@@ -60,21 +58,14 @@ Public Class DBMRtPIPoint
         Dim PINamedValues As PISDKCommon.NamedValues
         Dim PIValues As PISDK.PIValues
         Dim Value,NewValue As Double
-        InputTimestamp=InputDBMPointDriver.Point.Data.Snapshot.TimeStamp
-        For Each thisDBMRtCorrelationPIPoint As DBMRtCorrelationPIPoint In DBMRtCorrelationPIPoints
-            InputTimestamp.UTCSeconds=Math.Min(InputTimestamp.UTCSeconds,thisDBMRtCorrelationPIPoint.DBMPointDriver.Point.Data.Snapshot.TimeStamp.UTCSeconds)
+        InputTimestamp=InputDBMPointDriver.Point.Data.Snapshot.TimeStamp ' Timestamp of input point
+        For Each thisDBMRtCorrelationPIPoint As DBMRtCorrelationPIPoint In DBMRtCorrelationPIPoints ' Check timestamp of correlation points
+            InputTimestamp.UTCSeconds=Math.Min(InputTimestamp.UTCSeconds,thisDBMRtCorrelationPIPoint.DBMPointDriver.Point.Data.Snapshot.TimeStamp.UTCSeconds) ' Timestamp of correlation point, keep earliest
         Next
-        OutputTimestamp=OutputDBMPointDriver.Point.Data.Snapshot.TimeStamp
-        If DateDiff("d",OutputTimestamp.LocalDate,Now())>DBMRtConstants.MaxCalculationAge Then
-            OutputTimestamp.LocalDate=DateAdd("d",-DBMRtConstants.MaxCalculationAge,Now())
-        End If
-        OutputTimestamp.UTCSeconds+=DBMConstants.CalculationInterval-OutputTimestamp.UTCSeconds Mod DBMConstants.CalculationInterval
-        Do While InputTimestamp.UTCSeconds>=OutputTimestamp.UTCSeconds
-            CalcTimestamps.Add(OutputTimestamp.LocalDate)
-            OutputTimestamp.UTCSeconds+=DBMConstants.CalculationInterval
-        Loop
-        If CalcTimestamps.Count>0 Then
-            CalcTimestamps.Sort
+        InputTimestamp.UTCSeconds-=DBMConstants.CalculationInterval+InputTimestamp.UTCSeconds Mod DBMConstants.CalculationInterval ' Can calculate output until (inclusive)
+        OutputTimestamp=OutputDBMPointDriver.Point.Data.Snapshot.TimeStamp ' Timestamp of output point
+        OutputTimestamp.UTCSeconds+=DBMConstants.CalculationInterval-OutputTimestamp.UTCSeconds Mod DBMConstants.CalculationInterval ' Next calculation timestamp
+        If InputTimestamp.UTCSeconds>=OutputTimestamp.UTCSeconds Then ' If calculation timestamp can be calculated
             Annotation=""
             PIAnnotations=New PISDK.PIAnnotations
             PINamedValues=New PISDKCommon.NamedValues
@@ -82,13 +73,13 @@ Public Class DBMRtPIPoint
             PIValues.ReadOnly=False
             Try
                 If DBMRtCorrelationPIPoints.Count=0 Then
-                    Value=DBMRtCalculator.DBM.Calculate(InputDBMPointDriver,Nothing,CalcTimestamps(CalcTimestamps.Count-1)).Factor
+                    Value=DBMRtCalculator.DBM.Calculate(InputDBMPointDriver,Nothing,InputTimestamp.LocalDate).Factor
                 Else
                     Value=0
                     For Each thisDBMRtCorrelationPIPoint As DBMRtCorrelationPIPoint In DBMRtCorrelationPIPoints
-                        NewValue=DBMRtCalculator.DBM.Calculate(InputDBMPointDriver,thisDBMRtCorrelationPIPoint.DBMPointDriver,CalcTimestamps(CalcTimestamps.Count-1),thisDBMRtCorrelationPIPoint.SubstractSelf).Factor
-                        If NewValue=0 Then
-                            Exit For
+                        NewValue=DBMRtCalculator.DBM.Calculate(InputDBMPointDriver,thisDBMRtCorrelationPIPoint.DBMPointDriver,InputTimestamp.LocalDate,thisDBMRtCorrelationPIPoint.SubstractSelf).Factor
+                        If NewValue=0 Then ' If there is no exception
+                            Exit For ' Do not calculate next correlation points
                         End If
                         If (Value=0 And Math.Abs(NewValue)>1) Or (Math.Abs(NewValue)<=1 And ((NewValue<0 And NewValue>=-1 And (NewValue<Value Or Math.Abs(Value)>1)) Or (NewValue>0 And NewValue<=1 And (NewValue>Value Or Math.Abs(Value)>1) And Not(Value<0 And Value>=-1)))) Then
                             Value=NewValue
@@ -106,12 +97,11 @@ Public Class DBMRtPIPoint
                 PIAnnotations.Add("","",Annotation,False,"String")
                 PINamedValues.Add("Annotations",CObj(PIAnnotations))
             End If
-            PIValues.Add(CalcTimestamps(CalcTimestamps.Count-1),Value,PINamedValues)
+            PIValues.Add(InputTimestamp.LocalDate,Value,PINamedValues)
             Try
                 OutputDBMPointDriver.Point.Data.UpdateValues(PIValues)
             Catch
             End Try
-            CalcTimestamps.RemoveAt(CalcTimestamps.Count-1)
         End If
     End Sub
 
