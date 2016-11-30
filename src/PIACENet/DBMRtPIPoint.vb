@@ -39,16 +39,12 @@ Public Class DBMRtPIPoint
                 FieldsB=Split(thisField,":")
                 Try
                     If DBMRtCalculator.PISDK.Servers(Mid(FieldsB(0),1+CInt(IIf(Left(FieldsB(0),1)="-",1,0)))).PIPoints(FieldsB(1)).Name<>"" Then
-                        AddCorrelationPIPoint(DBMRtCalculator.PISDK.Servers(Mid(FieldsB(0),1+CInt(IIf(Left(FieldsB(0),1)="-",1,0)))).PIPoints(FieldsB(1)),Left(FieldsB(0),1)="-")
+                        DBMRtCorrelationPIPoints.Add(New DBMRtCorrelationPIPoint(DBMRtCalculator.PISDK.Servers(Mid(FieldsB(0),1+CInt(IIf(Left(FieldsB(0),1)="-",1,0)))).PIPoints(FieldsB(1)),Left(FieldsB(0),1)="-"))
                     End If
                 Catch
                 End Try
             Next
         End If
-    End Sub
-
-    Private Sub AddCorrelationPIPoint(ByVal PIPoint As PISDK.PIPoint,ByVal SubstractSelf As Boolean)
-        DBMRtCorrelationPIPoints.Add(New DBMRtCorrelationPIPoint(PIPoint,SubstractSelf))
     End Sub
 
     Public Sub Calculate
