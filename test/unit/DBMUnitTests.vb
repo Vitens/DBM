@@ -22,13 +22,8 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
-Imports System.Reflection
-<assembly:AssemblyTitle("DBMUnitTests")>
-<assembly:AssemblyVersion("1.1.1.*")>
-<assembly:AssemblyProduct("Dynamic Bandwidth Monitor Unit Tests")>
-<assembly:AssemblyDescription("Leak detection method implemented in a real-time data historian")>
-<assembly:AssemblyCopyright("Copyright (C) 2014, 2015, 2016 J.H. Fitié, Vitens N.V.")>
-<assembly:AssemblyCompany("Vitens N.V.")>
+<assembly:System.Reflection.AssemblyTitle("DBMUnitTests")>
+<assembly:System.Reflection.AssemblyVersion("1.1.1.*")>
 
 Module DBMUnitTests
 

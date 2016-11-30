@@ -22,13 +22,8 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
-Imports System.Reflection
-<assembly:AssemblyTitle("DBM")>
-<assembly:AssemblyVersion("1.3.1.*")>
-<assembly:AssemblyProduct("Dynamic Bandwidth Monitor")>
-<assembly:AssemblyDescription("Leak detection method implemented in a real-time data historian")>
-<assembly:AssemblyCopyright("Copyright (C) 2014, 2015, 2016 J.H. Fitié, Vitens N.V.")>
-<assembly:AssemblyCompany("Vitens N.V.")>
+<assembly:System.Reflection.AssemblyTitle("DBM")>
+<assembly:System.Reflection.AssemblyVersion("1.3.1.*")>
 
 Public Class DBM
 
