@@ -60,11 +60,21 @@ Public Class DBM
                 End If
                 AbsErrorStats.Calculate(DBMPoints(CorrelationDBMPointDriverIndex).AbsoluteError,DBMPoints(InputDBMPointDriverIndex).AbsoluteError) ' Absolute error compared to prediction
                 RelErrorStats.Calculate(DBMPoints(CorrelationDBMPointDriverIndex).RelativeError,DBMPoints(InputDBMPointDriverIndex).RelativeError) ' Relative error compared to prediction
-                If RelErrorStats.ModifiedCorrelation>DBMConstants.CorrelationThreshold Then ' Suppress event due to correlation of relative error // TODO
-                    Calculate.Factor=RelErrorStats.ModifiedCorrelation
+                If Not thisDBMCorrelationPoint.SubstractSelf And AbsErrorStats.ModifiedCorrelation<-DBMConstants.CorrelationThreshold Then ' If anticorrelation with adjacent measurement
+                    If Calculate.Factor<-DBMConstants.CorrelationThreshold And Calculate.Factor>=-1 Then ' If already suppressed due to anticorrelation
+                        Calculate.Factor=Math.Min(Calculate.Factor,AbsErrorStats.ModifiedCorrelation) ' Keep lowest value (strongest anticorrelation)
+                    Else ' Not already suppressed due to anticorrelation
+                        Calculate.Factor=AbsErrorStats.ModifiedCorrelation ' Suppress
+                    End If
                 End If
-                If Not thisDBMCorrelationPoint.SubstractSelf And AbsErrorStats.ModifiedCorrelation<-DBMConstants.CorrelationThreshold Then ' Suppress event due to anticorrelation of absolute error (unmeasured supply) // TODO
-                    Calculate.Factor=AbsErrorStats.ModifiedCorrelation
+                If RelErrorStats.ModifiedCorrelation>DBMConstants.CorrelationThreshold Then ' If correlation with measurement
+                    If Not (Calculate.Factor<-DBMConstants.CorrelationThreshold And Calculate.Factor>=-1) Then ' If not already suppressed due to anticorrelation
+                        If Calculate.Factor>DBMConstants.CorrelationThreshold And Calculate.Factor<=1 Then ' If already suppressed due to correlation
+                            Calculate.Factor=Math.Max(Calculate.Factor,RelErrorStats.ModifiedCorrelation) ' Keep highest value (strongest correlation)
+                        Else ' Not already suppressed due to correlation
+                            Calculate.Factor=RelErrorStats.ModifiedCorrelation ' Suppress
+                        End If
+                    End If
                 End If
             Next
         End If
