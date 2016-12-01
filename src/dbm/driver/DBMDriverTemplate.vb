@@ -38,6 +38,7 @@ Public Class DBMPointDriver
     End Sub
 
     Public Function GetData(ByVal StartTimestamp As DateTime,ByVal EndTimestamp As DateTime) As Double
+        Return 0
     End Function
 
 End Class
