@@ -414,6 +414,29 @@ Module DBMUnitTests
             Console.WriteLine(" Done")
         Next i
 
+        Console.Write("Testing DBM.KeepOrSuppressEvent ")
+        CheckEqual(DBM.KeepOrSuppressEvent(5,0,0,False),5)
+        CheckEqual(DBM.KeepOrSuppressEvent(-5,0,0,False),-5)
+        CheckEqual(DBM.KeepOrSuppressEvent(5,-0.8,0,False),5)
+        CheckEqual(DBM.KeepOrSuppressEvent(5,-0.9,0,False),-0.9)
+        CheckEqual(DBM.KeepOrSuppressEvent(5,-0.9,0,True),5)
+        CheckEqual(DBM.KeepOrSuppressEvent(5,0,0.8,False),5)
+        CheckEqual(DBM.KeepOrSuppressEvent(5,0,0.9,False),0.9)
+        CheckEqual(DBM.KeepOrSuppressEvent(5,0,0.9,True),0.9)
+        CheckEqual(DBM.KeepOrSuppressEvent(-0.9,-0.85,0,False),-0.9)
+        CheckEqual(DBM.KeepOrSuppressEvent(-0.9,-0.95,0,False),-0.95)
+        CheckEqual(DBM.KeepOrSuppressEvent(0.9,0,0.85,False),0.9)
+        CheckEqual(DBM.KeepOrSuppressEvent(0.9,0,0.95,False),0.95)
+        CheckEqual(DBM.KeepOrSuppressEvent(0.9,0,0.95,True),0.95)
+        CheckEqual(DBM.KeepOrSuppressEvent(-0.9,-0.99,0,False),-0.99)
+        CheckEqual(DBM.KeepOrSuppressEvent(-0.9,0.99,0,False),-0.9)
+        CheckEqual(DBM.KeepOrSuppressEvent(-0.9,0.99,0,True),-0.9)
+        CheckEqual(DBM.KeepOrSuppressEvent(0.99,-0.9,0,False),-0.9)
+        CheckEqual(DBM.KeepOrSuppressEvent(0.99,-0.9,0,True),0.99)
+        CheckEqual(DBM.KeepOrSuppressEvent(-0.99,0,0,True),-0.99)
+        CheckEqual(DBM.KeepOrSuppressEvent(0.99,0,0,True),0.99)
+        Console.WriteLine(" Done")
+
         Console.WriteLine(Math.Round((DateTime.Now.Ticks-Ticks)/10000) & "ms")
 
         For i=0 To 1 ' Run all cases twice to test cache

@@ -44,6 +44,27 @@ Public Class DBM
         Return DBMPointDriverIndex
     End Function
 
+    Public Shared Function KeepOrSuppressEvent(ByVal Factor As Double,ByVal AbsErrModCorr As Double,ByVal RelErrModCorr As Double,ByVal SubstractSelf As Boolean) As Double
+        KeepOrSuppressEvent=Factor
+        If Not SubstractSelf And AbsErrModCorr<-DBMConstants.CorrelationThreshold Then ' If anticorrelation with adjacent measurement
+            If KeepOrSuppressEvent<-DBMConstants.CorrelationThreshold And KeepOrSuppressEvent>=-1 Then ' If already suppressed due to anticorrelation
+                KeepOrSuppressEvent=Math.Min(KeepOrSuppressEvent,AbsErrModCorr) ' Keep lowest value (strongest anticorrelation)
+            Else ' Not already suppressed due to anticorrelation
+                KeepOrSuppressEvent=AbsErrModCorr ' Suppress
+            End If
+        End If
+        If RelErrModCorr>DBMConstants.CorrelationThreshold Then ' If correlation with measurement
+            If Not (KeepOrSuppressEvent<-DBMConstants.CorrelationThreshold And KeepOrSuppressEvent>=-1) Then ' If not already suppressed due to anticorrelation
+                If KeepOrSuppressEvent>DBMConstants.CorrelationThreshold And KeepOrSuppressEvent<=1 Then ' If already suppressed due to correlation
+                    KeepOrSuppressEvent=Math.Max(KeepOrSuppressEvent,RelErrModCorr) ' Keep highest value (strongest correlation)
+                Else ' Not already suppressed due to correlation
+                    KeepOrSuppressEvent=RelErrModCorr ' Suppress
+                End If
+            End If
+        End If
+        Return KeepOrSuppressEvent
+    End Function
+
     Public Function Calculate(ByVal InputDBMPointDriver As DBMPointDriver,ByVal DBMCorrelationPoints As Collections.Generic.List(Of DBMCorrelationPoint),ByVal Timestamp As DateTime) As DBMResult
         Dim InputDBMPointDriverIndex,CorrelationDBMPointDriverIndex As Integer
         Dim CorrelationDBMResult As DBMResult
@@ -60,22 +81,7 @@ Public Class DBM
                 End If
                 AbsErrorStats.Calculate(DBMPoints(CorrelationDBMPointDriverIndex).AbsoluteError,DBMPoints(InputDBMPointDriverIndex).AbsoluteError) ' Absolute error compared to prediction
                 RelErrorStats.Calculate(DBMPoints(CorrelationDBMPointDriverIndex).RelativeError,DBMPoints(InputDBMPointDriverIndex).RelativeError) ' Relative error compared to prediction
-                If Not thisDBMCorrelationPoint.SubstractSelf And AbsErrorStats.ModifiedCorrelation<-DBMConstants.CorrelationThreshold Then ' If anticorrelation with adjacent measurement
-                    If Calculate.Factor<-DBMConstants.CorrelationThreshold And Calculate.Factor>=-1 Then ' If already suppressed due to anticorrelation
-                        Calculate.Factor=Math.Min(Calculate.Factor,AbsErrorStats.ModifiedCorrelation) ' Keep lowest value (strongest anticorrelation)
-                    Else ' Not already suppressed due to anticorrelation
-                        Calculate.Factor=AbsErrorStats.ModifiedCorrelation ' Suppress
-                    End If
-                End If
-                If RelErrorStats.ModifiedCorrelation>DBMConstants.CorrelationThreshold Then ' If correlation with measurement
-                    If Not (Calculate.Factor<-DBMConstants.CorrelationThreshold And Calculate.Factor>=-1) Then ' If not already suppressed due to anticorrelation
-                        If Calculate.Factor>DBMConstants.CorrelationThreshold And Calculate.Factor<=1 Then ' If already suppressed due to correlation
-                            Calculate.Factor=Math.Max(Calculate.Factor,RelErrorStats.ModifiedCorrelation) ' Keep highest value (strongest correlation)
-                        Else ' Not already suppressed due to correlation
-                            Calculate.Factor=RelErrorStats.ModifiedCorrelation ' Suppress
-                        End If
-                    End If
-                End If
+                Calculate.Factor=KeepOrSuppressEvent(Calculate.Factor,AbsErrorStats.ModifiedCorrelation,RelErrorStats.ModifiedCorrelation,thisDBMCorrelationPoint.SubstractSelf)
             Next
         End If
         Return Calculate
