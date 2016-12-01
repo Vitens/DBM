@@ -30,7 +30,7 @@ del /Q build\*
 
 set vbc="%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\Vbc.exe"
 set AlwaysIncludeFiles=src\shared\DBMSharedManifest.vb
-set IncludeFiles=src\dbm\DBM.vb src\dbm\DBMCachedValue.vb src\dbm\DBMConstants.vb src\dbm\DBMDataManager.vb src\dbm\DBMFunctions.vb src\dbm\DBMMath.vb src\dbm\DBMPoint.vb src\dbm\DBMResult.vb src\dbm\DBMStatistics.vb
+set IncludeFiles=src\dbm\DBM.vb src\dbm\DBMCachedValue.vb src\dbm\DBMConstants.vb src\dbm\DBMCorrelationPoint.vb src\dbm\DBMDataManager.vb src\dbm\DBMFunctions.vb src\dbm\DBMMath.vb src\dbm\DBMPoint.vb src\dbm\DBMResult.vb src\dbm\DBMStatistics.vb
 set PIRefs="%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDK.dll","%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDKCommon.dll"
 set PIACERefs="%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PITimeServer.dll","%PIHOME%\ACE\OSISoft.PIACENet.dll"
 
@@ -50,7 +50,7 @@ if exist "%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDK.dll" (
 
     if exist "%PIHOME%\ACE\OSISoft.PIACENet.dll" (
 
-        %vbc% /reference:%PIRefs%,%PIACERefs%,build\DBMDriverOSIsoftPI.dll /rootnamespace:PIACE.DBMRt /target:library /out:build\DBMRt.dll %AlwaysIncludeFiles% src\PIACENet\DBMRt.vb src\PIACENet\DBMRtCalculator.vb src\PIACENet\DBMRtCorrelationPIPoint.vb src\PIACENet\DBMRtPIPoint.vb src\PIACENet\DBMRtPIServer.vb
+        %vbc% /reference:%PIRefs%,%PIACERefs%,build\DBMDriverOSIsoftPI.dll /rootnamespace:PIACE.DBMRt /target:library /out:build\DBMRt.dll %AlwaysIncludeFiles% src\PIACENet\DBMRt.vb src\PIACENet\DBMRtCalculator.vb src\PIACENet\DBMRtPIPoint.vb src\PIACENet\DBMRtPIServer.vb
         if not exist build\DBMRt.dll goto ExitBuild
 
     )

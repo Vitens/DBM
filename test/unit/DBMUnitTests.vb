@@ -35,19 +35,19 @@ Module DBMUnitTests
     Private Sub UnitTest(ByVal Description As String,ByVal ExpFact As Double,ByVal ExpCurr As Double,ByVal ExpPred As Double,ByVal ExpLCL As Double,ByVal ExpUCL As Double,ByVal InputPoint As Object,ByVal CorrelationPoint As Object,ByVal Timestamp As DateTime,ByVal SubstractInputPointFromCorrelationPoint As Boolean)
         Dim Ticks As Int64=DateTime.Now.Ticks
         Dim DBMResult As DBMResult
+        Dim CorrelationDBMCorrelationPoints As New Collections.Generic.List(Of DBMCorrelationPoint)
         Console.Write(Description & Space(Math.Max(0,33-Description.Length)))
+        If Not IsNothing(CorrelationPoint) Then
+            #If OfflineUnitTests Then
+            CorrelationDBMCorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver(CStr(CorrelationPoint)),SubstractInputPointFromCorrelationPoint))
+            #Else
+            CorrelationDBMCorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver(CType(CType(_PISDK.Servers(Split(CStr(CorrelationPoint),"\")(2)).PIPoints(Split(CStr(CorrelationPoint),"\")(3)),PISDK.PIPoint),PISDK.PIPoint)),SubstractInputPointFromCorrelationPoint))
+            #End If
+        End If
         #If OfflineUnitTests Then
-        If IsNothing(CorrelationPoint) Then
-            DBMResult=_DBM.Calculate(New DBMPointDriver(CStr(InputPoint)),Nothing,Timestamp,SubstractInputPointFromCorrelationPoint)
-        Else
-            DBMResult=_DBM.Calculate(New DBMPointDriver(CStr(InputPoint)),New DBMPointDriver(CStr(CorrelationPoint)),Timestamp,SubstractInputPointFromCorrelationPoint)
-        End If
+        DBMResult=_DBM.Calculate(New DBMPointDriver(CStr(InputPoint)),CorrelationDBMCorrelationPoints,Timestamp)
         #Else
-        If IsNothing(CorrelationPoint) Then
-            DBMResult=_DBM.Calculate(New DBMPointDriver(CType(_PISDK.Servers(Split(CStr(InputPoint),"\")(2)).PIPoints(Split(CStr(InputPoint),"\")(3)),PISDK.PIPoint)),Nothing,Timestamp,SubstractInputPointFromCorrelationPoint)
-        Else
-            DBMResult=_DBM.Calculate(New DBMPointDriver(CType(_PISDK.Servers(Split(CStr(InputPoint),"\")(2)).PIPoints(Split(CStr(InputPoint),"\")(3)),PISDK.PIPoint)),New DBMPointDriver(CType(CType(_PISDK.Servers(Split(CStr(CorrelationPoint),"\")(2)).PIPoints(Split(CStr(CorrelationPoint),"\")(3)),PISDK.PIPoint),PISDK.PIPoint)),Timestamp,SubstractInputPointFromCorrelationPoint)
-        End If
+        DBMResult=_DBM.Calculate(New DBMPointDriver(CType(_PISDK.Servers(Split(CStr(InputPoint),"\")(2)).PIPoints(Split(CStr(InputPoint),"\")(3)),PISDK.PIPoint)),CorrelationDBMCorrelationPoints,Timestamp)
         #End If
         If Math.Round(DBMResult.Factor,3)=ExpFact And Math.Round(DBMResult.CurrValue)=ExpCurr And Math.Round(DBMResult.PredValue)=ExpPred And Math.Round(DBMResult.LowContrLimit)=ExpLCL And Math.Round(DBMResult.UppContrLimit)=ExpUCL Then
             Console.Write("OK")
