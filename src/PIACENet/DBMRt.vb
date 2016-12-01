@@ -23,7 +23,7 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 <assembly:System.Reflection.AssemblyTitle("DBMRt")>
-<assembly:System.Reflection.AssemblyVersion("2.6.1.*")>
+<assembly:System.Reflection.AssemblyVersion("2.6.2.*")>
 
 Public Class DBMRt
 
