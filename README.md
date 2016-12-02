@@ -94,7 +94,7 @@ Module Module1
         Do While s<e
             r=_DBM.Calculate(New DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Leeuwarden-levering")),CP,s)
             Console.Write(s.ToString & vbTab & r.Factor & vbTab & r.CurrValue & vbTab & r.PredValue & vbTab & r.LowContrLimit & vbTab & r.UppContrLimit)
-            r=_DBM.Calculate(New DBMPointDriver(_PISDK.Servers("sr-16634").PIPoints("Reinwaterafgifte")),Nothing,s)
+            r=_DBM.Calculate(CP(0).DBMPointDriver,Nothing,s)
             Console.WriteLine(vbTab & r.CurrValue & vbTab & r.PredValue & vbTab & r.LowContrLimit & vbTab & r.UppContrLimit)
             s=DateAdd("s",DBMConstants.CalculationInterval,s)
         Loop
@@ -125,7 +125,7 @@ Module Module1
         Do While s<e
             r=_DBM.Calculate(New DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Drachten-levering")),CP,s)
             Console.Write(s.ToString & vbTab & r.Factor & vbTab & r.CurrValue & vbTab & r.PredValue & vbTab & r.LowContrLimit & vbTab & r.UppContrLimit)
-            r=_DBM.Calculate(New DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Oosterwolde-levering")),Nothing,s)
+            r=_DBM.Calculate(CP(0).DBMPointDriver,Nothing,s)
             Console.WriteLine(vbTab & r.CurrValue & vbTab & r.PredValue & vbTab & r.LowContrLimit & vbTab & r.UppContrLimit)
             s=DateAdd("s",DBMConstants.CalculationInterval,s)
         Loop
