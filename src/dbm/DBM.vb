@@ -23,7 +23,6 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 <assembly:System.Reflection.AssemblyTitle("DBM")>
-<assembly:System.Reflection.AssemblyVersion("1.4.1.*")>
 
 Public Class DBM
 
