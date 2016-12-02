@@ -48,7 +48,9 @@ Public Class DBM
         KeepOrSuppressEvent=Factor
         If Not SubstractSelf And AbsErrModCorr<-DBMConstants.CorrelationThreshold Then ' If anticorrelation with adjacent measurement
             If KeepOrSuppressEvent<-DBMConstants.CorrelationThreshold And KeepOrSuppressEvent>=-1 Then ' If already suppressed due to anticorrelation
-                KeepOrSuppressEvent=Math.Min(KeepOrSuppressEvent,AbsErrModCorr) ' Keep lowest value (strongest anticorrelation)
+                If AbsErrModCorr<KeepOrSuppressEvent Then ' Keep lowest value (strongest anticorrelation)
+                    KeepOrSuppressEvent=AbsErrModCorr ' Suppress
+                End If
             Else ' Not already suppressed due to anticorrelation
                 KeepOrSuppressEvent=AbsErrModCorr ' Suppress
             End If
@@ -56,7 +58,9 @@ Public Class DBM
         If RelErrModCorr>DBMConstants.CorrelationThreshold Then ' If correlation with measurement
             If Not (KeepOrSuppressEvent<-DBMConstants.CorrelationThreshold And KeepOrSuppressEvent>=-1) Then ' If not already suppressed due to anticorrelation
                 If KeepOrSuppressEvent>DBMConstants.CorrelationThreshold And KeepOrSuppressEvent<=1 Then ' If already suppressed due to correlation
-                    KeepOrSuppressEvent=Math.Max(KeepOrSuppressEvent,RelErrModCorr) ' Keep highest value (strongest correlation)
+                    If RelErrModCorr>KeepOrSuppressEvent Then ' Keep highest value (strongest correlation)
+                        KeepOrSuppressEvent=RelErrModCorr ' Suppress
+                    End If
                 Else ' Not already suppressed due to correlation
                     KeepOrSuppressEvent=RelErrModCorr ' Suppress
                 End If
