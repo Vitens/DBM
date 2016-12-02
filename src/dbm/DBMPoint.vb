@@ -37,7 +37,7 @@ Public Class DBMPoint
         Dim CorrelationCounter,EMACounter,PatternCounter As Integer
         Dim Pattern(DBMConstants.ComparePatterns),CurrValueEMA(DBMConstants.EMAPreviousPeriods),PredValueEMA(DBMConstants.EMAPreviousPeriods),LowContrLimitEMA(DBMConstants.EMAPreviousPeriods),UppContrLimitEMA(DBMConstants.EMAPreviousPeriods) As Double
         Dim DBMStatistics As New DBMStatistics
-        Calculate.Factor=0 ' No event
+        Calculate.SuppressedBy=Nothing
         For CorrelationCounter=0 To DBMConstants.CorrelationPreviousPeriods
             If CorrelationCounter=0 Or (IsInputDBMPoint And Calculate.Factor<>0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
                 For EMACounter=DBMConstants.EMAPreviousPeriods To 0 Step -1

@@ -71,8 +71,9 @@ Public Class DBM
 
     Public Function Calculate(ByVal InputDBMPointDriver As DBMPointDriver,ByVal DBMCorrelationPoints As Collections.Generic.List(Of DBMCorrelationPoint),ByVal Timestamp As DateTime) As DBMResult
         Dim InputDBMPointDriverIndex,CorrelationDBMPointDriverIndex As Integer
-        Dim CorrelationDBMResult As DBMResult
+        Dim CorrelationDBMResult As New DBMResult
         Dim AbsErrorStats,RelErrorStats As New DBMStatistics
+        Dim NewValue As Double
         InputDBMPointDriverIndex=DBMPointDriverIndex(InputDBMPointDriver)
         Calculate=DBMPoints(InputDBMPointDriverIndex).Calculate(Timestamp,True,DBMCorrelationPoints.Count>0) ' Calculate for input point
         If Calculate.Factor<>0 And DBMCorrelationPoints.Count>0 Then ' If an event is found and a correlation point is available
@@ -85,7 +86,11 @@ Public Class DBM
                 End If
                 AbsErrorStats.Calculate(DBMPoints(CorrelationDBMPointDriverIndex).AbsoluteError,DBMPoints(InputDBMPointDriverIndex).AbsoluteError) ' Absolute error compared to prediction
                 RelErrorStats.Calculate(DBMPoints(CorrelationDBMPointDriverIndex).RelativeError,DBMPoints(InputDBMPointDriverIndex).RelativeError) ' Relative error compared to prediction
-                Calculate.Factor=KeepOrSuppressEvent(Calculate.Factor,AbsErrorStats.ModifiedCorrelation,RelErrorStats.ModifiedCorrelation,thisDBMCorrelationPoint.SubstractSelf)
+                NewValue=KeepOrSuppressEvent(Calculate.Factor,AbsErrorStats.ModifiedCorrelation,RelErrorStats.ModifiedCorrelation,thisDBMCorrelationPoint.SubstractSelf)
+                If NewValue<>Calculate.Factor Then ' Has event been suppressed
+                    Calculate.Factor=NewValue
+                    Calculate.SuppressedBy=thisDBMCorrelationPoint.DBMPointDriver ' Suppressed by
+                End If
             Next
         End If
         Return Calculate
