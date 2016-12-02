@@ -36,7 +36,7 @@ Module DBMUnitTests
         Dim Ticks As Int64=DateTime.Now.Ticks
         Dim InputDBMPointDriver,CorrelationDBMPointDriver As DBMPointDriver
         Dim DBMCorrelationPoints As New Collections.Generic.List(Of DBMCorrelationPoint)
-        Dim DBMResult As New DBMResult
+        Dim DBMResult As DBMResult
         Console.Write(Description & Space(Math.Max(0,33-Description.Length)))
         #If OfflineUnitTests Then
         InputDBMPointDriver=New DBMPointDriver(CStr(InputPoint))

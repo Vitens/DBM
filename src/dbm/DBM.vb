@@ -71,7 +71,7 @@ Public Class DBM
 
     Public Function Calculate(ByVal InputDBMPointDriver As DBMPointDriver,ByVal DBMCorrelationPoints As Collections.Generic.List(Of DBMCorrelationPoint),ByVal Timestamp As DateTime) As DBMResult
         Dim InputDBMPointDriverIndex,CorrelationDBMPointDriverIndex As Integer
-        Dim CorrelationDBMResult As New DBMResult
+        Dim CorrelationDBMResult As DBMResult
         Dim AbsErrorStats,RelErrorStats As New DBMStatistics
         Dim NewValue As Double
         If IsNothing(DBMCorrelationPoints) Then DBMCorrelationPoints=New Collections.Generic.List(Of DBMCorrelationPoint)
