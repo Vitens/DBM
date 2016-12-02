@@ -133,6 +133,9 @@ Module Module1
 End Module
 ```
 
+## Classes
+![Classes](docs/dbmclasses.png)
+
 ## About Vitens
 ![Vitens](docs/vitens.png)
 
