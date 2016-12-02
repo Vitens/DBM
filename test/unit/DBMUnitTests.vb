@@ -35,8 +35,8 @@ Module DBMUnitTests
     Private Sub UnitTest(ByVal Description As String,ByVal ExpFact As Double,ByVal ExpCurr As Double,ByVal ExpPred As Double,ByVal ExpLCL As Double,ByVal ExpUCL As Double,ByVal InputPoint As Object,ByVal CorrelationPoint As Object,ByVal Timestamp As DateTime,ByVal SubstractSelf As Boolean)
         Dim Ticks As Int64=DateTime.Now.Ticks
         Dim InputDBMPointDriver,CorrelationDBMPointDriver As DBMPointDriver
-        Dim DBMResult As New DBMResult
         Dim DBMCorrelationPoints As New Collections.Generic.List(Of DBMCorrelationPoint)
+        Dim DBMResult As New DBMResult
         Console.Write(Description & Space(Math.Max(0,33-Description.Length)))
         #If OfflineUnitTests Then
         InputDBMPointDriver=New DBMPointDriver(CStr(InputPoint))
@@ -53,17 +53,8 @@ Module DBMUnitTests
             DBMCorrelationPoints.Add(New DBMCorrelationPoint(CorrelationDBMPointDriver,SubstractSelf))
         End If
         DBMResult=_DBM.Calculate(InputDBMPointDriver,DBMCorrelationPoints,Timestamp)
-        If Math.Round(DBMResult.Factor,3)=ExpFact And Math.Round(DBMResult.CurrValue)=ExpCurr And Math.Round(DBMResult.PredValue)=ExpPred And Math.Round(DBMResult.LowContrLimit)=ExpLCL And Math.Round(DBMResult.UppContrLimit)=ExpUCL Then
-            If Not IsNothing(CorrelationPoint) And Not IsNothing(DBMResult.SuppressedBy) Then
-                If DBMResult.SuppressedBy.Point Is CorrelationDBMPointDriver.Point Then
-                    Console.Write("OK")
-                Else
-                    Console.WriteLine("ERR")
-                    End
-                End If
-            Else
-                Console.Write("OK")
-            End If
+        If Math.Round(DBMResult.Factor,3)=ExpFact And Math.Round(DBMResult.CurrValue)=ExpCurr And Math.Round(DBMResult.PredValue)=ExpPred And Math.Round(DBMResult.LowContrLimit)=ExpLCL And Math.Round(DBMResult.UppContrLimit)=ExpUCL And (IsNothing(DBMResult.SuppressedBy) Or (Not IsNothing(DBMResult.SuppressedBy) And CorrelationDBMPointDriver Is DBMResult.SuppressedBy)) Then
+            Console.Write("OK")
         Else
             Console.WriteLine("ERR")
             End
