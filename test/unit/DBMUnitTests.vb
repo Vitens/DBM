@@ -23,7 +23,7 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 <assembly:System.Reflection.AssemblyTitle("DBMUnitTests")>
-<assembly:System.Reflection.AssemblyVersion("1.1.2.*")>
+<assembly:System.Reflection.AssemblyVersion("1.1.3.*")>
 
 Module DBMUnitTests
 
