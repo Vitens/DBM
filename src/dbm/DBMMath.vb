@@ -101,11 +101,11 @@ Public Class DBMMath
         Return MedianAbsDevScaleFactor
     End Function
 
-    Public Shared Function ControlLimitRejectionCriterion(ByVal n As Integer) As Double
+    Public Shared Function ControlLimitRejectionCriterion(ByVal p As Double,ByVal n As Integer) As Double
         If n<30 Then
-            ControlLimitRejectionCriterion=TInv((DBMConstants.ConfidenceInterval+1)/2,n) ' n<30 Student's t-distribution
+            ControlLimitRejectionCriterion=TInv((p+1)/2,n) ' n<30 Student's t-distribution
         Else
-            ControlLimitRejectionCriterion=NormSInv((DBMConstants.ConfidenceInterval+1)/2) ' n>=30 Standard normal distribution
+            ControlLimitRejectionCriterion=NormSInv((p+1)/2) ' n>=30 Standard normal distribution
         End If
         Return ControlLimitRejectionCriterion
     End Function
@@ -158,11 +158,11 @@ Public Class DBMMath
         MeanAbsDev=CalculateMeanAbsDev(Data.ToArray)
         For i=0 to Data.Length-1
             If MedianAbsDev=0 Then ' Use Mean Absolute Deviation instead of Median Absolute Deviation to detect outliers
-                If Math.Abs(Data(i)-Mean)>MeanAbsDev*MeanAbsDevScaleFactor*ControlLimitRejectionCriterion(Data.Length-1) Then ' If value is an outlier
+                If Math.Abs(Data(i)-Mean)>MeanAbsDev*MeanAbsDevScaleFactor*ControlLimitRejectionCriterion(DBMConstants.ConfidenceInterval,Data.Length-1) Then ' If value is an outlier
                     Data(i)=Double.NaN ' Exclude outlier
                 End If
             Else ' Use Median Absolute Deviation to detect outliers
-                If Math.Abs(Data(i)-Median)>MedianAbsDev*MedianAbsDevScaleFactor(Data.Length-1)*ControlLimitRejectionCriterion(Data.Length-1) Then ' If value is an outlier
+                If Math.Abs(Data(i)-Median)>MedianAbsDev*MedianAbsDevScaleFactor(Data.Length-1)*ControlLimitRejectionCriterion(DBMConstants.ConfidenceInterval,Data.Length-1) Then ' If value is an outlier
                     Data(i)=Double.NaN ' Exclude outlier
                 End If
             End If

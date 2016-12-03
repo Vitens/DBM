@@ -57,8 +57,8 @@ Public Class DBMPoint
                         DBMStatistics.Calculate(DBMMath.RemoveOutliers(Pattern.Take(Pattern.Length-1).ToArray)) ' Calculate statistics for data after removing outliers
                         CurrValueEMA(EMACounter)=Pattern(DBMConstants.ComparePatterns)
                         PredValueEMA(EMACounter)=DBMConstants.ComparePatterns*DBMStatistics.Slope+DBMStatistics.Intercept ' Extrapolate linear regression
-                        LowContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)-DBMMath.ControlLimitRejectionCriterion(DBMStatistics.Count-1)*DBMStatistics.StDevSLinReg
-                        UppContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)+DBMMath.ControlLimitRejectionCriterion(DBMStatistics.Count-1)*DBMStatistics.StDevSLinReg
+                        LowContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)-DBMMath.ControlLimitRejectionCriterion(DBMConstants.ConfidenceInterval,DBMStatistics.Count-1)*DBMStatistics.StDevSLinReg
+                        UppContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)+DBMMath.ControlLimitRejectionCriterion(DBMConstants.ConfidenceInterval,DBMStatistics.Count-1)*DBMStatistics.StDevSLinReg
                     End If
                 Next EMACounter
                 AbsoluteError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=DBMMath.CalculateExpMovingAvg(PredValueEMA)-DBMMath.CalculateExpMovingAvg(CurrValueEMA) ' Absolute error compared to prediction
