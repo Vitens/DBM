@@ -45,11 +45,11 @@ Public Class DBMDataManager
             If DBMCachedValues.Count<DBMConstants.MaximumCacheSize Then ' Limit cache size
                 DBMCachedValues.Add(New DBMCachedValue(Timestamp,Value)) ' Add to cache (new)
             Else
-                DBMCachedValues(CacheIndex)=New DBMCachedValue(Timestamp,Value) ' Add to cache (overwrite existing)
+                DBMCachedValues.Item(CacheIndex)=New DBMCachedValue(Timestamp,Value) ' Add to cache (overwrite existing)
                 CacheIndex=(CacheIndex+1) Mod DBMCachedValues.Count ' Increase index
             End If
         Else
-            Value=DBMCachedValues(i).Value ' Return value from cache
+            Value=DBMCachedValues.Item(i).Value ' Return value from cache
         End If
         Return Value
     End Function
