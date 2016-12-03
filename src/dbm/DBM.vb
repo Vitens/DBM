@@ -27,18 +27,17 @@ Option Strict
 Public Class DBM
 
     Private DBMDriver As DBMDriver
-    Public DBMPoints(-1) As DBMPoint
+    Public DBMPoints As New Collections.Generic.List(Of DBMPoint)
 
     Public Sub New(Optional ByVal Data() As Object=Nothing)
         DBMDriver=New DBMDriver(Data)
     End Sub
 
     Public Function DBMPointDriverIndex(ByVal DBMPointDriver As DBMPointDriver) As Integer
-        DBMPointDriverIndex=Array.FindIndex(DBMPoints,Function(FindDBMPoint)FindDBMPoint.DBMDataManager.DBMPointDriver.Point Is DBMPointDriver.Point)
+        DBMPointDriverIndex=DBMPoints.FindIndex(Function(FindDBMPoint)FindDBMPoint.DBMDataManager.DBMPointDriver.Point Is DBMPointDriver.Point)
         If DBMPointDriverIndex=-1 Then ' PointDriver not found
-            ReDim Preserve DBMPoints(DBMPoints.Length) ' Add to array
-            DBMPointDriverIndex=DBMPoints.Length-1
-            DBMPoints(DBMPointDriverIndex)=New DBMPoint(DBMPointDriver)
+            DBMPoints.Add(New DBMPoint(DBMPointDriver)) ' Add to list
+            DBMPointDriverIndex=DBMPoints.Count-1
         End If
         Return DBMPointDriverIndex
     End Function

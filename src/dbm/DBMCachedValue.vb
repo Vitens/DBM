@@ -32,9 +32,4 @@ Public Class DBMCachedValue
         Me.Value=Value
     End Sub
 
-    Public Sub Invalidate
-        Me.Timestamp=Nothing
-        Me.Value=Nothing
-    End Sub
-
 End Class
