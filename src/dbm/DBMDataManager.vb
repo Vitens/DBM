@@ -25,25 +25,29 @@ Option Strict
 Public Class DBMDataManager
 
     Public DBMPointDriver As DBMPointDriver
+    Private CacheIndex As Integer
     Private DBMCachedValues As New Collections.Generic.List(Of DBMCachedValue)
 
     Public Sub New(ByVal DBMPointDriver As DBMPointDriver)
         Me.DBMPointDriver=DBMPointDriver
+        CacheIndex=0
     End Sub
 
     Public Function Value(ByVal Timestamp As DateTime) As Double ' Returns value at timestamp, either from cache or using driver
         Dim i As Integer
         i=DBMCachedValues.FindIndex(Function(FindCachedValue)FindCachedValue.Timestamp=Timestamp) ' Find timestamp in cache
         If i=-1 Then ' Not in cache
-            If DBMCachedValues.Count>=(DBMConstants.ComparePatterns+1)*(DBMConstants.EMAPreviousPeriods+DBMConstants.CorrelationPreviousPeriods+24*3600/DBMConstants.CalculationInterval) Then ' Limit cache size (large enough for at least one day)
-                DBMCachedValues.RemoveAt(0) ' Remove first item
-            End If
             Try
                 Value=DBMPointDriver.GetData(Timestamp,DateAdd("s",DBMConstants.CalculationInterval,Timestamp)) ' Get data using driver
             Catch
                 Value=Double.NaN ' Error, return Not a Number
             End Try
-            DBMCachedValues.Add(New DBMCachedValue(Timestamp,Value)) ' Add to cache
+            If DBMCachedValues.Count<(DBMConstants.ComparePatterns+1)*(DBMConstants.EMAPreviousPeriods+DBMConstants.CorrelationPreviousPeriods+24*3600/DBMConstants.CalculationInterval) Then ' Limit cache size (large enough for at least one day)
+                DBMCachedValues.Add(New DBMCachedValue(Timestamp,Value)) ' Add to cache (new)
+            Else
+                DBMCachedValues(CacheIndex)=New DBMCachedValue(Timestamp,Value) ' Add to cache (existing)
+                CacheIndex=(CacheIndex+1) Mod DBMCachedValues.Count ' Increase index
+            End If
         Else
             Value=DBMCachedValues(i).Value ' Return value from cache
         End If
