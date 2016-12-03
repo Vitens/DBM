@@ -42,7 +42,7 @@ Public Class DBMDataManager
             Catch
                 Value=Double.NaN ' Error, return Not a Number
             End Try
-            If DBMCachedValues.Count<(DBMConstants.ComparePatterns+1)*(DBMConstants.EMAPreviousPeriods+DBMConstants.CorrelationPreviousPeriods+24*3600/DBMConstants.CalculationInterval) Then ' Limit cache size (large enough for at least one day)
+            If DBMCachedValues.Count<DBMConstants.MaximumCacheSize Then ' Limit cache size (large enough for at least one day)
                 DBMCachedValues.Add(New DBMCachedValue(Timestamp,Value)) ' Add to cache (new)
             Else
                 DBMCachedValues(CacheIndex)=New DBMCachedValue(Timestamp,Value) ' Add to cache (existing)
