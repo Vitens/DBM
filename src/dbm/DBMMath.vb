@@ -103,7 +103,7 @@ Public Class DBMMath
 
     Public Shared Function ControlLimitRejectionCriterion(ByVal n As Integer) As Double
         If n<30 Then
-            ControlLimitRejectionCriterion=TInv2T(1-DBMConstants.ConfidenceInterval,n) ' n<30 Student's t-distribution
+            ControlLimitRejectionCriterion=TInv((DBMConstants.ConfidenceInterval+1)/2,n) ' n<30 Student's t-distribution
         Else
             ControlLimitRejectionCriterion=NormSInv((DBMConstants.ConfidenceInterval+1)/2) ' n>=30 Standard normal distribution
         End If
