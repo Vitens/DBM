@@ -70,8 +70,7 @@ Public Class DBMPoint
                     Calculate.UppContrLimit=DBMMath.CalculateExpMovingAvg(UppContrLimitEMA)
                     If Calculate.CurrValue<Calculate.LowContrLimit Then ' Lower control limit exceeded
                         Calculate.Factor=(Calculate.PredValue-Calculate.CurrValue)/(Calculate.LowContrLimit-Calculate.PredValue)
-                    End If
-                    If Calculate.CurrValue>Calculate.UppContrLimit Then ' Upper control limit exceeded
+                    ElseIf Calculate.CurrValue>Calculate.UppContrLimit Then ' Upper control limit exceeded
                         Calculate.Factor=(Calculate.CurrValue-Calculate.PredValue)/(Calculate.UppContrLimit-Calculate.PredValue)
                     End If
                 End If
