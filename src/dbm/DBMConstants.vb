@@ -30,6 +30,6 @@ Public Class DBMConstants
     Public Const ConfidenceInterval As Double=              0.99 ' confidence interval for outlier detection and control limits
     Public Const CorrelationPreviousPeriods As Integer=     CInt(2*3600/CalculationInterval-1) ' previous periods; 23 = 2 hours, current value inclusive
     Public Const CorrelationThreshold As Double=            0.83666 ' absolute correlation lower limit for detecting (anti)correlation
-    Public Const MaximumCacheSize As Double=                (ComparePatterns+1)*(EMAPreviousPeriods+CorrelationPreviousPeriods+24*3600/CalculationInterval) ' maximum number of cached values per point; large enough for at least one day
+    Public Const MaximumCacheSize As Integer=               CInt((24*3600/CalculationInterval+EMAPreviousPeriods+CorrelationPreviousPeriods)*(ComparePatterns+1)) ' maximum number of cached values per point; large enough for at least one day
 
 End Class
