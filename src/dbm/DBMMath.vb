@@ -84,7 +84,7 @@ Public Class DBMMath
     End Function
 
     Public Shared Function TInv(ByVal p As Double,ByVal dof As Integer) As Double
-        TInv=TInv2T(1-(Math.Abs(0.5-p))*2,dof)*-Math.Sign(0.5-p)
+        TInv=Math.Sign(p-0.5)*TInv2T(1-(Math.Abs(0.5-p))*2,dof)
         Return TInv
     End Function
 
