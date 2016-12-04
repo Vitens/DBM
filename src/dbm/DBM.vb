@@ -52,8 +52,7 @@ Public Class DBM
             Else ' Not already suppressed due to anticorrelation
                 KeepOrSuppressEvent=AbsErrModCorr ' Suppress
             End If
-        End If
-        If RelErrModCorr>DBMConstants.CorrelationThreshold Then ' If correlation with measurement
+        ElseIf RelErrModCorr>DBMConstants.CorrelationThreshold Then ' If correlation with measurement
             If Not (KeepOrSuppressEvent<-DBMConstants.CorrelationThreshold And KeepOrSuppressEvent>=-1) Then ' If not already suppressed due to anticorrelation
                 If KeepOrSuppressEvent>DBMConstants.CorrelationThreshold And KeepOrSuppressEvent<=1 Then ' If already suppressed due to correlation
                     If RelErrModCorr>KeepOrSuppressEvent Then ' Keep highest value (strongest correlation)
