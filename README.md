@@ -28,7 +28,7 @@ Real-time, leak detection, demand forecasting, demand patterns, operational dash
 ![Sample 1](docs/sample1.png)
 [Sample 1 data](docs/sample1.csv)
 
-In this example, two days before and after the current day are shown. For historic values, the measured data (black) is shown along with the predicted value (red). The upper and lower control limits (gray) were not crossed, so the DBM factor value (blue) equals zero. For future values, the prediction is shown along with the upper and lower control limits.
+In this example, two days before and after the current day are shown. For historic values, the measured data (black) is shown along with the predicted value (red). The upper and lower control limits (gray) were not crossed, so the DBM factor value (blue) equals zero. For future values, the prediction is shown along with the upper and lower control limits. Reliable predictions can be made for at least seven days in advance.
 
 ```
 Option Explicit
