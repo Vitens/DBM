@@ -2,6 +2,8 @@
 Dynamic Bandwidth Monitor  
 Leak detection method implemented in a real-time data historian
 
+![Logo](docs/dbmlogo.png)
+
 * J.H. Fitié, Vitens N.V. <[johan.fitie@vitens.nl](mailto:johan.fitie@vitens.nl)>
 * E.A. Trietsch, Vitens N.V. <[eelco.trietsch@vitens.nl](mailto:eelco.trietsch@vitens.nl)>
 
