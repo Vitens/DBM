@@ -58,8 +58,8 @@ Public Class DBMPoint
                         UppContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)+DBMMath.ControlLimitRejectionCriterion(DBMConstants.ConfidenceInterval,DBMStatistics.Count-1)*DBMStatistics.StDevSLinReg
                     End If
                 Next EMACounter
-                Calculate.AbsoluteError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=DBMMath.CalculateExpMovingAvg(PredValueEMA)-DBMMath.CalculateExpMovingAvg(CurrValueEMA) ' Absolute error compared to prediction
-                Calculate.RelativeError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=DBMMath.CalculateExpMovingAvg(PredValueEMA)/DBMMath.CalculateExpMovingAvg(CurrValueEMA)-1 ' Relative error compared to prediction
+                Calculate.AbsoluteErrors(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=DBMMath.CalculateExpMovingAvg(PredValueEMA)-DBMMath.CalculateExpMovingAvg(CurrValueEMA) ' Absolute error compared to prediction
+                Calculate.RelativeErrors(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=DBMMath.CalculateExpMovingAvg(PredValueEMA)/DBMMath.CalculateExpMovingAvg(CurrValueEMA)-1 ' Relative error compared to prediction
                 If CorrelationCounter=0 Then
                     Calculate.CurrValue=DBMMath.CalculateExpMovingAvg(CurrValueEMA)
                     Calculate.PredValue=DBMMath.CalculateExpMovingAvg(PredValueEMA)

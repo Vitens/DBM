@@ -82,8 +82,8 @@ Public Class DBM
                 Else
                     CorrelationDBMResult=DBMPoints.Item(CorrelationDBMPointDriverIndex).Calculate(Timestamp,False,True) ' Calculate for correlation point
                 End If
-                AbsErrorStats.Calculate(CorrelationDBMResult.AbsoluteError,Calculate.AbsoluteError) ' Absolute error compared to prediction
-                RelErrorStats.Calculate(CorrelationDBMResult.RelativeError,Calculate.RelativeError) ' Relative error compared to prediction
+                AbsErrorStats.Calculate(CorrelationDBMResult.AbsoluteErrors,Calculate.AbsoluteErrors) ' Absolute error compared to prediction
+                RelErrorStats.Calculate(CorrelationDBMResult.RelativeErrors,Calculate.RelativeErrors) ' Relative error compared to prediction
                 NewValue=KeepOrSuppressEvent(Calculate.Factor,AbsErrorStats.ModifiedCorrelation,RelErrorStats.ModifiedCorrelation,thisDBMCorrelationPoint.SubstractSelf)
                 If NewValue<>Calculate.Factor Then ' Has event been suppressed
                     Calculate.Factor=NewValue

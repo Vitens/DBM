@@ -24,12 +24,12 @@ Option Strict
 
 Public Class DBMResult
 
-    Public Factor,OriginalFactor,CurrValue,PredValue,LowContrLimit,UppContrLimit,AbsoluteError(),RelativeError() As Double
+    Public Factor,OriginalFactor,CurrValue,PredValue,LowContrLimit,UppContrLimit,AbsoluteErrors(),RelativeErrors() As Double
     Public SuppressedBy As DBMPointDriver
 
     Public Sub New()
-        ReDim AbsoluteError(DBMConstants.CorrelationPreviousPeriods)
-        ReDim RelativeError(DBMConstants.CorrelationPreviousPeriods)
+        ReDim AbsoluteErrors(DBMConstants.CorrelationPreviousPeriods)
+        ReDim RelativeErrors(DBMConstants.CorrelationPreviousPeriods)
         SuppressedBy=Nothing
     End Sub
 
