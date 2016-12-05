@@ -26,7 +26,7 @@ Public Class DBMDataManager
 
     Public DBMPointDriver As DBMPointDriver
     Private CacheIndex As Integer
-    Public DBMCachedValues As New Collections.Generic.List(Of DBMCachedValue)
+    Private DBMCachedValues As New Collections.Generic.List(Of DBMCachedValue)
 
     Public Sub New(ByVal DBMPointDriver As DBMPointDriver)
         Me.DBMPointDriver=DBMPointDriver
