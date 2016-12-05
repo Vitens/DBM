@@ -111,6 +111,7 @@ Public Class DBMMath
     End Function
 
     Public Shared Function CalculateMean(ByVal Data() As Double) As Double
+        CalculateMean=0
         For Each Value As Double In Data
             CalculateMean+=Value/Data.Length
         Next
@@ -172,6 +173,7 @@ Public Class DBMMath
 
     Public Shared Function CalculateExpMovingAvg(ByVal Data() As Double) As Double ' Filter high frequency variation
         Dim Weight,TotalWeight As Double
+        CalculateExpMovingAvg=0
         Weight=1 ' Initial weight
         TotalWeight=0
         For Each Value As Double In Data ' Most significant value first
