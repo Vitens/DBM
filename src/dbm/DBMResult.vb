@@ -22,9 +22,15 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
-Public Structure DBMResult
+Public Class DBMResult
 
     Public Factor,OriginalFactor,CurrValue,PredValue,LowContrLimit,UppContrLimit,AbsoluteError(),RelativeError() As Double
     Public SuppressedBy As DBMPointDriver
 
-End Structure
+    Public Sub New()
+        ReDim AbsoluteError(DBMConstants.CorrelationPreviousPeriods)
+        ReDim RelativeError(DBMConstants.CorrelationPreviousPeriods)
+        SuppressedBy=Nothing
+    End Sub
+
+End Class
