@@ -73,6 +73,7 @@ Public Class DBMPoint
                     ElseIf Calculate.CurrValue>Calculate.UppContrLimit Then ' Upper control limit exceeded
                         Calculate.Factor=(Calculate.CurrValue-Calculate.PredValue)/(Calculate.UppContrLimit-Calculate.PredValue)
                     End If
+                    Calculate.OriginalFactor=Calculate.Factor ' Store original factor before possible suppression
                 End If
             End If
         Next CorrelationCounter
