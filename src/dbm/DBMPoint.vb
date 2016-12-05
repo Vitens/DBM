@@ -50,7 +50,7 @@ Public Class DBMPoint
                         End If
                         For PatternCounter=DBMConstants.ComparePatterns To 0 Step -1
                             Pattern(DBMConstants.ComparePatterns-PatternCounter)=DBMDataManager.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*DBMConstants.CalculationInterval,Timestamp)))
-                            If Not IsNothing(SubstractDBMPoint) Then
+                            If SubstractDBMPoint IsNot Nothing Then
                                 Pattern(DBMConstants.ComparePatterns-PatternCounter)-=SubstractDBMPoint.DBMDataManager.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*DBMConstants.CalculationInterval,Timestamp)))
                             End If
                         Next PatternCounter
