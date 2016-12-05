@@ -25,18 +25,17 @@ Option Strict
 Public Class DBMPoint
 
     Public DBMDataManager As DBMDataManager
-    Public AbsoluteError(),RelativeError() As Double
 
     Public Sub New(ByVal DBMPointDriver As DBMPointDriver)
         DBMDataManager=New DBMDataManager(DBMPointDriver)
-        ReDim AbsoluteError(DBMConstants.CorrelationPreviousPeriods)
-        ReDim RelativeError(DBMConstants.CorrelationPreviousPeriods)
     End Sub
 
     Public Function Calculate(ByVal Timestamp As DateTime,ByVal IsInputDBMPoint As Boolean,ByVal HasCorrelationDBMPoint As Boolean,Optional ByRef SubstractDBMPoint As DBMPoint=Nothing) As DBMResult
         Dim CorrelationCounter,EMACounter,PatternCounter As Integer
         Dim Pattern(DBMConstants.ComparePatterns),CurrValueEMA(DBMConstants.EMAPreviousPeriods),PredValueEMA(DBMConstants.EMAPreviousPeriods),LowContrLimitEMA(DBMConstants.EMAPreviousPeriods),UppContrLimitEMA(DBMConstants.EMAPreviousPeriods) As Double
         Dim DBMStatistics As New DBMStatistics
+        ReDim Calculate.AbsoluteError(DBMConstants.CorrelationPreviousPeriods)
+        ReDim Calculate.RelativeError(DBMConstants.CorrelationPreviousPeriods)
         Calculate.SuppressedBy=Nothing
         For CorrelationCounter=0 To DBMConstants.CorrelationPreviousPeriods
             If CorrelationCounter=0 Or (IsInputDBMPoint And Calculate.Factor<>0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
@@ -61,8 +60,8 @@ Public Class DBMPoint
                         UppContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)+DBMMath.ControlLimitRejectionCriterion(DBMConstants.ConfidenceInterval,DBMStatistics.Count-1)*DBMStatistics.StDevSLinReg
                     End If
                 Next EMACounter
-                AbsoluteError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=DBMMath.CalculateExpMovingAvg(PredValueEMA)-DBMMath.CalculateExpMovingAvg(CurrValueEMA) ' Absolute error compared to prediction
-                RelativeError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=DBMMath.CalculateExpMovingAvg(PredValueEMA)/DBMMath.CalculateExpMovingAvg(CurrValueEMA)-1 ' Relative error compared to prediction
+                Calculate.AbsoluteError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=DBMMath.CalculateExpMovingAvg(PredValueEMA)-DBMMath.CalculateExpMovingAvg(CurrValueEMA) ' Absolute error compared to prediction
+                Calculate.RelativeError(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=DBMMath.CalculateExpMovingAvg(PredValueEMA)/DBMMath.CalculateExpMovingAvg(CurrValueEMA)-1 ' Relative error compared to prediction
                 If CorrelationCounter=0 Then
                     Calculate.CurrValue=DBMMath.CalculateExpMovingAvg(CurrValueEMA)
                     Calculate.PredValue=DBMMath.CalculateExpMovingAvg(PredValueEMA)

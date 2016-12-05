@@ -24,7 +24,7 @@ Option Strict
 
 Public Structure DBMResult
 
-    Public Factor,OriginalFactor,CurrValue,PredValue,LowContrLimit,UppContrLimit As Double
+    Public Factor,OriginalFactor,CurrValue,PredValue,LowContrLimit,UppContrLimit,AbsoluteError(),RelativeError() As Double
     Public SuppressedBy As DBMPointDriver
 
 End Structure
