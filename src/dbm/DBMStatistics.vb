@@ -27,7 +27,7 @@ Public Class DBMStatistics
     Public Count As Integer
     Public Slope,Intercept,StDevSLinReg,ModifiedCorrelation As Double
 
-    Public Sub Calculate(ByVal DataY() As Double,Optional ByVal DataX() As Double=Nothing)
+    Public Sub Calculate(DataY() As Double,Optional DataX() As Double=Nothing)
         Dim SumX,SumXX,SumY,SumYY,SumXY As Double
         Dim i As Integer
         Count=0

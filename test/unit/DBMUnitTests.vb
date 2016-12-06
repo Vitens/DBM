@@ -31,7 +31,7 @@ Module DBMUnitTests
     Dim _PISDK As New PISDK.PISDK
     #End If
 
-    Private Sub UnitTest(ByVal Description As String,ByVal ExpFact As Double,ByVal ExpOrigFact As Double,ByVal ExpCurr As Double,ByVal ExpPred As Double,ByVal ExpLCL As Double,ByVal ExpUCL As Double,ByVal InputPoint As Object,ByVal CorrelationPoint As Object,ByVal Timestamp As DateTime,ByVal SubstractSelf As Boolean)
+    Private Sub UnitTest(Description As String,ExpFact As Double,ExpOrigFact As Double,ExpCurr As Double,ExpPred As Double,ExpLCL As Double,ExpUCL As Double,InputPoint As Object,CorrelationPoint As Object,Timestamp As DateTime,SubstractSelf As Boolean)
         Dim Ticks As Int64=DateTime.Now.Ticks
         Dim InputDBMPointDriver,CorrelationDBMPointDriver As DBMPointDriver
         Dim DBMCorrelationPoints As New Collections.Generic.List(Of DBMCorrelationPoint)
@@ -63,7 +63,7 @@ Module DBMUnitTests
         Console.WriteLine("F:" & Math.Round(DBMResult.Factor,3) & " C:" & Math.Round(DBMResult.CurrValue) & " P:" & Math.Round(DBMResult.PredValue) & " L:" & Math.Round(DBMResult.LowContrLimit) & " U:" & Math.Round(DBMResult.UppContrLimit))
     End Sub
 
-    Private Function ArrayMultiplier(ByVal Data() As Double) As Double
+    Private Function ArrayMultiplier(Data() As Double) As Double
         ArrayMultiplier=1
         For Each Value In Data
             If Not Double.IsNaN(Value) Then
@@ -73,7 +73,7 @@ Module DBMUnitTests
         Return ArrayMultiplier
     End Function
 
-    Private Sub CheckEqual(ByVal Result As Double,ByVal Expected As Double)
+    Private Sub CheckEqual(Result As Double,Expected As Double)
         If Result<>Expected Then
             Console.WriteLine("ERR")
             End

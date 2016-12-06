@@ -29,11 +29,11 @@ Public Class DBM
     Private DBMDriver As DBMDriver
     Public DBMPoints As New Collections.Generic.List(Of DBMPoint)
 
-    Public Sub New(Optional ByVal Data() As Object=Nothing)
+    Public Sub New(Optional Data() As Object=Nothing)
         DBMDriver=New DBMDriver(Data)
     End Sub
 
-    Public Function DBMPointDriverIndex(ByVal DBMPointDriver As DBMPointDriver) As Integer
+    Public Function DBMPointDriverIndex(DBMPointDriver As DBMPointDriver) As Integer
         DBMPointDriverIndex=DBMPoints.FindIndex(Function(FindDBMPoint)FindDBMPoint.DBMDataManager.DBMPointDriver.Point Is DBMPointDriver.Point)
         If DBMPointDriverIndex=-1 Then ' PointDriver not found
             DBMPoints.Add(New DBMPoint(DBMPointDriver)) ' Add to list
@@ -42,7 +42,7 @@ Public Class DBM
         Return DBMPointDriverIndex
     End Function
 
-    Public Shared Function KeepOrSuppressEvent(ByVal Factor As Double,ByVal AbsErrModCorr As Double,ByVal RelErrModCorr As Double,ByVal SubstractSelf As Boolean) As Double
+    Public Shared Function KeepOrSuppressEvent(Factor As Double,AbsErrModCorr As Double,RelErrModCorr As Double,SubstractSelf As Boolean) As Double
         KeepOrSuppressEvent=Factor
         If Not SubstractSelf And AbsErrModCorr<-DBMConstants.CorrelationThreshold Then ' If anticorrelation with adjacent measurement
             If KeepOrSuppressEvent<-DBMConstants.CorrelationThreshold And KeepOrSuppressEvent>=-1 Then ' If already suppressed due to anticorrelation
@@ -66,7 +66,7 @@ Public Class DBM
         Return KeepOrSuppressEvent
     End Function
 
-    Public Function Calculate(ByVal InputDBMPointDriver As DBMPointDriver,ByVal DBMCorrelationPoints As Collections.Generic.List(Of DBMCorrelationPoint),ByVal Timestamp As DateTime) As DBMResult
+    Public Function Calculate(InputDBMPointDriver As DBMPointDriver,DBMCorrelationPoints As Collections.Generic.List(Of DBMCorrelationPoint),Timestamp As DateTime) As DBMResult
         Dim InputDBMPointDriverIndex,CorrelationDBMPointDriverIndex As Integer
         Dim CorrelationDBMResult As DBMResult
         Dim AbsErrorStats,RelErrorStats As New DBMStatistics

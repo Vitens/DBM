@@ -27,7 +27,7 @@ Public Class DBMCorrelationPoint
     Public DBMPointDriver As DBMPointDriver
     Public SubstractSelf As Boolean
 
-    Public Sub New(ByVal DBMPointDriver As DBMPointDriver,ByVal SubstractSelf As Boolean)
+    Public Sub New(DBMPointDriver As DBMPointDriver,SubstractSelf As Boolean)
         Me.DBMPointDriver=DBMPointDriver
         Me.SubstractSelf=SubstractSelf
     End Sub

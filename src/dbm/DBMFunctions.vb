@@ -33,7 +33,7 @@ Public Class DBMFunctions
         Return DBMVersion
     End Function
 
-    Public Shared Function ArrayRotateLeft(ByVal Data() As Double) As Double() ' Rotate array left, first item becomes last
+    Public Shared Function ArrayRotateLeft(Data() As Double) As Double() ' Rotate array left, first item becomes last
         Array.Reverse(Data) ' ABCDE -> EDCBA
         Array.Reverse(Data,0,Data.Length-1) ' EDCBA -> BCDEA
         Return Data

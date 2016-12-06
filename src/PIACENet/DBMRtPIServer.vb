@@ -27,7 +27,7 @@ Public Class DBMRtPIServer
     Private PIServer As PISDK.Server
     Private DBMRtPIPoints As Collections.Generic.List(Of DBMRtPIPoint)
 
-    Public Sub New(ByVal PIServer As PISDK.Server,Optional ByVal TagFilter As String="*")
+    Public Sub New(PIServer As PISDK.Server,Optional TagFilter As String="*")
         Dim InstrTag,Fields() As String
         Me.PIServer=PIServer
         DBMRtPIPoints=New Collections.Generic.List(Of DBMRtPIPoint)

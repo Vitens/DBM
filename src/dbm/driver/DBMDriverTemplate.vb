@@ -24,7 +24,7 @@ Option Strict
 
 Public Class DBMDriver
 
-    Public Sub New(Optional ByVal Data() As Object=Nothing)
+    Public Sub New(Optional Data() As Object=Nothing)
     End Sub
 
 End Class
@@ -33,11 +33,11 @@ Public Class DBMPointDriver
 
     Public Point As Object
 
-    Public Sub New(ByVal Point As Object)
+    Public Sub New(Point As Object)
         Me.Point=Point
     End Sub
 
-    Public Function GetData(ByVal StartTimestamp As DateTime,ByVal EndTimestamp As DateTime) As Double
+    Public Function GetData(StartTimestamp As DateTime,EndTimestamp As DateTime) As Double
         Return 0
     End Function
 

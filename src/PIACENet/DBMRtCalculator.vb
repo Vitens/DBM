@@ -28,7 +28,7 @@ Public Class DBMRtCalculator
     Public Shared DBM As New DBM
     Private DBMRtPIServers As Collections.Generic.List(Of DBMRtPIServer)
 
-    Public Sub New(Optional ByVal DefaultServerOnly As Boolean=False,Optional ByVal TagFilter As String="*")
+    Public Sub New(Optional DefaultServerOnly As Boolean=False,Optional TagFilter As String="*")
         DBMRtPIServers=New Collections.Generic.List(Of DBMRtPIServer)
         For Each thisServer As PISDK.Server In PISDK.Servers
             If Not DefaultServerOnly Or thisServer Is PISDK.Servers.DefaultServer Then

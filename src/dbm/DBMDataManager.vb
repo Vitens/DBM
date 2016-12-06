@@ -28,12 +28,12 @@ Public Class DBMDataManager
     Private CacheIndex As Integer
     Private DBMCachedValues As New Collections.Generic.List(Of DBMCachedValue)
 
-    Public Sub New(ByVal DBMPointDriver As DBMPointDriver)
+    Public Sub New(DBMPointDriver As DBMPointDriver)
         Me.DBMPointDriver=DBMPointDriver
         CacheIndex=0
     End Sub
 
-    Public Function Value(ByVal Timestamp As DateTime) As Double ' Returns value at timestamp, either from cache or using driver
+    Public Function Value(Timestamp As DateTime) As Double ' Returns value at timestamp, either from cache or using driver
         Dim i As Integer
         i=DBMCachedValues.FindIndex(Function(FindCachedValue)FindCachedValue.Timestamp=Timestamp) ' Find timestamp in cache
         If i=-1 Then ' Not in cache

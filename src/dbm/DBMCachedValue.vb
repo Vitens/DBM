@@ -27,7 +27,7 @@ Public Class DBMCachedValue
     Public Timestamp As DateTime
     Public Value As Double
 
-    Public Sub New(Optional ByVal Timestamp As DateTime=Nothing,Optional ByVal Value As Double=Nothing)
+    Public Sub New(Optional Timestamp As DateTime=Nothing,Optional Value As Double=Nothing)
         Me.Timestamp=Timestamp
         Me.Value=Value
     End Sub

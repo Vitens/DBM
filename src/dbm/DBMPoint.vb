@@ -26,11 +26,11 @@ Public Class DBMPoint
 
     Public DBMDataManager As DBMDataManager
 
-    Public Sub New(ByVal DBMPointDriver As DBMPointDriver)
+    Public Sub New(DBMPointDriver As DBMPointDriver)
         DBMDataManager=New DBMDataManager(DBMPointDriver)
     End Sub
 
-    Public Function Calculate(ByVal Timestamp As DateTime,ByVal IsInputDBMPoint As Boolean,ByVal HasCorrelationDBMPoint As Boolean,Optional ByRef SubstractDBMPoint As DBMPoint=Nothing) As DBMResult
+    Public Function Calculate(Timestamp As DateTime,IsInputDBMPoint As Boolean,HasCorrelationDBMPoint As Boolean,Optional SubstractDBMPoint As DBMPoint=Nothing) As DBMResult
         Dim CorrelationCounter,EMACounter,PatternCounter As Integer
         Dim Pattern(DBMConstants.ComparePatterns),CurrValueEMA(DBMConstants.EMAPreviousPeriods),PredValueEMA(DBMConstants.EMAPreviousPeriods),LowContrLimitEMA(DBMConstants.EMAPreviousPeriods),UppContrLimitEMA(DBMConstants.EMAPreviousPeriods) As Double
         Dim DBMStatistics As New DBMStatistics

@@ -27,7 +27,7 @@ Public Class DBMRtPIPoint
     Private InputDBMPointDriver,OutputDBMPointDriver As DBMPointDriver
     Private DBMCorrelationPoints As Collections.Generic.List(Of DBMCorrelationPoint)
 
-    Public Sub New(ByVal InputPIPoint As PISDK.PIPoint,ByVal OutputPIPoint As PISDK.PIPoint)
+    Public Sub New(InputPIPoint As PISDK.PIPoint,OutputPIPoint As PISDK.PIPoint)
         Dim ExDesc,FieldsA(),FieldsB() As String
         InputDBMPointDriver=New DBMPointDriver(InputPIPoint)
         OutputDBMPointDriver=New DBMPointDriver(OutputPIPoint)
