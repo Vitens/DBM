@@ -42,7 +42,6 @@ Module DBMUnitTests
         #Else
         InputDBMPointDriver=New DBMPointDriver(CType(_PISDK.Servers(Split(CStr(InputPoint),"\")(2)).PIPoints(Split(CStr(InputPoint),"\")(3)),PISDK.PIPoint))
         #End If
-        CorrelationDBMPointDriver=Nothing
         If CorrelationPoint IsNot Nothing Then
             #If OfflineUnitTests Then
             CorrelationDBMPointDriver=New DBMPointDriver(CStr(CorrelationPoint))
@@ -50,6 +49,8 @@ Module DBMUnitTests
             CorrelationDBMPointDriver=New DBMPointDriver(CType(CType(_PISDK.Servers(Split(CStr(CorrelationPoint),"\")(2)).PIPoints(Split(CStr(CorrelationPoint),"\")(3)),PISDK.PIPoint),PISDK.PIPoint))
             #End If
             DBMCorrelationPoints.Add(New DBMCorrelationPoint(CorrelationDBMPointDriver,SubstractSelf))
+        Else
+            CorrelationDBMPointDriver=Nothing
         End If
         DBMResult=_DBM.Calculate(InputDBMPointDriver,DBMCorrelationPoints,Timestamp)
         If Math.Round(DBMResult.Factor,3)=ExpFact And Math.Round(DBMResult.OriginalFactor,3)=ExpOrigFact And Math.Round(DBMResult.CurrValue)=ExpCurr And Math.Round(DBMResult.PredValue)=ExpPred And Math.Round(DBMResult.LowContrLimit)=ExpLCL And Math.Round(DBMResult.UppContrLimit)=ExpUCL And (DBMResult.SuppressedBy Is Nothing Or (DBMResult.SuppressedBy IsNot Nothing And CorrelationDBMPointDriver Is DBMResult.SuppressedBy)) Then
