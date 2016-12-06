@@ -38,11 +38,11 @@ Public Class DBMDataManager
         i=DBMCachedValues.FindIndex(Function(FindCachedValue)FindCachedValue.Timestamp=Timestamp) ' Find timestamp in cache
         If i=-1 Then ' Not in cache
             Try
-                Value=DBMPointDriver.GetData(Timestamp,DateAdd("s",DBMConstants.CalculationInterval,Timestamp)) ' Get data using driver
+                Value=DBMPointDriver.GetData(Timestamp,DateAdd("s",DBMParameters.CalculationInterval,Timestamp)) ' Get data using driver
             Catch
                 Value=Double.NaN ' Error, return Not a Number
             End Try
-            If DBMCachedValues.Count<DBMConstants.MaximumCacheSize Then ' Limit cache size
+            If DBMCachedValues.Count<DBMParameters.MaximumCacheSize Then ' Limit cache size
                 DBMCachedValues.Add(New DBMCachedValue(Timestamp,Value)) ' Add to cache (new)
             Else
                 DBMCachedValues.Item(CacheIndex)=New DBMCachedValue(Timestamp,Value) ' Add to cache (overwrite existing)

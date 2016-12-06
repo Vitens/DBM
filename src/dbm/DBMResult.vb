@@ -28,8 +28,8 @@ Public Class DBMResult
     Public SuppressedBy As DBMPointDriver
 
     Public Sub New()
-        ReDim AbsoluteErrors(DBMConstants.CorrelationPreviousPeriods)
-        ReDim RelativeErrors(DBMConstants.CorrelationPreviousPeriods)
+        ReDim AbsoluteErrors(DBMParameters.CorrelationPreviousPeriods)
+        ReDim RelativeErrors(DBMParameters.CorrelationPreviousPeriods)
         SuppressedBy=Nothing
     End Sub
 

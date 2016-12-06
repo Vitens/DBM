@@ -32,34 +32,34 @@ Public Class DBMPoint
 
     Public Function Calculate(Timestamp As DateTime,IsInputDBMPoint As Boolean,HasCorrelationDBMPoint As Boolean,Optional SubstractDBMPoint As DBMPoint=Nothing) As DBMResult
         Dim CorrelationCounter,EMACounter,PatternCounter As Integer
-        Dim Pattern(DBMConstants.ComparePatterns),CurrValueEMA(DBMConstants.EMAPreviousPeriods),PredValueEMA(DBMConstants.EMAPreviousPeriods),LowContrLimitEMA(DBMConstants.EMAPreviousPeriods),UppContrLimitEMA(DBMConstants.EMAPreviousPeriods) As Double
+        Dim Pattern(DBMParameters.ComparePatterns),CurrValueEMA(DBMParameters.EMAPreviousPeriods),PredValueEMA(DBMParameters.EMAPreviousPeriods),LowContrLimitEMA(DBMParameters.EMAPreviousPeriods),UppContrLimitEMA(DBMParameters.EMAPreviousPeriods) As Double
         Dim DBMStatistics As New DBMStatistics
         Calculate=New DBMResult
-        For CorrelationCounter=0 To DBMConstants.CorrelationPreviousPeriods
+        For CorrelationCounter=0 To DBMParameters.CorrelationPreviousPeriods
             If CorrelationCounter=0 Or (IsInputDBMPoint And Calculate.Factor<>0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
-                For EMACounter=DBMConstants.EMAPreviousPeriods To 0 Step -1
-                    If CorrelationCounter=0 Or (CorrelationCounter>0 And EMACounter=DBMConstants.EMAPreviousPeriods) Then
-                        If CorrelationCounter>0 And EMACounter=DBMConstants.EMAPreviousPeriods Then ' Reuse calculation results when moving back for correlation calculation
+                For EMACounter=DBMParameters.EMAPreviousPeriods To 0 Step -1
+                    If CorrelationCounter=0 Or (CorrelationCounter>0 And EMACounter=DBMParameters.EMAPreviousPeriods) Then
+                        If CorrelationCounter>0 And EMACounter=DBMParameters.EMAPreviousPeriods Then ' Reuse calculation results when moving back for correlation calculation
                             CurrValueEMA=DBMFunctions.ArrayRotateLeft(CurrValueEMA)
                             PredValueEMA=DBMFunctions.ArrayRotateLeft(PredValueEMA)
                             LowContrLimitEMA=DBMFunctions.ArrayRotateLeft(LowContrLimitEMA)
                             UppContrLimitEMA=DBMFunctions.ArrayRotateLeft(UppContrLimitEMA)
                         End If
-                        For PatternCounter=DBMConstants.ComparePatterns To 0 Step -1
-                            Pattern(DBMConstants.ComparePatterns-PatternCounter)=DBMDataManager.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*DBMConstants.CalculationInterval,Timestamp)))
+                        For PatternCounter=DBMParameters.ComparePatterns To 0 Step -1
+                            Pattern(DBMParameters.ComparePatterns-PatternCounter)=DBMDataManager.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*DBMParameters.CalculationInterval,Timestamp)))
                             If SubstractDBMPoint IsNot Nothing Then
-                                Pattern(DBMConstants.ComparePatterns-PatternCounter)-=SubstractDBMPoint.DBMDataManager.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*DBMConstants.CalculationInterval,Timestamp)))
+                                Pattern(DBMParameters.ComparePatterns-PatternCounter)-=SubstractDBMPoint.DBMDataManager.Value(DateAdd("d",-PatternCounter*7,DateAdd("s",-(EMACounter+CorrelationCounter)*DBMParameters.CalculationInterval,Timestamp)))
                             End If
                         Next PatternCounter
                         DBMStatistics.Calculate(DBMMath.RemoveOutliers(Pattern.Take(Pattern.Length-1).ToArray)) ' Calculate statistics for data after removing outliers
-                        CurrValueEMA(EMACounter)=Pattern(DBMConstants.ComparePatterns)
-                        PredValueEMA(EMACounter)=DBMConstants.ComparePatterns*DBMStatistics.Slope+DBMStatistics.Intercept ' Extrapolate linear regression
-                        LowContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)-DBMMath.ControlLimitRejectionCriterion(DBMConstants.ConfidenceInterval,DBMStatistics.Count-1)*DBMStatistics.StDevSLinReg
-                        UppContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)+DBMMath.ControlLimitRejectionCriterion(DBMConstants.ConfidenceInterval,DBMStatistics.Count-1)*DBMStatistics.StDevSLinReg
+                        CurrValueEMA(EMACounter)=Pattern(DBMParameters.ComparePatterns)
+                        PredValueEMA(EMACounter)=DBMParameters.ComparePatterns*DBMStatistics.Slope+DBMStatistics.Intercept ' Extrapolate linear regression
+                        LowContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)-DBMMath.ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,DBMStatistics.Count-1)*DBMStatistics.StDevSLinReg
+                        UppContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)+DBMMath.ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,DBMStatistics.Count-1)*DBMStatistics.StDevSLinReg
                     End If
                 Next EMACounter
-                Calculate.AbsoluteErrors(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=DBMMath.CalculateExpMovingAvg(PredValueEMA)-DBMMath.CalculateExpMovingAvg(CurrValueEMA) ' Absolute error compared to prediction
-                Calculate.RelativeErrors(DBMConstants.CorrelationPreviousPeriods-CorrelationCounter)=DBMMath.CalculateExpMovingAvg(PredValueEMA)/DBMMath.CalculateExpMovingAvg(CurrValueEMA)-1 ' Relative error compared to prediction
+                Calculate.AbsoluteErrors(DBMParameters.CorrelationPreviousPeriods-CorrelationCounter)=DBMMath.CalculateExpMovingAvg(PredValueEMA)-DBMMath.CalculateExpMovingAvg(CurrValueEMA) ' Absolute error compared to prediction
+                Calculate.RelativeErrors(DBMParameters.CorrelationPreviousPeriods-CorrelationCounter)=DBMMath.CalculateExpMovingAvg(PredValueEMA)/DBMMath.CalculateExpMovingAvg(CurrValueEMA)-1 ' Relative error compared to prediction
                 If CorrelationCounter=0 Then
                     Calculate.CurrValue=DBMMath.CalculateExpMovingAvg(CurrValueEMA)
                     Calculate.PredValue=DBMMath.CalculateExpMovingAvg(PredValueEMA)

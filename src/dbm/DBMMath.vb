@@ -159,11 +159,11 @@ Public Class DBMMath
         MeanAbsDev=CalculateMeanAbsDev(Data.ToArray)
         For i=0 to Data.Length-1
             If MedianAbsDev=0 Then ' Use Mean Absolute Deviation instead of Median Absolute Deviation to detect outliers
-                If Math.Abs(Data(i)-Mean)>MeanAbsDev*MeanAbsDevScaleFactor*ControlLimitRejectionCriterion(DBMConstants.ConfidenceInterval,Data.Length-1) Then ' If value is an outlier
+                If Math.Abs(Data(i)-Mean)>MeanAbsDev*MeanAbsDevScaleFactor*ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,Data.Length-1) Then ' If value is an outlier
                     Data(i)=Double.NaN ' Exclude outlier
                 End If
             Else ' Use Median Absolute Deviation to detect outliers
-                If Math.Abs(Data(i)-Median)>MedianAbsDev*MedianAbsDevScaleFactor(Data.Length-1)*ControlLimitRejectionCriterion(DBMConstants.ConfidenceInterval,Data.Length-1) Then ' If value is an outlier
+                If Math.Abs(Data(i)-Median)>MedianAbsDev*MedianAbsDevScaleFactor(Data.Length-1)*ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,Data.Length-1) Then ' If value is an outlier
                     Data(i)=Double.NaN ' Exclude outlier
                 End If
             End If

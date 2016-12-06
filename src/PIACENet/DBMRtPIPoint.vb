@@ -54,9 +54,9 @@ Public Class DBMRtPIPoint
         For Each thisDBMCorrelationPoint As DBMCorrelationPoint In DBMCorrelationPoints ' Check timestamp of correlation points
             InputTimestamp.UTCSeconds=Math.Min(InputTimestamp.UTCSeconds,thisDBMCorrelationPoint.DBMPointDriver.Point.Data.Snapshot.TimeStamp.UTCSeconds) ' Timestamp of correlation point, keep earliest
         Next
-        InputTimestamp.UTCSeconds-=DBMConstants.CalculationInterval+InputTimestamp.UTCSeconds Mod DBMConstants.CalculationInterval ' Can calculate output until (inclusive)
+        InputTimestamp.UTCSeconds-=DBMParameters.CalculationInterval+InputTimestamp.UTCSeconds Mod DBMParameters.CalculationInterval ' Can calculate output until (inclusive)
         OutputTimestamp=OutputDBMPointDriver.Point.Data.Snapshot.TimeStamp ' Timestamp of output point
-        OutputTimestamp.UTCSeconds+=DBMConstants.CalculationInterval-OutputTimestamp.UTCSeconds Mod DBMConstants.CalculationInterval ' Next calculation timestamp
+        OutputTimestamp.UTCSeconds+=DBMParameters.CalculationInterval-OutputTimestamp.UTCSeconds Mod DBMParameters.CalculationInterval ' Next calculation timestamp
         If InputTimestamp.UTCSeconds>=OutputTimestamp.UTCSeconds Then ' If calculation timestamp can be calculated
             Try
                 Value=DBMRtCalculator.DBM.Calculate(InputDBMPointDriver,DBMCorrelationPoints,InputTimestamp.LocalDate).Factor

@@ -44,17 +44,17 @@ Public Class DBM
 
     Public Shared Function KeepOrSuppressEvent(Factor As Double,AbsErrModCorr As Double,RelErrModCorr As Double,SubstractSelf As Boolean) As Double
         KeepOrSuppressEvent=Factor
-        If Not SubstractSelf And AbsErrModCorr<-DBMConstants.CorrelationThreshold Then ' If anticorrelation with adjacent measurement
-            If KeepOrSuppressEvent<-DBMConstants.CorrelationThreshold And KeepOrSuppressEvent>=-1 Then ' If already suppressed due to anticorrelation
+        If Not SubstractSelf And AbsErrModCorr<-DBMParameters.CorrelationThreshold Then ' If anticorrelation with adjacent measurement
+            If KeepOrSuppressEvent<-DBMParameters.CorrelationThreshold And KeepOrSuppressEvent>=-1 Then ' If already suppressed due to anticorrelation
                 If AbsErrModCorr<KeepOrSuppressEvent Then ' Keep lowest value (strongest anticorrelation)
                     KeepOrSuppressEvent=AbsErrModCorr ' Suppress
                 End If
             Else ' Not already suppressed due to anticorrelation
                 KeepOrSuppressEvent=AbsErrModCorr ' Suppress
             End If
-        ElseIf RelErrModCorr>DBMConstants.CorrelationThreshold Then ' If correlation with measurement
-            If Not (KeepOrSuppressEvent<-DBMConstants.CorrelationThreshold And KeepOrSuppressEvent>=-1) Then ' If not already suppressed due to anticorrelation
-                If KeepOrSuppressEvent>DBMConstants.CorrelationThreshold And KeepOrSuppressEvent<=1 Then ' If already suppressed due to correlation
+        ElseIf RelErrModCorr>DBMParameters.CorrelationThreshold Then ' If correlation with measurement
+            If Not (KeepOrSuppressEvent<-DBMParameters.CorrelationThreshold And KeepOrSuppressEvent>=-1) Then ' If not already suppressed due to anticorrelation
+                If KeepOrSuppressEvent>DBMParameters.CorrelationThreshold And KeepOrSuppressEvent<=1 Then ' If already suppressed due to correlation
                     If RelErrModCorr>KeepOrSuppressEvent Then ' Keep highest value (strongest correlation)
                         KeepOrSuppressEvent=RelErrModCorr ' Suppress
                     End If
