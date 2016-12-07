@@ -31,8 +31,7 @@ Namespace DBM
             DBMVersion=DBMVersion & " v" & System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileVersion & vbCrLf
             DBMVersion=DBMVersion & System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).ProductName & vbCrLf
             DBMVersion=DBMVersion & System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Comments & vbCrLf & vbCrLf
-            DBMVersion=DBMVersion & System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).LegalCopyright & vbCrLf & vbCrLf
-            DBMVersion=DBMVersion & "Unit tests passed: " & CStr(DBMUnitTests.Results)
+            DBMVersion=DBMVersion & System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).LegalCopyright
             Return DBMVersion
         End Function
 

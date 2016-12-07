@@ -33,6 +33,9 @@ Namespace DBM
 
         Public Sub New(Optional Data() As Object=Nothing)
             DBMDriver=New DBMDriver(Data)
+            If Not DBMUnitTests.Results Then
+                Throw New System.Exception
+            End If
         End Sub
 
         Public Function DBMPointDriverIndex(DBMPointDriver As DBMPointDriver) As Integer
