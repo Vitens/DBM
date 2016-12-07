@@ -22,14 +22,18 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
-Public Class DBMCachedValue
+Namespace DBM
 
-    Public Timestamp As DateTime
-    Public Value As Double
+    Public Class DBMCachedValue
 
-    Public Sub New(Optional Timestamp As DateTime=Nothing,Optional Value As Double=Nothing)
-        Me.Timestamp=Timestamp
-        Me.Value=Value
-    End Sub
+        Public Timestamp As DateTime
+        Public Value As Double
 
-End Class
+        Public Sub New(Optional Timestamp As DateTime=Nothing,Optional Value As Double=Nothing)
+            Me.Timestamp=Timestamp
+            Me.Value=Value
+        End Sub
+
+    End Class
+
+End Namespace

@@ -22,14 +22,18 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
-Public Class DBMParameters
+Namespace DBM
 
-    Public Shared CalculationInterval As Integer=           300 ' seconds; 300 = 5 minutes
-    Public Shared ComparePatterns As Integer=               12 ' weeks
-    Public Shared EMAPreviousPeriods As Integer=            CInt(0.5*3600/CalculationInterval) ' previous periods; 6 = 35 minutes, current value inclusive
-    Public Shared ConfidenceInterval As Double=             0.99 ' confidence interval for outlier detection and control limits
-    Public Shared CorrelationPreviousPeriods As Integer=    CInt(2*3600/CalculationInterval-1) ' previous periods; 23 = 2 hours, current value inclusive
-    Public Shared CorrelationThreshold As Double=           0.83666 ' absolute correlation lower limit for detecting (anti)correlation
-    Public Shared MaximumCacheSize As Integer=              CInt((24*3600/CalculationInterval+EMAPreviousPeriods+CorrelationPreviousPeriods)*(ComparePatterns+1)) ' maximum number of cached values per point; large enough for at least one day
+    Public Class DBMParameters
 
-End Class
+        Public Shared CalculationInterval As Integer=           300 ' seconds; 300 = 5 minutes
+        Public Shared ComparePatterns As Integer=               12 ' weeks
+        Public Shared EMAPreviousPeriods As Integer=            CInt(0.5*3600/CalculationInterval) ' previous periods; 6 = 35 minutes, current value inclusive
+        Public Shared ConfidenceInterval As Double=             0.99 ' confidence interval for outlier detection and control limits
+        Public Shared CorrelationPreviousPeriods As Integer=    CInt(2*3600/CalculationInterval-1) ' previous periods; 23 = 2 hours, current value inclusive
+        Public Shared CorrelationThreshold As Double=           0.83666 ' absolute correlation lower limit for detecting (anti)correlation
+        Public Shared MaximumCacheSize As Integer=              CInt((24*3600/CalculationInterval+EMAPreviousPeriods+CorrelationPreviousPeriods)*(ComparePatterns+1)) ' maximum number of cached values per point; large enough for at least one day
+
+    End Class
+
+End Namespace

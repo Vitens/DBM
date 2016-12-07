@@ -22,23 +22,27 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
-Public Class DBMDriver
+Namespace DBM
 
-    Public Sub New(Optional Data() As Object=Nothing)
-    End Sub
+    Public Class DBMDriver
 
-End Class
+        Public Sub New(Optional Data() As Object=Nothing)
+        End Sub
 
-Public Class DBMPointDriver
+    End Class
 
-    Public Point As Object
+    Public Class DBMPointDriver
 
-    Public Sub New(Point As Object)
-        Me.Point=Point
-    End Sub
+        Public Point As Object
 
-    Public Function GetData(StartTimestamp As DateTime,EndTimestamp As DateTime) As Double
-        Return 0
-    End Function
+        Public Sub New(Point As Object)
+            Me.Point=Point
+        End Sub
 
-End Class
+        Public Function GetData(StartTimestamp As DateTime,EndTimestamp As DateTime) As Double
+            Return 0
+        End Function
+
+    End Class
+
+End Namespace

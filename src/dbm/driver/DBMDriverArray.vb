@@ -22,34 +22,38 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
-Public Class DBMDriver
+Namespace DBM
 
-    Public Shared Data(-1) As Double
-    Public Shared DataIndex As Integer
+    Public Class DBMDriver
 
-    Public Sub New(Optional Data() As Object=Nothing)
-        Dim i As Integer
-        ReDim DBMDriver.Data(Data.Length-1)
-        For i=0 To Data.Length-1
-            DBMDriver.Data(i)=CDbl(Data(i))
-        Next i
-        DBMDriver.DataIndex=0
-    End Sub
+        Public Shared Data(-1) As Double
+        Public Shared DataIndex As Integer
 
-End Class
+        Public Sub New(Optional Data() As Object=Nothing)
+            Dim i As Integer
+            ReDim DBMDriver.Data(Data.Length-1)
+            For i=0 To Data.Length-1
+                DBMDriver.Data(i)=CDbl(Data(i))
+            Next i
+            DBMDriver.DataIndex=0
+        End Sub
 
-Public Class DBMPointDriver
+    End Class
 
-    Public Point As String
+    Public Class DBMPointDriver
 
-    Public Sub New(Point As String)
-        Me.Point=Point
-    End Sub
+        Public Point As String
 
-    Public Function GetData(StartTimestamp As DateTime,EndTimestamp As DateTime) As Double
-        GetData=DBMDriver.Data(DBMDriver.DataIndex) ' Return item from data array passed to DBMDriver
-        DBMDriver.DataIndex=(DBMDriver.DataIndex+1) Mod DBMDriver.Data.Length ' Increase index
-        Return GetData
-    End Function
+        Public Sub New(Point As String)
+            Me.Point=Point
+        End Sub
 
-End Class
+        Public Function GetData(StartTimestamp As DateTime,EndTimestamp As DateTime) As Double
+            GetData=DBMDriver.Data(DBMDriver.DataIndex) ' Return item from data array passed to DBMDriver
+            DBMDriver.DataIndex=(DBMDriver.DataIndex+1) Mod DBMDriver.Data.Length ' Increase index
+            Return GetData
+        End Function
+
+    End Class
+
+End Namespace

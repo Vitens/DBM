@@ -22,23 +22,27 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
-Public Class DBMDriver
+Namespace DBM
 
-    Public Sub New(Optional Data() As Object=Nothing)
-    End Sub
+    Public Class DBMDriver
 
-End Class
+        Public Sub New(Optional Data() As Object=Nothing)
+        End Sub
 
-Public Class DBMPointDriver
+    End Class
 
-    Public Point As PISDK.PIPoint
+    Public Class DBMPointDriver
 
-    Public Sub New(Point As PISDK.PIPoint)
-        Me.Point=Point
-    End Sub
+        Public Point As PISDK.PIPoint
 
-    Public Function GetData(StartTimestamp As DateTime,EndTimestamp As DateTime) As Double
-        Return CDbl(Point.Data.Summary(StartTimestamp,EndTimestamp,PISDK.ArchiveSummaryTypeConstants.astAverage,PISDK.CalculationBasisConstants.cbTimeWeighted).Value)
-    End Function
+        Public Sub New(Point As PISDK.PIPoint)
+            Me.Point=Point
+        End Sub
 
-End Class
+        Public Function GetData(StartTimestamp As DateTime,EndTimestamp As DateTime) As Double
+            Return CDbl(Point.Data.Summary(StartTimestamp,EndTimestamp,PISDK.ArchiveSummaryTypeConstants.astAverage,PISDK.CalculationBasisConstants.cbTimeWeighted).Value)
+        End Function
+
+    End Class
+
+End Namespace

@@ -22,41 +22,45 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
-Public Class DBMStatistics
+Namespace DBM
 
-    Public Count As Integer
-    Public Slope,Intercept,StDevSLinReg,ModifiedCorrelation As Double
+    Public Class DBMStatistics
 
-    Public Sub Calculate(DataY() As Double,Optional DataX() As Double=Nothing)
-        Dim SumX,SumXX,SumY,SumYY,SumXY As Double
-        Dim i As Integer
-        Count=0
-        For i=0 To DataY.Length-1
-            If Not Double.IsNaN(DataY(i)) Then
-                If DataX Is Nothing Then
-                    SumX+=i
-                    SumXX+=i^2
-                    SumXY+=i*DataY(i)
-                Else
-                    SumX+=DataX(i)
-                    SumXX+=DataX(i)^2
-                    SumXY+=DataX(i)*DataY(i)
+        Public Count As Integer
+        Public Slope,Intercept,StDevSLinReg,ModifiedCorrelation As Double
+
+        Public Sub Calculate(DataY() As Double,Optional DataX() As Double=Nothing)
+            Dim SumX,SumXX,SumY,SumYY,SumXY As Double
+            Dim i As Integer
+            Count=0
+            For i=0 To DataY.Length-1
+                If Not Double.IsNaN(DataY(i)) Then
+                    If DataX Is Nothing Then
+                        SumX+=i
+                        SumXX+=i^2
+                        SumXY+=i*DataY(i)
+                    Else
+                        SumX+=DataX(i)
+                        SumXX+=DataX(i)^2
+                        SumXY+=DataX(i)*DataY(i)
+                    End If
+                    SumY+=DataY(i)
+                    SumYY+=DataY(i)^2
+                    Count+=1
                 End If
-                SumY+=DataY(i)
-                SumYY+=DataY(i)^2
-                Count+=1
-            End If
-        Next i
-        Slope=(Count*SumXY-SumX*SumY)/(Count*SumXX-SumX^2)
-        Intercept=(SumX*SumXY-SumY*SumXX)/(SumX^2-Count*SumXX)
-        StDevSLinReg=0
-        For i=0 to DataY.Length-1
-            If Not Double.IsNaN(DataY(i)) Then
-                StDevSLinReg+=(DataY(i)-i*Slope-Intercept)^2
-            End If
-        Next i
-        StDevSLinReg=Math.Sqrt(StDevSLinReg/(Count-2)) ' n-2 is used because two parameters (slope and intercept) were estimated in order to estimate the sum of squares
-        ModifiedCorrelation=SumXY/Math.Sqrt(SumXX)/Math.Sqrt(SumYY) ' Average is not removed, as expected average is zero
-    End Sub
+            Next i
+            Slope=(Count*SumXY-SumX*SumY)/(Count*SumXX-SumX^2)
+            Intercept=(SumX*SumXY-SumY*SumXX)/(SumX^2-Count*SumXX)
+            StDevSLinReg=0
+            For i=0 to DataY.Length-1
+                If Not Double.IsNaN(DataY(i)) Then
+                    StDevSLinReg+=(DataY(i)-i*Slope-Intercept)^2
+                End If
+            Next i
+            StDevSLinReg=Math.Sqrt(StDevSLinReg/(Count-2)) ' n-2 is used because two parameters (slope and intercept) were estimated in order to estimate the sum of squares
+            ModifiedCorrelation=SumXY/Math.Sqrt(SumXX)/Math.Sqrt(SumYY) ' Average is not removed, as expected average is zero
+        End Sub
 
-End Class
+    End Class
+
+End Namespace

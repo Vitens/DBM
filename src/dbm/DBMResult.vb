@@ -22,15 +22,19 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
-Public Class DBMResult
+Namespace DBM
 
-    Public Factor,OriginalFactor,CurrValue,PredValue,LowContrLimit,UppContrLimit,AbsoluteErrors(),RelativeErrors() As Double
-    Public SuppressedBy As DBMPointDriver
+    Public Class DBMResult
 
-    Public Sub New()
-        ReDim AbsoluteErrors(DBMParameters.CorrelationPreviousPeriods)
-        ReDim RelativeErrors(DBMParameters.CorrelationPreviousPeriods)
-        SuppressedBy=Nothing
-    End Sub
+        Public Factor,OriginalFactor,CurrValue,PredValue,LowContrLimit,UppContrLimit,AbsoluteErrors(),RelativeErrors() As Double
+        Public SuppressedBy As DBMPointDriver
 
-End Class
+        Public Sub New()
+            ReDim AbsoluteErrors(DBMParameters.CorrelationPreviousPeriods)
+            ReDim RelativeErrors(DBMParameters.CorrelationPreviousPeriods)
+            SuppressedBy=Nothing
+        End Sub
+
+    End Class
+
+End Namespace

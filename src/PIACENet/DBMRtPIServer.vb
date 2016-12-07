@@ -22,39 +22,43 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
-Public Class DBMRtPIServer
+Namespace DBMRt
 
-    Private PIServer As PISDK.Server
-    Private DBMRtPIPoints As Collections.Generic.List(Of DBMRtPIPoint)
+    Public Class DBMRtPIServer
 
-    Public Sub New(PIServer As PISDK.Server,Optional TagFilter As String="*")
-        Dim InstrTag,Fields() As String
-        Me.PIServer=PIServer
-        DBMRtPIPoints=New Collections.Generic.List(Of DBMRtPIPoint)
-        Try
-            For Each thisDBMRtPIPoint As PISDK.PIPoint In Me.PIServer.GetPointsSQL("PIpoint.Tag='" & TagFilter & "' AND PIpoint.PointSource='dbmrt' AND PIpoint.Scan=1")
-                InstrTag=thisDBMRtPIPoint.PointAttributes("InstrumentTag").Value.ToString
-                If Text.RegularExpressions.Regex.IsMatch(InstrTag,"^[a-zA-Z0-9_\.-]{1,}:[^:?*&]{1,}$") Then
-                    Fields=Split(InstrTag.ToString,":")
-                    Try
-                        If DBMRtCalculator.PISDK.Servers(Fields(0)).PIPoints(Fields(1)).Name<>"" Then
-                            DBMRtPIPoints.Add(New DBMRtPIPoint(DBMRtCalculator.PISDK.Servers(Fields(0)).PIPoints(Fields(1)),thisDBMRtPIPoint))
-                        End If
-                    Catch
-                    End Try
-                End If
-            Next
-        Catch
-        End Try
-    End Sub
+        Private PIServer As PISDK.Server
+        Private DBMRtPIPoints As Collections.Generic.List(Of DBMRtPIPoint)
 
-    Public Sub Calculate
-        For Each thisDBMRtPIPoint As DBMRtPIPoint In DBMRtPIPoints
+        Public Sub New(PIServer As PISDK.Server,Optional TagFilter As String="*")
+            Dim InstrTag,Fields() As String
+            Me.PIServer=PIServer
+            DBMRtPIPoints=New Collections.Generic.List(Of DBMRtPIPoint)
             Try
-                thisDBMRtPIPoint.Calculate
+                For Each thisDBMRtPIPoint As PISDK.PIPoint In Me.PIServer.GetPointsSQL("PIpoint.Tag='" & TagFilter & "' AND PIpoint.PointSource='dbmrt' AND PIpoint.Scan=1")
+                    InstrTag=thisDBMRtPIPoint.PointAttributes("InstrumentTag").Value.ToString
+                    If Text.RegularExpressions.Regex.IsMatch(InstrTag,"^[a-zA-Z0-9_\.-]{1,}:[^:?*&]{1,}$") Then
+                        Fields=Split(InstrTag.ToString,":")
+                        Try
+                            If DBMRtCalculator.PISDK.Servers(Fields(0)).PIPoints(Fields(1)).Name<>"" Then
+                                DBMRtPIPoints.Add(New DBMRtPIPoint(DBMRtCalculator.PISDK.Servers(Fields(0)).PIPoints(Fields(1)),thisDBMRtPIPoint))
+                            End If
+                        Catch
+                        End Try
+                    End If
+                Next
             Catch
             End Try
-        Next
-    End Sub
+        End Sub
 
-End Class
+        Public Sub Calculate
+            For Each thisDBMRtPIPoint As DBMRtPIPoint In DBMRtPIPoints
+                Try
+                    thisDBMRtPIPoint.Calculate
+                Catch
+                End Try
+            Next
+        End Sub
+
+    End Class
+
+End Namespace

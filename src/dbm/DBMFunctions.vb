@@ -22,21 +22,25 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
-Public Class DBMFunctions
+Namespace DBM
 
-    Public Shared Function DBMVersion As String
-        DBMVersion=System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileDescription
-        DBMVersion=DBMVersion & " v" & System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileVersion & vbCrLf
-        DBMVersion=DBMVersion & System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).ProductName & vbCrLf
-        DBMVersion=DBMVersion & System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Comments & vbCrLf & vbCrLf
-        DBMVersion=DBMVersion & System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).LegalCopyright
-        Return DBMVersion
-    End Function
+    Public Class DBMFunctions
 
-    Public Shared Function ArrayRotateLeft(Data() As Double) As Double() ' Rotate array left, first item becomes last
-        Array.Reverse(Data) ' ABCDE -> EDCBA
-        Array.Reverse(Data,0,Data.Length-1) ' EDCBA -> BCDEA
-        Return Data
-    End Function
+        Public Shared Function DBMVersion As String
+            DBMVersion=System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileDescription
+            DBMVersion=DBMVersion & " v" & System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileVersion & vbCrLf
+            DBMVersion=DBMVersion & System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).ProductName & vbCrLf
+            DBMVersion=DBMVersion & System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).Comments & vbCrLf & vbCrLf
+            DBMVersion=DBMVersion & System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).LegalCopyright
+            Return DBMVersion
+        End Function
 
-End Class
+        Public Shared Function ArrayRotateLeft(Data() As Double) As Double() ' Rotate array left, first item becomes last
+            Array.Reverse(Data) ' ABCDE -> EDCBA
+            Array.Reverse(Data,0,Data.Length-1) ' EDCBA -> BCDEA
+            Return Data
+        End Function
+
+    End Class
+
+End Namespace

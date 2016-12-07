@@ -22,36 +22,40 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
-Public Class DBMDataManager
+Namespace DBM
 
-    Public DBMPointDriver As DBMPointDriver
-    Private CacheIndex As Integer
-    Private DBMCachedValues As New Collections.Generic.List(Of DBMCachedValue)
+    Public Class DBMDataManager
 
-    Public Sub New(DBMPointDriver As DBMPointDriver)
-        Me.DBMPointDriver=DBMPointDriver
-        CacheIndex=0
-    End Sub
+        Public DBMPointDriver As DBMPointDriver
+        Private CacheIndex As Integer
+        Private DBMCachedValues As New Collections.Generic.List(Of DBMCachedValue)
 
-    Public Function Value(Timestamp As DateTime) As Double ' Returns value at timestamp, either from cache or using driver
-        Dim i As Integer
-        i=DBMCachedValues.FindIndex(Function(FindCachedValue)FindCachedValue.Timestamp=Timestamp) ' Find timestamp in cache
-        If i=-1 Then ' Not in cache
-            Try
-                Value=DBMPointDriver.GetData(Timestamp,DateAdd("s",DBMParameters.CalculationInterval,Timestamp)) ' Get data using driver
-            Catch
-                Value=Double.NaN ' Error, return Not a Number
-            End Try
-            If DBMCachedValues.Count<DBMParameters.MaximumCacheSize Then ' Limit cache size
-                DBMCachedValues.Add(New DBMCachedValue(Timestamp,Value)) ' Add to cache (new)
+        Public Sub New(DBMPointDriver As DBMPointDriver)
+            Me.DBMPointDriver=DBMPointDriver
+            CacheIndex=0
+        End Sub
+
+        Public Function Value(Timestamp As DateTime) As Double ' Returns value at timestamp, either from cache or using driver
+            Dim i As Integer
+            i=DBMCachedValues.FindIndex(Function(FindCachedValue)FindCachedValue.Timestamp=Timestamp) ' Find timestamp in cache
+            If i=-1 Then ' Not in cache
+                Try
+                    Value=DBMPointDriver.GetData(Timestamp,DateAdd("s",DBMParameters.CalculationInterval,Timestamp)) ' Get data using driver
+                Catch
+                    Value=Double.NaN ' Error, return Not a Number
+                End Try
+                If DBMCachedValues.Count<DBMParameters.MaximumCacheSize Then ' Limit cache size
+                    DBMCachedValues.Add(New DBMCachedValue(Timestamp,Value)) ' Add to cache (new)
+                Else
+                    DBMCachedValues.Item(CacheIndex)=New DBMCachedValue(Timestamp,Value) ' Add to cache (overwrite existing)
+                    CacheIndex=(CacheIndex+1) Mod DBMCachedValues.Count ' Increase index
+                End If
             Else
-                DBMCachedValues.Item(CacheIndex)=New DBMCachedValue(Timestamp,Value) ' Add to cache (overwrite existing)
-                CacheIndex=(CacheIndex+1) Mod DBMCachedValues.Count ' Increase index
+                Value=DBMCachedValues.Item(i).Value ' Return value from cache
             End If
-        Else
-            Value=DBMCachedValues.Item(i).Value ' Return value from cache
-        End If
-        Return Value
-    End Function
+            Return Value
+        End Function
 
-End Class
+    End Class
+
+End Namespace

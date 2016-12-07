@@ -22,25 +22,29 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
-Public Class DBMRtCalculator
+Namespace DBMRt
 
-    Public Shared PISDK As New PISDK.PISDK
-    Public Shared DBM As New DBM
-    Private DBMRtPIServers As Collections.Generic.List(Of DBMRtPIServer)
+    Public Class DBMRtCalculator
 
-    Public Sub New(Optional DefaultServerOnly As Boolean=False,Optional TagFilter As String="*")
-        DBMRtPIServers=New Collections.Generic.List(Of DBMRtPIServer)
-        For Each thisServer As PISDK.Server In PISDK.Servers
-            If Not DefaultServerOnly Or thisServer Is PISDK.Servers.DefaultServer Then
-                DBMRtPIServers.Add(New DBMRtPIServer(thisServer,TagFilter))
-            End If
-        Next
-    End Sub
+        Public Shared PISDK As New PISDK.PISDK
+        Public Shared DBM As New DBM.DBM
+        Private DBMRtPIServers As Collections.Generic.List(Of DBMRtPIServer)
 
-    Public Sub Calculate
-        For Each thisDBMRtPIServer As DBMRtPIServer In DBMRtPIServers
-            thisDBMRtPIServer.Calculate
-        Next
-    End Sub
+        Public Sub New(Optional DefaultServerOnly As Boolean=False,Optional TagFilter As String="*")
+            DBMRtPIServers=New Collections.Generic.List(Of DBMRtPIServer)
+            For Each thisServer As PISDK.Server In PISDK.Servers
+                If Not DefaultServerOnly Or thisServer Is PISDK.Servers.DefaultServer Then
+                    DBMRtPIServers.Add(New DBMRtPIServer(thisServer,TagFilter))
+                End If
+            Next
+        End Sub
 
-End Class
+        Public Sub Calculate
+            For Each thisDBMRtPIServer As DBMRtPIServer In DBMRtPIServers
+                thisDBMRtPIServer.Calculate
+            Next
+        End Sub
+
+    End Class
+
+End Namespace

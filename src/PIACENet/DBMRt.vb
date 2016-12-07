@@ -24,24 +24,28 @@ Option Strict
 
 <assembly:System.Reflection.AssemblyTitle("DBMRt")>
 
-Public Class DBMRt
+Namespace DBMRt
 
-    Inherits OSIsoft.PI.ACE.PIACENetClassModule
+    Public Class DBMRt
 
-    Private DBMRtCalculator As DBMRtCalculator
+        Inherits OSIsoft.PI.ACE.PIACENetClassModule
 
-    Public Overrides Sub ACECalculations()
-        DBMRtCalculator.Calculate
-    End Sub
+        Private DBMRtCalculator As DBMRtCalculator
 
-    Protected Overrides Sub InitializePIACEPoints()
-    End Sub
+        Public Overrides Sub ACECalculations()
+            DBMRtCalculator.Calculate
+        End Sub
 
-    Protected Overrides Sub ModuleDependentInitialization()
-        DBMRtCalculator=New DBMRtCalculator(True)
-    End Sub
+        Protected Overrides Sub InitializePIACEPoints()
+        End Sub
 
-    Protected Overrides Sub ModuleDependentTermination()
-    End Sub
+        Protected Overrides Sub ModuleDependentInitialization()
+            DBMRtCalculator=New DBMRtCalculator(True)
+        End Sub
 
-End Class
+        Protected Overrides Sub ModuleDependentTermination()
+        End Sub
+
+    End Class
+
+End Namespace

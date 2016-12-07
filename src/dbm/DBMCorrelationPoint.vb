@@ -22,14 +22,18 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
-Public Class DBMCorrelationPoint
+Namespace DBM
 
-    Public DBMPointDriver As DBMPointDriver
-    Public SubstractSelf As Boolean
+    Public Class DBMCorrelationPoint
 
-    Public Sub New(DBMPointDriver As DBMPointDriver,SubstractSelf As Boolean)
-        Me.DBMPointDriver=DBMPointDriver
-        Me.SubstractSelf=SubstractSelf
-    End Sub
+        Public DBMPointDriver As DBMPointDriver
+        Public SubstractSelf As Boolean
 
-End Class
+        Public Sub New(DBMPointDriver As DBMPointDriver,SubstractSelf As Boolean)
+            Me.DBMPointDriver=DBMPointDriver
+            Me.SubstractSelf=SubstractSelf
+        End Sub
+
+    End Class
+
+End Namespace

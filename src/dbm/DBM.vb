@@ -24,74 +24,78 @@ Option Strict
 
 <assembly:System.Reflection.AssemblyTitle("DBM")>
 
-Public Class DBM
+Namespace DBM
 
-    Private DBMDriver As DBMDriver
-    Public DBMPoints As New Collections.Generic.List(Of DBMPoint)
+    Public Class DBM
 
-    Public Sub New(Optional Data() As Object=Nothing)
-        DBMDriver=New DBMDriver(Data)
-    End Sub
+        Private DBMDriver As DBMDriver
+        Public DBMPoints As New Collections.Generic.List(Of DBMPoint)
 
-    Public Function DBMPointDriverIndex(DBMPointDriver As DBMPointDriver) As Integer
-        DBMPointDriverIndex=DBMPoints.FindIndex(Function(FindDBMPoint)FindDBMPoint.DBMDataManager.DBMPointDriver.Point Is DBMPointDriver.Point)
-        If DBMPointDriverIndex=-1 Then ' PointDriver not found
-            DBMPoints.Add(New DBMPoint(DBMPointDriver)) ' Add to list
-            DBMPointDriverIndex=DBMPoints.Count-1
-        End If
-        Return DBMPointDriverIndex
-    End Function
+        Public Sub New(Optional Data() As Object=Nothing)
+            DBMDriver=New DBMDriver(Data)
+        End Sub
 
-    Public Shared Function KeepOrSuppressEvent(Factor As Double,AbsErrModCorr As Double,RelErrModCorr As Double,SubstractSelf As Boolean) As Double
-        KeepOrSuppressEvent=Factor
-        If Not SubstractSelf And AbsErrModCorr<-DBMParameters.CorrelationThreshold Then ' If anticorrelation with adjacent measurement
-            If KeepOrSuppressEvent<-DBMParameters.CorrelationThreshold And KeepOrSuppressEvent>=-1 Then ' If already suppressed due to anticorrelation
-                If AbsErrModCorr<KeepOrSuppressEvent Then ' Keep lowest value (strongest anticorrelation)
+        Public Function DBMPointDriverIndex(DBMPointDriver As DBMPointDriver) As Integer
+            DBMPointDriverIndex=DBMPoints.FindIndex(Function(FindDBMPoint)FindDBMPoint.DBMDataManager.DBMPointDriver.Point Is DBMPointDriver.Point)
+            If DBMPointDriverIndex=-1 Then ' PointDriver not found
+                DBMPoints.Add(New DBMPoint(DBMPointDriver)) ' Add to list
+                DBMPointDriverIndex=DBMPoints.Count-1
+            End If
+            Return DBMPointDriverIndex
+        End Function
+
+        Public Shared Function KeepOrSuppressEvent(Factor As Double,AbsErrModCorr As Double,RelErrModCorr As Double,SubstractSelf As Boolean) As Double
+            KeepOrSuppressEvent=Factor
+            If Not SubstractSelf And AbsErrModCorr<-DBMParameters.CorrelationThreshold Then ' If anticorrelation with adjacent measurement
+                If KeepOrSuppressEvent<-DBMParameters.CorrelationThreshold And KeepOrSuppressEvent>=-1 Then ' If already suppressed due to anticorrelation
+                    If AbsErrModCorr<KeepOrSuppressEvent Then ' Keep lowest value (strongest anticorrelation)
+                        KeepOrSuppressEvent=AbsErrModCorr ' Suppress
+                    End If
+                Else ' Not already suppressed due to anticorrelation
                     KeepOrSuppressEvent=AbsErrModCorr ' Suppress
                 End If
-            Else ' Not already suppressed due to anticorrelation
-                KeepOrSuppressEvent=AbsErrModCorr ' Suppress
-            End If
-        ElseIf RelErrModCorr>DBMParameters.CorrelationThreshold Then ' If correlation with measurement
-            If Not (KeepOrSuppressEvent<-DBMParameters.CorrelationThreshold And KeepOrSuppressEvent>=-1) Then ' If not already suppressed due to anticorrelation
-                If KeepOrSuppressEvent>DBMParameters.CorrelationThreshold And KeepOrSuppressEvent<=1 Then ' If already suppressed due to correlation
-                    If RelErrModCorr>KeepOrSuppressEvent Then ' Keep highest value (strongest correlation)
+            ElseIf RelErrModCorr>DBMParameters.CorrelationThreshold Then ' If correlation with measurement
+                If Not (KeepOrSuppressEvent<-DBMParameters.CorrelationThreshold And KeepOrSuppressEvent>=-1) Then ' If not already suppressed due to anticorrelation
+                    If KeepOrSuppressEvent>DBMParameters.CorrelationThreshold And KeepOrSuppressEvent<=1 Then ' If already suppressed due to correlation
+                        If RelErrModCorr>KeepOrSuppressEvent Then ' Keep highest value (strongest correlation)
+                            KeepOrSuppressEvent=RelErrModCorr ' Suppress
+                        End If
+                    Else ' Not already suppressed due to correlation
                         KeepOrSuppressEvent=RelErrModCorr ' Suppress
                     End If
-                Else ' Not already suppressed due to correlation
-                    KeepOrSuppressEvent=RelErrModCorr ' Suppress
                 End If
             End If
-        End If
-        Return KeepOrSuppressEvent
-    End Function
+            Return KeepOrSuppressEvent
+        End Function
 
-    Public Function Calculate(InputDBMPointDriver As DBMPointDriver,DBMCorrelationPoints As Collections.Generic.List(Of DBMCorrelationPoint),Timestamp As DateTime) As DBMResult
-        Dim InputDBMPointDriverIndex,CorrelationDBMPointDriverIndex As Integer
-        Dim CorrelationDBMResult As DBMResult
-        Dim AbsErrorStats,RelErrorStats As New DBMStatistics
-        Dim NewValue As Double
-        If DBMCorrelationPoints Is Nothing Then DBMCorrelationPoints=New Collections.Generic.List(Of DBMCorrelationPoint)
-        InputDBMPointDriverIndex=DBMPointDriverIndex(InputDBMPointDriver)
-        Calculate=DBMPoints.Item(InputDBMPointDriverIndex).Calculate(Timestamp,True,DBMCorrelationPoints.Count>0) ' Calculate for input point
-        If Calculate.Factor<>0 And DBMCorrelationPoints.Count>0 Then ' If an event is found and a correlation point is available
-            For Each thisDBMCorrelationPoint As DBMCorrelationPoint In DBMCorrelationPoints
-                CorrelationDBMPointDriverIndex=DBMPointDriverIndex(thisDBMCorrelationPoint.DBMPointDriver)
-                If thisDBMCorrelationPoint.SubstractSelf Then ' If pattern of correlation point contains input point
-                    CorrelationDBMResult=DBMPoints.Item(CorrelationDBMPointDriverIndex).Calculate(Timestamp,False,True,DBMPoints.Item(InputDBMPointDriverIndex)) ' Calculate for correlation point, substract input point
-                Else
-                    CorrelationDBMResult=DBMPoints.Item(CorrelationDBMPointDriverIndex).Calculate(Timestamp,False,True) ' Calculate for correlation point
-                End If
-                AbsErrorStats.Calculate(CorrelationDBMResult.AbsoluteErrors,Calculate.AbsoluteErrors) ' Absolute error compared to prediction
-                RelErrorStats.Calculate(CorrelationDBMResult.RelativeErrors,Calculate.RelativeErrors) ' Relative error compared to prediction
-                NewValue=KeepOrSuppressEvent(Calculate.Factor,AbsErrorStats.ModifiedCorrelation,RelErrorStats.ModifiedCorrelation,thisDBMCorrelationPoint.SubstractSelf)
-                If NewValue<>Calculate.Factor Then ' Has event been suppressed
-                    Calculate.Factor=NewValue
-                    Calculate.SuppressedBy=thisDBMCorrelationPoint.DBMPointDriver ' Suppressed by
-                End If
-            Next
-        End If
-        Return Calculate
-    End Function
+        Public Function Calculate(InputDBMPointDriver As DBMPointDriver,DBMCorrelationPoints As Collections.Generic.List(Of DBMCorrelationPoint),Timestamp As DateTime) As DBMResult
+            Dim InputDBMPointDriverIndex,CorrelationDBMPointDriverIndex As Integer
+            Dim CorrelationDBMResult As DBMResult
+            Dim AbsErrorStats,RelErrorStats As New DBMStatistics
+            Dim NewValue As Double
+            If DBMCorrelationPoints Is Nothing Then DBMCorrelationPoints=New Collections.Generic.List(Of DBMCorrelationPoint)
+            InputDBMPointDriverIndex=DBMPointDriverIndex(InputDBMPointDriver)
+            Calculate=DBMPoints.Item(InputDBMPointDriverIndex).Calculate(Timestamp,True,DBMCorrelationPoints.Count>0) ' Calculate for input point
+            If Calculate.Factor<>0 And DBMCorrelationPoints.Count>0 Then ' If an event is found and a correlation point is available
+                For Each thisDBMCorrelationPoint As DBMCorrelationPoint In DBMCorrelationPoints
+                    CorrelationDBMPointDriverIndex=DBMPointDriverIndex(thisDBMCorrelationPoint.DBMPointDriver)
+                    If thisDBMCorrelationPoint.SubstractSelf Then ' If pattern of correlation point contains input point
+                        CorrelationDBMResult=DBMPoints.Item(CorrelationDBMPointDriverIndex).Calculate(Timestamp,False,True,DBMPoints.Item(InputDBMPointDriverIndex)) ' Calculate for correlation point, substract input point
+                    Else
+                        CorrelationDBMResult=DBMPoints.Item(CorrelationDBMPointDriverIndex).Calculate(Timestamp,False,True) ' Calculate for correlation point
+                    End If
+                    AbsErrorStats.Calculate(CorrelationDBMResult.AbsoluteErrors,Calculate.AbsoluteErrors) ' Absolute error compared to prediction
+                    RelErrorStats.Calculate(CorrelationDBMResult.RelativeErrors,Calculate.RelativeErrors) ' Relative error compared to prediction
+                    NewValue=KeepOrSuppressEvent(Calculate.Factor,AbsErrorStats.ModifiedCorrelation,RelErrorStats.ModifiedCorrelation,thisDBMCorrelationPoint.SubstractSelf)
+                    If NewValue<>Calculate.Factor Then ' Has event been suppressed
+                        Calculate.Factor=NewValue
+                        Calculate.SuppressedBy=thisDBMCorrelationPoint.DBMPointDriver ' Suppressed by
+                    End If
+                Next
+            End If
+            Return Calculate
+        End Function
 
-End Class
+    End Class
+
+End Namespace
