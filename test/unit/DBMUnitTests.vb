@@ -393,7 +393,7 @@ Module DBMUnitTests
         CheckEqual(Math.Round(DBM.DBMMath.CalculateExpMovingAvg({26.1368,78.5212,37.8903,28.9665,91.9377,63.1742}),4),48.6925)
         Console.WriteLine(" Done")
 
-        For i=1 To 5
+        For i=1 To 6
             If i=1 Then
                 Console.Write("Testing DBM.DBMStatistics.Slope ")
                 Results={-24.1399,-67.5699,51.3427,-56.9825,27.3182,-2.6573,32.1923,-46.8462,-11.1224,-61.5455,9.4424,-0.1602,10.7659,4.8889,-4.6572,-0.4548,-6.6652,2.2442,8.6539,-12.0462}
@@ -409,6 +409,9 @@ Module DBMUnitTests
             ElseIf i=5 Then
                 Console.Write("Testing DBM.DBMStatistics.ModifiedCorrelation ")
                 Results={0.819,0.7932,0.8652,0.7909,0.8474,0.8345,0.8554,0.8061,0.8274,0.7962,0.8665,0.9037,0.8892,0.908,0.887,0.8274,0.8714,0.8915,0.9047,0.8561}
+            ElseIf i=6 Then
+                Console.Write("Testing DBM.DBMStatistics.Determination ")
+                Results={0.024,0.1398,0.1164,0.082,0.0271,0.0004,0.0509,0.1184,0.0063,0.1413,0.1845,0.0001,0.1029,0.0412,0.0146,0.0002,0.091,0.022,0.2803,0.0974}
             End If
             For j=0 To 19
                 If j=0 Then DBMStatistics.Calculate({3411,3067,3159,2579,2604,3549,2028,3521,3629,3418,2091,2828})
@@ -441,6 +444,8 @@ Module DBMUnitTests
                     CheckEqual(Math.Round(DBMStatistics.Correlation,4),Results(j))
                 ElseIf i=5 Then
                     CheckEqual(Math.Round(DBMStatistics.ModifiedCorrelation,4),Results(j))
+                ElseIf i=6 Then
+                    CheckEqual(Math.Round(DBMStatistics.Determination,4),Results(j))
                 End If
             Next j
             Console.WriteLine(" Done")

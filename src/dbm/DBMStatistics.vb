@@ -27,7 +27,7 @@ Namespace DBM
     Public Class DBMStatistics
 
         Public Count As Integer
-        Public Slope,Intercept,StDevSLinReg,Correlation,ModifiedCorrelation As Double
+        Public Slope,Intercept,StDevSLinReg,Correlation,ModifiedCorrelation,Determination As Double
 
         Public Sub Calculate(DataY() As Double,Optional DataX() As Double=Nothing)
             Dim SumX,SumXX,SumY,SumYY,SumXY As Double
@@ -58,8 +58,9 @@ Namespace DBM
                 End If
             Next i
             StDevSLinReg=Math.Sqrt(StDevSLinReg/(Count-2)) ' n-2 is used because two parameters (slope and intercept) were estimated in order to estimate the sum of squares
-            Correlation=(Count*SumXY-SumX*SumY)/(Math.Sqrt((Count*SumXX-SumX^2)*(Count*SumYY-SumY^2)))
+            Correlation=(Count*SumXY-SumX*SumY)/Math.Sqrt((Count*SumXX-SumX^2)*(Count*SumYY-SumY^2)) ' a number that quantifies some type of correlation and dependence, meaning statistical relationships between two or more random variables or observed data values
             ModifiedCorrelation=SumXY/Math.Sqrt(SumXX)/Math.Sqrt(SumYY) ' Average is not removed, as expected average is zero
+            Determination=Correlation^2 ' a number that indicates the proportion of the variance in the dependent variable that is predictable from the independent variable
         End Sub
 
     End Class
