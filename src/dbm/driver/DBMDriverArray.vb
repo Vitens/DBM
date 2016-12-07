@@ -42,9 +42,9 @@ Namespace DBM
 
     Public Class DBMPointDriver
 
-        Public Point As String
+        Public Point As Object
 
-        Public Sub New(Point As String)
+        Public Sub New(Point As Object)
             Me.Point=Point
         End Sub
 

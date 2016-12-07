@@ -33,14 +33,14 @@ Namespace DBM
 
     Public Class DBMPointDriver
 
-        Public Point As PISDK.PIPoint
+        Public Point As Object
 
-        Public Sub New(Point As PISDK.PIPoint)
+        Public Sub New(Point As Object)
             Me.Point=Point
         End Sub
 
         Public Function GetData(StartTimestamp As DateTime,EndTimestamp As DateTime) As Double
-            Return CDbl(Point.Data.Summary(StartTimestamp,EndTimestamp,PISDK.ArchiveSummaryTypeConstants.astAverage,PISDK.CalculationBasisConstants.cbTimeWeighted).Value)
+            Return CDbl(CType(Point,PISDK.PIPoint).Data.Summary(StartTimestamp,EndTimestamp,PISDK.ArchiveSummaryTypeConstants.astAverage,PISDK.CalculationBasisConstants.cbTimeWeighted).Value)
         End Function
 
     End Class
