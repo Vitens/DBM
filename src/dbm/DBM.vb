@@ -33,7 +33,7 @@ Namespace DBM
 
         Public Sub New(Optional Data() As Object=Nothing)
             If Not DBMUnitTests.Results Then
-                Throw New System.Exception
+                Throw New System.Exception("Unit tests failed.")
             End If
             DBMDriver=New DBMDriver(Data)
         End Sub
