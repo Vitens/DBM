@@ -181,7 +181,7 @@ Namespace DBM
             For Each Value As Double In Data ' Most significant value first
                 CalculateExpMovingAvg+=Value*Weight
                 TotalWeight+=Weight
-                Weight*=1-2/((Data.Length)+1) ' Decrease weight for older values
+                Weight*=1-2/(Data.Length+1) ' Decrease weight for older values
             Next
             CalculateExpMovingAvg/=TotalWeight
             Return CalculateExpMovingAvg
