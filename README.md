@@ -37,16 +37,16 @@ Option Explicit
 Option Strict
 Module Module1
     Public Sub Main
-        Dim _DBM As New DBM
+        Dim _DBM As New DBM.DBM
         Dim _PISDK As New PISDK.PISDK
         Dim s,e As DateTime
-        Dim r As New DBMResult
+        Dim r As New DBM.DBMResult
         s=DateAdd("d",-2,DateTime.Today)
         e=DateAdd("d",5,s)
         Do While s<e
-            r=_DBM.Calculate(New DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Leeuwarden-levering")),Nothing,s)
+            r=_DBM.Calculate(New DBM.DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Leeuwarden-levering")),Nothing,s)
             Console.WriteLine(s.ToString & vbTab & r.Factor & vbTab & r.CurrValue & vbTab & r.PredValue & vbTab & r.LowContrLimit & vbTab & r.UppContrLimit)
-            s=DateAdd("s",DBMConstants.CalculationInterval,s)
+            s=DateAdd("s",DBM.DBMParameters.CalculationInterval,s)
         Loop
     End Sub
 End Module
@@ -63,16 +63,16 @@ Option Explicit
 Option Strict
 Module Module1
     Public Sub Main
-        Dim _DBM As New DBM
+        Dim _DBM As New DBM.DBM
         Dim _PISDK As New PISDK.PISDK
         Dim s,e As DateTime
-        Dim r As New DBMResult
+        Dim r As New DBM.DBMResult
         s=New DateTime(2013,3,12)
         e=DateAdd("d",1,s)
         Do While s<e
-            r=_DBM.Calculate(New DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Leeuwarden-levering")),Nothing,s)
+            r=_DBM.Calculate(New DBM.DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Leeuwarden-levering")),Nothing,s)
             Console.WriteLine(s.ToString & vbTab & r.Factor & vbTab & r.CurrValue & vbTab & r.PredValue & vbTab & r.LowContrLimit & vbTab & r.UppContrLimit)
-            s=DateAdd("s",DBMConstants.CalculationInterval,s)
+            s=DateAdd("s",DBM.DBMParameters.CalculationInterval,s)
         Loop
     End Sub
 End Module
@@ -90,20 +90,20 @@ Option Explicit
 Option Strict
 Module Module1
     Public Sub Main
-        Dim _DBM As New DBM
+        Dim _DBM As New DBM.DBM
         Dim _PISDK As New PISDK.PISDK
         Dim s,e As DateTime
-        Dim r As New DBMResult
-        Dim CP As New Collections.Generic.List(Of DBMCorrelationPoint)
+        Dim r As New DBM.DBMResult
+        Dim CP As New Collections.Generic.List(Of DBM.DBMCorrelationPoint)
         s=New DateTime(2016,1,1)
         e=DateAdd("d",1,s)
-        CP.Add(New DBMCorrelationPoint(New DBMPointDriver(_PISDK.Servers("sr-16634").PIPoints("Reinwaterafgifte")),False))
+        CP.Add(New DBM.DBMCorrelationPoint(New DBM.DBMPointDriver(_PISDK.Servers("sr-16634").PIPoints("Reinwaterafgifte")),False))
         Do While s<e
-            r=_DBM.Calculate(New DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Leeuwarden-levering")),CP,s)
+            r=_DBM.Calculate(New DBM.DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Leeuwarden-levering")),CP,s)
             Console.Write(s.ToString & vbTab & r.Factor & vbTab & r.CurrValue & vbTab & r.PredValue & vbTab & r.LowContrLimit & vbTab & r.UppContrLimit)
             r=_DBM.Calculate(CP.Item(0).DBMPointDriver,Nothing,s)
             Console.WriteLine(vbTab & r.CurrValue & vbTab & r.PredValue & vbTab & r.LowContrLimit & vbTab & r.UppContrLimit)
-            s=DateAdd("s",DBMConstants.CalculationInterval,s)
+            s=DateAdd("s",DBM.DBMParameters.CalculationInterval,s)
         Loop
     End Sub
 End Module
@@ -121,20 +121,20 @@ Option Explicit
 Option Strict
 Module Module1
     Public Sub Main
-        Dim _DBM As New DBM
+        Dim _DBM As New DBM.DBM
         Dim _PISDK As New PISDK.PISDK
         Dim s,e As DateTime
-        Dim r As New DBMResult
-        Dim CP As New Collections.Generic.List(Of DBMCorrelationPoint)
+        Dim r As New DBM.DBMResult
+        Dim CP As New Collections.Generic.List(Of DBM.DBMCorrelationPoint)
         s=New DateTime(2014,11,13)
         e=DateAdd("d",1,s)
-        CP.Add(New DBMCorrelationPoint(New DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Oosterwolde-levering")),False))
+        CP.Add(New DBM.DBMCorrelationPoint(New DBM.DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Oosterwolde-levering")),False))
         Do While s<e
-            r=_DBM.Calculate(New DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Drachten-levering")),CP,s)
+            r=_DBM.Calculate(New DBM.DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Drachten-levering")),CP,s)
             Console.Write(s.ToString & vbTab & r.Factor & vbTab & r.CurrValue & vbTab & r.PredValue & vbTab & r.LowContrLimit & vbTab & r.UppContrLimit)
             r=_DBM.Calculate(CP.Item(0).DBMPointDriver,Nothing,s)
             Console.WriteLine(vbTab & r.CurrValue & vbTab & r.PredValue & vbTab & r.LowContrLimit & vbTab & r.UppContrLimit)
-            s=DateAdd("s",DBMConstants.CalculationInterval,s)
+            s=DateAdd("s",DBM.DBMParameters.CalculationInterval,s)
         Loop
     End Sub
 End Module
