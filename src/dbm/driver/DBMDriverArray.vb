@@ -26,16 +26,7 @@ Namespace DBM
 
     Public Class DBMDriver
 
-        Public Shared Data(-1) As Double
-        Public Shared DataIndex As Integer
-
         Public Sub New(Optional Data() As Object=Nothing)
-            Dim i As Integer
-            ReDim DBMDriver.Data(Data.Length-1)
-            For i=0 To Data.Length-1
-                DBMDriver.Data(i)=CDbl(Data(i))
-            Next i
-            DBMDriver.DataIndex=0
         End Sub
 
     End Class
@@ -49,8 +40,8 @@ Namespace DBM
         End Sub
 
         Public Function GetData(StartTimestamp As DateTime,EndTimestamp As DateTime) As Double
-            GetData=DBMDriver.Data(DBMDriver.DataIndex) ' Return item from data array passed to DBMDriver
-            DBMDriver.DataIndex=(DBMDriver.DataIndex+1) Mod DBMDriver.Data.Length ' Increase index
+            GetData=DBMUnitTests.Data(DBMUnitTests.DataIndex) ' Return item from data array
+            DBMUnitTests.DataIndex=(DBMUnitTests.DataIndex+1) Mod DBMUnitTests.Data.Length ' Increase index
             Return GetData
         End Function
 
