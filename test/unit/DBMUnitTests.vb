@@ -95,7 +95,7 @@ Module DBMUnitTests
             UnitTest(-1.024,-1.024,535,605,537,673,"M",Nothing,New DateTime(2016,4,28,17,55,0),False)
             UnitTest(0,0,548,609,538,679,"M",Nothing,New DateTime(2016,4,28,18,0,0),False)
         Next i
-		Console.WriteLine("Unit tests passed.")
+        Console.WriteLine("Unit tests passed.")
     End Sub
 
 End Module
