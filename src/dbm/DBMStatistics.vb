@@ -27,7 +27,7 @@ Namespace DBM
     Public Class DBMStatistics
 
         Public Count As Integer
-        Public Slope,Intercept,StDevSLinReg,Correlation,ModifiedCorrelation,Determination As Double
+        Public Slope,Angle,Intercept,StDevSLinReg,Correlation,ModifiedCorrelation,Determination As Double
 
         Public Sub Calculate(DataY() As Double,Optional DataX() As Double=Nothing)
             Dim i As Integer
@@ -50,6 +50,7 @@ Namespace DBM
                 End If
             Next i
             Slope=(Count*SumXY-SumX*SumY)/(Count*SumXX-SumX^2)
+            Angle=Math.Atan(Slope)/(2*Math.PI)*360 ' Angle in degrees
             Intercept=(SumX*SumXY-SumY*SumXX)/(SumX^2-Count*SumXX)
             StDevSLinReg=0 ' Standard error of the predicted y-value for each x in the regression. The standard error is a measure of the amount of error in the prediction of y for an individual x
             For i=0 to DataY.Length-1
