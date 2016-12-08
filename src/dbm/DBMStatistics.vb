@@ -30,8 +30,8 @@ Namespace DBM
         Public Slope,Intercept,StDevSLinReg,Correlation,ModifiedCorrelation,Determination As Double
 
         Public Sub Calculate(DataY() As Double,Optional DataX() As Double=Nothing)
-            Dim SumX,SumXX,SumY,SumYY,SumXY As Double
             Dim i As Integer
+            Dim SumX,SumY,SumXX,SumYY,SumXY As Double
             If DataX Is Nothing Then
                 ReDim DataX(DataY.Length-1)
                 For i=0 To DataX.Length-1
@@ -42,10 +42,10 @@ Namespace DBM
             For i=0 To DataY.Length-1
                 If Not Double.IsNaN(DataX(i)) And Not Double.IsNaN(DataY(i)) Then
                     SumX+=DataX(i)
-                    SumXX+=DataX(i)^2
-                    SumXY+=DataX(i)*DataY(i)
                     SumY+=DataY(i)
+                    SumXX+=DataX(i)^2
                     SumYY+=DataY(i)^2
+                    SumXY+=DataX(i)*DataY(i)
                     Count+=1
                 End If
             Next i
