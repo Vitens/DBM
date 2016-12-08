@@ -32,10 +32,10 @@ set vbc="%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\Vbc.exe" /optimize+ /no
 set PIRefs="%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDK.dll","%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDKCommon.dll"
 set PIACERefs="%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PITimeServer.dll","%PIHOME%\ACE\OSISoft.PIACENet.dll"
 
-%vbc% /target:library /out:build\DBMDriverArray.dll src\shared\*.vb src\dbm\*.vb src\dbm\driver\DBMDriverArray.vb
-if not exist build\DBMDriverArray.dll goto ExitBuild
+%vbc% /target:library /out:build\DBMDriverNull.dll src\shared\*.vb src\dbm\*.vb src\dbm\driver\DBMDriverNull.vb
+if not exist build\DBMDriverNull.dll goto ExitBuild
 
-%vbc% /reference:build\DBMDriverArray.dll /out:build\DBMUnitTests.exe src\shared\*.vb test\unit\DBMUnitTests.vb
+%vbc% /reference:build\DBMDriverNull.dll /out:build\DBMUnitTests.exe src\shared\*.vb test\unit\*.vb
 if not exist build\DBMUnitTests.exe goto ExitBuild
 
 if exist "%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDK.dll" (

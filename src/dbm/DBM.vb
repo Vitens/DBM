@@ -30,12 +30,6 @@ Namespace DBM
 
         Public DBMPoints As New Collections.Generic.List(Of DBMPoint)
 
-        Public Sub New(Optional Data() As Object=Nothing)
-            If Not DBMUnitTests.Results Then
-                Throw New System.Exception("Unit tests failed.")
-            End If
-        End Sub
-
         Public Function DBMPointDriverIndex(DBMPointDriver As DBMPointDriver) As Integer
             DBMPointDriverIndex=DBMPoints.FindIndex(Function(FindDBMPoint)FindDBMPoint.DBMDataManager.DBMPointDriver.Point Is DBMPointDriver.Point)
             If DBMPointDriverIndex=-1 Then ' PointDriver not found

@@ -39,11 +39,16 @@ Namespace DBM
             Dim i As Integer
             i=DBMCachedValues.FindIndex(Function(FindCachedValue)FindCachedValue.Timestamp=Timestamp) ' Find timestamp in cache
             If i=-1 Then ' Not in cache
-                Try
-                    Value=DBMPointDriver.GetData(Timestamp,DateAdd("s",DBMParameters.CalculationInterval,Timestamp)) ' Get data using driver
-                Catch
-                    Value=Double.NaN ' Error, return Not a Number
-                End Try
+                If DBMUnitTests.UnitTestsRunning Then ' Do not use point driver when running unit tests
+                    Value=DBMUnitTests.Data(DBMUnitTests.DataIndex) ' Return item from unit tests data array
+                    DBMUnitTests.DataIndex=(DBMUnitTests.DataIndex+1) Mod DBMUnitTests.Data.Length ' Increase index
+                Else
+                    Try
+                        Value=DBMPointDriver.GetData(Timestamp,DateAdd("s",DBMParameters.CalculationInterval,Timestamp)) ' Get data using driver
+                    Catch
+                        Value=Double.NaN ' Error, return Not a Number
+                    End Try
+                End If
                 If DBMCachedValues.Count<DBMParameters.MaximumCacheSize Then ' Limit cache size
                     DBMCachedValues.Add(New DBMCachedValue(Timestamp,Value)) ' Add to cache (new)
                 Else
