@@ -46,9 +46,9 @@ Namespace DBM
             Dim InputDBMPointDriver,CorrelationDBMPointDriver As DBMPointDriver
             Dim DBMCorrelationPoints As New Collections.Generic.List(Of DBMCorrelationPoint)
             Dim DBMResult As DBMResult
-            InputDBMPointDriver=New DBMPointDriver(CStr(InputPoint))
+            InputDBMPointDriver=New DBMPointDriver(InputPoint)
             If CorrelationPoint IsNot Nothing Then
-                CorrelationDBMPointDriver=New DBMPointDriver(CStr(CorrelationPoint))
+                CorrelationDBMPointDriver=New DBMPointDriver(CorrelationPoint)
                 DBMCorrelationPoints.Add(New DBMCorrelationPoint(CorrelationDBMPointDriver,SubstractSelf))
             Else
                 CorrelationDBMPointDriver=Nothing
