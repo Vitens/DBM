@@ -24,13 +24,6 @@ Option Strict
 
 Namespace DBM
 
-    Public Class DBMDriver
-
-        Public Sub New(Optional Data() As Object=Nothing)
-        End Sub
-
-    End Class
-
     Public Class DBMPointDriver
 
         Public Point As Object

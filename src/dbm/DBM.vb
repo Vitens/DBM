@@ -28,14 +28,12 @@ Namespace DBM
 
     Public Class DBM
 
-        Private DBMDriver As DBMDriver
         Public DBMPoints As New Collections.Generic.List(Of DBMPoint)
 
         Public Sub New(Optional Data() As Object=Nothing)
             If Not DBMUnitTests.Results Then
                 Throw New System.Exception("Unit tests failed.")
             End If
-            DBMDriver=New DBMDriver(Data)
         End Sub
 
         Public Function DBMPointDriverIndex(DBMPointDriver As DBMPointDriver) As Integer
