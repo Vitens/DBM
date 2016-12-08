@@ -51,7 +51,7 @@ Namespace DBM
             Next i
             Slope=(Count*SumXY-SumX*SumY)/(Count*SumXX-SumX^2)
             Intercept=(SumX*SumXY-SumY*SumXX)/(SumX^2-Count*SumXX)
-            StDevSLinReg=0
+            StDevSLinReg=0 ' Standard error of the predicted y-value for each x in the regression. The standard error is a measure of the amount of error in the prediction of y for an individual x
             For i=0 to DataY.Length-1
                 If Not Double.IsNaN(DataX(i)) And Not Double.IsNaN(DataY(i)) Then
                     StDevSLinReg+=(DataY(i)-DataX(i)*Slope-Intercept)^2
