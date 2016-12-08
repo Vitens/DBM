@@ -22,9 +22,9 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
-<assembly:System.Reflection.AssemblyTitle("DBMUnitTests")>
+<assembly:System.Reflection.AssemblyTitle("DBMTester")>
 
-Module DBMUnitTests
+Module DBMTester
 
     Public Sub Main
         Dim _DBM As New DBM.DBM
@@ -36,7 +36,7 @@ Module DBMUnitTests
         Else
             Console.Write("FAILED")
         End If
-        Console.WriteLine(" (" & Math.Round((DateTime.Now.Ticks-Ticks)/10000) & "ms).")
+        Console.WriteLine(" (" & Math.Round((DateTime.Now.Ticks-Ticks)/10000) & "ms)")
     End Sub
 
 End Module
