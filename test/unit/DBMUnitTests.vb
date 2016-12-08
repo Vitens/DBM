@@ -30,11 +30,13 @@ Module DBMUnitTests
         Dim _DBM As New DBM.DBM
         Dim Ticks As Int64=DateTime.Now.Ticks
         Console.WriteLine(DBM.DBMFunctions.DBMVersion & vbCrLf)
+        Console.Write(" * Unit tests --> ")
         If DBM.DBMUnitTests.TestResults Then
-            Console.WriteLine(" [+] Unit tests passed (" & Math.Round((DateTime.Now.Ticks-Ticks)/10000) & "ms).")
+            Console.Write("PASSED")
         Else
-            Console.WriteLine(" [-] Unit tests failed (" & Math.Round((DateTime.Now.Ticks-Ticks)/10000) & "ms).")
+            Console.Write("FAILED")
         End If
+        Console.WriteLine(" (" & Math.Round((DateTime.Now.Ticks-Ticks)/10000) & "ms).")
     End Sub
 
 End Module
