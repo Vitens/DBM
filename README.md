@@ -27,10 +27,10 @@ Real-time, leak detection, demand forecasting, demand patterns, operational dash
 ## Drivers
 DBM uses drivers to read information from a source of data. The following drivers are included:
 
-|Driver|Description|
-|-|-|
-|DBMDriverNull|Returns zero for every request. Template for custom developed drivers.|
-|DBMDriverOSIsoftPI|Driver for OSIsoft PI.|
+| Driver             | Description                                                            |
+| ------------------ | ---------------------------------------------------------------------- |
+| DBMDriverNull      | Returns zero for every request. Template for custom developed drivers. |
+| DBMDriverOSIsoftPI | Driver for OSIsoft PI.                                                 |
 
 ## Samples
 
