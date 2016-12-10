@@ -35,15 +35,14 @@ Namespace DBM
 
         Public Function GetData(StartTimestamp As DateTime,EndTimestamp As DateTime) As Double
             Dim StreamReader As System.IO.StreamReader
-            Dim Line,Fields() As String
+            Dim Fields() As String
             Dim i As Integer
             If DBMCachedValues.Count=0 Then ' No data in memory yet
                 Try
                     StreamReader=New System.IO.StreamReader(CStr(Point))
                     Do While Not StreamReader.EndOfStream
-                        Line=StreamReader.ReadLine()
                         Try
-                            Fields=Split(Line,",") ' Delimiter
+                            Fields=Split(StreamReader.ReadLine(),",") ' Delimiter
                             DBMCachedValues.Add(New DBMCachedValue(Convert.ToDateTime(Fields(0)),Convert.ToDouble(Fields(1)))) ' timestamp,value
                         Catch
                         End Try
