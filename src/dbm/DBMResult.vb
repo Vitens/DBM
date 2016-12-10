@@ -27,12 +27,12 @@ Namespace DBM
     Public Class DBMResult
 
         Public Factor,OriginalFactor,CurrValue,PredValue,LowContrLimit,UppContrLimit,AbsoluteErrors(),RelativeErrors() As Double
+        Public AbsErrorStats,RelErrorStats As New DBMStatistics
         Public SuppressedBy As DBMPointDriver
 
         Public Sub New()
             ReDim AbsoluteErrors(DBMParameters.CorrelationPreviousPeriods)
             ReDim RelativeErrors(DBMParameters.CorrelationPreviousPeriods)
-            SuppressedBy=Nothing
         End Sub
 
     End Class
