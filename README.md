@@ -1,21 +1,16 @@
 # DBM
 Dynamic Bandwidth Monitor  
-Leak detection method implemented in a real-time data historian
+Leak detection method implemented in a real-time data historian  
+https://github.com/jfitie/DBM
 
 ![Logo](docs/dbmlogo.png)
 
+## Authors
 | Name          | Company      | Role        | Contact                  |
 | ------------- | ------------ | ----------- | ------------------------ |
 | J.H. Fitié    | Vitens N.V.  | Lead author | johan.fitie@vitens.nl    |
 | E.A. Trietsch | Vitens N.V.  | Co-author   | eelco.trietsch@vitens.nl |
 |               | VORtech B.V. | Contributor |                          |
-
-https://github.com/jfitie/DBM
-
-## Requirements
-* Microsoft .NET Framework 4
-* Optional: OSIsoft PI Software Development Kit (PI SDK)
-* Optional: OSIsoft PI Advanced Computing Engine (PI ACE)
 
 ## Description
 Water company Vitens has created a demonstration site called the Vitens Innovation Playground (VIP), in which new technologies and methodologies are developed, tested, and demonstrated. The projects conducted in the demonstration site can be categorized into one of four themes: energy optimization, real-time leak detection, online water quality monitoring, and customer interaction. In the real-time leak detection theme, a method for leak detection based on statistical demand forecasting was developed.
@@ -26,6 +21,13 @@ One of the advantages of this method is that it doesn’t require manual configu
 
 ### Keywords
 Real-time, leak detection, demand forecasting, demand patterns, operational dashboard
+
+## Requirements
+| Priority  | Requirement                                   | Version |
+| --------- | --------------------------------------------- | ------- |
+| Mandatory | Microsoft .NET Framework                      | 4       |
+| Optional  | OSIsoft PI Software Development Kit (PI SDK)  |         |
+| Optional  | OSIsoft PI Advanced Computing Engine (PI ACE) |         |
 
 ## Drivers
 DBM uses drivers to read information from a source of data. The following drivers are included:
