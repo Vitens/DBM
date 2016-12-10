@@ -34,6 +34,7 @@ DBM uses drivers to read information from a source of data. The following driver
 | Driver                  | Description                                                            |
 | ----------------------- | ---------------------------------------------------------------------- |
 | `DBMDriverNull.vb`      | Returns zero for every request. Template for custom developed drivers. |
+| `DBMDriverCSV.vb`       | Driver for CSV files (timestamp,value)                                 |
 | `DBMDriverOSIsoftPI.vb` | Driver for OSIsoft PI.                                                 |
 
 ## Parameters

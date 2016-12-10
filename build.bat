@@ -38,6 +38,9 @@ if not exist build\DBMDriverNull.dll goto ExitBuild
 %vbc% /reference:build\DBMDriverNull.dll /out:build\DBMTester.exe src\shared\*.vb test\unit\*.vb
 if not exist build\DBMTester.exe goto ExitBuild
 
+%vbc% /target:library /out:build\DBMDriverCSV.dll src\shared\*.vb src\dbm\*.vb src\dbm\driver\DBMDriverCSV.vb
+if not exist build\DBMDriverCSV.dll goto ExitBuild
+
 if exist "%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDK.dll" (
 
     %vbc% /reference:%PIRefs% /target:library /out:build\DBMDriverOSIsoftPI.dll src\shared\*.vb src\dbm\*.vb src\dbm\driver\DBMDriverOSIsoftPI.vb
