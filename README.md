@@ -31,11 +31,11 @@ Real-time, leak detection, demand forecasting, demand patterns, operational dash
 ## Drivers
 DBM uses drivers to read information from a source of data. The following drivers are included:
 
-| Driver                  | Description                                                            | Remarks                                                                |
-| ----------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| `DBMDriverNull.vb`      | Returns zero for every request. Template for custom developed drivers. |                                                                        |
-| `DBMDriverCSV.vb`       | Driver for CSV files (timestamp,value).                                | Data interval must be the same as the `CalculationInterval` parameter. |
-| `DBMDriverOSIsoftPI.vb` | Driver for OSIsoft PI.                                                 |                                                                        |
+| Driver                  | Description                                                            | Identifier (`Point`)    | Remarks                                                                |
+| ----------------------- | ---------------------------------------------------------------------- | ----------------------- | ---------------------------------------------------------------------- |
+| `DBMDriverNull.vb`      | Returns zero for every request. Template for custom developed drivers. | None                    |                                                                        |
+| `DBMDriverCSV.vb`       | Driver for CSV files (timestamp,value).                                | CSV filename (`String`) | Data interval must be the same as the `CalculationInterval` parameter. |
+| `DBMDriverOSIsoftPI.vb` | Driver for OSIsoft PI.                                                 | `PISDK.PIPoint` object  |                                                                        |
 
 ## Parameters
 DBM can be configured using several parameters. The values for these parameters can be changed at runtime in the `DBM.DBMParameters` class.
