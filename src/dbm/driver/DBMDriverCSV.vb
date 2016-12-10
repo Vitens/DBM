@@ -37,17 +37,17 @@ Namespace DBM
             Dim StreamReader As System.IO.StreamReader
             Dim Line,Fields() As String
             Dim i As Integer
-            If DBMCachedValues.Count=0 Then ' No data yet
+            If DBMCachedValues.Count=0 Then ' No data in memory yet
                 Try
                     StreamReader=New System.IO.StreamReader(CStr(Point))
-                    While Not StreamReader.EndOfStream
+                    Do While Not StreamReader.EndOfStream
                         Line=StreamReader.ReadLine()
                         Try
-                            Fields=Split(Line,",") ' CSV delimiter
+                            Fields=Split(Line,",") ' Delimiter
                             DBMCachedValues.Add(New DBMCachedValue(Convert.ToDateTime(Fields(0)),Convert.ToDouble(Fields(1)))) ' timestamp,value
                         Catch
                         End Try
-                    End While
+                    Loop
                     StreamReader.Close
                 Catch
                 End Try
