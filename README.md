@@ -124,9 +124,11 @@ Module Module1
         CP.Add(New DBM.DBMCorrelationPoint(New DBM.DBMPointDriver(_PISDK.Servers("sr-16634").PIPoints("Reinwaterafgifte")),False))
         Do While s<e
             r=_DBM.Calculate(New DBM.DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Leeuwarden-levering")),CP,s)
-            Console.Write(s.ToString & vbTab & r.Factor & vbTab & r.CurrValue & vbTab & r.PredValue & vbTab & r.LowContrLimit & vbTab & r.UppContrLimit)
+            Console.Write(s.ToString & vbTab & r.Factor & vbTab & r.CurrValue & vbTab & r.PredValue & vbTab & r.LowContrLimit & vbTab & r.UppContrLimit & vbTab)
+            Console.Write(r.AbsErrorStats.Count & vbTab & r.AbsErrorStats.Slope & vbTab & r.AbsErrorStats.Angle & vbTab & r.AbsErrorStats.Intercept & vbTab & r.AbsErrorStats.StDevSLinReg & vbTab & r.AbsErrorStats.Correlation & vbTab & r.AbsErrorStats.ModifiedCorrelation & vbTab & r.AbsErrorStats.Determination & vbTab)
+            Console.Write(r.RelErrorStats.Count & vbTab & r.RelErrorStats.Slope & vbTab & r.RelErrorStats.Angle & vbTab & r.RelErrorStats.Intercept & vbTab & r.RelErrorStats.StDevSLinReg & vbTab & r.RelErrorStats.Correlation & vbTab & r.RelErrorStats.ModifiedCorrelation & vbTab & r.RelErrorStats.Determination & vbTab)
             r=_DBM.Calculate(CP.Item(0).DBMPointDriver,Nothing,s)
-            Console.WriteLine(vbTab & r.CurrValue & vbTab & r.PredValue & vbTab & r.LowContrLimit & vbTab & r.UppContrLimit)
+            Console.WriteLine(r.CurrValue & vbTab & r.PredValue & vbTab & r.LowContrLimit & vbTab & r.UppContrLimit)
             s=DateAdd("s",DBM.DBMParameters.CalculationInterval,s)
         Loop
     End Sub
@@ -155,9 +157,11 @@ Module Module1
         CP.Add(New DBM.DBMCorrelationPoint(New DBM.DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Oosterwolde-levering")),False))
         Do While s<e
             r=_DBM.Calculate(New DBM.DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Drachten-levering")),CP,s)
-            Console.Write(s.ToString & vbTab & r.Factor & vbTab & r.CurrValue & vbTab & r.PredValue & vbTab & r.LowContrLimit & vbTab & r.UppContrLimit)
+            Console.Write(s.ToString & vbTab & r.Factor & vbTab & r.CurrValue & vbTab & r.PredValue & vbTab & r.LowContrLimit & vbTab & r.UppContrLimit & vbTab)
+            Console.Write(r.AbsErrorStats.Count & vbTab & r.AbsErrorStats.Slope & vbTab & r.AbsErrorStats.Angle & vbTab & r.AbsErrorStats.Intercept & vbTab & r.AbsErrorStats.StDevSLinReg & vbTab & r.AbsErrorStats.Correlation & vbTab & r.AbsErrorStats.ModifiedCorrelation & vbTab & r.AbsErrorStats.Determination & vbTab)
+            Console.Write(r.RelErrorStats.Count & vbTab & r.RelErrorStats.Slope & vbTab & r.RelErrorStats.Angle & vbTab & r.RelErrorStats.Intercept & vbTab & r.RelErrorStats.StDevSLinReg & vbTab & r.RelErrorStats.Correlation & vbTab & r.RelErrorStats.ModifiedCorrelation & vbTab & r.RelErrorStats.Determination & vbTab)
             r=_DBM.Calculate(CP.Item(0).DBMPointDriver,Nothing,s)
-            Console.WriteLine(vbTab & r.CurrValue & vbTab & r.PredValue & vbTab & r.LowContrLimit & vbTab & r.UppContrLimit)
+            Console.WriteLine(r.CurrValue & vbTab & r.PredValue & vbTab & r.LowContrLimit & vbTab & r.UppContrLimit)
             s=DateAdd("s",DBM.DBMParameters.CalculationInterval,s)
         Loop
     End Sub
