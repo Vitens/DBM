@@ -31,11 +31,11 @@ Real-time, leak detection, demand forecasting, demand patterns, operational dash
 ## Drivers
 DBM uses drivers to read information from a source of data. The following drivers are included:
 
-| Driver                  | Description                             | Identifier (`Point`)    | Remarks                                                                |
-| ----------------------- | --------------------------------------- | ----------------------- | ---------------------------------------------------------------------- |
-| `DBMDriverNull.vb`      | Returns zero for every request.         | `Object` (unused)       | Template for custom developed drivers.                                 |
-| `DBMDriverCSV.vb`       | Driver for CSV files (timestamp,value). | `String` (CSV filename) | Data interval must be the same as the `CalculationInterval` parameter. |
-| `DBMDriverOSIsoftPI.vb` | Driver for OSIsoft PI.                  | `PISDK.PIPoint` object  |                                                                        |
+| Driver                  | Description                             | Identifier (`Point`)     | Remarks                                                                |
+| ----------------------- | --------------------------------------- | ------------------------ | ---------------------------------------------------------------------- |
+| `DBMDriverNull.vb`      | Returns zero for every request.         | `Object` (unused)        | Template for custom developed drivers.                                 |
+| `DBMDriverCSV.vb`       | Driver for CSV files (timestamp,value). | `String` (CSV filename)  | Data interval must be the same as the `CalculationInterval` parameter. |
+| `DBMDriverOSIsoftPI.vb` | Driver for OSIsoft PI.                  | `PISDK.PIPoint` (PI tag) |                                                                        |
 
 ## Parameters
 DBM can be configured using several parameters. The values for these parameters can be changed at runtime in the `DBM.DBMParameters` class.
