@@ -1,9 +1,8 @@
+![Logo](docs/dbmlogo.png)
+
 # DBM
 Dynamic Bandwidth Monitor  
-Leak detection method implemented in a real-time data historian  
-https://github.com/jfitie/DBM
-
-![Logo](docs/dbmlogo.png)
+Leak detection method implemented in a real-time data historian
 
 ## Authors
 | Name          | Company      | Role        | Contact                  |
