@@ -42,7 +42,7 @@ Namespace DBM
             Return ArrayMultiplier
         End Function
 
-        Private Shared Function TestCase(InputPoint As Object,CorrelationPoint As Object,Timestamp As DateTime,SubstractSelf As Boolean,ExpResults() As Double,ExpAbsErrStats() As Double,ExpRelErrStats() As Double) As Boolean
+        Private Shared Function TestCase(InputPoint As String,CorrelationPoint As String,Timestamp As DateTime,SubstractSelf As Boolean,ExpResults() As Double,ExpAbsErrStats() As Double,ExpRelErrStats() As Double) As Boolean
             Dim InputDBMPointDriver,CorrelationDBMPointDriver As DBMPointDriver
             Dim DBMCorrelationPoints As New Collections.Generic.List(Of DBMCorrelationPoint)
             Dim DBMResult As DBMResult
