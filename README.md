@@ -4,8 +4,11 @@ Leak detection method implemented in a real-time data historian
 
 ![Logo](docs/dbmlogo.png)
 
-* J.H. Fitié, Vitens N.V. <[johan.fitie@vitens.nl](mailto:johan.fitie@vitens.nl)>
-* E.A. Trietsch, Vitens N.V. <[eelco.trietsch@vitens.nl](mailto:eelco.trietsch@vitens.nl)>
+| Name          | Company      | Role        | Contact                  |
+| ------------- | ------------ | ----------- | ------------------------ |
+| J.H. Fitié    | Vitens N.V.  | Lead author | johan.fitie@vitens.nl    |
+| E.A. Trietsch | Vitens N.V.  | Co-author   | eelco.trietsch@vitens.nl |
+|               | VORtech B.V. | Contributor |                          |
 
 https://github.com/jfitie/DBM
 
