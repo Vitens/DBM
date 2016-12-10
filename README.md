@@ -27,10 +27,22 @@ Real-time, leak detection, demand forecasting, demand patterns, operational dash
 ## Drivers
 DBM uses drivers to read information from a source of data. The following drivers are included:
 
-| Driver             | Description                                                            |
-| ------------------ | ---------------------------------------------------------------------- |
-| DBMDriverNull      | Returns zero for every request. Template for custom developed drivers. |
-| DBMDriverOSIsoftPI | Driver for OSIsoft PI.                                                 |
+| Driver                  | Description                                                            |
+| ----------------------- | ---------------------------------------------------------------------- |
+| `DBMDriverNull.vb`      | Returns zero for every request. Template for custom developed drivers. |
+| `DBMDriverOSIsoftPI.vb` | Driver for OSIsoft PI.                                                 |
+
+## Parameters
+DBM can be configured using several parameters. The values for these parameters can be changed at runtime in the `DBM.DBMParameters` class.
+
+| Parameter                    | Default value | Units         | Description                                                                                             |
+| ---------------------------- | ------------- | ------------- | ------------------------------------------------------------------------------------------------------- |
+| `CalculationInterval`        | 300           | seconds       | Time interval at which the calculation is run.                                                          |
+| `ComparePatterns`            | 12            | weeks         | Amount of weeks to look back to predict the current value and control limits.                           |
+| `EMAPreviousPeriods`         | 6             | count         | Amount of previous intervals used to smooth the data.                                                   |
+| `ConfidenceInterval`         | 0.99          | percent       | Confidence interval used for removing outliers and determining control limits.                          |
+| `CorrelationPreviousPeriods` | 23            | count         | Amount of previous intervals used to calculate prediction error correlation when an exception is found. |
+| `CorrelationThreshold`       | 0.83666       | dimensionless | Absolute correlation lower limit for detecting (anti)correlation.                                       |
 
 ## Samples
 
