@@ -27,15 +27,15 @@ Namespace DBM
     Public Class DBMDataManager
 
         Public DBMPointDriver As DBMPointDriver
-        Private DBMCachedValues As New Collections.Generic.Dictionary(Of DateTime,Double)
+        Private CachedValues As New Collections.Generic.Dictionary(Of DateTime,Double)
 
         Public Sub New(DBMPointDriver As DBMPointDriver)
             Me.DBMPointDriver=DBMPointDriver
         End Sub
 
         Public Function Value(Timestamp As DateTime) As Double ' Returns value at timestamp, either from cache or using driver
-            If DBMCachedValues.ContainsKey(Timestamp) Then ' In cache
-                Value=DBMCachedValues.Item(Timestamp) ' Return value from cache
+            If CachedValues.ContainsKey(Timestamp) Then ' In cache
+                Value=CachedValues.Item(Timestamp) ' Return value from cache
             Else
                 If DBMUnitTests.UnitTestsRunning Then ' Do not use point driver when running unit tests
                     Value=DBMUnitTests.Data(DBMUnitTests.DataIndex) ' Return item from unit tests data array
@@ -47,10 +47,10 @@ Namespace DBM
                         Value=Double.NaN ' Error, return Not a Number
                     End Try
                 End If
-                If DBMCachedValues.Count>=DBMParameters.MaximumCacheSize Then ' Limit cache size
-                    DBMCachedValues.Remove(DBMCachedValues.ElementAt(CInt(Math.Floor(Rnd()*DBMCachedValues.Count))).Key) ' Remove random cached value
+                If CachedValues.Count>=DBMParameters.MaximumCacheSize Then ' Limit cache size
+                    CachedValues.Remove(CachedValues.ElementAt(CInt(Math.Floor(Rnd()*CachedValues.Count))).Key) ' Remove random cached value
                 End If
-                DBMCachedValues.Add(Timestamp,Value) ' Add to cache
+                CachedValues.Add(Timestamp,Value) ' Add to cache
             End If
             Return Value
         End Function

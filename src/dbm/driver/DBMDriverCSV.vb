@@ -27,7 +27,7 @@ Namespace DBM
     Public Class DBMPointDriver
 
         Public Point As Object
-        Private DBMCachedValues As New Collections.Generic.Dictionary(Of DateTime,Double)
+        Private CachedValues As New Collections.Generic.Dictionary(Of DateTime,Double)
 
         Public Sub New(Point As Object)
             Me.Point=Point
@@ -36,13 +36,13 @@ Namespace DBM
         Public Function GetData(StartTimestamp As DateTime,EndTimestamp As DateTime) As Double
             Dim StreamReader As System.IO.StreamReader
             Dim Fields() As String
-            If DBMCachedValues.Count=0 Then ' No data in memory yet
+            If CachedValues.Count=0 Then ' No data in memory yet
                 Try
                     StreamReader=New System.IO.StreamReader(CStr(Point))
                     Do While Not StreamReader.EndOfStream
                         Try
                             Fields=Split(StreamReader.ReadLine(),",") ' Delimiter
-                            DBMCachedValues.Add(Convert.ToDateTime(Fields(0)),Convert.ToDouble(Fields(1))) ' timestamp,value
+                            CachedValues.Add(Convert.ToDateTime(Fields(0)),Convert.ToDouble(Fields(1))) ' timestamp,value
                         Catch
                         End Try
                     Loop
@@ -50,8 +50,8 @@ Namespace DBM
                 Catch
                 End Try
             End If
-            If DBMCachedValues.ContainsKey(StartTimestamp) Then ' In cache
-                GetData=DBMCachedValues.Item(StartTimestamp) ' Return value from cache
+            If CachedValues.ContainsKey(StartTimestamp) Then ' In cache
+                GetData=CachedValues.Item(StartTimestamp) ' Return value from cache
             Else
                 GetData=Double.NaN ' No data, return Not a Number
             End If
