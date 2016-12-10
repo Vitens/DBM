@@ -27,18 +27,16 @@ Namespace DBM
     Public Class DBMDataManager
 
         Public DBMPointDriver As DBMPointDriver
-        Private CacheIndex As Integer
-        Private DBMCachedValues As New Collections.Generic.List(Of DBMCachedValue)
+        Private DBMCachedValues As New Collections.Generic.Dictionary(Of DateTime,Double)
 
         Public Sub New(DBMPointDriver As DBMPointDriver)
             Me.DBMPointDriver=DBMPointDriver
-            CacheIndex=0
         End Sub
 
         Public Function Value(Timestamp As DateTime) As Double ' Returns value at timestamp, either from cache or using driver
-            Dim i As Integer
-            i=DBMCachedValues.FindIndex(Function(FindCachedValue)FindCachedValue.Timestamp=Timestamp) ' Find timestamp in cache
-            If i=-1 Then ' Not in cache
+            If DBMCachedValues.ContainsKey(Timestamp) Then ' In cache
+                Value=DBMCachedValues.Item(Timestamp) ' Return value from cache
+            Else
                 If DBMUnitTests.UnitTestsRunning Then ' Do not use point driver when running unit tests
                     Value=DBMUnitTests.Data(DBMUnitTests.DataIndex) ' Return item from unit tests data array
                     DBMUnitTests.DataIndex=(DBMUnitTests.DataIndex+1) Mod DBMUnitTests.Data.Length ' Increase index
@@ -49,14 +47,10 @@ Namespace DBM
                         Value=Double.NaN ' Error, return Not a Number
                     End Try
                 End If
-                If DBMCachedValues.Count<DBMParameters.MaximumCacheSize Then ' Limit cache size
-                    DBMCachedValues.Add(New DBMCachedValue(Timestamp,Value)) ' Add to cache (new)
-                Else
-                    DBMCachedValues.Item(CacheIndex)=New DBMCachedValue(Timestamp,Value) ' Add to cache (overwrite existing)
-                    CacheIndex=(CacheIndex+1) Mod DBMCachedValues.Count ' Increase index
+                If DBMCachedValues.Count>=DBMParameters.MaximumCacheSize Then ' Limit cache size
+                    DBMCachedValues.Remove(DBMCachedValues.ElementAt(CInt(Math.Floor(Rnd()*DBMCachedValues.Count))).Key) ' Remove random cached value
                 End If
-            Else
-                Value=DBMCachedValues.Item(i).Value ' Return value from cache
+                DBMCachedValues.Add(Timestamp,Value) ' Add to cache
             End If
             Return Value
         End Function
