@@ -28,15 +28,16 @@ Namespace DBM
 
     Public Class DBM
 
-        Public DBMPoints As New Collections.Generic.List(Of DBMPoint)
+        Public DBMPoints As New Collections.Generic.Dictionary(Of Object,DBMPoint)
 
-        Public Function DBMPointDriverIndex(DBMPointDriver As DBMPointDriver) As Integer
-            DBMPointDriverIndex=DBMPoints.FindIndex(Function(FindDBMPoint)FindDBMPoint.DBMDataManager.DBMPointDriver.Point Is DBMPointDriver.Point)
-            If DBMPointDriverIndex=-1 Then ' PointDriver not found
-                DBMPoints.Add(New DBMPoint(DBMPointDriver)) ' Add to list
-                DBMPointDriverIndex=DBMPoints.Count-1
+        Public Function GetDBMPoint(DBMPointDriver As DBMPointDriver) As DBMPoint
+            If DBMPoints.ContainsKey(DBMPointDriver.Point) Then
+                GetDBMPoint=DBMPoints.Item(DBMPointDriver.Point)
+            Else
+                DBMPoints.Add(DBMPointDriver.Point,New DBMPoint(DBMPointDriver)) ' Add to dictionary
+                GetDBMPoint=DBMPoints.Item(DBMPointDriver.Point)
             End If
-            Return DBMPointDriverIndex
+            Return GetDBMPoint
         End Function
 
         Public Shared Function KeepOrSuppressEvent(Factor As Double,AbsErrModCorr As Double,RelErrModCorr As Double,SubstractSelf As Boolean) As Double
@@ -64,19 +65,16 @@ Namespace DBM
         End Function
 
         Public Function Calculate(InputDBMPointDriver As DBMPointDriver,DBMCorrelationPoints As Collections.Generic.List(Of DBMCorrelationPoint),Timestamp As DateTime) As DBMResult
-            Dim InputDBMPointDriverIndex,CorrelationDBMPointDriverIndex As Integer
             Dim CorrelationDBMResult As DBMResult
             Dim NewValue As Double
             If DBMCorrelationPoints Is Nothing Then DBMCorrelationPoints=New Collections.Generic.List(Of DBMCorrelationPoint)
-            InputDBMPointDriverIndex=DBMPointDriverIndex(InputDBMPointDriver)
-            Calculate=DBMPoints.Item(InputDBMPointDriverIndex).Calculate(Timestamp,True,DBMCorrelationPoints.Count>0) ' Calculate for input point
+            Calculate=GetDBMPoint(InputDBMPointDriver).Calculate(Timestamp,True,DBMCorrelationPoints.Count>0) ' Calculate for input point
             If Calculate.Factor<>0 And DBMCorrelationPoints.Count>0 Then ' If an event is found and a correlation point is available
                 For Each thisDBMCorrelationPoint As DBMCorrelationPoint In DBMCorrelationPoints
-                    CorrelationDBMPointDriverIndex=DBMPointDriverIndex(thisDBMCorrelationPoint.DBMPointDriver)
                     If thisDBMCorrelationPoint.SubstractSelf Then ' If pattern of correlation point contains input point
-                        CorrelationDBMResult=DBMPoints.Item(CorrelationDBMPointDriverIndex).Calculate(Timestamp,False,True,DBMPoints.Item(InputDBMPointDriverIndex)) ' Calculate for correlation point, substract input point
+                        CorrelationDBMResult=GetDBMPoint(thisDBMCorrelationPoint.DBMPointDriver).Calculate(Timestamp,False,True,GetDBMPoint(InputDBMPointDriver)) ' Calculate for correlation point, substract input point
                     Else
-                        CorrelationDBMResult=DBMPoints.Item(CorrelationDBMPointDriverIndex).Calculate(Timestamp,False,True) ' Calculate for correlation point
+                        CorrelationDBMResult=GetDBMPoint(thisDBMCorrelationPoint.DBMPointDriver).Calculate(Timestamp,False,True) ' Calculate for correlation point
                     End If
                     Calculate.AbsErrorStats.Calculate(CorrelationDBMResult.AbsoluteErrors,Calculate.AbsoluteErrors) ' Absolute error compared to prediction
                     Calculate.RelErrorStats.Calculate(CorrelationDBMResult.RelativeErrors,Calculate.RelativeErrors) ' Relative error compared to prediction
