@@ -35,11 +35,11 @@ set PIACERefs="%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PITimeServer.dll","%PIHOM
 %vbc% /target:library /out:build\DBMDriverNull.dll src\shared\*.vb src\dbm\*.vb src\dbm\driver\DBMDriverNull.vb
 if not exist build\DBMDriverNull.dll goto ExitBuild
 
-%vbc% /reference:build\DBMDriverNull.dll /out:build\DBMTester.exe src\shared\*.vb test\unit\*.vb
-if not exist build\DBMTester.exe goto ExitBuild
-
 %vbc% /target:library /out:build\DBMDriverCSV.dll src\shared\*.vb src\dbm\*.vb src\dbm\driver\DBMDriverCSV.vb
 if not exist build\DBMDriverCSV.dll goto ExitBuild
+
+%vbc% /reference:build\DBMDriverCSV.dll /out:build\DBMTester.exe src\shared\*.vb test\unit\*.vb
+if not exist build\DBMTester.exe goto ExitBuild
 
 if exist "%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDK.dll" (
 
