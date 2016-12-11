@@ -30,7 +30,7 @@ Namespace DBM
         Public AbsErrorStats,RelErrorStats As New DBMStatistics
         Public SuppressedBy As DBMPointDriver
 
-        Public Sub New()
+        Public Sub New
             ReDim AbsoluteErrors(DBMParameters.CorrelationPreviousPeriods)
             ReDim RelativeErrors(DBMParameters.CorrelationPreviousPeriods)
         End Sub

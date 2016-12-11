@@ -48,7 +48,7 @@ Namespace DBM
                     End Try
                 End If
                 If CachedValues.Count>=DBMParameters.MaximumCacheSize Then ' Limit cache size
-                    CachedValues.Remove(CachedValues.ElementAt(CInt(Math.Floor(Rnd()*CachedValues.Count))).Key) ' Remove random cached value
+                    CachedValues.Remove(CachedValues.ElementAt(CInt(Math.Floor(Rnd*CachedValues.Count))).Key) ' Remove random cached value
                 End If
                 CachedValues.Add(Timestamp,Value) ' Add to cache
             End If

@@ -41,7 +41,7 @@ Namespace DBM
                     StreamReader=New System.IO.StreamReader(CStr(Point))
                     Do While Not StreamReader.EndOfStream
                         Try
-                            Fields=Split(StreamReader.ReadLine(),",",2) ' Delimiter; split in 2 fields
+                            Fields=Split(StreamReader.ReadLine,",",2) ' Delimiter; split in 2 fields
                             CachedValues.Add(Convert.ToDateTime(Fields(0)),Convert.ToDouble(Fields(1))) ' timestamp,value
                         Catch
                         End Try

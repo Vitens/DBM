@@ -32,18 +32,18 @@ Namespace DBMRt
 
         Private DBMRtCalculator As DBMRtCalculator
 
-        Public Overrides Sub ACECalculations()
+        Public Overrides Sub ACECalculations
             DBMRtCalculator.Calculate
         End Sub
 
-        Protected Overrides Sub InitializePIACEPoints()
+        Protected Overrides Sub InitializePIACEPoints
         End Sub
 
-        Protected Overrides Sub ModuleDependentInitialization()
+        Protected Overrides Sub ModuleDependentInitialization
             DBMRtCalculator=New DBMRtCalculator(True)
         End Sub
 
-        Protected Overrides Sub ModuleDependentTermination()
+        Protected Overrides Sub ModuleDependentTermination
         End Sub
 
     End Class
