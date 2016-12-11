@@ -64,6 +64,7 @@ Namespace DBM
 
         Public Function Calculate(InputDBMPointDriver As DBMPointDriver,DBMCorrelationPoints As Collections.Generic.List(Of DBMCorrelationPoint),Timestamp As DateTime) As DBMResult
             Dim CorrelationDBMResult As DBMResult
+            Dim AbsErrorStats,RelErrorStats As New DBMStatistics
             Dim NewValue As Double
             If DBMCorrelationPoints Is Nothing Then DBMCorrelationPoints=New Collections.Generic.List(Of DBMCorrelationPoint)
             Calculate=GetDBMPoint(InputDBMPointDriver).Calculate(Timestamp,True,DBMCorrelationPoints.Count>0) ' Calculate for input point
@@ -74,11 +75,13 @@ Namespace DBM
                     Else
                         CorrelationDBMResult=GetDBMPoint(thisDBMCorrelationPoint.DBMPointDriver).Calculate(Timestamp,False,True) ' Calculate for correlation point
                     End If
-                    Calculate.AbsErrorStats.Calculate(CorrelationDBMResult.AbsoluteErrors,Calculate.AbsoluteErrors) ' Absolute error compared to prediction
-                    Calculate.RelErrorStats.Calculate(CorrelationDBMResult.RelativeErrors,Calculate.RelativeErrors) ' Relative error compared to prediction
-                    NewValue=KeepOrSuppressEvent(Calculate.Factor,Calculate.AbsErrorStats.ModifiedCorrelation,Calculate.RelErrorStats.ModifiedCorrelation,thisDBMCorrelationPoint.SubstractSelf)
+                    AbsErrorStats.Calculate(CorrelationDBMResult.AbsoluteErrors,Calculate.AbsoluteErrors) ' Absolute error compared to prediction
+                    RelErrorStats.Calculate(CorrelationDBMResult.RelativeErrors,Calculate.RelativeErrors) ' Relative error compared to prediction
+                    NewValue=KeepOrSuppressEvent(Calculate.Factor,AbsErrorStats.ModifiedCorrelation,RelErrorStats.ModifiedCorrelation,thisDBMCorrelationPoint.SubstractSelf)
                     If NewValue<>Calculate.Factor Then ' Has event been suppressed
                         Calculate.Factor=NewValue
+                        Calculate.AbsErrorStats=AbsErrorStats
+                        Calculate.RelErrorStats=RelErrorStats
                         Calculate.SuppressedBy=thisDBMCorrelationPoint.DBMPointDriver ' Suppressed by
                     End If
                 Next
