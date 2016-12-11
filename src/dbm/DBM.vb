@@ -31,12 +31,10 @@ Namespace DBM
         Public DBMPoints As New Collections.Generic.Dictionary(Of Object,DBMPoint)
 
         Public Function GetDBMPoint(DBMPointDriver As DBMPointDriver) As DBMPoint
-            If DBMPoints.ContainsKey(DBMPointDriver.Point) Then
-                GetDBMPoint=DBMPoints.Item(DBMPointDriver.Point)
-            Else
+            If Not DBMPoints.ContainsKey(DBMPointDriver.Point) Then
                 DBMPoints.Add(DBMPointDriver.Point,New DBMPoint(DBMPointDriver)) ' Add to dictionary
-                GetDBMPoint=DBMPoints.Item(DBMPointDriver.Point)
             End If
+            GetDBMPoint=DBMPoints.Item(DBMPointDriver.Point)
             Return GetDBMPoint
         End Function
 
