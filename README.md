@@ -65,7 +65,7 @@ Module Module1
         Dim _DBM As New DBM.DBM
         Dim _PISDK As New PISDK.PISDK
         Dim s,e As DateTime
-        Dim r As New DBM.DBMResult
+        Dim r As DBM.DBMResult
         s=DateAdd("d",-2,DateTime.Today)
         e=DateAdd("d",5,s)
         Do While s<e
@@ -91,7 +91,7 @@ Module Module1
         Dim _DBM As New DBM.DBM
         Dim _PISDK As New PISDK.PISDK
         Dim s,e As DateTime
-        Dim r As New DBM.DBMResult
+        Dim r As DBM.DBMResult
         s=New DateTime(2013,3,12)
         e=DateAdd("d",1,s)
         Do While s<e
@@ -118,7 +118,7 @@ Module Module1
         Dim _DBM As New DBM.DBM
         Dim _PISDK As New PISDK.PISDK
         Dim s,e As DateTime
-        Dim r As New DBM.DBMResult
+        Dim r As DBM.DBMResult
         Dim CP As New Collections.Generic.List(Of DBM.DBMCorrelationPoint)
         s=New DateTime(2016,1,1)
         e=DateAdd("d",1,s)
@@ -151,7 +151,7 @@ Module Module1
         Dim _DBM As New DBM.DBM
         Dim _PISDK As New PISDK.PISDK
         Dim s,e As DateTime
-        Dim r As New DBM.DBMResult
+        Dim r As DBM.DBMResult
         Dim CP As New Collections.Generic.List(Of DBM.DBMCorrelationPoint)
         s=New DateTime(2014,11,13)
         e=DateAdd("d",1,s)
