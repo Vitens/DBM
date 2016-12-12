@@ -34,61 +34,40 @@ Module DBMTester
         Dim StartTimestamp,EndTimestamp As DateTime
         Dim DBMResult As DBM.DBMResult
         Dim Ticks As Int64
-        Console.WriteLine(DBM.DBMFunctions.DBMVersion & vbCrLf)
         For Each CommandLineArg As String In Environment.GetCommandLineArgs
             If Text.RegularExpressions.Regex.IsMatch(CommandLineArg,"^[-/](.+)=(.+)$") Then
                 Fields=Split(CommandLineArg,"=",2)
                 Try
                     Select Case Mid(Fields(0),2).ToLower
                         Case "i"
-                            Console.WriteLine("Input point: " & Fields(1))
                             InputDBMPointDriver=New DBM.DBMPointDriver(Fields(1))
                         Case "c"
-                            Console.WriteLine("Correlation point: " & Fields(1))
                             DBMCorrelationPoints.Add(New DBM.DBMCorrelationPoint(New DBM.DBMPointDriver(Fields(1)),False))
                         Case "cs"
-                            Console.WriteLine("Correlation point (substract input): " & Fields(1))
                             DBMCorrelationPoints.Add(New DBM.DBMCorrelationPoint(New DBM.DBMPointDriver(Fields(1)),True))
                         Case "iv"
-                            Console.Write("Calculation interval: ")
                             DBM.DBMParameters.CalculationInterval=Convert.ToInt32(Fields(1))
-                            Console.WriteLine(DBM.DBMParameters.CalculationInterval)
                         Case "p"
-                            Console.Write("Compare patterns: ")
                             DBM.DBMParameters.ComparePatterns=Convert.ToInt32(Fields(1))
-                            Console.WriteLine(DBM.DBMParameters.ComparePatterns)
                         Case "ep"
-                            Console.Write("EMA previous periods: ")
                             DBM.DBMParameters.EMAPreviousPeriods=Convert.ToInt32(Fields(1))
-                            Console.WriteLine(DBM.DBMParameters.EMAPreviousPeriods)
                         Case "ci"
-                            Console.Write("Confidence interval: ")
                             DBM.DBMParameters.ConfidenceInterval=Convert.ToDouble(Fields(1))
-                            Console.WriteLine(DBM.DBMParameters.ConfidenceInterval)
                         Case "cp"
-                            Console.Write("Correlation previous periods: ")
                             DBM.DBMParameters.CorrelationPreviousPeriods=Convert.ToInt32(Fields(1))
-                            Console.WriteLine(DBM.DBMParameters.CorrelationPreviousPeriods)
                         Case "ct"
-                            Console.Write("Correlation threshold: ")
                             DBM.DBMParameters.CorrelationThreshold=Convert.ToDouble(Fields(1))
-                            Console.WriteLine(DBM.DBMParameters.CorrelationThreshold)
                         Case "st"
-                            Console.Write("Start timestamp: ")
                             StartTimestamp=Convert.ToDateTime(Fields(1))
-                            Console.WriteLine(StartTimestamp)
                         Case "et"
-                            Console.Write("End timestamp: ")
                             EndTimestamp=Convert.ToDateTime(Fields(1))
-                            Console.WriteLine(EndTimestamp)
                     End Select
-                Catch ex As Exception
-                    Console.WriteLine(ex.Message)
-                    End
+                Catch
                 End Try
             End If
         Next
         If InputDBMPointDriver Is Nothing Or StartTimestamp=DateTime.MinValue Then
+            Console.WriteLine(DBM.DBMFunctions.DBMVersion & vbCrLf)
             Ticks=DateTime.Now.Ticks
             Console.Write(" * Unit tests --> ")
             If DBM.DBMUnitTests.TestResults Then
