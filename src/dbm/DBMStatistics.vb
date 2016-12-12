@@ -29,6 +29,10 @@ Namespace DBM
         Public Count As Integer
         Public Slope,Angle,Intercept,StDevSLinReg,Correlation,ModifiedCorrelation,Determination As Double
 
+        Public Function ShallowCopy As DBMStatistics
+            Return DirectCast(Me.MemberwiseClone,DBMStatistics)
+        End Function
+
         Public Sub Calculate(DataY() As Double,Optional DataX() As Double=Nothing)
             Dim i As Integer
             Dim SumX,SumY,SumXX,SumYY,SumXY As Double

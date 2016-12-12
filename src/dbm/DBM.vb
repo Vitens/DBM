@@ -82,8 +82,8 @@ Namespace DBM
                     NewFactor=KeepOrSuppressEvent(Calculate.Factor,AbsErrorStats.ModifiedCorrelation,RelErrorStats.ModifiedCorrelation,thisDBMCorrelationPoint.SubstractSelf)
                     If NewFactor<>Calculate.Factor Then ' Has event been suppressed
                         Calculate.Factor=NewFactor
-                        Calculate.AbsErrorStats=AbsErrorStats
-                        Calculate.RelErrorStats=RelErrorStats
+                        Calculate.AbsErrorStats=AbsErrorStats.ShallowCopy
+                        Calculate.RelErrorStats=RelErrorStats.ShallowCopy
                         Calculate.SuppressedBy=thisDBMCorrelationPoint.DBMPointDriver ' Suppressed by
                     End If
                 Next
