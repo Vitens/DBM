@@ -21,34 +21,6 @@ One of the advantages of this method is that it doesn’t require manual configu
 ### Keywords
 Real-time, leak detection, demand forecasting, demand patterns, operational dashboard
 
-## Requirements
-| Priority  | Requirement                                   | Version |
-| --------- | --------------------------------------------- | ------- |
-| Mandatory | Microsoft .NET Framework                      | 4       |
-| Optional  | OSIsoft PI Software Development Kit (PI SDK)  |         |
-| Optional  | OSIsoft PI Advanced Computing Engine (PI ACE) |         |
-
-## Drivers
-DBM uses drivers to read information from a source of data. The following drivers are included:
-
-| Driver                  | Description                             | Identifier (`Point`)     | Remarks                                                                |
-| ----------------------- | --------------------------------------- | ------------------------ | ---------------------------------------------------------------------- |
-| `DBMDriverNull.vb`      | Returns zero for every request.         | `Object` (unused)        | Template for custom developed drivers.                                 |
-| `DBMDriverCSV.vb`       | Driver for CSV files (timestamp,value). | `String` (CSV filename)  | Data interval must be the same as the `CalculationInterval` parameter. |
-| `DBMDriverOSIsoftPI.vb` | Driver for OSIsoft PI.                  | `PISDK.PIPoint` (PI tag) |                                                                        |
-
-## Parameters
-DBM can be configured using several parameters. The values for these parameters can be changed at runtime in the `DBM.DBMParameters` class.
-
-| Parameter                    | Default value | Units         | Description                                                                                             |
-| ---------------------------- | ------------- | ------------- | ------------------------------------------------------------------------------------------------------- |
-| `CalculationInterval`        | 300           | seconds       | Time interval at which the calculation is run.                                                          |
-| `ComparePatterns`            | 12            | weeks         | Number of weeks to look back to predict the current value and control limits.                           |
-| `EMAPreviousPeriods`         | 6             | intervals     | Number of previous intervals used to smooth the data.                                                   |
-| `ConfidenceInterval`         | 0.99          | percent       | Confidence interval used for removing outliers and determining control limits.                          |
-| `CorrelationPreviousPeriods` | 23            | intervals     | Number of previous intervals used to calculate prediction error correlation when an exception is found. |
-| `CorrelationThreshold`       | 0.83666       | dimensionless | Absolute correlation lower limit for detecting (anti)correlation.                                       |
-
 ## Samples
 
 ### Sample 1 - Prediction
@@ -169,7 +141,37 @@ Module Module1
 End Module
 ```
 
-## DBMTester
+## Program information
+
+### Requirements
+| Priority  | Requirement                                   | Version    |
+| --------- | --------------------------------------------- | ---------- |
+| Mandatory | Microsoft .NET Framework                      | v4.0.30319 |
+| Optional  | OSIsoft PI Software Development Kit (PI SDK)  |            |
+| Optional  | OSIsoft PI Advanced Computing Engine (PI ACE) |            |
+
+### Drivers
+DBM uses drivers to read information from a source of data. The following drivers are included:
+
+| Driver                  | Description                             | Identifier (`Point`)     | Remarks                                                                |
+| ----------------------- | --------------------------------------- | ------------------------ | ---------------------------------------------------------------------- |
+| `DBMDriverNull.vb`      | Returns zero for every request.         | `Object` (unused)        | Template for custom developed drivers.                                 |
+| `DBMDriverCSV.vb`       | Driver for CSV files (timestamp,value). | `String` (CSV filename)  | Data interval must be the same as the `CalculationInterval` parameter. |
+| `DBMDriverOSIsoftPI.vb` | Driver for OSIsoft PI.                  | `PISDK.PIPoint` (PI tag) | Used by PI ACE module `DBMRt`.                                         |
+
+### Parameters
+DBM can be configured using several parameters. The values for these parameters can be changed at runtime in the `DBM.DBMParameters` class.
+
+| Parameter                    | Default value | Units         | Description                                                                                             |
+| ---------------------------- | ------------- | ------------- | ------------------------------------------------------------------------------------------------------- |
+| `CalculationInterval`        | 300           | seconds       | Time interval at which the calculation is run.                                                          |
+| `ComparePatterns`            | 12            | weeks         | Number of weeks to look back to predict the current value and control limits.                           |
+| `EMAPreviousPeriods`         | 6             | intervals     | Number of previous intervals used to smooth the data.                                                   |
+| `ConfidenceInterval`         | 0.99          | percent       | Confidence interval used for removing outliers and determining control limits.                          |
+| `CorrelationPreviousPeriods` | 23            | intervals     | Number of previous intervals used to calculate prediction error correlation when an exception is found. |
+| `CorrelationThreshold`       | 0.83666       | dimensionless | Absolute correlation lower limit for detecting (anti)correlation.                                       |
+
+### DBMTester
 DBMTester is a command line utility that can be used to quickly calculate DBM results using the CSV driver. The following arguments are available:
 
 | Argument | Count  | Description                                                                    |
@@ -186,19 +188,10 @@ DBMTester is a command line utility that can be used to quickly calculate DBM re
 | `-st=`   | 1      | Start timestamp for calculations.                                              |
 | `-et=`   | 0..1   | End timestamp for calculations, all intervals in between are calculated.       |
 
-## Classes
+### Classes
 ![Classes](docs/dbmclasses.png)
 
-## About Vitens
-![Vitens](docs/vitens.png)
-
-Vitens is the largest drinking water company in The Netherlands. We deliver top quality drinking water to 5.6 million people and companies in the provinces Flevoland, Fryslân, Gelderland, Utrecht and Overijssel and some municipalities in Drenthe and Noord-Holland. Annually we deliver 350 million m³ water with 1,400 employees, 100 water treatment works and 49,000 kilometres of water mains.
-
-One of our main focus points is using advanced water quality, quantity and hydraulics models to further improve and optimize our treatment and distribution processes.
-
-https://www.vitens.nl/
-
-## License
+### License
 DBM  
 Dynamic Bandwidth Monitor  
 Leak detection method implemented in a real-time data historian
@@ -212,3 +205,12 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ![GPLv3](docs/gplv3.png)
+
+## About Vitens
+![Vitens](docs/vitens.png)
+
+Vitens is the largest drinking water company in The Netherlands. We deliver top quality drinking water to 5.6 million people and companies in the provinces Flevoland, Fryslân, Gelderland, Utrecht and Overijssel and some municipalities in Drenthe and Noord-Holland. Annually we deliver 350 million m³ water with 1,400 employees, 100 water treatment works and 49,000 kilometres of water mains.
+
+One of our main focus points is using advanced water quality, quantity and hydraulics models to further improve and optimize our treatment and distribution processes.
+
+https://www.vitens.nl/
