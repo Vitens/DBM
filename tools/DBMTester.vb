@@ -36,7 +36,7 @@ Module DBMTester
         Dim DBMResult As DBM.DBMResult
         For Each CommandLineArg As String In Environment.GetCommandLineArgs ' Parse command line arguments
             If Text.RegularExpressions.Regex.IsMatch(CommandLineArg,"^[-/](.+)=(.+)$") Then ' Parameter=Value
-                Fields=Split(CommandLineArg,"=",2)
+                Fields=CommandLineArg.Split(New Char(){"="c},2)
                 Try
                     Select Case Mid(Fields(0),2).ToLower
                         Case "i"

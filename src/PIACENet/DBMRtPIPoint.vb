@@ -36,9 +36,9 @@ Namespace DBMRt
             DBMCorrelationPoints=New Collections.Generic.List(Of DBM.DBMCorrelationPoint)
             ExDesc=DirectCast(OutputDBMPointDriver.Point,PISDK.PIPoint).PointAttributes("ExDesc").Value.ToString
             If Text.RegularExpressions.Regex.IsMatch(ExDesc,"^[-]{0,1}[a-zA-Z0-9][a-zA-Z0-9_\.-]{0,}:[^:?*&]{1,}(&[-]{0,1}[a-zA-Z0-9][a-zA-Z0-9_\.-]{0,}:[^:?*&]{1,}){0,}$") Then
-                FieldsA=Split(ExDesc.ToString,"&")
+                FieldsA=ExDesc.ToString.Split(New Char(){"&"c})
                 For Each thisField As String In FieldsA
-                    FieldsB=Split(thisField,":")
+                    FieldsB=thisField.Split(New Char(){":"c})
                     Try
                         If DBMRtCalculator.PISDK.Servers(Mid(FieldsB(0),1+CInt(IIf(Left(FieldsB(0),1)="-",1,0)))).PIPoints(FieldsB(1)).Name<>"" Then
                             DBMCorrelationPoints.Add(New DBM.DBMCorrelationPoint(New DBM.DBMPointDriver(DBMRtCalculator.PISDK.Servers(Mid(FieldsB(0),1+CInt(IIf(Left(FieldsB(0),1)="-",1,0)))).PIPoints(FieldsB(1))),Left(FieldsB(0),1)="-"))

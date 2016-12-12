@@ -37,7 +37,7 @@ Namespace DBMRt
                 For Each thisDBMRtPIPoint As PISDK.PIPoint In Me.PIServer.GetPointsSQL("PIpoint.Tag='" & TagFilter & "' AND PIpoint.PointSource='dbmrt' AND PIpoint.Scan=1")
                     InstrTag=thisDBMRtPIPoint.PointAttributes("InstrumentTag").Value.ToString
                     If Text.RegularExpressions.Regex.IsMatch(InstrTag,"^[a-zA-Z0-9_\.-]{1,}:[^:?*&]{1,}$") Then
-                        Fields=Split(InstrTag.ToString,":")
+                        Fields=InstrTag.ToString.Split(New Char(){":"c})
                         Try
                             If DBMRtCalculator.PISDK.Servers(Fields(0)).PIPoints(Fields(1)).Name<>"" Then
                                 DBMRtPIPoints.Add(New DBMRtPIPoint(DBMRtCalculator.PISDK.Servers(Fields(0)).PIPoints(Fields(1)),thisDBMRtPIPoint))
