@@ -53,7 +53,7 @@ DBM can be configured using several parameters. The values for these parameters 
 
 ### Sample 1 - Prediction
 ![Sample 1](docs/sample1.png)
-[Sample 1 data](docs/sample1.csv) ([Sample 1 input data](docs/sample1input.csv))
+[Sample 1 data](docs/sample1.csv) ([input data](docs/sample1input.csv))
 
 In this example, two days before and after the current day are shown. For historic values, the measured data (black) is shown along with the predicted value (red). The upper and lower control limits (gray) were not crossed, so the DBM factor value (blue) equals zero. For future values, the prediction is shown along with the upper and lower control limits. Reliable predictions can be made for at least seven days in advance.
 
@@ -79,7 +79,7 @@ End Module
 
 ### Sample 2 - Exception
 ![Sample 2](docs/sample2.png)
-[Sample 2 data](docs/sample2.csv) ([Sample 2 input data](docs/sample2input.csv))
+[Sample 2 data](docs/sample2.csv) ([input data](docs/sample2input.csv))
 
 In this example, an exception causes the measured value (black) to cross the upper control limit (gray). The DBM factor value (blue) is greater than one during this time (calculated as _(measured value - predicted value)/(upper control limit - predicted value)_).
 
@@ -106,7 +106,7 @@ End Module
 ### Sample 3 - Suppressed exception (correlation)
 ![Sample 3a](docs/sample3a.png)
 ![Sample 3b](docs/sample3b.png)
-[Sample 3 data](docs/sample3.csv) ([Sample 3 input data](docs/sample3input.csv), [Sample 3 correlation data](docs/sample3correlation.csv))
+[Sample 3 data](docs/sample3.csv) ([input data](docs/sample3input.csv), [correlation data](docs/sample3correlation.csv))
 
 In this example, an exception causes the measured value (black) to cross the upper and lower control limits (gray). Because the pattern is checked against a similar pattern which has a comparable relative prediction error (calculated as _(predicted value / measured value) - 1_), the exception is suppressed. The DBM factor value is greater than zero and less than, or equal to one (correlation coefficient of the relative prediction error) during this time.
 
@@ -139,7 +139,7 @@ End Module
 ### Sample 4 - Suppressed exception (anticorrelation)
 ![Sample 4a](docs/sample4a.png)
 ![Sample 4b](docs/sample4b.png)
-[Sample 4 data](docs/sample4.csv) ([Sample 4 input data](docs/sample4input.csv), [Sample 4 correlation data](docs/sample4correlation.csv))
+[Sample 4 data](docs/sample4.csv) ([input data](docs/sample4input.csv), [correlation data](docs/sample4correlation.csv))
 
 In this example, an exception causes the measured value (black) to cross the lower control limit (gray). Because the pattern is checked against a similar, adjacent, pattern which has a comparable, but inverted, absolute prediction error (calculated as _predicted value - measured value_), the exception is suppressed. The DBM factor value is less than zero and greater than, or equal to negative one (correlation coefficient of the absolute prediction error) during this time.
 
