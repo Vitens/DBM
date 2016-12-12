@@ -79,7 +79,7 @@ Module DBMTester
                             Console.WriteLine(StartTimestamp)
                         Case "et"
                             Console.Write("End timestamp: ")
-                            EndTimestamp=DateAdd("s",-DBM.DBMParameters.CalculationInterval,Convert.ToDateTime(Fields(1)))
+                            EndTimestamp=Convert.ToDateTime(Fields(1))
                             Console.WriteLine(EndTimestamp)
                     End Select
                 Catch ex As Exception
@@ -98,7 +98,11 @@ Module DBMTester
             End If
             Console.WriteLine(" (" & Math.Round((DateTime.Now.Ticks-Ticks)/10000) & "ms)")
         Else
-            If EndTimestamp=DateTime.MinValue Then EndTimestamp=StartTimestamp
+            If EndTimestamp=DateTime.MinValue Then
+                EndTimestamp=StartTimestamp
+            Else
+                EndTimestamp=DateAdd("s",-DBM.DBMParameters.CalculationInterval,EndTimestamp)
+            End If
             Do While StartTimestamp<=EndTimestamp
                 Console.Write(StartTimestamp & vbTab)
                 DBMResult=_DBM.Calculate(InputDBMPointDriver,DBMCorrelationPoints,StartTimestamp)
