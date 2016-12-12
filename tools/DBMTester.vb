@@ -32,10 +32,10 @@ Module DBMTester
         Dim InputDBMPointDriver As DBM.DBMPointDriver=Nothing
         Dim DBMCorrelationPoints As New Collections.Generic.List(Of DBM.DBMCorrelationPoint)
         Dim StartTimestamp,EndTimestamp As DateTime
-        Dim DBMResult As DBM.DBMResult
         Dim Ticks As Int64
-        For Each CommandLineArg As String In Environment.GetCommandLineArgs
-            If Text.RegularExpressions.Regex.IsMatch(CommandLineArg,"^[-/](.+)=(.+)$") Then
+        Dim DBMResult As DBM.DBMResult
+        For Each CommandLineArg As String In Environment.GetCommandLineArgs ' Parse command line arguments
+            If Text.RegularExpressions.Regex.IsMatch(CommandLineArg,"^[-/](.+)=(.+)$") Then ' Parameter=Value
                 Fields=Split(CommandLineArg,"=",2)
                 Try
                     Select Case Mid(Fields(0),2).ToLower
@@ -66,7 +66,7 @@ Module DBMTester
                 End Try
             End If
         Next
-        If InputDBMPointDriver Is Nothing Or StartTimestamp=DateTime.MinValue Then
+        If InputDBMPointDriver Is Nothing Or StartTimestamp=DateTime.MinValue Then ' Performan unit tests
             Console.WriteLine(DBM.DBMFunctions.DBMVersion & vbCrLf)
             Ticks=DateTime.Now.Ticks
             Console.Write(" * Unit tests --> ")
@@ -78,9 +78,9 @@ Module DBMTester
             Console.WriteLine(" (" & Math.Round((DateTime.Now.Ticks-Ticks)/10000) & "ms)")
         Else
             If EndTimestamp=DateTime.MinValue Then
-                EndTimestamp=StartTimestamp
+                EndTimestamp=StartTimestamp ' No end timestamp, set to start timestamp
             Else
-                EndTimestamp=DateAdd("s",-DBM.DBMParameters.CalculationInterval,EndTimestamp)
+                EndTimestamp=DateAdd("s",-DBM.DBMParameters.CalculationInterval,EndTimestamp) ' Remove one interval from end timestamp
             End If
             Do While StartTimestamp<=EndTimestamp
                 Console.Write(StartTimestamp & vbTab)
@@ -93,7 +93,7 @@ Module DBMTester
                     Console.Write(vbTab & DBMResult.CurrValue & vbTab & DBMResult.PredValue & vbTab & DBMResult.LowContrLimit & vbTab & DBMResult.UppContrLimit)
                 Next
                 Console.Write(vbCrLf)
-                StartTimestamp=DateAdd("s",DBM.DBMParameters.CalculationInterval,StartTimestamp)
+                StartTimestamp=DateAdd("s",DBM.DBMParameters.CalculationInterval,StartTimestamp) ' Next interval
             Loop
         End If
     End Sub
