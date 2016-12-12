@@ -57,5 +57,7 @@ if exist "%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDK.dll" (
 
 build\DBMTester.exe
 
+call docs\testsamples.bat
+
 :ExitBuild
 pause

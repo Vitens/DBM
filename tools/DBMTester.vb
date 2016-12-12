@@ -66,7 +66,7 @@ Module DBMTester
                 End Try
             End If
         Next
-        If InputDBMPointDriver Is Nothing Or StartTimestamp=DateTime.MinValue Then ' Performan unit tests
+        If InputDBMPointDriver Is Nothing Or StartTimestamp=DateTime.MinValue Then ' Perform unit tests
             Console.WriteLine(DBM.DBMFunctions.DBMVersion & vbCrLf)
             Ticks=DateTime.Now.Ticks
             Console.Write(" * Unit tests --> ")
