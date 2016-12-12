@@ -36,7 +36,7 @@ Namespace DBMRt
             DBMCorrelationPoints=New Collections.Generic.List(Of DBM.DBMCorrelationPoint)
             ExDesc=DirectCast(OutputDBMPointDriver.Point,PISDK.PIPoint).PointAttributes("ExDesc").Value.ToString
             If Text.RegularExpressions.Regex.IsMatch(ExDesc,"^[-]{0,1}[a-zA-Z0-9][a-zA-Z0-9_\.-]{0,}:[^:?*&]{1,}(&[-]{0,1}[a-zA-Z0-9][a-zA-Z0-9_\.-]{0,}:[^:?*&]{1,}){0,}$") Then
-                FieldsA=ExDesc.ToString.Split(New Char(){"&"c})
+                FieldsA=ExDesc.Split(New Char(){"&"c})
                 For Each thisField As String In FieldsA
                     FieldsB=thisField.Split(New Char(){":"c})
                     Try
