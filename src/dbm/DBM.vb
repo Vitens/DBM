@@ -66,7 +66,9 @@ Namespace DBM
             Dim CorrelationDBMResult As DBMResult
             Dim AbsErrorStats,RelErrorStats As New DBMStatistics
             Dim NewFactor As Double
-            If DBMCorrelationPoints Is Nothing Then DBMCorrelationPoints=New Collections.Generic.List(Of DBMCorrelationPoint)
+            If DBMCorrelationPoints Is Nothing Then
+                DBMCorrelationPoints=New Collections.Generic.List(Of DBMCorrelationPoint)
+            End If
             Calculate=GetDBMPoint(InputDBMPointDriver).Calculate(Timestamp,True,DBMCorrelationPoints.Count>0) ' Calculate for input point
             If Calculate.Factor<>0 And DBMCorrelationPoints.Count>0 Then ' If an event is found and a correlation point is available
                 For Each thisDBMCorrelationPoint As DBMCorrelationPoint In DBMCorrelationPoints
