@@ -57,10 +57,5 @@ if exist "%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDK.dll" (
 
 build\DBMTester.exe
 
-build\DBMTester.exe -i=docs\sample1input.csv -st=24-11-2016 -et=29-11-2016 > docs\sample1.csv
-build\DBMTester.exe -i=docs\sample2input.csv -st=12-3-2013 -et=13-3-2013 > docs\sample2.csv
-build\DBMTester.exe -i=docs\sample3input.csv -c=docs\sample3correlation.csv -st=1-1-2016 -et=2-1-2016 > docs\sample3.csv
-build\DBMTester.exe -i=docs\sample4input.csv -c=docs\sample4correlation.csv -st=13-11-2014 -et=14-11-2014 > docs\sample4.csv
-
 :ExitBuild
 pause
