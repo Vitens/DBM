@@ -29,51 +29,11 @@ Real-time, leak detection, demand forecasting, demand patterns, operational dash
 
 In this example, two days before and after the current day are shown. For historic values, the measured data (black) is shown along with the predicted value (red). The upper and lower control limits (gray) were not crossed, so the DBM factor value (blue) equals zero. For future values, the prediction is shown along with the upper and lower control limits. Reliable predictions can be made for at least seven days in advance.
 
-```
-Option Explicit
-Option Strict
-Module Module1
-    Public Sub Main
-        Dim _DBM As New DBM.DBM
-        Dim _PISDK As New PISDK.PISDK
-        Dim s,e As DateTime
-        Dim r As DBM.DBMResult
-        s=DateAdd("d",-2,DateTime.Today)
-        e=DateAdd("d",5,s)
-        Do While s<e
-            r=_DBM.Calculate(New DBM.DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Leeuwarden-levering")),Nothing,s)
-            Console.WriteLine(s.ToString & vbTab & r.Factor & vbTab & r.CurrValue & vbTab & r.PredValue & vbTab & r.LowContrLimit & vbTab & r.UppContrLimit)
-            s=DateAdd("s",DBM.DBMParameters.CalculationInterval,s)
-        Loop
-    End Sub
-End Module
-```
-
 ### Sample 2 - Exception
 ![Sample 2](docs/sample2.png)
 [Sample 2 data](docs/sample2.csv) ([input data](docs/sample2input.csv))
 
 In this example, an exception causes the measured value (black) to cross the upper control limit (gray). The DBM factor value (blue) is greater than one during this time (calculated as _(measured value - predicted value)/(upper control limit - predicted value)_).
-
-```
-Option Explicit
-Option Strict
-Module Module1
-    Public Sub Main
-        Dim _DBM As New DBM.DBM
-        Dim _PISDK As New PISDK.PISDK
-        Dim s,e As DateTime
-        Dim r As DBM.DBMResult
-        s=New DateTime(2013,3,12)
-        e=DateAdd("d",1,s)
-        Do While s<e
-            r=_DBM.Calculate(New DBM.DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Leeuwarden-levering")),Nothing,s)
-            Console.WriteLine(s.ToString & vbTab & r.Factor & vbTab & r.CurrValue & vbTab & r.PredValue & vbTab & r.LowContrLimit & vbTab & r.UppContrLimit)
-            s=DateAdd("s",DBM.DBMParameters.CalculationInterval,s)
-        Loop
-    End Sub
-End Module
-```
 
 ### Sample 3 - Suppressed exception (correlation)
 ![Sample 3a](docs/sample3a.png)
@@ -82,64 +42,12 @@ End Module
 
 In this example, an exception causes the measured value (black) to cross the upper and lower control limits (gray). Because the pattern is checked against a similar pattern which has a comparable relative prediction error (calculated as _(predicted value / measured value) - 1_), the exception is suppressed. The DBM factor value is greater than zero and less than, or equal to one (correlation coefficient of the relative prediction error) during this time.
 
-```
-Option Explicit
-Option Strict
-Module Module1
-    Public Sub Main
-        Dim _DBM As New DBM.DBM
-        Dim _PISDK As New PISDK.PISDK
-        Dim s,e As DateTime
-        Dim r As DBM.DBMResult
-        Dim CP As New Collections.Generic.List(Of DBM.DBMCorrelationPoint)
-        s=New DateTime(2016,1,1)
-        e=DateAdd("d",1,s)
-        CP.Add(New DBM.DBMCorrelationPoint(New DBM.DBMPointDriver(_PISDK.Servers("sr-16634").PIPoints("Reinwaterafgifte")),False))
-        Do While s<e
-            r=_DBM.Calculate(New DBM.DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Leeuwarden-levering")),CP,s)
-            Console.Write(s.ToString & vbTab & r.Factor & vbTab & r.CurrValue & vbTab & r.PredValue & vbTab & r.LowContrLimit & vbTab & r.UppContrLimit & vbTab)
-            Console.Write(r.AbsErrorStats.Count & vbTab & r.AbsErrorStats.Slope & vbTab & r.AbsErrorStats.Angle & vbTab & r.AbsErrorStats.Intercept & vbTab & r.AbsErrorStats.StDevSLinReg & vbTab & r.AbsErrorStats.Correlation & vbTab & r.AbsErrorStats.ModifiedCorrelation & vbTab & r.AbsErrorStats.Determination & vbTab)
-            Console.Write(r.RelErrorStats.Count & vbTab & r.RelErrorStats.Slope & vbTab & r.RelErrorStats.Angle & vbTab & r.RelErrorStats.Intercept & vbTab & r.RelErrorStats.StDevSLinReg & vbTab & r.RelErrorStats.Correlation & vbTab & r.RelErrorStats.ModifiedCorrelation & vbTab & r.RelErrorStats.Determination & vbTab)
-            r=_DBM.Calculate(CP.Item(0).DBMPointDriver,Nothing,s)
-            Console.WriteLine(r.CurrValue & vbTab & r.PredValue & vbTab & r.LowContrLimit & vbTab & r.UppContrLimit)
-            s=DateAdd("s",DBM.DBMParameters.CalculationInterval,s)
-        Loop
-    End Sub
-End Module
-```
-
 ### Sample 4 - Suppressed exception (anticorrelation)
 ![Sample 4a](docs/sample4a.png)
 ![Sample 4b](docs/sample4b.png)
 [Sample 4 data](docs/sample4.csv) ([input data](docs/sample4input.csv), [correlation data](docs/sample4correlation.csv))
 
 In this example, an exception causes the measured value (black) to cross the lower control limit (gray). Because the pattern is checked against a similar, adjacent, pattern which has a comparable, but inverted, absolute prediction error (calculated as _predicted value - measured value_), the exception is suppressed. The DBM factor value is less than zero and greater than, or equal to negative one (correlation coefficient of the absolute prediction error) during this time.
-
-```
-Option Explicit
-Option Strict
-Module Module1
-    Public Sub Main
-        Dim _DBM As New DBM.DBM
-        Dim _PISDK As New PISDK.PISDK
-        Dim s,e As DateTime
-        Dim r As DBM.DBMResult
-        Dim CP As New Collections.Generic.List(Of DBM.DBMCorrelationPoint)
-        s=New DateTime(2014,11,13)
-        e=DateAdd("d",1,s)
-        CP.Add(New DBM.DBMCorrelationPoint(New DBM.DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Oosterwolde-levering")),False))
-        Do While s<e
-            r=_DBM.Calculate(New DBM.DBMPointDriver(_PISDK.Servers("sr-16635").PIPoints("ACE-FR-Deelbalansgebied-Drachten-levering")),CP,s)
-            Console.Write(s.ToString & vbTab & r.Factor & vbTab & r.CurrValue & vbTab & r.PredValue & vbTab & r.LowContrLimit & vbTab & r.UppContrLimit & vbTab)
-            Console.Write(r.AbsErrorStats.Count & vbTab & r.AbsErrorStats.Slope & vbTab & r.AbsErrorStats.Angle & vbTab & r.AbsErrorStats.Intercept & vbTab & r.AbsErrorStats.StDevSLinReg & vbTab & r.AbsErrorStats.Correlation & vbTab & r.AbsErrorStats.ModifiedCorrelation & vbTab & r.AbsErrorStats.Determination & vbTab)
-            Console.Write(r.RelErrorStats.Count & vbTab & r.RelErrorStats.Slope & vbTab & r.RelErrorStats.Angle & vbTab & r.RelErrorStats.Intercept & vbTab & r.RelErrorStats.StDevSLinReg & vbTab & r.RelErrorStats.Correlation & vbTab & r.RelErrorStats.ModifiedCorrelation & vbTab & r.RelErrorStats.Determination & vbTab)
-            r=_DBM.Calculate(CP.Item(0).DBMPointDriver,Nothing,s)
-            Console.WriteLine(r.CurrValue & vbTab & r.PredValue & vbTab & r.LowContrLimit & vbTab & r.UppContrLimit)
-            s=DateAdd("s",DBM.DBMParameters.CalculationInterval,s)
-        Loop
-    End Sub
-End Module
-```
 
 ## Program information
 
