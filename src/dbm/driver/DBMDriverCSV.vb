@@ -27,7 +27,7 @@ Namespace DBM
     Public Class DBMPointDriver
 
         Public Point As Object
-        Private CachedValues As New Collections.Generic.Dictionary(Of DateTime,Double)
+        Private CachedValues As Collections.Generic.Dictionary(Of DateTime,Double)
 
         Public Sub New(Point As Object)
             Me.Point=Point
@@ -36,7 +36,8 @@ Namespace DBM
         Public Function GetData(StartTimestamp As DateTime,EndTimestamp As DateTime) As Double
             Dim StreamReader As System.IO.StreamReader
             Dim Fields() As String
-            If CachedValues.Count=0 Then ' No data in memory yet
+            If CachedValues Is Nothing Then ' No data in memory yet
+                CachedValues=New Collections.Generic.Dictionary(Of DateTime,Double)
                 Try
                     StreamReader=New System.IO.StreamReader(CStr(Point))
                     Do While Not StreamReader.EndOfStream
