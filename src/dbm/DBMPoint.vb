@@ -27,6 +27,8 @@ Namespace DBM
     Public Class DBMPoint
 
         Public DBMDataManager As DBMDataManager
+        Private DBMPredictions As New Collections.Generic.Dictionary(Of DateTime,DBMPrediction)
+        Private PrevSubstractDBMPoint As DBMPoint
 
         Public Sub New(DBMPointDriver As DBMPointDriver)
             DBMDataManager=New DBMDataManager(DBMPointDriver)
@@ -35,11 +37,14 @@ Namespace DBM
         Public Function Calculate(Timestamp As DateTime,IsInputDBMPoint As Boolean,HasCorrelationDBMPoint As Boolean,Optional SubstractDBMPoint As DBMPoint=Nothing) As DBMResult
             Dim CorrelationCounter,EMACounter,PatternCounter As Integer
             Dim CalcTimestamp As DateTime
-            Dim DBMPredictions As New Collections.Generic.Dictionary(Of DateTime,DBMPrediction)
             Dim Pattern(DBMParameters.ComparePatterns),MeasValueEMA(DBMParameters.EMAPreviousPeriods),PredValueEMA(DBMParameters.EMAPreviousPeriods),LowContrLimitEMA(DBMParameters.EMAPreviousPeriods),UppContrLimitEMA(DBMParameters.EMAPreviousPeriods) As Double
             Dim DBMPrediction As DBMPrediction
             Dim MeasValue,PredValue,LowContrLimit,UppContrLimit As Double
             Calculate=New DBMResult
+            If SubstractDBMPoint IsNot PrevSubstractDBMPoint Then ' Can we reuse stored results?
+                DBMPredictions.Clear
+                PrevSubstractDBMPoint=SubstractDBMPoint
+            End If
             For CorrelationCounter=0 To DBMParameters.CorrelationPreviousPeriods
                 If CorrelationCounter=0 Or (IsInputDBMPoint And Calculate.Factor<>0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
                     For EMACounter=DBMParameters.EMAPreviousPeriods To 0 Step -1
@@ -53,6 +58,9 @@ Namespace DBM
                             Next PatternCounter
                             DBMPrediction=New DBMPrediction
                             DBMPrediction.Calculate(Pattern)
+                            If DBMPredictions.Count>=DBMParameters.MaximumCacheSize Then ' Limit cache size
+                                DBMPredictions.Remove(DBMPredictions.ElementAt(CInt(Math.Floor(Rnd*DBMPredictions.Count))).Key) ' Remove random cached value
+                            End If
                             DBMPredictions.Add(CalcTimestamp,DBMPrediction) ' Add to cache
                         Else ' From cache
                             DBMPrediction=DBMPredictions.Item(CalcTimestamp)
