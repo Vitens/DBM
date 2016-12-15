@@ -90,7 +90,7 @@ Module DBMTester
             End If
         Next
         If InputDBMPointDriver Is Nothing Or StartTimestamp=DateTime.MinValue Then ' Perform unit tests
-            Console.WriteLine(DBM.DBM.DBMVersion & vbCrLf)
+            Console.WriteLine(DBM.DBM.DBMVersion)
         Else
             If EndTimestamp=DateTime.MinValue Then
                 EndTimestamp=StartTimestamp ' No end timestamp, set to start timestamp

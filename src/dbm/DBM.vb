@@ -37,7 +37,7 @@ Namespace DBM
                 System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).ProductName & vbCrLf & _
                 System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).Comments & vbCrLf & vbCrLf & _
                 System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).LegalCopyright & vbCrLf & vbCrLf & _
-                " * Unit tests OK: " & CStr(DBMUnitTests.TestResults) & ", in " & Math.Round((DateTime.Now.Ticks-Ticks)/10000) & "ms"
+                " * Unit tests OK: " & CStr(DBMUnitTests.TestResults) & ", in " & Math.Round((DateTime.Now.Ticks-Ticks)/10000) & "ms" & vbCrLf
         End Function
 
         Private Function GetDBMPoint(DBMPointDriver As DBMPointDriver) As DBMPoint
