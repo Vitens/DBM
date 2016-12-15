@@ -30,6 +30,16 @@ Namespace DBM
 
         Public DBMPoints As New Collections.Generic.Dictionary(Of Object,DBMPoint)
 
+        Public Shared Function DBMVersion As String
+            Dim Ticks As Int64=DateTime.Now.Ticks
+            Return System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).FileDescription & _
+                " v" & System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).FileVersion & vbCrLf & _
+                System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).ProductName & vbCrLf & _
+                System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).Comments & vbCrLf & vbCrLf & _
+                System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).LegalCopyright & vbCrLf & vbCrLf & _
+                " * Unit tests OK: " & CStr(DBMUnitTests.TestResults) & ", in " & Math.Round((DateTime.Now.Ticks-Ticks)/10000) & "ms"
+        End Function
+
         Private Function GetDBMPoint(DBMPointDriver As DBMPointDriver) As DBMPoint
             If Not DBMPoints.ContainsKey(DBMPointDriver.Point) Then
                 DBMPoints.Add(DBMPointDriver.Point,New DBMPoint(DBMPointDriver)) ' Add to dictionary

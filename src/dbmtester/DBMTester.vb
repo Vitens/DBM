@@ -50,7 +50,6 @@ Module DBMTester
         Dim InputDBMPointDriver As DBM.DBMPointDriver=Nothing
         Dim DBMCorrelationPoints As New Collections.Generic.List(Of DBM.DBMCorrelationPoint)
         Dim StartTimestamp,EndTimestamp As DateTime
-        Dim Ticks As Int64
         Dim DBMResult As DBM.DBMResult
         For Each CommandLineArg As String In Environment.GetCommandLineArgs ' Parse command line arguments
             If Text.RegularExpressions.Regex.IsMatch(CommandLineArg,"^[-/](.+)=(.+)$") Then ' Parameter=Value
@@ -91,15 +90,7 @@ Module DBMTester
             End If
         Next
         If InputDBMPointDriver Is Nothing Or StartTimestamp=DateTime.MinValue Then ' Perform unit tests
-            Console.WriteLine(DBM.DBMFunctions.DBMVersion & vbCrLf)
-            Ticks=DateTime.Now.Ticks
-            Console.Write(" * Unit tests --> ")
-            If DBM.DBMUnitTests.TestResults Then
-                Console.Write("PASSED")
-            Else
-                Console.Write("FAILED")
-            End If
-            Console.WriteLine(" (" & Math.Round((DateTime.Now.Ticks-Ticks)/10000) & "ms)")
+            Console.WriteLine(DBM.DBM.DBMVersion & vbCrLf)
         Else
             If EndTimestamp=DateTime.MinValue Then
                 EndTimestamp=StartTimestamp ' No end timestamp, set to start timestamp
