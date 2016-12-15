@@ -93,9 +93,6 @@ DBMTester is a command line utility that can be used to quickly calculate DBM re
 | `-et=`   | 0..1   | End timestamp for calculations, all intervals in between are calculated.                                      |
 | `-f=`    | 0..1   | CSV output format. `local` for local formatting, `intl` for UTC time and international formatting (ISO 8601). |
 
-### Classes
-![Classes](docs/dbmclasses.png)
-
 ### License
 DBM  
 Dynamic Bandwidth Monitor  
@@ -112,10 +109,10 @@ You should have received a copy of the GNU General Public License along with thi
 ![GPLv3](docs/gplv3.png)
 
 ## About Vitens
-![Vitens](docs/vitens.png)
-
 Vitens is the largest drinking water company in The Netherlands. We deliver top quality drinking water to 5.6 million people and companies in the provinces Flevoland, Fryslân, Gelderland, Utrecht and Overijssel and some municipalities in Drenthe and Noord-Holland. Annually we deliver 350 million m³ water with 1,400 employees, 100 water treatment works and 49,000 kilometres of water mains.
 
 One of our main focus points is using advanced water quality, quantity and hydraulics models to further improve and optimize our treatment and distribution processes.
+
+![Vitens](docs/vitens.png)
 
 https://www.vitens.nl/
