@@ -28,15 +28,10 @@ Namespace DBMRt
 
         Public Shared PISDK As New PISDK.PISDK
         Public Shared DBM As New DBM.DBM
-        Private DBMRtPIServers As Collections.Generic.List(Of DBMRtPIServer)
+        Private DBMRtPIServers As New Collections.Generic.List(Of DBMRtPIServer)
 
-        Public Sub New(Optional DefaultServerOnly As Boolean=False,Optional TagFilter As String="*")
-            DBMRtPIServers=New Collections.Generic.List(Of DBMRtPIServer)
-            For Each thisServer As PISDK.Server In PISDK.Servers
-                If Not DefaultServerOnly Or thisServer Is PISDK.Servers.DefaultServer Then
-                    DBMRtPIServers.Add(New DBMRtPIServer(thisServer,TagFilter))
-                End If
-            Next
+        Public Sub New
+            DBMRtPIServers.Add(New DBMRtPIServer(PISDK.Servers.DefaultServer))
         End Sub
 
         Public Sub Calculate

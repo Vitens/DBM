@@ -27,14 +27,13 @@ Namespace DBMRt
     Public Class DBMRtPIServer
 
         Private PIServer As PISDK.Server
-        Private DBMRtPIPoints As Collections.Generic.List(Of DBMRtPIPoint)
+        Private DBMRtPIPoints As New Collections.Generic.List(Of DBMRtPIPoint)
 
-        Public Sub New(PIServer As PISDK.Server,Optional TagFilter As String="*")
+        Public Sub New(PIServer As PISDK.Server)
             Dim InstrTag,Fields() As String
             Me.PIServer=PIServer
-            DBMRtPIPoints=New Collections.Generic.List(Of DBMRtPIPoint)
             Try
-                For Each thisDBMRtPIPoint As PISDK.PIPoint In Me.PIServer.GetPointsSQL("PIpoint.Tag='" & TagFilter & "' AND PIpoint.PointSource='dbmrt' AND PIpoint.Scan=1")
+                For Each thisDBMRtPIPoint As PISDK.PIPoint In Me.PIServer.GetPointsSQL("PIpoint.Tag='*' AND PIpoint.PointSource='dbmrt' AND PIpoint.Scan=1")
                     InstrTag=thisDBMRtPIPoint.PointAttributes("InstrumentTag").Value.ToString
                     If Text.RegularExpressions.Regex.IsMatch(InstrTag,"^[a-zA-Z0-9_\.-]{1,}:[^:?*&]{1,}$") Then
                         Fields=InstrTag.Split(New Char(){":"c})

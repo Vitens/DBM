@@ -30,20 +30,23 @@ Namespace DBMRt
 
         Inherits OSIsoft.PI.ACE.PIACENetClassModule
 
-        Private DBMRtCalculator As DBMRtCalculator
+        Private DBMRtCalculator As DBMRtCalculator=Nothing
 
         Public Overrides Sub ACECalculations
-            DBMRtCalculator.Calculate
+            If DBMRtCalculator IsNot Nothing Then
+                DBMRtCalculator.Calculate
+            End If
         End Sub
 
         Protected Overrides Sub InitializePIACEPoints
         End Sub
 
         Protected Overrides Sub ModuleDependentInitialization
-            DBMRtCalculator=New DBMRtCalculator(True)
+            DBMRtCalculator=New DBMRtCalculator
         End Sub
 
         Protected Overrides Sub ModuleDependentTermination
+            DBMRtCalculator=Nothing
         End Sub
 
     End Class

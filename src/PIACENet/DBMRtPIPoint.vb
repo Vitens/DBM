@@ -27,13 +27,12 @@ Namespace DBMRt
     Public Class DBMRtPIPoint
 
         Private InputDBMPointDriver,OutputDBMPointDriver As DBM.DBMPointDriver
-        Private DBMCorrelationPoints As Collections.Generic.List(Of DBM.DBMCorrelationPoint)
+        Private DBMCorrelationPoints As New Collections.Generic.List(Of DBM.DBMCorrelationPoint)
 
         Public Sub New(InputPIPoint As PISDK.PIPoint,OutputPIPoint As PISDK.PIPoint)
             Dim ExDesc,FieldsA(),FieldsB() As String
             InputDBMPointDriver=New DBM.DBMPointDriver(InputPIPoint)
             OutputDBMPointDriver=New DBM.DBMPointDriver(OutputPIPoint)
-            DBMCorrelationPoints=New Collections.Generic.List(Of DBM.DBMCorrelationPoint)
             ExDesc=DirectCast(OutputDBMPointDriver.Point,PISDK.PIPoint).PointAttributes("ExDesc").Value.ToString
             If Text.RegularExpressions.Regex.IsMatch(ExDesc,"^[-]{0,1}[a-zA-Z0-9][a-zA-Z0-9_\.-]{0,}:[^:?*&]{1,}(&[-]{0,1}[a-zA-Z0-9][a-zA-Z0-9_\.-]{0,}:[^:?*&]{1,}){0,}$") Then
                 FieldsA=ExDesc.Split(New Char(){"&"c})

@@ -48,7 +48,9 @@ Namespace DBM
                 If CorrelationCounter=0 Or (IsInputDBMPoint And Calculate.Factor<>0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
                     For EMACounter=DBMParameters.EMAPreviousPeriods To 0 Step -1
                         CalcTimestamp=DateAdd("s",-(EMACounter+CorrelationCounter)*DBMParameters.CalculationInterval,Timestamp)
-                        If Not DBMPredictions.ContainsKey(CalcTimestamp) Then ' Calculate data
+                        If DBMPredictions.ContainsKey(CalcTimestamp) Then ' From cache
+                            DBMPrediction=DBMPredictions.Item(CalcTimestamp).ShallowCopy
+                        Else ' Calculate data
                             For PatternCounter=DBMParameters.ComparePatterns To 0 Step -1
                                 Pattern(DBMParameters.ComparePatterns-PatternCounter)=DBMDataManager.Value(DateAdd("d",-PatternCounter*7,CalcTimestamp))
                                 If SubstractDBMPoint IsNot Nothing Then
@@ -60,8 +62,6 @@ Namespace DBM
                                 DBMPredictions.Remove(DBMPredictions.ElementAt(CInt(Math.Floor(Rnd*DBMPredictions.Count))).Key) ' Remove random cached value
                             End If
                             DBMPredictions.Add(CalcTimestamp,DBMPrediction.ShallowCopy) ' Add to cache
-                        Else ' From cache
-                            DBMPrediction=DBMPredictions.Item(CalcTimestamp).ShallowCopy
                         End If
                         MeasValueEMA(EMACounter)=DBMPrediction.MeasValue
                         PredValueEMA(EMACounter)=DBMPrediction.PredValue
