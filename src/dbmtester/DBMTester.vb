@@ -26,6 +26,24 @@ Option Strict
 
 Module DBMTester
 
+    Private InternationalFormat As Boolean=False
+
+    Private Function FormatNumber(Value As Double) As String
+        If InternationalFormat Then
+            Return Value.ToString("0.####",System.Globalization.CultureInfo.InvariantCulture)
+        Else
+            Return Value.ToString("0.####")
+        End If
+    End Function
+
+    Private Function FormatDateTime(Value As DateTime) As String
+        If InternationalFormat Then
+            Return Value.ToUniversalTime.ToString("s") & "Z" ' ISO 8601 UTC
+        Else
+            Return Value.ToString
+        End If
+    End Function
+
     Public Sub Main
         Dim _DBM As New DBM.DBM
         Dim Fields() As String
@@ -61,6 +79,12 @@ Module DBMTester
                             StartTimestamp=Convert.ToDateTime(Fields(1))
                         Case "et"
                             EndTimestamp=Convert.ToDateTime(Fields(1))
+                        Case "f"
+                            If Fields(1).ToLower="intl" Then
+                                InternationalFormat=True
+                            ElseIf Fields(1).ToLower="local" Then
+                                InternationalFormat=False
+                            End If
                     End Select
                 Catch
                 End Try
@@ -83,14 +107,14 @@ Module DBMTester
                 EndTimestamp=DateAdd("s",-DBM.DBMParameters.CalculationInterval,EndTimestamp) ' Remove one interval from end timestamp
             End If
             Do While StartTimestamp<=EndTimestamp
-                Console.Write(StartTimestamp & vbTab)
+                Console.Write(FormatDateTime(StartTimestamp) & vbTab)
                 DBMResult=_DBM.Calculate(InputDBMPointDriver,DBMCorrelationPoints,StartTimestamp)
-                Console.Write(DBMResult.Factor & vbTab & DBMResult.CurrValue & vbTab & DBMResult.PredValue & vbTab & DBMResult.LowContrLimit & vbTab & DBMResult.UppContrLimit & vbTab)
-                Console.Write(DBMResult.AbsErrorStats.Count & vbTab & DBMResult.AbsErrorStats.Slope & vbTab & DBMResult.AbsErrorStats.Angle & vbTab & DBMResult.AbsErrorStats.Intercept & vbTab & DBMResult.AbsErrorStats.StDevSLinReg & vbTab & DBMResult.AbsErrorStats.Correlation & vbTab & DBMResult.AbsErrorStats.ModifiedCorrelation & vbTab & DBMResult.AbsErrorStats.Determination & vbTab)
-                Console.Write(DBMResult.RelErrorStats.Count & vbTab & DBMResult.RelErrorStats.Slope & vbTab & DBMResult.RelErrorStats.Angle & vbTab & DBMResult.RelErrorStats.Intercept & vbTab & DBMResult.RelErrorStats.StDevSLinReg & vbTab & DBMResult.RelErrorStats.Correlation & vbTab & DBMResult.RelErrorStats.ModifiedCorrelation & vbTab & DBMResult.RelErrorStats.Determination)
+                Console.Write(FormatNumber(DBMResult.Factor) & vbTab & FormatNumber(DBMResult.CurrValue) & vbTab & FormatNumber(DBMResult.PredValue) & vbTab & FormatNumber(DBMResult.LowContrLimit) & vbTab & FormatNumber(DBMResult.UppContrLimit) & vbTab)
+                Console.Write(FormatNumber(DBMResult.AbsErrorStats.Count) & vbTab & FormatNumber(DBMResult.AbsErrorStats.Slope) & vbTab & FormatNumber(DBMResult.AbsErrorStats.Angle) & vbTab & FormatNumber(DBMResult.AbsErrorStats.Intercept) & vbTab & FormatNumber(DBMResult.AbsErrorStats.StDevSLinReg) & vbTab & FormatNumber(DBMResult.AbsErrorStats.Correlation) & vbTab & FormatNumber(DBMResult.AbsErrorStats.ModifiedCorrelation) & vbTab & FormatNumber(DBMResult.AbsErrorStats.Determination) & vbTab)
+                Console.Write(FormatNumber(DBMResult.RelErrorStats.Count) & vbTab & FormatNumber(DBMResult.RelErrorStats.Slope) & vbTab & FormatNumber(DBMResult.RelErrorStats.Angle) & vbTab & FormatNumber(DBMResult.RelErrorStats.Intercept) & vbTab & FormatNumber(DBMResult.RelErrorStats.StDevSLinReg) & vbTab & FormatNumber(DBMResult.RelErrorStats.Correlation) & vbTab & FormatNumber(DBMResult.RelErrorStats.ModifiedCorrelation) & vbTab & FormatNumber(DBMResult.RelErrorStats.Determination))
                 For Each thisDBMCorrelationPoint As DBM.DBMCorrelationPoint In DBMCorrelationPoints
                     DBMResult=_DBM.Calculate(thisDBMCorrelationPoint.DBMPointDriver,Nothing,StartTimestamp)
-                    Console.Write(vbTab & DBMResult.CurrValue & vbTab & DBMResult.PredValue & vbTab & DBMResult.LowContrLimit & vbTab & DBMResult.UppContrLimit)
+                    Console.Write(vbTab & FormatNumber(DBMResult.CurrValue) & vbTab & FormatNumber(DBMResult.PredValue) & vbTab & FormatNumber(DBMResult.LowContrLimit) & vbTab & FormatNumber(DBMResult.UppContrLimit))
                 Next
                 Console.Write(vbCrLf)
                 StartTimestamp=DateAdd("s",DBM.DBMParameters.CalculationInterval,StartTimestamp) ' Next interval

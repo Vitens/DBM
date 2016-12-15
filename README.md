@@ -78,19 +78,20 @@ DBM can be configured using several parameters. The values for these parameters 
 ### DBMTester
 DBMTester is a command line utility that can be used to quickly calculate DBM results using the CSV driver. The following arguments are available:
 
-| Argument | Count  | Description                                                                    |
-| -------- | ------ | ------------------------------------------------------------------------------ |
-| `-i=`    | 1      | Specifies the input point (CSV file).                                          |
-| `-c=`    | 0..n   | Adds a correlation point (CSV file).                                           |
-| `-cs=`   | 0..n   | Adds a correlation point (CSV file) from which the input point is substracted. |
-| `-iv=`   | 0..1   | Changes the `CalculationInterval` parameter.                                   |
-| `-p=`    | 0..1   | Changes the `ComparePatterns` parameter.                                       |
-| `-ep=`   | 0..1   | Changes the `EMAPreviousPeriods` parameter.                                    |
-| `-ci=`   | 0..1   | Changes the `ConfidenceInterval` parameter.                                    |
-| `-cp=`   | 0..1   | Changes the `CorrelationPreviousPeriods` parameter.                            |
-| `-ct=`   | 0..1   | Changes the `CorrelationThreshold` parameter.                                  |
-| `-st=`   | 1      | Start timestamp for calculations.                                              |
-| `-et=`   | 0..1   | End timestamp for calculations, all intervals in between are calculated.       |
+| Argument | Count  | Description                                                                                                   |
+| -------- | ------ | ------------------------------------------------------------------------------------------------------------- |
+| `-i=`    | 1      | Specifies the input point (CSV file).                                                                         |
+| `-c=`    | 0..n   | Adds a correlation point (CSV file).                                                                          |
+| `-cs=`   | 0..n   | Adds a correlation point (CSV file) from which the input point is substracted.                                |
+| `-iv=`   | 0..1   | Changes the `CalculationInterval` parameter.                                                                  |
+| `-p=`    | 0..1   | Changes the `ComparePatterns` parameter.                                                                      |
+| `-ep=`   | 0..1   | Changes the `EMAPreviousPeriods` parameter.                                                                   |
+| `-ci=`   | 0..1   | Changes the `ConfidenceInterval` parameter.                                                                   |
+| `-cp=`   | 0..1   | Changes the `CorrelationPreviousPeriods` parameter.                                                           |
+| `-ct=`   | 0..1   | Changes the `CorrelationThreshold` parameter.                                                                 |
+| `-st=`   | 1      | Start timestamp for calculations.                                                                             |
+| `-et=`   | 0..1   | End timestamp for calculations, all intervals in between are calculated.                                      |
+| `-f=`    | 0..1   | CSV output format. `local` for local formatting, `intl` for UTC time and international formatting (ISO 8601). |
 
 ### Classes
 ![Classes](docs/dbmclasses.png)
