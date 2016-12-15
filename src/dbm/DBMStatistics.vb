@@ -27,7 +27,7 @@ Namespace DBM
     Public Class DBMStatistics
 
         Public Count As Integer
-        Public Slope,Angle,Intercept,StDevSLinReg,Correlation,ModifiedCorrelation,Determination As Double
+        Public Slope,Angle,Intercept,StandardError,Correlation,ModifiedCorrelation,Determination As Double
 
         Public Function ShallowCopy As DBMStatistics
             Return DirectCast(Me.MemberwiseClone,DBMStatistics)
@@ -56,13 +56,13 @@ Namespace DBM
             Slope=(Count*SumXY-SumX*SumY)/(Count*SumXX-SumX^2)
             Angle=Math.Atan(Slope)/(2*Math.PI)*360 ' Angle in degrees
             Intercept=(SumX*SumXY-SumY*SumXX)/(SumX^2-Count*SumXX)
-            StDevSLinReg=0 ' Standard error of the predicted y-value for each x in the regression. The standard error is a measure of the amount of error in the prediction of y for an individual x
+            StandardError=0 ' Standard error of the predicted y-value for each x in the regression. The standard error is a measure of the amount of error in the prediction of y for an individual x
             For i=0 to DataY.Length-1
                 If Not Double.IsNaN(DataX(i)) And Not Double.IsNaN(DataY(i)) Then
-                    StDevSLinReg+=(DataY(i)-DataX(i)*Slope-Intercept)^2
+                    StandardError+=(DataY(i)-DataX(i)*Slope-Intercept)^2
                 End If
             Next i
-            StDevSLinReg=Math.Sqrt(StDevSLinReg/(Count-2)) ' n-2 is used because two parameters (slope and intercept) were estimated in order to estimate the sum of squares
+            StandardError=Math.Sqrt(StandardError/(Count-2)) ' n-2 is used because two parameters (slope and intercept) were estimated in order to estimate the sum of squares
             Correlation=(Count*SumXY-SumX*SumY)/Math.Sqrt((Count*SumXX-SumX^2)*(Count*SumYY-SumY^2)) ' Wikipedia: A number that quantifies some type of correlation and dependence, meaning statistical relationships between two or more random variables or observed data values
             ModifiedCorrelation=SumXY/Math.Sqrt(SumXX)/Math.Sqrt(SumYY) ' Average is not removed, as expected average is zero
             Determination=Correlation^2 ' Wikipedia: A number that indicates the proportion of the variance in the dependent variable that is predictable from the independent variable

@@ -35,12 +35,6 @@ Namespace DBM
             Return DBMVersion
         End Function
 
-        Public Shared Function ArrayRotateLeft(Data() As Double) As Double() ' Rotate array left, first item becomes last
-            Array.Reverse(Data) ' ABCDE -> EDCBA
-            Array.Reverse(Data,0,Data.Length-1) ' EDCBA -> BCDEA
-            Return Data
-        End Function
-
     End Class
 
 End Namespace

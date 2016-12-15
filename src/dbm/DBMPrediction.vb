@@ -24,16 +24,15 @@ Option Strict
 
 Namespace DBM
 
-    Public Class DBMResult
+    Public Class DBMPrediction
 
-        Public Factor,OriginalFactor,AbsoluteErrors(),RelativeErrors() As Double
-        Public DBMPrediction As DBMPrediction
-        Public AbsErrorStats,RelErrorStats As New DBMStatistics
-        Public SuppressedBy As DBMPointDriver
+        Public MeasValue,PredValue,LowContrLimit,UppContrLimit As Double
 
-        Public Sub New
-            ReDim AbsoluteErrors(DBMParameters.CorrelationPreviousPeriods)
-            ReDim RelativeErrors(DBMParameters.CorrelationPreviousPeriods)
+        Public Sub New(MeasValue As Double,PredValue As Double,LowContrLimit As Double,UppContrLimit As Double)
+            Me.MeasValue=MeasValue
+            Me.PredValue=PredValue
+            Me.LowContrLimit=LowContrLimit
+            Me.UppContrLimit=UppContrLimit
         End Sub
 
     End Class

@@ -56,9 +56,9 @@ Namespace DBM
             UnitTestsRunning=True
             DBMResult=_DBM.Calculate(InputDBMPointDriver,DBMCorrelationPoints,Timestamp)
             UnitTestsRunning=False
-            Return ArrayMultiplier({Math.Round(DBMResult.Factor,3),Math.Round(DBMResult.OriginalFactor,3),Math.Round(DBMResult.CurrValue),Math.Round(DBMResult.PredValue),Math.Round(DBMResult.LowContrLimit),Math.Round(DBMResult.UppContrLimit)})=ArrayMultiplier(ExpResults) And _
-                ArrayMultiplier({DBMResult.AbsErrorStats.Count,Math.Round(DBMResult.AbsErrorStats.Slope,4),Math.Round(DBMResult.AbsErrorStats.Angle,4),Math.Round(DBMResult.AbsErrorStats.Intercept,4),Math.Round(DBMResult.AbsErrorStats.StDevSLinReg,4),Math.Round(DBMResult.AbsErrorStats.Correlation,4),Math.Round(DBMResult.AbsErrorStats.ModifiedCorrelation,4),Math.Round(DBMResult.AbsErrorStats.Determination,4)})=ArrayMultiplier(ExpAbsErrStats) And _
-                ArrayMultiplier({DBMResult.RelErrorStats.Count,Math.Round(DBMResult.RelErrorStats.Slope,4),Math.Round(DBMResult.RelErrorStats.Angle,4),Math.Round(DBMResult.RelErrorStats.Intercept,4),Math.Round(DBMResult.RelErrorStats.StDevSLinReg,4),Math.Round(DBMResult.RelErrorStats.Correlation,4),Math.Round(DBMResult.RelErrorStats.ModifiedCorrelation,4),Math.Round(DBMResult.RelErrorStats.Determination,4)})=ArrayMultiplier(ExpRelErrStats) And _
+            Return ArrayMultiplier({Math.Round(DBMResult.Factor,3),Math.Round(DBMResult.OriginalFactor,3),Math.Round(DBMResult.DBMPrediction.MeasValue),Math.Round(DBMResult.DBMPrediction.PredValue),Math.Round(DBMResult.DBMPrediction.LowContrLimit),Math.Round(DBMResult.DBMPrediction.UppContrLimit)})=ArrayMultiplier(ExpResults) And _
+                ArrayMultiplier({DBMResult.AbsErrorStats.Count,Math.Round(DBMResult.AbsErrorStats.Slope,4),Math.Round(DBMResult.AbsErrorStats.Angle,4),Math.Round(DBMResult.AbsErrorStats.Intercept,4),Math.Round(DBMResult.AbsErrorStats.StandardError,4),Math.Round(DBMResult.AbsErrorStats.Correlation,4),Math.Round(DBMResult.AbsErrorStats.ModifiedCorrelation,4),Math.Round(DBMResult.AbsErrorStats.Determination,4)})=ArrayMultiplier(ExpAbsErrStats) And _
+                ArrayMultiplier({DBMResult.RelErrorStats.Count,Math.Round(DBMResult.RelErrorStats.Slope,4),Math.Round(DBMResult.RelErrorStats.Angle,4),Math.Round(DBMResult.RelErrorStats.Intercept,4),Math.Round(DBMResult.RelErrorStats.StandardError,4),Math.Round(DBMResult.RelErrorStats.Correlation,4),Math.Round(DBMResult.RelErrorStats.ModifiedCorrelation,4),Math.Round(DBMResult.RelErrorStats.Determination,4)})=ArrayMultiplier(ExpRelErrStats) And _
                 (DBMResult.SuppressedBy Is Nothing Or (DBMResult.SuppressedBy IsNot Nothing And CorrelationDBMPointDriver Is DBMResult.SuppressedBy))
         End Function
 
@@ -91,12 +91,6 @@ Namespace DBM
             TestResults=TestResults And DBM.KeepOrSuppressEvent(0.99,-0.9,0,True)=0.99
             TestResults=TestResults And DBM.KeepOrSuppressEvent(-0.99,0,0,True)=-0.99
             TestResults=TestResults And DBM.KeepOrSuppressEvent(0.99,0,0,True)=0.99
-
-            TestResults=TestResults And ArrayMultiplier(DBMFunctions.ArrayRotateLeft({1,2,3,4,5}))=ArrayMultiplier({2,3,4,5,1})
-            TestResults=TestResults And ArrayMultiplier(DBMFunctions.ArrayRotateLeft({2,3,4,5,1}))=ArrayMultiplier({3,4,5,1,2})
-            TestResults=TestResults And ArrayMultiplier(DBMFunctions.ArrayRotateLeft({3,4,5,1,2}))=ArrayMultiplier({4,5,1,2,3})
-            TestResults=TestResults And ArrayMultiplier(DBMFunctions.ArrayRotateLeft({4,5,1,2,3}))=ArrayMultiplier({5,1,2,3,4})
-            TestResults=TestResults And ArrayMultiplier(DBMFunctions.ArrayRotateLeft({5,1,2,3,4}))=ArrayMultiplier({1,2,3,4,5})
 
             TestResults=TestResults And Math.Round(DBMMath.NormSInv(0.7451),4)=0.6591
             TestResults=TestResults And Math.Round(DBMMath.NormSInv(0.4188),4)=-0.205
@@ -376,7 +370,7 @@ Namespace DBM
                 TestResults=TestResults And Math.Round(DBMStatistics.Slope,4)={-24.1399,-67.5699,51.3427,-56.9825,27.3182,-2.6573,32.1923,-46.8462,-11.1224,-61.5455,9.4424,-0.1602,10.7659,4.8889,-4.6572,-0.4548,-6.6652,2.2442,8.6539,-12.0462}(i)
                 TestResults=TestResults And Math.Round(DBMStatistics.Angle,4)={-87.6279,-89.1521,88.8842,-88.9946,87.9036,-69.3779,88.2208,-88.7771,-84.8624,-89.0691,83.9546,-9.0998,84.6933,78.4399,-77.8813,-24.4582,-81.4673,65.9827,83.4085,-85.2545}(i)
                 TestResults=TestResults And Math.Round(DBMStatistics.Intercept,4)={3123.1026,3566.2179,2875.6154,3284.6538,2664.3333,2877.4487,3016.6923,3116.4872,2851.9231,3380.5,2332.5305,2930.2549,2585.1154,2427.9251,3229.618,2967.1468,3472.9635,2986.3475,2469.7771,3320.9411}(i)
-                TestResults=TestResults And Math.Round(DBMStatistics.StDevSLinReg,4)={582.4218,633.706,535.0359,720.9024,619.3358,506.8629,525.9328,483.3154,527.9273,573.7699,544.1683,523.5486,590.2042,436.8994,644.5969,698.2517,478.875,384.1275,419.8051,657.4656}(i)
+                TestResults=TestResults And Math.Round(DBMStatistics.StandardError,4)={582.4218,633.706,535.0359,720.9024,619.3358,506.8629,525.9328,483.3154,527.9273,573.7699,544.1683,523.5486,590.2042,436.8994,644.5969,698.2517,478.875,384.1275,419.8051,657.4656}(i)
                 TestResults=TestResults And Math.Round(DBMStatistics.Correlation,4)={-0.1548,-0.374,0.3411,-0.2864,0.1645,-0.0198,0.2255,-0.3441,-0.0794,-0.3759,0.4296,-0.0071,0.3208,0.2029,-0.1209,-0.0154,-0.3016,0.1484,0.5294,-0.3121}(i)
                 TestResults=TestResults And Math.Round(DBMStatistics.ModifiedCorrelation,4)={0.819,0.7932,0.8652,0.7909,0.8474,0.8345,0.8554,0.8061,0.8274,0.7962,0.8665,0.9037,0.8892,0.908,0.887,0.8274,0.8714,0.8915,0.9047,0.8561}(i)
                 TestResults=TestResults And Math.Round(DBMStatistics.Determination,4)={0.024,0.1398,0.1164,0.082,0.0271,0.0004,0.0509,0.1184,0.0063,0.1413,0.1845,0.0001,0.1029,0.0412,0.0146,0.0002,0.091,0.022,0.2803,0.0974}(i)
