@@ -38,8 +38,7 @@ Namespace DBM
             Dim CorrelationCounter,EMACounter,PatternCounter As Integer
             Dim CalcTimestamp As DateTime
             Dim Pattern(DBMParameters.ComparePatterns),MeasValueEMA(DBMParameters.EMAPreviousPeriods),PredValueEMA(DBMParameters.EMAPreviousPeriods),LowContrLimitEMA(DBMParameters.EMAPreviousPeriods),UppContrLimitEMA(DBMParameters.EMAPreviousPeriods) As Double
-            Dim DBMPrediction As DBMPrediction
-            Dim MeasValue,PredValue,LowContrLimit,UppContrLimit As Double
+            Dim DBMPrediction As New DBMPrediction
             Calculate=New DBMResult
             If SubstractDBMPoint IsNot PrevSubstractDBMPoint Then ' Can we reuse stored results?
                 DBMPredictions.Clear
@@ -56,34 +55,30 @@ Namespace DBM
                                     Pattern(DBMParameters.ComparePatterns-PatternCounter)-=SubstractDBMPoint.DBMDataManager.Value(DateAdd("d",-PatternCounter*7,CalcTimestamp))
                                 End If
                             Next PatternCounter
-                            DBMPrediction=New DBMPrediction
                             DBMPrediction.Calculate(Pattern)
                             If DBMPredictions.Count>=DBMParameters.MaximumCacheSize Then ' Limit cache size
                                 DBMPredictions.Remove(DBMPredictions.ElementAt(CInt(Math.Floor(Rnd*DBMPredictions.Count))).Key) ' Remove random cached value
                             End If
-                            DBMPredictions.Add(CalcTimestamp,DBMPrediction) ' Add to cache
+                            DBMPredictions.Add(CalcTimestamp,DBMPrediction.ShallowCopy) ' Add to cache
                         Else ' From cache
-                            DBMPrediction=DBMPredictions.Item(CalcTimestamp)
+                            DBMPrediction=DBMPredictions.Item(CalcTimestamp).ShallowCopy
                         End If
                         MeasValueEMA(EMACounter)=DBMPrediction.MeasValue
                         PredValueEMA(EMACounter)=DBMPrediction.PredValue
                         LowContrLimitEMA(EMACounter)=DBMPrediction.LowContrLimit
                         UppContrLimitEMA(EMACounter)=DBMPrediction.UppContrLimit
                     Next EMACounter
-                    MeasValue=DBMMath.CalculateExpMovingAvg(MeasValueEMA)
-                    PredValue=DBMMath.CalculateExpMovingAvg(PredValueEMA)
-                    Calculate.AbsoluteErrors(DBMParameters.CorrelationPreviousPeriods-CorrelationCounter)=PredValue-MeasValue ' Absolute error compared to prediction
-                    Calculate.RelativeErrors(DBMParameters.CorrelationPreviousPeriods-CorrelationCounter)=PredValue/MeasValue-1 ' Relative error compared to prediction
+                    DBMPrediction=New DBMPrediction(DBMMath.CalculateExpMovingAvg(MeasValueEMA),DBMMath.CalculateExpMovingAvg(PredValueEMA),DBMMath.CalculateExpMovingAvg(LowContrLimitEMA),DBMMath.CalculateExpMovingAvg(UppContrLimitEMA))
+                    Calculate.AbsoluteErrors(DBMParameters.CorrelationPreviousPeriods-CorrelationCounter)=DBMPrediction.PredValue-DBMPrediction.MeasValue ' Absolute error compared to prediction
+                    Calculate.RelativeErrors(DBMParameters.CorrelationPreviousPeriods-CorrelationCounter)=DBMPrediction.PredValue/DBMPrediction.MeasValue-1 ' Relative error compared to prediction
                     If CorrelationCounter=0 Then
-                        LowContrLimit=DBMMath.CalculateExpMovingAvg(LowContrLimitEMA)
-                        UppContrLimit=DBMMath.CalculateExpMovingAvg(UppContrLimitEMA)
-                        Calculate.DBMPrediction=New DBMPrediction(MeasValue,PredValue,LowContrLimit,UppContrLimit)
-                        If MeasValue<LowContrLimit Then ' Lower control limit exceeded
-                            Calculate.Factor=(PredValue-MeasValue)/(LowContrLimit-PredValue)
-                        ElseIf MeasValue>UppContrLimit Then ' Upper control limit exceeded
-                            Calculate.Factor=(MeasValue-PredValue)/(UppContrLimit-PredValue)
+                        If DBMPrediction.MeasValue<DBMPrediction.LowContrLimit Then ' Lower control limit exceeded
+                            Calculate.Factor=(DBMPrediction.PredValue-DBMPrediction.MeasValue)/(DBMPrediction.LowContrLimit-DBMPrediction.PredValue)
+                        ElseIf DBMPrediction.MeasValue>DBMPrediction.UppContrLimit Then ' Upper control limit exceeded
+                            Calculate.Factor=(DBMPrediction.MeasValue-DBMPrediction.PredValue)/(DBMPrediction.UppContrLimit-DBMPrediction.PredValue)
                         End If
                         Calculate.OriginalFactor=Calculate.Factor ' Store original factor before possible suppression
+                        Calculate.DBMPrediction=DBMPrediction.ShallowCopy
                     End If
                 End If
             Next CorrelationCounter

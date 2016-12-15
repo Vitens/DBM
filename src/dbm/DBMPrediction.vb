@@ -28,6 +28,10 @@ Namespace DBM
 
         Public MeasValue,PredValue,LowContrLimit,UppContrLimit As Double
 
+        Public Function ShallowCopy As DBMPrediction
+            Return DirectCast(Me.MemberwiseClone,DBMPrediction)
+        End Function
+
         Public Sub New(Optional MeasValue As Double=0,Optional PredValue As Double=0,Optional LowContrLimit As Double=0,Optional UppContrLimit As Double=0)
             Me.MeasValue=MeasValue
             Me.PredValue=PredValue
