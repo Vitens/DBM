@@ -38,8 +38,8 @@ Namespace DBM
             Dim DBMPredictions As New Collections.Generic.Dictionary(Of DateTime,DBMPrediction)
             Dim Pattern(DBMParameters.ComparePatterns),MeasValueEMA(DBMParameters.EMAPreviousPeriods),PredValueEMA(DBMParameters.EMAPreviousPeriods),LowContrLimitEMA(DBMParameters.EMAPreviousPeriods),UppContrLimitEMA(DBMParameters.EMAPreviousPeriods) As Double
             Dim DBMStatistics As New DBMStatistics
-            Dim MeasValue,PredValue,LowContrLimit,UppContrLimit As Double
             Dim DBMPrediction As DBMPrediction
+            Dim MeasValue,PredValue,LowContrLimit,UppContrLimit As Double
             Calculate=New DBMResult
             For CorrelationCounter=0 To DBMParameters.CorrelationPreviousPeriods
                 If CorrelationCounter=0 Or (IsInputDBMPoint And Calculate.Factor<>0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
@@ -53,22 +53,18 @@ Namespace DBM
                                 End If
                             Next PatternCounter
                             DBMStatistics.Calculate(DBMMath.RemoveOutliers(Pattern.Take(Pattern.Length-1).ToArray)) ' Calculate statistics for data after removing outliers
-                            MeasValue=Pattern(DBMParameters.ComparePatterns)
-                            PredValue=DBMParameters.ComparePatterns*DBMStatistics.Slope+DBMStatistics.Intercept ' Extrapolate regression one interval
-                            LowContrLimit=PredValue-DBMMath.ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,DBMStatistics.Count-1)*DBMStatistics.StandardError
-                            UppContrLimit=PredValue+DBMMath.ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,DBMStatistics.Count-1)*DBMStatistics.StandardError
-                            DBMPredictions.Add(CalcTimestamp,New DBMPrediction(MeasValue,PredValue,LowContrLimit,UppContrLimit)) ' Add to cache
+                            MeasValueEMA(EMACounter)=Pattern(DBMParameters.ComparePatterns)
+                            PredValueEMA(EMACounter)=DBMParameters.ComparePatterns*DBMStatistics.Slope+DBMStatistics.Intercept ' Extrapolate regression one interval
+                            LowContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)-DBMMath.ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,DBMStatistics.Count-1)*DBMStatistics.StandardError
+                            UppContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)+DBMMath.ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,DBMStatistics.Count-1)*DBMStatistics.StandardError
+                            DBMPredictions.Add(CalcTimestamp,New DBMPrediction(MeasValueEMA(EMACounter),PredValueEMA(EMACounter),LowContrLimitEMA(EMACounter),UppContrLimitEMA(EMACounter))) ' Add to cache
                         Else ' Use previously calculated data
                             DBMPrediction=DBMPredictions.Item(CalcTimestamp)
-                            MeasValue=DBMPrediction.MeasValue
-                            PredValue=DBMPrediction.PredValue
-                            LowContrLimit=DBMPrediction.LowContrLimit
-                            UppContrLimit=DBMPrediction.UppContrLimit
+                            MeasValueEMA(EMACounter)=DBMPrediction.MeasValue
+                            PredValueEMA(EMACounter)=DBMPrediction.PredValue
+                            LowContrLimitEMA(EMACounter)=DBMPrediction.LowContrLimit
+                            UppContrLimitEMA(EMACounter)=DBMPrediction.UppContrLimit
                         End If
-                        MeasValueEMA(EMACounter)=MeasValue
-                        PredValueEMA(EMACounter)=PredValue
-                        LowContrLimitEMA(EMACounter)=LowContrLimit
-                        UppContrLimitEMA(EMACounter)=UppContrLimit
                     Next EMACounter
                     MeasValue=DBMMath.CalculateExpMovingAvg(MeasValueEMA)
                     PredValue=DBMMath.CalculateExpMovingAvg(PredValueEMA)
