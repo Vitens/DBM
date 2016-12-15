@@ -37,7 +37,6 @@ Namespace DBM
             Dim CalcTimestamp As DateTime
             Dim DBMPredictions As New Collections.Generic.Dictionary(Of DateTime,DBMPrediction)
             Dim Pattern(DBMParameters.ComparePatterns),MeasValueEMA(DBMParameters.EMAPreviousPeriods),PredValueEMA(DBMParameters.EMAPreviousPeriods),LowContrLimitEMA(DBMParameters.EMAPreviousPeriods),UppContrLimitEMA(DBMParameters.EMAPreviousPeriods) As Double
-            Dim DBMStatistics As New DBMStatistics
             Dim DBMPrediction As DBMPrediction
             Dim MeasValue,PredValue,LowContrLimit,UppContrLimit As Double
             Calculate=New DBMResult
@@ -52,19 +51,16 @@ Namespace DBM
                                     Pattern(DBMParameters.ComparePatterns-PatternCounter)-=SubstractDBMPoint.DBMDataManager.Value(DateAdd("d",-PatternCounter*7,CalcTimestamp))
                                 End If
                             Next PatternCounter
-                            DBMStatistics.Calculate(DBMMath.RemoveOutliers(Pattern.Take(Pattern.Length-1).ToArray)) ' Calculate statistics for data after removing outliers
-                            MeasValueEMA(EMACounter)=Pattern(DBMParameters.ComparePatterns)
-                            PredValueEMA(EMACounter)=DBMParameters.ComparePatterns*DBMStatistics.Slope+DBMStatistics.Intercept ' Extrapolate regression one interval
-                            LowContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)-DBMMath.ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,DBMStatistics.Count-1)*DBMStatistics.StandardError
-                            UppContrLimitEMA(EMACounter)=PredValueEMA(EMACounter)+DBMMath.ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,DBMStatistics.Count-1)*DBMStatistics.StandardError
-                            DBMPredictions.Add(CalcTimestamp,New DBMPrediction(MeasValueEMA(EMACounter),PredValueEMA(EMACounter),LowContrLimitEMA(EMACounter),UppContrLimitEMA(EMACounter))) ' Add to cache
-                        Else ' Use previously calculated data
+                            DBMPrediction=New DBMPrediction
+                            DBMPrediction.Calculate(Pattern)
+                            DBMPredictions.Add(CalcTimestamp,DBMPrediction) ' Add to cache
+                        Else ' From cache
                             DBMPrediction=DBMPredictions.Item(CalcTimestamp)
-                            MeasValueEMA(EMACounter)=DBMPrediction.MeasValue
-                            PredValueEMA(EMACounter)=DBMPrediction.PredValue
-                            LowContrLimitEMA(EMACounter)=DBMPrediction.LowContrLimit
-                            UppContrLimitEMA(EMACounter)=DBMPrediction.UppContrLimit
                         End If
+                        MeasValueEMA(EMACounter)=DBMPrediction.MeasValue
+                        PredValueEMA(EMACounter)=DBMPrediction.PredValue
+                        LowContrLimitEMA(EMACounter)=DBMPrediction.LowContrLimit
+                        UppContrLimitEMA(EMACounter)=DBMPrediction.UppContrLimit
                     Next EMACounter
                     MeasValue=DBMMath.CalculateExpMovingAvg(MeasValueEMA)
                     PredValue=DBMMath.CalculateExpMovingAvg(PredValueEMA)

@@ -28,11 +28,20 @@ Namespace DBM
 
         Public MeasValue,PredValue,LowContrLimit,UppContrLimit As Double
 
-        Public Sub New(MeasValue As Double,PredValue As Double,LowContrLimit As Double,UppContrLimit As Double)
+        Public Sub New(Optional MeasValue As Double=0,Optional PredValue As Double=0,Optional LowContrLimit As Double=0,Optional UppContrLimit As Double=0)
             Me.MeasValue=MeasValue
             Me.PredValue=PredValue
             Me.LowContrLimit=LowContrLimit
             Me.UppContrLimit=UppContrLimit
+        End Sub
+
+        Public Sub Calculate(Data() As Double)
+            Dim DBMStatistics As New DBMStatistics
+            DBMStatistics.Calculate(DBMMath.RemoveOutliers(Data.Take(Data.Length-1).ToArray)) ' Calculate statistics for data after removing outliers
+            MeasValue=Data(DBMParameters.ComparePatterns)
+            PredValue=DBMParameters.ComparePatterns*DBMStatistics.Slope+DBMStatistics.Intercept ' Extrapolate regression one interval
+            LowContrLimit=PredValue-DBMMath.ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,DBMStatistics.Count-1)*DBMStatistics.StandardError
+            UppContrLimit=PredValue+DBMMath.ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,DBMStatistics.Count-1)*DBMStatistics.StandardError
         End Sub
 
     End Class
