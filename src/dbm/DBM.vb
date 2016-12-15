@@ -34,8 +34,7 @@ Namespace DBM
             If Not DBMPoints.ContainsKey(DBMPointDriver.Point) Then
                 DBMPoints.Add(DBMPointDriver.Point,New DBMPoint(DBMPointDriver)) ' Add to dictionary
             End If
-            GetDBMPoint=DBMPoints.Item(DBMPointDriver.Point)
-            Return GetDBMPoint
+            Return DBMPoints.Item(DBMPointDriver.Point)
         End Function
 
         Public Shared Function KeepOrSuppressEvent(Factor As Double,AbsErrModCorr As Double,RelErrModCorr As Double,SubstractSelf As Boolean) As Double

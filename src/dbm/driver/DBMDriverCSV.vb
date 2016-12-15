@@ -52,11 +52,10 @@ Namespace DBM
                 End Try
             End If
             If CachedValues.ContainsKey(StartTimestamp) Then ' In cache
-                GetData=CachedValues.Item(StartTimestamp) ' Return value from cache
+                Return CachedValues.Item(StartTimestamp) ' Return value from cache
             Else
-                GetData=Double.NaN ' No data, return Not a Number
+                Return Double.NaN ' No data, return Not a Number
             End If
-            Return GetData
         End Function
 
     End Class

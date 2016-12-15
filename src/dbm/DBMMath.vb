@@ -40,16 +40,15 @@ Namespace DBM
             Dim q,r As Double
             If p<p_low Then
                 q=Math.Sqrt(-2*Math.Log(p))
-                NormSInv=(((((c1*q+c2)*q+c3)*q+c4)*q+c5)*q+c6)/((((d1*q+d2)*q+d3)*q+d4)*q+1)
+                Return (((((c1*q+c2)*q+c3)*q+c4)*q+c5)*q+c6)/((((d1*q+d2)*q+d3)*q+d4)*q+1)
             ElseIf p<=p_high Then
                 q=p-0.5
                 r=q*q
-                NormSInv=(((((a1*r+a2)*r+a3)*r+a4)*r+a5)*r+a6)*q/(((((b1*r+b2)*r+b3)*r+b4)*r+b5)*r+1)
+                Return (((((a1*r+a2)*r+a3)*r+a4)*r+a5)*r+a6)*q/(((((b1*r+b2)*r+b3)*r+b4)*r+b5)*r+1)
             Else
                 q=Math.Sqrt(-2*Math.Log(1-p))
-                NormSInv=-(((((c1*q+c2)*q+c3)*q+c4)*q+c5)*q+c6)/((((d1*q+d2)*q+d3)*q+d4)*q+1)
+                Return -(((((c1*q+c2)*q+c3)*q+c4)*q+c5)*q+c6)/((((d1*q+d2)*q+d3)*q+d4)*q+1)
             End If
-            Return NormSInv
         End Function
 
         Public Shared Function TInv2T(p As Double,dof As Integer) As Double
@@ -58,9 +57,9 @@ Namespace DBM
             Dim a,b,c,d,x,y As Double
             If dof=1 Then
                 p*=Math.PI/2
-                TInv2T=Math.Cos(p)/Math.Sin(p)
+                Return Math.Cos(p)/Math.Sin(p)
             ElseIf dof=2 Then
-                TInv2T=Math.Sqrt(2/(p*(2-p))-2)
+                Return Math.Sqrt(2/(p*(2-p))-2)
             Else
                 a=1/(dof-0.5)
                 b=48/(a^2)
@@ -80,14 +79,12 @@ Namespace DBM
                 Else
                     y=((1/(((dof+6)/(dof*y)-0.089*d-0.822)*(dof+2)*3)+0.5/(dof+4))*y-1)*(dof+1)/(dof+2)+1/y
                 End If
-                TInv2T=Math.Sqrt(dof*y)
+                Return Math.Sqrt(dof*y)
             End If
-            Return TInv2T
         End Function
 
         Public Shared Function TInv(p As Double,dof As Integer) As Double
-            TInv=Math.Sign(p-0.5)*TInv2T(1-Math.Abs(p-0.5)*2,dof)
-            Return TInv
+            Return Math.Sign(p-0.5)*TInv2T(1-Math.Abs(p-0.5)*2,dof)
         End Function
 
         Public Shared Function MeanAbsDevScaleFactor As Double ' Scale factor k
@@ -96,20 +93,18 @@ Namespace DBM
 
         Public Shared Function MedianAbsDevScaleFactor(n As Integer) As Double ' Scale factor k
             If n<30 Then
-                MedianAbsDevScaleFactor=1/TInv(0.75,n) ' n<30 Student's t-distribution
+                Return 1/TInv(0.75,n) ' n<30 Student's t-distribution
             Else
-                MedianAbsDevScaleFactor=1/NormSInv(0.75) ' n>=30 Standard normal distribution
+                Return 1/NormSInv(0.75) ' n>=30 Standard normal distribution
             End If
-            Return MedianAbsDevScaleFactor
         End Function
 
         Public Shared Function ControlLimitRejectionCriterion(p As Double,n As Integer) As Double
             If n<30 Then
-                ControlLimitRejectionCriterion=TInv((p+1)/2,n) ' n<30 Student's t-distribution
+                Return TInv((p+1)/2,n) ' n<30 Student's t-distribution
             Else
-                ControlLimitRejectionCriterion=NormSInv((p+1)/2) ' n>=30 Standard normal distribution
+                Return NormSInv((p+1)/2) ' n>=30 Standard normal distribution
             End If
-            Return ControlLimitRejectionCriterion
         End Function
 
         Public Shared Function CalculateMean(Data() As Double) As Double
@@ -123,11 +118,10 @@ Namespace DBM
         Public Shared Function CalculateMedian(Data() As Double) As Double
             Array.Sort(Data)
             If Data.Length Mod 2=0 Then
-                CalculateMedian=(Data(Data.Length\2)+Data(Data.Length\2-1))/2
+                Return (Data(Data.Length\2)+Data(Data.Length\2-1))/2
             Else
-                CalculateMedian=Data(Data.Length\2)
+                Return Data(Data.Length\2)
             End If
-            Return CalculateMedian
         End Function
 
         Public Shared Function CalculateMeanAbsDev(Data() As Double) As Double
@@ -137,8 +131,7 @@ Namespace DBM
             For i=0 to Data.Length-1
                 Data(i)=Math.Abs(Data(i)-Mean)
             Next i
-            CalculateMeanAbsDev=CalculateMean(Data)
-            Return CalculateMeanAbsDev
+            Return CalculateMean(Data)
         End Function
 
         Public Shared Function CalculateMedianAbsDev(Data() As Double) As Double
@@ -148,8 +141,7 @@ Namespace DBM
             For i=0 to Data.Length-1
                 Data(i)=Math.Abs(Data(i)-Median)
             Next i
-            CalculateMedianAbsDev=CalculateMedian(Data)
-            Return CalculateMedianAbsDev
+            Return CalculateMedian(Data)
         End Function
 
         Public Shared Function RemoveOutliers(Data() As Double) As Double() ' Returns an array which contains the input data from which outliers are removed (NaN)
