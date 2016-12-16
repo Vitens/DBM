@@ -42,11 +42,11 @@ Namespace DBM
             Dim MeasValueEMA,PredValueEMA,LowContrLimitEMA,UppContrLimitEMA As Double
             Calculate=New DBMResult
             If SubstractDBMPoint IsNot PrevSubstractDBMPoint Then ' Can we reuse stored results?
-                DBMPredictions.Clear
+                DBMPredictions.Clear 'No, so clear results
                 PrevSubstractDBMPoint=SubstractDBMPoint
             End If
             For CorrelationCounter=0 To DBMParameters.CorrelationPreviousPeriods
-                If CorrelationCounter=0 Or (IsInputDBMPoint And Calculate.Factor<>0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
+                If Calculate.DBMPrediction Is Nothing Or (IsInputDBMPoint And Calculate.Factor<>0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
                     For EMACounter=DBMParameters.EMAPreviousPeriods To 0 Step -1
                         CalcTimestamp=DateAdd("s",-(EMACounter+CorrelationCounter)*DBMParameters.CalculationInterval,Timestamp)
                         If DBMPredictions.ContainsKey(CalcTimestamp) Then ' From cache
@@ -73,7 +73,7 @@ Namespace DBM
                     PredValueEMA=DBMMath.CalculateExpMovingAvg(PredValues)
                     Calculate.AbsoluteErrors(DBMParameters.CorrelationPreviousPeriods-CorrelationCounter)=PredValueEMA-MeasValueEMA ' Absolute error compared to prediction
                     Calculate.RelativeErrors(DBMParameters.CorrelationPreviousPeriods-CorrelationCounter)=PredValueEMA/MeasValueEMA-1 ' Relative error compared to prediction
-                    If CorrelationCounter=0 Then
+                    If Calculate.DBMPrediction Is Nothing Then
                         LowContrLimitEMA=DBMMath.CalculateExpMovingAvg(LowContrLimits)
                         UppContrLimitEMA=DBMMath.CalculateExpMovingAvg(UppContrLimits)
                         If MeasValueEMA<LowContrLimitEMA Then ' Lower control limit exceeded
