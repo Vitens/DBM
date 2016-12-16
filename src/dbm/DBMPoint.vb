@@ -37,8 +37,9 @@ Namespace DBM
         Public Function Calculate(Timestamp As DateTime,IsInputDBMPoint As Boolean,HasCorrelationDBMPoint As Boolean,Optional SubstractDBMPoint As DBMPoint=Nothing) As DBMResult
             Dim CorrelationCounter,EMACounter,PatternCounter As Integer
             Dim CalcTimestamp As DateTime
-            Dim Pattern(DBMParameters.ComparePatterns),MeasValueEMA(DBMParameters.EMAPreviousPeriods),PredValueEMA(DBMParameters.EMAPreviousPeriods),LowContrLimitEMA(DBMParameters.EMAPreviousPeriods),UppContrLimitEMA(DBMParameters.EMAPreviousPeriods) As Double
             Dim DBMPrediction As New DBMPrediction
+            Dim Patterns(DBMParameters.ComparePatterns),MeasValues(DBMParameters.EMAPreviousPeriods),PredValues(DBMParameters.EMAPreviousPeriods),LowContrLimits(DBMParameters.EMAPreviousPeriods),UppContrLimits(DBMParameters.EMAPreviousPeriods) As Double
+            Dim MeasValueEMA,PredValueEMA,LowContrLimitEMA,UppContrLimitEMA As Double
             Calculate=New DBMResult
             If SubstractDBMPoint IsNot PrevSubstractDBMPoint Then ' Can we reuse stored results?
                 DBMPredictions.Clear
@@ -52,33 +53,36 @@ Namespace DBM
                             DBMPrediction=DBMPredictions.Item(CalcTimestamp).ShallowCopy
                         Else ' Calculate data
                             For PatternCounter=DBMParameters.ComparePatterns To 0 Step -1
-                                Pattern(DBMParameters.ComparePatterns-PatternCounter)=DBMDataManager.Value(DateAdd("d",-PatternCounter*7,CalcTimestamp))
+                                Patterns(DBMParameters.ComparePatterns-PatternCounter)=DBMDataManager.Value(DateAdd("d",-PatternCounter*7,CalcTimestamp))
                                 If SubstractDBMPoint IsNot Nothing Then
-                                    Pattern(DBMParameters.ComparePatterns-PatternCounter)-=SubstractDBMPoint.DBMDataManager.Value(DateAdd("d",-PatternCounter*7,CalcTimestamp))
+                                    Patterns(DBMParameters.ComparePatterns-PatternCounter)-=SubstractDBMPoint.DBMDataManager.Value(DateAdd("d",-PatternCounter*7,CalcTimestamp))
                                 End If
                             Next PatternCounter
-                            DBMPrediction.Calculate(Pattern)
+                            DBMPrediction.Calculate(Patterns)
                             Do While DBMPredictions.Count>=DBMParameters.MaxDBMPointCacheSize ' Limit cache size
                                 DBMPredictions.Remove(DBMPredictions.ElementAt(CInt(Math.Floor(Rnd*DBMPredictions.Count))).Key) ' Remove random cached value
                             Loop
                             DBMPredictions.Add(CalcTimestamp,DBMPrediction.ShallowCopy) ' Add to cache
                         End If
-                        MeasValueEMA(EMACounter)=DBMPrediction.MeasValue
-                        PredValueEMA(EMACounter)=DBMPrediction.PredValue
-                        LowContrLimitEMA(EMACounter)=DBMPrediction.LowContrLimit
-                        UppContrLimitEMA(EMACounter)=DBMPrediction.UppContrLimit
+                        MeasValues(EMACounter)=DBMPrediction.MeasValue
+                        PredValues(EMACounter)=DBMPrediction.PredValue
+                        LowContrLimits(EMACounter)=DBMPrediction.LowContrLimit
+                        UppContrLimits(EMACounter)=DBMPrediction.UppContrLimit
                     Next EMACounter
-                    DBMPrediction=New DBMPrediction(DBMMath.CalculateExpMovingAvg(MeasValueEMA),DBMMath.CalculateExpMovingAvg(PredValueEMA),DBMMath.CalculateExpMovingAvg(LowContrLimitEMA),DBMMath.CalculateExpMovingAvg(UppContrLimitEMA))
-                    Calculate.AbsoluteErrors(DBMParameters.CorrelationPreviousPeriods-CorrelationCounter)=DBMPrediction.PredValue-DBMPrediction.MeasValue ' Absolute error compared to prediction
-                    Calculate.RelativeErrors(DBMParameters.CorrelationPreviousPeriods-CorrelationCounter)=DBMPrediction.PredValue/DBMPrediction.MeasValue-1 ' Relative error compared to prediction
+                    MeasValueEMA=DBMMath.CalculateExpMovingAvg(MeasValues)
+                    PredValueEMA=DBMMath.CalculateExpMovingAvg(PredValues)
+                    Calculate.AbsoluteErrors(DBMParameters.CorrelationPreviousPeriods-CorrelationCounter)=PredValueEMA-MeasValueEMA ' Absolute error compared to prediction
+                    Calculate.RelativeErrors(DBMParameters.CorrelationPreviousPeriods-CorrelationCounter)=PredValueEMA/MeasValueEMA-1 ' Relative error compared to prediction
                     If CorrelationCounter=0 Then
-                        If DBMPrediction.MeasValue<DBMPrediction.LowContrLimit Then ' Lower control limit exceeded
-                            Calculate.Factor=(DBMPrediction.PredValue-DBMPrediction.MeasValue)/(DBMPrediction.LowContrLimit-DBMPrediction.PredValue)
-                        ElseIf DBMPrediction.MeasValue>DBMPrediction.UppContrLimit Then ' Upper control limit exceeded
-                            Calculate.Factor=(DBMPrediction.MeasValue-DBMPrediction.PredValue)/(DBMPrediction.UppContrLimit-DBMPrediction.PredValue)
+                        LowContrLimitEMA=DBMMath.CalculateExpMovingAvg(LowContrLimits)
+                        UppContrLimitEMA=DBMMath.CalculateExpMovingAvg(UppContrLimits)
+                        If MeasValueEMA<LowContrLimitEMA Then ' Lower control limit exceeded
+                            Calculate.Factor=(PredValueEMA-MeasValueEMA)/(LowContrLimitEMA-PredValueEMA)
+                        ElseIf MeasValueEMA>UppContrLimitEMA Then ' Upper control limit exceeded
+                            Calculate.Factor=(MeasValueEMA-PredValueEMA)/(UppContrLimitEMA-PredValueEMA)
                         End If
                         Calculate.OriginalFactor=Calculate.Factor ' Store original factor before possible suppression
-                        Calculate.DBMPrediction=DBMPrediction.ShallowCopy
+                        Calculate.DBMPrediction=New DBMPrediction(MeasValueEMA,PredValueEMA,LowContrLimitEMA,UppContrLimitEMA)
                     End If
                 End If
             Next CorrelationCounter
