@@ -74,7 +74,7 @@ Namespace DBM
         Public Function Calculate(InputDBMPointDriver As DBMPointDriver,DBMCorrelationPoints As Collections.Generic.List(Of DBMCorrelationPoint),Timestamp As DateTime) As DBMResult
             Dim CorrelationDBMResult As DBMResult
             Dim AbsErrorStats,RelErrorStats As New DBMStatistics
-            Dim NewFactor As Double
+            Dim Factor As Double
             If DBMCorrelationPoints Is Nothing Then
                 DBMCorrelationPoints=New Collections.Generic.List(Of DBMCorrelationPoint)
             End If
@@ -88,9 +88,9 @@ Namespace DBM
                     End If
                     AbsErrorStats.Calculate(CorrelationDBMResult.AbsoluteErrors,Calculate.AbsoluteErrors) ' Absolute error compared to prediction
                     RelErrorStats.Calculate(CorrelationDBMResult.RelativeErrors,Calculate.RelativeErrors) ' Relative error compared to prediction
-                    NewFactor=KeepOrSuppressEvent(Calculate.Factor,AbsErrorStats.ModifiedCorrelation,RelErrorStats.ModifiedCorrelation,thisDBMCorrelationPoint.SubstractSelf)
-                    If NewFactor<>Calculate.Factor Then ' Has event been suppressed
-                        Calculate.Factor=NewFactor
+                    Factor=KeepOrSuppressEvent(Calculate.Factor,AbsErrorStats.ModifiedCorrelation,RelErrorStats.ModifiedCorrelation,thisDBMCorrelationPoint.SubstractSelf)
+                    If Factor<>Calculate.Factor Then ' Has event been suppressed
+                        Calculate.Factor=Factor
                         Calculate.AbsErrorStats=AbsErrorStats.ShallowCopy
                         Calculate.RelErrorStats=RelErrorStats.ShallowCopy
                         Calculate.SuppressedBy=thisDBMCorrelationPoint.DBMPointDriver ' Suppressed by
