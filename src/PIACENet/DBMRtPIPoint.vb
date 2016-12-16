@@ -39,8 +39,8 @@ Namespace DBMRt
                 For Each thisField As String In FieldsA
                     FieldsB=thisField.Split(New Char(){":"c})
                     Try
-                        If DBMRtCalculator.PISDK.Servers(Mid(FieldsB(0),1+CInt(IIf(Left(FieldsB(0),1)="-",1,0)))).PIPoints(FieldsB(1)).Name<>"" Then
-                            DBMCorrelationPoints.Add(New DBM.DBMCorrelationPoint(New DBM.DBMPointDriver(DBMRtCalculator.PISDK.Servers(Mid(FieldsB(0),1+CInt(IIf(Left(FieldsB(0),1)="-",1,0)))).PIPoints(FieldsB(1))),Left(FieldsB(0),1)="-"))
+                        If DBMRtCalculator.PISDK.Servers(Mid(FieldsB(0),1+If(Left(FieldsB(0),1)="-",1,0))).PIPoints(FieldsB(1)).Name<>"" Then
+                            DBMCorrelationPoints.Add(New DBM.DBMCorrelationPoint(New DBM.DBMPointDriver(DBMRtCalculator.PISDK.Servers(Mid(FieldsB(0),1+If(Left(FieldsB(0),1)="-",1,0))).PIPoints(FieldsB(1))),Left(FieldsB(0),1)="-"))
                         End If
                     Catch
                     End Try
