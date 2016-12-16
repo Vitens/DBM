@@ -50,7 +50,6 @@ Namespace DBMRt
 
         Public Sub Calculate
             Dim InputTimestamp,OutputTimestamp As PITimeServer.PITime
-            Dim Value As Double
             InputTimestamp=DirectCast(InputDBMPointDriver.Point,PISDK.PIPoint).Data.Snapshot.TimeStamp ' Timestamp of input point
             For Each thisDBMCorrelationPoint As DBM.DBMCorrelationPoint In DBMCorrelationPoints ' Check timestamp of correlation points
                 InputTimestamp.UTCSeconds=Math.Min(InputTimestamp.UTCSeconds,DirectCast(thisDBMCorrelationPoint.DBMPointDriver.Point,PISDK.PIPoint).Data.Snapshot.TimeStamp.UTCSeconds) ' Timestamp of correlation point, keep earliest
@@ -59,15 +58,7 @@ Namespace DBMRt
             OutputTimestamp=DirectCast(OutputDBMPointDriver.Point,PISDK.PIPoint).Data.Snapshot.TimeStamp ' Timestamp of output point
             OutputTimestamp.UTCSeconds+=DBM.DBMParameters.CalculationInterval-OutputTimestamp.UTCSeconds Mod DBM.DBMParameters.CalculationInterval ' Next calculation timestamp
             If InputTimestamp.UTCSeconds>=OutputTimestamp.UTCSeconds Then ' If calculation timestamp can be calculated
-                Try
-                    Value=DBMRtCalculator.DBM.Calculate(InputDBMPointDriver,DBMCorrelationPoints,InputTimestamp.LocalDate).Factor
-                Catch
-                    Value=Double.NaN ' Calculation error
-                End Try
-                Try
-                    DirectCast(OutputDBMPointDriver.Point,PISDK.PIPoint).Data.UpdateValue(Value,InputTimestamp.LocalDate) ' Write value to output point
-                Catch
-                End Try
+                DirectCast(OutputDBMPointDriver.Point,PISDK.PIPoint).Data.UpdateValue(DBMRtCalculator.DBM.Calculate(InputDBMPointDriver,DBMCorrelationPoints,InputTimestamp.LocalDate).Factor,InputTimestamp.LocalDate) ' Write calculated factor to output point
             End If
         End Sub
 
