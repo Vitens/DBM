@@ -58,9 +58,9 @@ Namespace DBM
                                 End If
                             Next PatternCounter
                             DBMPrediction.Calculate(Pattern)
-                            If DBMPredictions.Count>=DBMParameters.MaxDBMPointCacheSize Then ' Limit cache size
+                            Do While DBMPredictions.Count>=DBMParameters.MaxDBMPointCacheSize ' Limit cache size
                                 DBMPredictions.Remove(DBMPredictions.ElementAt(CInt(Math.Floor(Rnd*DBMPredictions.Count))).Key) ' Remove random cached value
-                            End If
+                            Loop
                             DBMPredictions.Add(CalcTimestamp,DBMPrediction.ShallowCopy) ' Add to cache
                         End If
                         MeasValueEMA(EMACounter)=DBMPrediction.MeasValue
