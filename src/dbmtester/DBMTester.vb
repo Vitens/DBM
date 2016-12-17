@@ -36,11 +36,11 @@ Module DBMTester
         End If
     End Function
 
-    Private Function FormatDateTime(Value As DateTime) As String
+    Private Function FormatDateTime(Timestamp As DateTime) As String
         If InternationalFormat Then
-            Return Value.ToUniversalTime.ToString("s") & "Z" ' ISO 8601 UTC
+            Return Timestamp.ToUniversalTime.ToString("s") & "Z" ' ISO 8601 UTC
         Else
-            Return Value.ToString
+            Return Timestamp.ToString
         End If
     End Function
 
@@ -90,7 +90,7 @@ Module DBMTester
             End If
         Next
         If InputPointDriver Is Nothing Or StartTimestamp=DateTime.MinValue Then ' Perform unit tests
-            Console.WriteLine(DBM.DBM.DBMVersion)
+            Console.WriteLine(DBM.DBM.Version)
         Else
             If EndTimestamp=DateTime.MinValue Then
                 EndTimestamp=StartTimestamp ' No end timestamp, set to start timestamp

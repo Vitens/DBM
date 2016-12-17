@@ -33,23 +33,23 @@ Namespace DBM
             Return DirectCast(Me.MemberwiseClone,DBMStatistics)
         End Function
 
-        Public Sub Calculate(DataY() As Double,Optional DataX() As Double=Nothing)
+        Public Sub Calculate(ValuesY() As Double,Optional ValuesX() As Double=Nothing)
             Dim i As Integer
             Dim SumX,SumY,SumXX,SumYY,SumXY As Double
-            If DataX Is Nothing Then
-                ReDim DataX(DataY.Length-1)
-                For i=0 To DataX.Length-1
-                    DataX(i)=i
+            If ValuesX Is Nothing Then
+                ReDim ValuesX(ValuesY.Length-1)
+                For i=0 To ValuesX.Length-1
+                    ValuesX(i)=i
                 Next i
             End If
             Count=0
-            For i=0 To DataY.Length-1
-                If Not Double.IsNaN(DataX(i)) And Not Double.IsNaN(DataY(i)) Then
-                    SumX+=DataX(i)
-                    SumY+=DataY(i)
-                    SumXX+=DataX(i)^2
-                    SumYY+=DataY(i)^2
-                    SumXY+=DataX(i)*DataY(i)
+            For i=0 To ValuesY.Length-1
+                If Not Double.IsNaN(ValuesX(i)) And Not Double.IsNaN(ValuesY(i)) Then
+                    SumX+=ValuesX(i)
+                    SumY+=ValuesY(i)
+                    SumXX+=ValuesX(i)^2
+                    SumYY+=ValuesY(i)^2
+                    SumXY+=ValuesX(i)*ValuesY(i)
                     Count+=1
                 End If
             Next i
@@ -57,9 +57,9 @@ Namespace DBM
             Angle=Math.Atan(Slope)/(2*Math.PI)*360 ' Angle in degrees
             Intercept=(SumX*SumXY-SumY*SumXX)/(SumX^2-Count*SumXX)
             StandardError=0 ' Standard error of the predicted y-value for each x in the regression. The standard error is a measure of the amount of error in the prediction of y for an individual x
-            For i=0 to DataY.Length-1
-                If Not Double.IsNaN(DataX(i)) And Not Double.IsNaN(DataY(i)) Then
-                    StandardError+=(DataY(i)-DataX(i)*Slope-Intercept)^2
+            For i=0 to ValuesY.Length-1
+                If Not Double.IsNaN(ValuesX(i)) And Not Double.IsNaN(ValuesY(i)) Then
+                    StandardError+=(ValuesY(i)-ValuesX(i)*Slope-Intercept)^2
                 End If
             Next i
             StandardError=Math.Sqrt(StandardError/(Count-2)) ' n-2 is used because two parameters (slope and intercept) were estimated in order to estimate the sum of squares

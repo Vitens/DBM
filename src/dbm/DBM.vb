@@ -30,7 +30,7 @@ Namespace DBM
 
         Public Points As New Collections.Generic.Dictionary(Of Object,DBMPoint)
 
-        Public Shared Function DBMVersion As String
+        Public Shared Function Version As String
             Dim Ticks As Int64=DateTime.Now.Ticks
             Return System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).FileDescription & _
                 " v" & System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).FileVersion & vbCrLf & _
