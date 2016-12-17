@@ -46,15 +46,15 @@ Namespace DBM
             End If
             For CorrelationCounter=0 To DBMParameters.CorrelationPreviousPeriods
                 If Calculate.DBMPrediction Is Nothing Or (IsInputDBMPoint And Calculate.Factor<>0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
-                    For EMACounter=DBMParameters.EMAPreviousPeriods To 0 Step -1
-                        CalcTimestamp=DateAdd("s",-(EMACounter+CorrelationCounter)*DBMParameters.CalculationInterval,Timestamp)
+                    For EMACounter=0 To DBMParameters.EMAPreviousPeriods
+                        CalcTimestamp=DateAdd("s",-(DBMParameters.EMAPreviousPeriods-EMACounter+CorrelationCounter)*DBMParameters.CalculationInterval,Timestamp)
                         If DBMPredictions.ContainsKey(CalcTimestamp) Then ' From cache
                             DBMPrediction=DBMPredictions.Item(CalcTimestamp).ShallowCopy
                         Else ' Calculate data
-                            For PatternCounter=DBMParameters.ComparePatterns To 0 Step -1
-                                Patterns(DBMParameters.ComparePatterns-PatternCounter)=DBMDataManager.Value(DateAdd("d",-PatternCounter*7,CalcTimestamp))
+                            For PatternCounter=0 To DBMParameters.ComparePatterns
+                                Patterns(PatternCounter)=DBMDataManager.Value(DateAdd("d",-(DBMParameters.ComparePatterns-PatternCounter)*7,CalcTimestamp))
                                 If SubstractDBMPoint IsNot Nothing Then
-                                    Patterns(DBMParameters.ComparePatterns-PatternCounter)-=SubstractDBMPoint.DBMDataManager.Value(DateAdd("d",-PatternCounter*7,CalcTimestamp))
+                                    Patterns(PatternCounter)-=SubstractDBMPoint.DBMDataManager.Value(DateAdd("d",-(DBMParameters.ComparePatterns-PatternCounter)*7,CalcTimestamp))
                                 End If
                             Next PatternCounter
                             DBMPrediction.Calculate(Patterns)

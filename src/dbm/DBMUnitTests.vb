@@ -305,25 +305,25 @@ Namespace DBM
             TestResults=TestResults And ArrayMultiplier(DBMMath.RemoveOutliers({3009.2004,3779.3677,3500.9705,3114.8486,3312.1548,3478.4153,3080.0972,2848.6597,3197.1477,3064.1587,3100.6992,2953.3582}))=ArrayMultiplier({3009.2004,Double.NaN,3500.9705,3114.8486,3312.1548,3478.4153,3080.0972,2848.6597,3197.1477,3064.1587,3100.6992,2953.3582})
 
             TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({70.5547}),4)=70.5547
-            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({53.3424,57.9519}),4)=54.4948
-            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({28.9562,30.1948}),4)=29.2658
-            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({77.474,1.4018}),4)=58.456
-            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({76.0724,81.449,70.9038}),4)=76.8702
-            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({4.5353,41.4033,86.2619}),4)=26.7442
-            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({79.048,37.3536,96.1953}),4)=69.5849
-            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({87.1446,5.6237,94.9557}),4)=64.9688
-            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({36.4019,52.4868,76.7112}),4)=46.7561
-            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({5.3505,59.2458,46.87,29.8165}),4)=29.509
-            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({62.2697,64.7821,26.3793,27.9342}),4)=53.6164
-            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({82.9802,82.4602,58.9163,98.6093}),4)=80.4071
-            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({91.0964,22.6866,69.5116,98.0003,24.3931}),4)=65.6332
-            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({53.3873,10.637,99.9415,67.6176,1.5704}),4)=48.0787
-            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({57.5184,10.0052,10.3023,79.8884,28.448}),4)=37.6429
-            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({4.5649,29.5773,38.2011,30.097,94.8571}),4)=26.456
-            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({97.9829,40.1374,27.828,16.0442,16.2822}),4)=55.6939
-            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({64.6587,41.0073,41.2767,71.273,32.6206,63.3179}),4)=53.1265
-            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({20.7561,18.6014,58.3359,8.0715,45.7971,90.573}),4)=31.4677
-            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({26.1368,78.5212,37.8903,28.9665,91.9377,63.1742}),4)=48.6925
+            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({53.3424,57.9519}),4)=56.7995
+            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({28.9562,30.1948}),4)=29.8852
+            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({77.474,1.4018}),4)=20.4199
+            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({76.0724,81.449,70.9038}),4)=74.6551
+            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({4.5353,41.4033,86.2619}),4)=61.7699
+            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({79.048,37.3536,96.1953}),4)=76.9338
+            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({87.1446,5.6237,94.9557}),4)=68.3164
+            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({36.4019,52.4868,76.7112}),4)=64.0315
+            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({5.3505,59.2458,46.87,29.8165}),4)=36.959
+            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({62.2697,64.7821,26.3793,27.9342}),4)=37.0099
+            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({82.9802,82.4602,58.9163,98.6093}),4)=83.4414
+            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({91.0964,22.6866,69.5116,98.0003,24.3931}),4)=55.7929
+            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({53.3873,10.637,99.9415,67.6176,1.5704}),4)=40.2177
+            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({57.5184,10.0052,10.3023,79.8884,28.448}),4)=38.6235
+            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({4.5649,29.5773,38.2011,30.097,94.8571}),4)=54.345
+            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({97.9829,40.1374,27.828,16.0442,16.2822}),4)=27.0999
+            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({64.6587,41.0073,41.2767,71.273,32.6206,63.3179}),4)=52.9531
+            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({20.7561,18.6014,58.3359,8.0715,45.7971,90.573}),4)=51.847
+            TestResults=TestResults And Math.Round(DBMMath.CalculateExpMovingAvg({26.1368,78.5212,37.8903,28.9665,91.9377,63.1742}),4)=60.2045
 
             For i=0 To 19
                 If i=0 Then
