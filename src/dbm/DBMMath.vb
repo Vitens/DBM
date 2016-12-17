@@ -107,73 +107,73 @@ Namespace DBM
             End If
         End Function
 
-        Public Shared Function CalculateMean(Data() As Double) As Double
+        Public Shared Function CalculateMean(Values() As Double) As Double
             CalculateMean=0
-            For Each Value In Data
-                CalculateMean+=Value/Data.Length
+            For Each Value In Values
+                CalculateMean+=Value/Values.Length
             Next
             Return CalculateMean
         End Function
 
-        Public Shared Function CalculateMedian(Data() As Double) As Double
-            Array.Sort(Data)
-            If Data.Length Mod 2=0 Then
-                Return (Data(Data.Length\2)+Data(Data.Length\2-1))/2
+        Public Shared Function CalculateMedian(Values() As Double) As Double
+            Array.Sort(Values)
+            If Values.Length Mod 2=0 Then
+                Return (Values(Values.Length\2)+Values(Values.Length\2-1))/2
             Else
-                Return Data(Data.Length\2)
+                Return Values(Values.Length\2)
             End If
         End Function
 
-        Public Shared Function CalculateMeanAbsDev(Data() As Double) As Double
+        Public Shared Function CalculateMeanAbsDev(Values() As Double) As Double
             Dim Mean As Double
             Dim i As Integer
-            Mean=CalculateMean(Data)
-            For i=0 to Data.Length-1
-                Data(i)=Math.Abs(Data(i)-Mean)
+            Mean=CalculateMean(Values)
+            For i=0 to Values.Length-1
+                Values(i)=Math.Abs(Values(i)-Mean)
             Next i
-            Return CalculateMean(Data)
+            Return CalculateMean(Values)
         End Function
 
-        Public Shared Function CalculateMedianAbsDev(Data() As Double) As Double
+        Public Shared Function CalculateMedianAbsDev(Values() As Double) As Double
             Dim Median As Double
             Dim i As Integer
-            Median=CalculateMedian(Data)
-            For i=0 to Data.Length-1
-                Data(i)=Math.Abs(Data(i)-Median)
+            Median=CalculateMedian(Values)
+            For i=0 to Values.Length-1
+                Values(i)=Math.Abs(Values(i)-Median)
             Next i
-            Return CalculateMedian(Data)
+            Return CalculateMedian(Values)
         End Function
 
-        Public Shared Function RemoveOutliers(Data() As Double) As Double() ' Returns an array which contains the input data from which outliers are removed (NaN)
+        Public Shared Function RemoveOutliers(Values() As Double) As Double() ' Returns an array which contains the input data from which outliers are removed (NaN)
             Dim Median,MedianAbsDev,Mean,MeanAbsDev As Double
             Dim i As Integer
-            Median=CalculateMedian(Data.ToArray)
-            MedianAbsDev=CalculateMedianAbsDev(Data.ToArray)
-            Mean=CalculateMean(Data.ToArray)
-            MeanAbsDev=CalculateMeanAbsDev(Data.ToArray)
-            For i=0 to Data.Length-1
+            Median=CalculateMedian(Values.ToArray)
+            MedianAbsDev=CalculateMedianAbsDev(Values.ToArray)
+            Mean=CalculateMean(Values.ToArray)
+            MeanAbsDev=CalculateMeanAbsDev(Values.ToArray)
+            For i=0 to Values.Length-1
                 If MedianAbsDev=0 Then ' Use Mean Absolute Deviation instead of Median Absolute Deviation to detect outliers
-                    If Math.Abs(Data(i)-Mean)>MeanAbsDev*MeanAbsDevScaleFactor*ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,Data.Length-1) Then ' If value is an outlier
-                        Data(i)=Double.NaN ' Exclude outlier
+                    If Math.Abs(Values(i)-Mean)>MeanAbsDev*MeanAbsDevScaleFactor*ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,Values.Length-1) Then ' If value is an outlier
+                        Values(i)=Double.NaN ' Exclude outlier
                     End If
                 Else ' Use Median Absolute Deviation to detect outliers
-                    If Math.Abs(Data(i)-Median)>MedianAbsDev*MedianAbsDevScaleFactor(Data.Length-1)*ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,Data.Length-1) Then ' If value is an outlier
-                        Data(i)=Double.NaN ' Exclude outlier
+                    If Math.Abs(Values(i)-Median)>MedianAbsDev*MedianAbsDevScaleFactor(Values.Length-1)*ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,Values.Length-1) Then ' If value is an outlier
+                        Values(i)=Double.NaN ' Exclude outlier
                     End If
                 End If
             Next i
-            Return Data
+            Return Values
         End Function
 
-        Public Shared Function CalculateExpMovingAvg(Data() As Double) As Double ' Filter high frequency variation
+        Public Shared Function CalculateExpMovingAvg(Values() As Double) As Double ' Filter high frequency variation
             Dim Weight,TotalWeight As Double
             CalculateExpMovingAvg=0
             Weight=1 ' Initial weight
             TotalWeight=0
-            For Each Value In Data ' Least significant value first
+            For Each Value In Values ' Least significant value first
                 CalculateExpMovingAvg+=Value*Weight
                 TotalWeight+=Weight
-                Weight/=1-2/(Data.Length+1) ' Increase weight for newer values
+                Weight/=1-2/(Values.Length+1) ' Increase weight for newer values
             Next
             CalculateExpMovingAvg/=TotalWeight
             Return CalculateExpMovingAvg

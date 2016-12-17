@@ -28,7 +28,7 @@ Namespace DBM
 
         Public DataManager As DBMDataManager
         Private Predictions As New Collections.Generic.Dictionary(Of DateTime,DBMPrediction)
-        Private PrevSubstractPoint As DBMPoint
+        Private PredictionsSubstractPoint As DBMPoint
 
         Public Sub New(PointDriver As DBMPointDriver)
             DataManager=New DBMDataManager(PointDriver)
@@ -40,9 +40,9 @@ Namespace DBM
             Dim Prediction As New DBMPrediction
             Dim Patterns(DBMParameters.ComparePatterns),MeasuredValues(DBMParameters.EMAPreviousPeriods),PredictedValues(DBMParameters.EMAPreviousPeriods),LowerControlLimits(DBMParameters.EMAPreviousPeriods),UpperControlLimits(DBMParameters.EMAPreviousPeriods) As Double
             Result=New DBMResult
-            If SubstractPoint IsNot PrevSubstractPoint Then ' Can we reuse stored results?
+            If SubstractPoint IsNot PredictionsSubstractPoint Then ' Can we reuse stored results?
                 Predictions.Clear 'No, so clear results
-                PrevSubstractPoint=SubstractPoint
+                PredictionsSubstractPoint=SubstractPoint
             End If
             For CorrelationCounter=0 To DBMParameters.CorrelationPreviousPeriods
                 If Result.Prediction Is Nothing Or (IsInputDBMPoint And Result.Factor<>0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
@@ -58,7 +58,7 @@ Namespace DBM
                                 End If
                             Next PatternCounter
                             Prediction.Calculate(Patterns)
-                            Do While Predictions.Count>=DBMParameters.MaxDBMPointCacheSize ' Limit cache size
+                            Do While Predictions.Count>=DBMParameters.MaxPointPredictions ' Limit cache size
                                 Predictions.Remove(Predictions.ElementAt(CInt(Math.Floor(Rnd*Predictions.Count))).Key) ' Remove random cached value
                             Loop
                             Predictions.Add(PredictionTimestamp,Prediction.ShallowCopy) ' Add to cache

@@ -36,8 +36,8 @@ Namespace DBMRt
             ExDesc=DirectCast(OutputPointDriver.Point,PISDK.PIPoint).PointAttributes("ExDesc").Value.ToString
             If Text.RegularExpressions.Regex.IsMatch(ExDesc,"^[-]{0,1}[a-zA-Z0-9][a-zA-Z0-9_\.-]{0,}:[^:?*&]{1,}(&[-]{0,1}[a-zA-Z0-9][a-zA-Z0-9_\.-]{0,}:[^:?*&]{1,}){0,}$") Then
                 SubstringsA=ExDesc.Split(New Char(){"&"c})
-                For Each thisField In SubstringsA
-                    SubstringsB=thisField.Split(New Char(){":"c})
+                For Each SubstringA In SubstringsA
+                    SubstringsB=SubstringA.Split(New Char(){":"c})
                     Try
                         If DBMRtCalculator.PISDK.Servers(Mid(SubstringsB(0),1+If(Left(SubstringsB(0),1)="-",1,0))).PIPoints(SubstringsB(1)).Name<>"" Then
                             CorrelationPoints.Add(New DBM.DBMCorrelationPoint(New DBM.DBMPointDriver(DBMRtCalculator.PISDK.Servers(Mid(SubstringsB(0),1+If(Left(SubstringsB(0),1)="-",1,0))).PIPoints(SubstringsB(1))),Left(SubstringsB(0),1)="-"))
@@ -51,8 +51,8 @@ Namespace DBMRt
         Public Sub Calculate
             Dim InputTimestamp,OutputTimestamp As PITimeServer.PITime
             InputTimestamp=DirectCast(InputPointDriver.Point,PISDK.PIPoint).Data.Snapshot.TimeStamp ' Timestamp of input point
-            For Each thisCorrelationPoint In CorrelationPoints ' Check timestamp of correlation points
-                InputTimestamp.UTCSeconds=Math.Min(InputTimestamp.UTCSeconds,DirectCast(thisCorrelationPoint.PointDriver.Point,PISDK.PIPoint).Data.Snapshot.TimeStamp.UTCSeconds) ' Timestamp of correlation point, keep earliest
+            For Each CorrelationPoint In CorrelationPoints ' Check timestamp of correlation points
+                InputTimestamp.UTCSeconds=Math.Min(InputTimestamp.UTCSeconds,DirectCast(CorrelationPoint.PointDriver.Point,PISDK.PIPoint).Data.Snapshot.TimeStamp.UTCSeconds) ' Timestamp of correlation point, keep earliest
             Next
             InputTimestamp.UTCSeconds-=DBM.DBMParameters.CalculationInterval+InputTimestamp.UTCSeconds Mod DBM.DBMParameters.CalculationInterval ' Can calculate output until (inclusive)
             OutputTimestamp=DirectCast(OutputPointDriver.Point,PISDK.PIPoint).Data.Snapshot.TimeStamp ' Timestamp of output point

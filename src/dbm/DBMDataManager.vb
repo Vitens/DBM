@@ -47,7 +47,7 @@ Namespace DBM
                         Value=Double.NaN ' Error, return Not a Number
                     End Try
                 End If
-                Do While Values.Count>=DBMParameters.MaxDBMDataManagerCacheSize ' Limit cache size
+                Do While Values.Count>=DBMParameters.MaxDataManagerValues ' Limit cache size
                     Values.Remove(Values.ElementAt(CInt(Math.Floor(Rnd*Values.Count))).Key) ' Remove random cached value
                 Loop
                 Values.Add(Timestamp,Value) ' Add to cache

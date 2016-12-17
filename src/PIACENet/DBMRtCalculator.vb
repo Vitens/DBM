@@ -35,8 +35,8 @@ Namespace DBMRt
         End Sub
 
         Public Sub Calculate
-            For Each thisPIServer In PIServers
-                thisPIServer.Calculate
+            For Each PIServer In PIServers
+                PIServer.Calculate
             Next
         End Sub
 

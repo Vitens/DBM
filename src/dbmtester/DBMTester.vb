@@ -103,8 +103,8 @@ Module DBMTester
                 Console.Write(FormatNumber(Result.Factor) & vbTab & FormatNumber(Result.Prediction.MeasuredValue) & vbTab & FormatNumber(Result.Prediction.PredictedValue) & vbTab & FormatNumber(Result.Prediction.LowerControlLimit) & vbTab & FormatNumber(Result.Prediction.UpperControlLimit) & vbTab)
                 Console.Write(FormatNumber(Result.AbsoluteErrorStats.Count) & vbTab & FormatNumber(Result.AbsoluteErrorStats.Slope) & vbTab & FormatNumber(Result.AbsoluteErrorStats.Angle) & vbTab & FormatNumber(Result.AbsoluteErrorStats.Intercept) & vbTab & FormatNumber(Result.AbsoluteErrorStats.StandardError) & vbTab & FormatNumber(Result.AbsoluteErrorStats.Correlation) & vbTab & FormatNumber(Result.AbsoluteErrorStats.ModifiedCorrelation) & vbTab & FormatNumber(Result.AbsoluteErrorStats.Determination) & vbTab)
                 Console.Write(FormatNumber(Result.RelativeErrorStats.Count) & vbTab & FormatNumber(Result.RelativeErrorStats.Slope) & vbTab & FormatNumber(Result.RelativeErrorStats.Angle) & vbTab & FormatNumber(Result.RelativeErrorStats.Intercept) & vbTab & FormatNumber(Result.RelativeErrorStats.StandardError) & vbTab & FormatNumber(Result.RelativeErrorStats.Correlation) & vbTab & FormatNumber(Result.RelativeErrorStats.ModifiedCorrelation) & vbTab & FormatNumber(Result.RelativeErrorStats.Determination))
-                For Each thisCorrelationPoint In CorrelationPoints
-                    Result=_DBM.Result(thisCorrelationPoint.PointDriver,Nothing,StartTimestamp)
+                For Each CorrelationPoint In CorrelationPoints
+                    Result=_DBM.Result(CorrelationPoint.PointDriver,Nothing,StartTimestamp)
                     Console.Write(vbTab & FormatNumber(Result.Prediction.MeasuredValue) & vbTab & FormatNumber(Result.Prediction.PredictedValue) & vbTab & FormatNumber(Result.Prediction.LowerControlLimit) & vbTab & FormatNumber(Result.Prediction.UpperControlLimit))
                 Next
                 Console.Write(vbCrLf)

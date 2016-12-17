@@ -33,13 +33,13 @@ Namespace DBMRt
             Dim InstrTag,Substrings() As String
             Me.PIServer=PIServer
             Try
-                For Each thisPIPoint As PISDK.PIPoint In Me.PIServer.GetPointsSQL("PIpoint.Tag='*' AND PIpoint.PointSource='dbmrt' AND PIpoint.Scan=1")
-                    InstrTag=thisPIPoint.PointAttributes("InstrumentTag").Value.ToString
+                For Each PIPoint As PISDK.PIPoint In Me.PIServer.GetPointsSQL("PIpoint.Tag='*' AND PIpoint.PointSource='dbmrt' AND PIpoint.Scan=1")
+                    InstrTag=PIPoint.PointAttributes("InstrumentTag").Value.ToString
                     If Text.RegularExpressions.Regex.IsMatch(InstrTag,"^[a-zA-Z0-9_\.-]{1,}:[^:?*&]{1,}$") Then
                         Substrings=InstrTag.Split(New Char(){":"c})
                         Try
                             If DBMRtCalculator.PISDK.Servers(Substrings(0)).PIPoints(Substrings(1)).Name<>"" Then
-                                PIPoints.Add(New DBMRtPIPoint(DBMRtCalculator.PISDK.Servers(Substrings(0)).PIPoints(Substrings(1)),thisPIPoint))
+                                PIPoints.Add(New DBMRtPIPoint(DBMRtCalculator.PISDK.Servers(Substrings(0)).PIPoints(Substrings(1)),PIPoint))
                             End If
                         Catch
                         End Try
@@ -50,9 +50,9 @@ Namespace DBMRt
         End Sub
 
         Public Sub Calculate
-            For Each thisPIPoint In PIPoints
+            For Each PIPoint In PIPoints
                 Try
-                    thisPIPoint.Calculate
+                    PIPoint.Calculate
                 Catch
                 End Try
             Next

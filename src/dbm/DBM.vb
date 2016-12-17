@@ -80,20 +80,20 @@ Namespace DBM
             End If
             Result=Point(InputPointDriver).Result(Timestamp,True,CorrelationPoints.Count>0) ' Calculate for input point
             If Result.Factor<>0 And CorrelationPoints.Count>0 Then ' If an event is found and a correlation point is available
-                For Each thisCorrelationPoint In CorrelationPoints
-                    If thisCorrelationPoint.SubstractSelf Then ' If pattern of correlation point contains input point
-                        CorrelationResult=Point(thisCorrelationPoint.PointDriver).Result(Timestamp,False,True,Point(InputPointDriver)) ' Calculate for correlation point, substract input point
+                For Each CorrelationPoint In CorrelationPoints
+                    If CorrelationPoint.SubstractSelf Then ' If pattern of correlation point contains input point
+                        CorrelationResult=Point(CorrelationPoint.PointDriver).Result(Timestamp,False,True,Point(InputPointDriver)) ' Calculate for correlation point, substract input point
                     Else
-                        CorrelationResult=Point(thisCorrelationPoint.PointDriver).Result(Timestamp,False,True) ' Calculate for correlation point
+                        CorrelationResult=Point(CorrelationPoint.PointDriver).Result(Timestamp,False,True) ' Calculate for correlation point
                     End If
                     AbsoluteErrorStats.Calculate(CorrelationResult.AbsoluteErrors,Result.AbsoluteErrors) ' Absolute error compared to prediction
                     RelativeErrorStats.Calculate(CorrelationResult.RelativeErrors,Result.RelativeErrors) ' Relative error compared to prediction
-                    Factor=Suppress(Result.Factor,AbsoluteErrorStats.ModifiedCorrelation,RelativeErrorStats.ModifiedCorrelation,thisCorrelationPoint.SubstractSelf)
+                    Factor=Suppress(Result.Factor,AbsoluteErrorStats.ModifiedCorrelation,RelativeErrorStats.ModifiedCorrelation,CorrelationPoint.SubstractSelf)
                     If Factor<>Result.Factor Then ' Has event been suppressed
                         Result.Factor=Factor
                         Result.AbsoluteErrorStats=AbsoluteErrorStats.ShallowCopy
                         Result.RelativeErrorStats=RelativeErrorStats.ShallowCopy
-                        Result.SuppressedBy=thisCorrelationPoint.PointDriver ' Suppressed by
+                        Result.SuppressedBy=CorrelationPoint.PointDriver ' Suppressed by
                     End If
                 Next
             End If

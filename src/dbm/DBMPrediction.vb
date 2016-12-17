@@ -39,10 +39,10 @@ Namespace DBM
             Me.UpperControlLimit=UpperControlLimit
         End Sub
 
-        Public Sub Calculate(Data() As Double) ' Calculates and stores prediction and control limits
+        Public Sub Calculate(Values() As Double) ' Calculates and stores prediction and control limits
             Dim Statistics As New DBMStatistics
-            Statistics.Calculate(DBMMath.RemoveOutliers(Data.Take(Data.Length-1).ToArray)) ' Calculate statistics for data after removing outliers
-            MeasuredValue=Data(DBMParameters.ComparePatterns)
+            Statistics.Calculate(DBMMath.RemoveOutliers(Values.Take(Values.Length-1).ToArray)) ' Calculate statistics for data after removing outliers
+            MeasuredValue=Values(DBMParameters.ComparePatterns)
             PredictedValue=DBMParameters.ComparePatterns*Statistics.Slope+Statistics.Intercept ' Extrapolate regression one interval
             LowerControlLimit=PredictedValue-DBMMath.ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,Statistics.Count-1)*Statistics.StandardError
             UpperControlLimit=PredictedValue+DBMMath.ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,Statistics.Count-1)*Statistics.StandardError
