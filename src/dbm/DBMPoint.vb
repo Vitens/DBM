@@ -26,52 +26,52 @@ Namespace DBM
 
     Public Class DBMPoint
 
-        Public DBMDataManager As DBMDataManager
-        Private DBMPredictions As New Collections.Generic.Dictionary(Of DateTime,DBMPrediction)
-        Private PrevSubstractDBMPoint As DBMPoint
+        Public DataManager As DBMDataManager
+        Private Predictions As New Collections.Generic.Dictionary(Of DateTime,DBMPrediction)
+        Private PrevSubstractPoint As DBMPoint
 
-        Public Sub New(DBMPointDriver As DBMPointDriver)
-            DBMDataManager=New DBMDataManager(DBMPointDriver)
+        Public Sub New(PointDriver As DBMPointDriver)
+            DataManager=New DBMDataManager(PointDriver)
         End Sub
 
-        Public Function Calculate(Timestamp As DateTime,IsInputDBMPoint As Boolean,HasCorrelationDBMPoint As Boolean,Optional SubstractDBMPoint As DBMPoint=Nothing) As DBMResult
+        Public Function Result(Timestamp As DateTime,IsInputDBMPoint As Boolean,HasCorrelationDBMPoint As Boolean,Optional SubstractPoint As DBMPoint=Nothing) As DBMResult
             Dim CorrelationCounter,EMACounter,PatternCounter As Integer
-            Dim CalcTimestamp As DateTime
-            Dim DBMPrediction As New DBMPrediction
-            Dim Patterns(DBMParameters.ComparePatterns),MeasValues(DBMParameters.EMAPreviousPeriods),PredValues(DBMParameters.EMAPreviousPeriods),LowContrLimits(DBMParameters.EMAPreviousPeriods),UppContrLimits(DBMParameters.EMAPreviousPeriods) As Double
-            Calculate=New DBMResult
-            If SubstractDBMPoint IsNot PrevSubstractDBMPoint Then ' Can we reuse stored results?
-                DBMPredictions.Clear 'No, so clear results
-                PrevSubstractDBMPoint=SubstractDBMPoint
+            Dim PredictionTimestamp As DateTime
+            Dim Prediction As New DBMPrediction
+            Dim Patterns(DBMParameters.ComparePatterns),MeasuredValues(DBMParameters.EMAPreviousPeriods),PredictedValues(DBMParameters.EMAPreviousPeriods),LowerControlLimits(DBMParameters.EMAPreviousPeriods),UpperControlLimits(DBMParameters.EMAPreviousPeriods) As Double
+            Result=New DBMResult
+            If SubstractPoint IsNot PrevSubstractPoint Then ' Can we reuse stored results?
+                Predictions.Clear 'No, so clear results
+                PrevSubstractPoint=SubstractPoint
             End If
             For CorrelationCounter=0 To DBMParameters.CorrelationPreviousPeriods
-                If Calculate.DBMPrediction Is Nothing Or (IsInputDBMPoint And Calculate.Factor<>0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
+                If Result.Prediction Is Nothing Or (IsInputDBMPoint And Result.Factor<>0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
                     For EMACounter=0 To DBMParameters.EMAPreviousPeriods
-                        CalcTimestamp=DateAdd("s",-(DBMParameters.EMAPreviousPeriods-EMACounter+CorrelationCounter)*DBMParameters.CalculationInterval,Timestamp)
-                        If DBMPredictions.ContainsKey(CalcTimestamp) Then ' From cache
-                            DBMPrediction=DBMPredictions.Item(CalcTimestamp).ShallowCopy
+                        PredictionTimestamp=DateAdd("s",-(DBMParameters.EMAPreviousPeriods-EMACounter+CorrelationCounter)*DBMParameters.CalculationInterval,Timestamp)
+                        If Predictions.ContainsKey(PredictionTimestamp) Then ' From cache
+                            Prediction=Predictions.Item(PredictionTimestamp).ShallowCopy
                         Else ' Calculate data
                             For PatternCounter=0 To DBMParameters.ComparePatterns
-                                Patterns(PatternCounter)=DBMDataManager.Value(DateAdd("d",-(DBMParameters.ComparePatterns-PatternCounter)*7,CalcTimestamp))
-                                If SubstractDBMPoint IsNot Nothing Then
-                                    Patterns(PatternCounter)-=SubstractDBMPoint.DBMDataManager.Value(DateAdd("d",-(DBMParameters.ComparePatterns-PatternCounter)*7,CalcTimestamp))
+                                Patterns(PatternCounter)=DataManager.Value(DateAdd("d",-(DBMParameters.ComparePatterns-PatternCounter)*7,PredictionTimestamp))
+                                If SubstractPoint IsNot Nothing Then
+                                    Patterns(PatternCounter)-=SubstractPoint.DataManager.Value(DateAdd("d",-(DBMParameters.ComparePatterns-PatternCounter)*7,PredictionTimestamp))
                                 End If
                             Next PatternCounter
-                            DBMPrediction.Calculate(Patterns)
-                            Do While DBMPredictions.Count>=DBMParameters.MaxDBMPointCacheSize ' Limit cache size
-                                DBMPredictions.Remove(DBMPredictions.ElementAt(CInt(Math.Floor(Rnd*DBMPredictions.Count))).Key) ' Remove random cached value
+                            Prediction.Calculate(Patterns)
+                            Do While Predictions.Count>=DBMParameters.MaxDBMPointCacheSize ' Limit cache size
+                                Predictions.Remove(Predictions.ElementAt(CInt(Math.Floor(Rnd*Predictions.Count))).Key) ' Remove random cached value
                             Loop
-                            DBMPredictions.Add(CalcTimestamp,DBMPrediction.ShallowCopy) ' Add to cache
+                            Predictions.Add(PredictionTimestamp,Prediction.ShallowCopy) ' Add to cache
                         End If
-                        MeasValues(EMACounter)=DBMPrediction.MeasValue
-                        PredValues(EMACounter)=DBMPrediction.PredValue
-                        LowContrLimits(EMACounter)=DBMPrediction.LowContrLimit
-                        UppContrLimits(EMACounter)=DBMPrediction.UppContrLimit
+                        MeasuredValues(EMACounter)=Prediction.MeasuredValue
+                        PredictedValues(EMACounter)=Prediction.PredictedValue
+                        LowerControlLimits(EMACounter)=Prediction.LowerControlLimit
+                        UpperControlLimits(EMACounter)=Prediction.UpperControlLimit
                     Next EMACounter
-                    Calculate.Calculate(CorrelationCounter,DBMMath.CalculateExpMovingAvg(MeasValues),DBMMath.CalculateExpMovingAvg(PredValues),DBMMath.CalculateExpMovingAvg(LowContrLimits),DBMMath.CalculateExpMovingAvg(UppContrLimits))
+                    Result.Calculate(CorrelationCounter,DBMMath.CalculateExpMovingAvg(MeasuredValues),DBMMath.CalculateExpMovingAvg(PredictedValues),DBMMath.CalculateExpMovingAvg(LowerControlLimits),DBMMath.CalculateExpMovingAvg(UpperControlLimits))
                 End If
             Next CorrelationCounter
-            Return Calculate
+            Return Result
         End Function
 
     End Class

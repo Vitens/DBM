@@ -28,15 +28,15 @@ Namespace DBMRt
 
         Public Shared PISDK As New PISDK.PISDK
         Public Shared DBM As New DBM.DBM
-        Private DBMRtPIServers As New Collections.Generic.List(Of DBMRtPIServer)
+        Private PIServers As New Collections.Generic.List(Of DBMRtPIServer)
 
         Public Sub New
-            DBMRtPIServers.Add(New DBMRtPIServer(PISDK.Servers.DefaultServer))
+            PIServers.Add(New DBMRtPIServer(PISDK.Servers.DefaultServer))
         End Sub
 
         Public Sub Calculate
-            For Each thisDBMRtPIServer As DBMRtPIServer In DBMRtPIServers
-                thisDBMRtPIServer.Calculate
+            For Each thisPIServer In PIServers
+                thisPIServer.Calculate
             Next
         End Sub
 

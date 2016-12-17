@@ -27,7 +27,7 @@ Namespace DBM
     Public Class DBMPointDriver
 
         Public Point As Object
-        Private CachedValues As Collections.Generic.Dictionary(Of DateTime,Double)
+        Private Values As Collections.Generic.Dictionary(Of DateTime,Double)
 
         Public Sub New(Point As Object)
             Me.Point=Point
@@ -35,15 +35,15 @@ Namespace DBM
 
         Public Function GetData(StartTimestamp As DateTime,EndTimestamp As DateTime) As Double
             Dim StreamReader As System.IO.StreamReader
-            Dim Fields() As String
-            If CachedValues Is Nothing Then ' No data in memory yet
-                CachedValues=New Collections.Generic.Dictionary(Of DateTime,Double)
+            Dim Substrings() As String
+            If Values Is Nothing Then ' No data in memory yet
+                Values=New Collections.Generic.Dictionary(Of DateTime,Double)
                 Try
                     StreamReader=New System.IO.StreamReader(CStr(Point))
                     Do While Not StreamReader.EndOfStream
                         Try
-                            Fields=StreamReader.ReadLine.Split(New Char(){","c,CChar(vbTab)},2) ' Comma and tab delimiters; split in 2 fields
-                            CachedValues.Add(Convert.ToDateTime(Fields(0)),Convert.ToDouble(Fields(1))) ' timestamp,value
+                            Substrings=StreamReader.ReadLine.Split(New Char(){","c,CChar(vbTab)},2) ' Comma and tab delimiters; split in 2 substrings
+                            Values.Add(Convert.ToDateTime(Substrings(0)),Convert.ToDouble(Substrings(1))) ' timestamp,value
                         Catch
                         End Try
                     Loop
@@ -51,8 +51,8 @@ Namespace DBM
                 Catch
                 End Try
             End If
-            If CachedValues.ContainsKey(StartTimestamp) Then ' In cache
-                Return CachedValues.Item(StartTimestamp) ' Return value from cache
+            If Values.ContainsKey(StartTimestamp) Then ' In cache
+                Return Values.Item(StartTimestamp) ' Return value from cache
             Else
                 Return Double.NaN ' No data, return Not a Number
             End If

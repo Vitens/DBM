@@ -27,19 +27,19 @@ Namespace DBMRt
     Public Class DBMRtPIServer
 
         Private PIServer As PISDK.Server
-        Private DBMRtPIPoints As New Collections.Generic.List(Of DBMRtPIPoint)
+        Private PIPoints As New Collections.Generic.List(Of DBMRtPIPoint)
 
         Public Sub New(PIServer As PISDK.Server)
-            Dim InstrTag,Fields() As String
+            Dim InstrTag,Substrings() As String
             Me.PIServer=PIServer
             Try
-                For Each thisDBMRtPIPoint As PISDK.PIPoint In Me.PIServer.GetPointsSQL("PIpoint.Tag='*' AND PIpoint.PointSource='dbmrt' AND PIpoint.Scan=1")
-                    InstrTag=thisDBMRtPIPoint.PointAttributes("InstrumentTag").Value.ToString
+                For Each thisPIPoint As PISDK.PIPoint In Me.PIServer.GetPointsSQL("PIpoint.Tag='*' AND PIpoint.PointSource='dbmrt' AND PIpoint.Scan=1")
+                    InstrTag=thisPIPoint.PointAttributes("InstrumentTag").Value.ToString
                     If Text.RegularExpressions.Regex.IsMatch(InstrTag,"^[a-zA-Z0-9_\.-]{1,}:[^:?*&]{1,}$") Then
-                        Fields=InstrTag.Split(New Char(){":"c})
+                        Substrings=InstrTag.Split(New Char(){":"c})
                         Try
-                            If DBMRtCalculator.PISDK.Servers(Fields(0)).PIPoints(Fields(1)).Name<>"" Then
-                                DBMRtPIPoints.Add(New DBMRtPIPoint(DBMRtCalculator.PISDK.Servers(Fields(0)).PIPoints(Fields(1)),thisDBMRtPIPoint))
+                            If DBMRtCalculator.PISDK.Servers(Substrings(0)).PIPoints(Substrings(1)).Name<>"" Then
+                                PIPoints.Add(New DBMRtPIPoint(DBMRtCalculator.PISDK.Servers(Substrings(0)).PIPoints(Substrings(1)),thisPIPoint))
                             End If
                         Catch
                         End Try
@@ -50,9 +50,9 @@ Namespace DBMRt
         End Sub
 
         Public Sub Calculate
-            For Each thisDBMRtPIPoint As DBMRtPIPoint In DBMRtPIPoints
+            For Each thisPIPoint In PIPoints
                 Try
-                    thisDBMRtPIPoint.Calculate
+                    thisPIPoint.Calculate
                 Catch
                 End Try
             Next

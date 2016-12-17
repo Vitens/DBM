@@ -26,21 +26,21 @@ Namespace DBMRt
 
     Public Class DBMRtPIPoint
 
-        Private InputDBMPointDriver,OutputDBMPointDriver As DBM.DBMPointDriver
-        Private DBMCorrelationPoints As New Collections.Generic.List(Of DBM.DBMCorrelationPoint)
+        Private InputPointDriver,OutputPointDriver As DBM.DBMPointDriver
+        Private CorrelationPoints As New Collections.Generic.List(Of DBM.DBMCorrelationPoint)
 
         Public Sub New(InputPIPoint As PISDK.PIPoint,OutputPIPoint As PISDK.PIPoint)
-            Dim ExDesc,FieldsA(),FieldsB() As String
-            InputDBMPointDriver=New DBM.DBMPointDriver(InputPIPoint)
-            OutputDBMPointDriver=New DBM.DBMPointDriver(OutputPIPoint)
-            ExDesc=DirectCast(OutputDBMPointDriver.Point,PISDK.PIPoint).PointAttributes("ExDesc").Value.ToString
+            Dim ExDesc,SubstringsA(),SubstringsB() As String
+            InputPointDriver=New DBM.DBMPointDriver(InputPIPoint)
+            OutputPointDriver=New DBM.DBMPointDriver(OutputPIPoint)
+            ExDesc=DirectCast(OutputPointDriver.Point,PISDK.PIPoint).PointAttributes("ExDesc").Value.ToString
             If Text.RegularExpressions.Regex.IsMatch(ExDesc,"^[-]{0,1}[a-zA-Z0-9][a-zA-Z0-9_\.-]{0,}:[^:?*&]{1,}(&[-]{0,1}[a-zA-Z0-9][a-zA-Z0-9_\.-]{0,}:[^:?*&]{1,}){0,}$") Then
-                FieldsA=ExDesc.Split(New Char(){"&"c})
-                For Each thisField As String In FieldsA
-                    FieldsB=thisField.Split(New Char(){":"c})
+                SubstringsA=ExDesc.Split(New Char(){"&"c})
+                For Each thisField In SubstringsA
+                    SubstringsB=thisField.Split(New Char(){":"c})
                     Try
-                        If DBMRtCalculator.PISDK.Servers(Mid(FieldsB(0),1+If(Left(FieldsB(0),1)="-",1,0))).PIPoints(FieldsB(1)).Name<>"" Then
-                            DBMCorrelationPoints.Add(New DBM.DBMCorrelationPoint(New DBM.DBMPointDriver(DBMRtCalculator.PISDK.Servers(Mid(FieldsB(0),1+If(Left(FieldsB(0),1)="-",1,0))).PIPoints(FieldsB(1))),Left(FieldsB(0),1)="-"))
+                        If DBMRtCalculator.PISDK.Servers(Mid(SubstringsB(0),1+If(Left(SubstringsB(0),1)="-",1,0))).PIPoints(SubstringsB(1)).Name<>"" Then
+                            CorrelationPoints.Add(New DBM.DBMCorrelationPoint(New DBM.DBMPointDriver(DBMRtCalculator.PISDK.Servers(Mid(SubstringsB(0),1+If(Left(SubstringsB(0),1)="-",1,0))).PIPoints(SubstringsB(1))),Left(SubstringsB(0),1)="-"))
                         End If
                     Catch
                     End Try
@@ -50,15 +50,15 @@ Namespace DBMRt
 
         Public Sub Calculate
             Dim InputTimestamp,OutputTimestamp As PITimeServer.PITime
-            InputTimestamp=DirectCast(InputDBMPointDriver.Point,PISDK.PIPoint).Data.Snapshot.TimeStamp ' Timestamp of input point
-            For Each thisDBMCorrelationPoint As DBM.DBMCorrelationPoint In DBMCorrelationPoints ' Check timestamp of correlation points
-                InputTimestamp.UTCSeconds=Math.Min(InputTimestamp.UTCSeconds,DirectCast(thisDBMCorrelationPoint.DBMPointDriver.Point,PISDK.PIPoint).Data.Snapshot.TimeStamp.UTCSeconds) ' Timestamp of correlation point, keep earliest
+            InputTimestamp=DirectCast(InputPointDriver.Point,PISDK.PIPoint).Data.Snapshot.TimeStamp ' Timestamp of input point
+            For Each thisCorrelationPoint In CorrelationPoints ' Check timestamp of correlation points
+                InputTimestamp.UTCSeconds=Math.Min(InputTimestamp.UTCSeconds,DirectCast(thisCorrelationPoint.PointDriver.Point,PISDK.PIPoint).Data.Snapshot.TimeStamp.UTCSeconds) ' Timestamp of correlation point, keep earliest
             Next
             InputTimestamp.UTCSeconds-=DBM.DBMParameters.CalculationInterval+InputTimestamp.UTCSeconds Mod DBM.DBMParameters.CalculationInterval ' Can calculate output until (inclusive)
-            OutputTimestamp=DirectCast(OutputDBMPointDriver.Point,PISDK.PIPoint).Data.Snapshot.TimeStamp ' Timestamp of output point
+            OutputTimestamp=DirectCast(OutputPointDriver.Point,PISDK.PIPoint).Data.Snapshot.TimeStamp ' Timestamp of output point
             OutputTimestamp.UTCSeconds+=DBM.DBMParameters.CalculationInterval-OutputTimestamp.UTCSeconds Mod DBM.DBMParameters.CalculationInterval ' Next calculation timestamp
             If InputTimestamp.UTCSeconds>=OutputTimestamp.UTCSeconds Then ' If calculation timestamp can be calculated
-                DirectCast(OutputDBMPointDriver.Point,PISDK.PIPoint).Data.UpdateValue(DBMRtCalculator.DBM.Calculate(InputDBMPointDriver,DBMCorrelationPoints,InputTimestamp.LocalDate).Factor,InputTimestamp.LocalDate) ' Write calculated factor to output point
+                DirectCast(OutputPointDriver.Point,PISDK.PIPoint).Data.UpdateValue(DBMRtCalculator.DBM.Result(InputPointDriver,CorrelationPoints,InputTimestamp.LocalDate).Factor,InputTimestamp.LocalDate) ' Write calculated factor to output point
             End If
         End Sub
 

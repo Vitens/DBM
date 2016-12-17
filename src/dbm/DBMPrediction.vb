@@ -26,26 +26,26 @@ Namespace DBM
 
     Public Class DBMPrediction
 
-        Public MeasValue,PredValue,LowContrLimit,UppContrLimit As Double
+        Public MeasuredValue,PredictedValue,LowerControlLimit,UpperControlLimit As Double
 
         Public Function ShallowCopy As DBMPrediction
             Return DirectCast(Me.MemberwiseClone,DBMPrediction)
         End Function
 
-        Public Sub New(Optional MeasValue As Double=0,Optional PredValue As Double=0,Optional LowContrLimit As Double=0,Optional UppContrLimit As Double=0)
-            Me.MeasValue=MeasValue
-            Me.PredValue=PredValue
-            Me.LowContrLimit=LowContrLimit
-            Me.UppContrLimit=UppContrLimit
+        Public Sub New(Optional MeasuredValue As Double=0,Optional PredictedValue As Double=0,Optional LowerControlLimit As Double=0,Optional UpperControlLimit As Double=0)
+            Me.MeasuredValue=MeasuredValue
+            Me.PredictedValue=PredictedValue
+            Me.LowerControlLimit=LowerControlLimit
+            Me.UpperControlLimit=UpperControlLimit
         End Sub
 
         Public Sub Calculate(Data() As Double) ' Calculates and stores prediction and control limits
-            Dim DBMStatistics As New DBMStatistics
-            DBMStatistics.Calculate(DBMMath.RemoveOutliers(Data.Take(Data.Length-1).ToArray)) ' Calculate statistics for data after removing outliers
-            MeasValue=Data(DBMParameters.ComparePatterns)
-            PredValue=DBMParameters.ComparePatterns*DBMStatistics.Slope+DBMStatistics.Intercept ' Extrapolate regression one interval
-            LowContrLimit=PredValue-DBMMath.ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,DBMStatistics.Count-1)*DBMStatistics.StandardError
-            UppContrLimit=PredValue+DBMMath.ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,DBMStatistics.Count-1)*DBMStatistics.StandardError
+            Dim Statistics As New DBMStatistics
+            Statistics.Calculate(DBMMath.RemoveOutliers(Data.Take(Data.Length-1).ToArray)) ' Calculate statistics for data after removing outliers
+            MeasuredValue=Data(DBMParameters.ComparePatterns)
+            PredictedValue=DBMParameters.ComparePatterns*Statistics.Slope+Statistics.Intercept ' Extrapolate regression one interval
+            LowerControlLimit=PredictedValue-DBMMath.ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,Statistics.Count-1)*Statistics.StandardError
+            UpperControlLimit=PredictedValue+DBMMath.ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,Statistics.Count-1)*Statistics.StandardError
         End Sub
 
     End Class

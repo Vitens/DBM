@@ -109,7 +109,7 @@ Namespace DBM
 
         Public Shared Function CalculateMean(Data() As Double) As Double
             CalculateMean=0
-            For Each Value As Double In Data
+            For Each Value In Data
                 CalculateMean+=Value/Data.Length
             Next
             Return CalculateMean
@@ -170,7 +170,7 @@ Namespace DBM
             CalculateExpMovingAvg=0
             Weight=1 ' Initial weight
             TotalWeight=0
-            For Each Value As Double In Data ' Least significant value first
+            For Each Value In Data ' Least significant value first
                 CalculateExpMovingAvg+=Value*Weight
                 TotalWeight+=Weight
                 Weight/=1-2/(Data.Length+1) ' Increase weight for newer values

@@ -27,8 +27,8 @@ Namespace DBM
     Public Class DBMResult
 
         Public Factor,OriginalFactor,AbsoluteErrors(),RelativeErrors() As Double
-        Public DBMPrediction As DBMPrediction
-        Public AbsErrorStats,RelErrorStats As New DBMStatistics
+        Public Prediction As DBMPrediction
+        Public AbsoluteErrorStats,RelativeErrorStats As New DBMStatistics
         Public SuppressedBy As DBMPointDriver
 
         Public Sub New
@@ -36,17 +36,17 @@ Namespace DBM
             ReDim RelativeErrors(DBMParameters.CorrelationPreviousPeriods)
         End Sub
 
-        Public Sub Calculate(Index As Integer,MeasValueEMA As Double,PredValueEMA As Double,LowContrLimitEMA As Double,UppContrLimitEMA As Double) ' Calculates and stores prediction errors and initial results
-            AbsoluteErrors(Index)=PredValueEMA-MeasValueEMA ' Absolute prediction error (for prediction error correlation calculations)
-            RelativeErrors(Index)=PredValueEMA/MeasValueEMA-1 ' Relative prediction error (for prediction error correlation calculations)
-            If DBMPrediction Is Nothing Then ' Store initial (no time offset because of prediction error correlation calculations) results
-                If MeasValueEMA<LowContrLimitEMA Then ' Lower control limit exceeded
-                    Factor=(PredValueEMA-MeasValueEMA)/(LowContrLimitEMA-PredValueEMA)
-                ElseIf MeasValueEMA>UppContrLimitEMA Then ' Upper control limit exceeded
-                    Factor=(MeasValueEMA-PredValueEMA)/(UppContrLimitEMA-PredValueEMA)
+        Public Sub Calculate(Index As Integer,MeasuredValueEMA As Double,PredictedValueEMA As Double,LowerControlLimitEMA As Double,UpperControlLimitEMA As Double) ' Calculates and stores prediction errors and initial results
+            AbsoluteErrors(Index)=PredictedValueEMA-MeasuredValueEMA ' Absolute prediction error (for prediction error correlation calculations)
+            RelativeErrors(Index)=PredictedValueEMA/MeasuredValueEMA-1 ' Relative prediction error (for prediction error correlation calculations)
+            If Prediction Is Nothing Then ' Store initial (no time offset because of prediction error correlation calculations) results
+                If MeasuredValueEMA<LowerControlLimitEMA Then ' Lower control limit exceeded
+                    Factor=(PredictedValueEMA-MeasuredValueEMA)/(LowerControlLimitEMA-PredictedValueEMA)
+                ElseIf MeasuredValueEMA>UpperControlLimitEMA Then ' Upper control limit exceeded
+                    Factor=(MeasuredValueEMA-PredictedValueEMA)/(UpperControlLimitEMA-PredictedValueEMA)
                 End If
                 OriginalFactor=Factor ' Store original factor before possible suppression
-                DBMPrediction=New DBMPrediction(MeasValueEMA,PredValueEMA,LowContrLimitEMA,UppContrLimitEMA)
+                Prediction=New DBMPrediction(MeasuredValueEMA,PredictedValueEMA,LowerControlLimitEMA,UpperControlLimitEMA)
             End If
         End Sub
 

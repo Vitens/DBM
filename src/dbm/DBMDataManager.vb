@@ -26,31 +26,31 @@ Namespace DBM
 
     Public Class DBMDataManager
 
-        Public DBMPointDriver As DBMPointDriver
-        Private CachedValues As New Collections.Generic.Dictionary(Of DateTime,Double)
+        Public PointDriver As DBMPointDriver
+        Private Values As New Collections.Generic.Dictionary(Of DateTime,Double)
 
-        Public Sub New(DBMPointDriver As DBMPointDriver)
-            Me.DBMPointDriver=DBMPointDriver
+        Public Sub New(PointDriver As DBMPointDriver)
+            Me.PointDriver=PointDriver
         End Sub
 
         Public Function Value(Timestamp As DateTime) As Double ' Returns value at timestamp, either from cache or using driver
-            If CachedValues.ContainsKey(Timestamp) Then ' In cache
-                Value=CachedValues.Item(Timestamp) ' Return value from cache
+            If Values.ContainsKey(Timestamp) Then ' In cache
+                Value=Values.Item(Timestamp) ' Return value from cache
             Else
                 If DBMUnitTests.UnitTestsRunning Then ' Do not use point driver when running unit tests
                     Value=DBMUnitTests.Data(DBMUnitTests.DataIndex) ' Return item from unit tests data array
                     DBMUnitTests.DataIndex=(DBMUnitTests.DataIndex+1) Mod DBMUnitTests.Data.Length ' Increase index
                 Else
                     Try
-                        Value=DBMPointDriver.GetData(Timestamp,DateAdd("s",DBMParameters.CalculationInterval,Timestamp)) ' Get data using driver
+                        Value=PointDriver.GetData(Timestamp,DateAdd("s",DBMParameters.CalculationInterval,Timestamp)) ' Get data using driver
                     Catch
                         Value=Double.NaN ' Error, return Not a Number
                     End Try
                 End If
-                Do While CachedValues.Count>=DBMParameters.MaxDBMDataManagerCacheSize ' Limit cache size
-                    CachedValues.Remove(CachedValues.ElementAt(CInt(Math.Floor(Rnd*CachedValues.Count))).Key) ' Remove random cached value
+                Do While Values.Count>=DBMParameters.MaxDBMDataManagerCacheSize ' Limit cache size
+                    Values.Remove(Values.ElementAt(CInt(Math.Floor(Rnd*Values.Count))).Key) ' Remove random cached value
                 Loop
-                CachedValues.Add(Timestamp,Value) ' Add to cache
+                Values.Add(Timestamp,Value) ' Add to cache
             End If
             Return Value
         End Function

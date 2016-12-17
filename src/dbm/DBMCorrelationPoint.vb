@@ -26,11 +26,11 @@ Namespace DBM
 
     Public Class DBMCorrelationPoint
 
-        Public DBMPointDriver As DBMPointDriver
+        Public PointDriver As DBMPointDriver
         Public SubstractSelf As Boolean
 
-        Public Sub New(DBMPointDriver As DBMPointDriver,SubstractSelf As Boolean)
-            Me.DBMPointDriver=DBMPointDriver
+        Public Sub New(PointDriver As DBMPointDriver,SubstractSelf As Boolean)
+            Me.PointDriver=PointDriver
             Me.SubstractSelf=SubstractSelf
         End Sub
 
