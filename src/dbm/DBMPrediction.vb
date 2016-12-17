@@ -39,7 +39,7 @@ Namespace DBM
             Me.UppContrLimit=UppContrLimit
         End Sub
 
-        Public Sub Calculate(Data() As Double)
+        Public Sub Calculate(Data() As Double) ' Calculates and stores prediction and control limits
             Dim DBMStatistics As New DBMStatistics
             DBMStatistics.Calculate(DBMMath.RemoveOutliers(Data.Take(Data.Length-1).ToArray)) ' Calculate statistics for data after removing outliers
             MeasValue=Data(DBMParameters.ComparePatterns)

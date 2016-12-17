@@ -39,7 +39,6 @@ Namespace DBM
             Dim CalcTimestamp As DateTime
             Dim DBMPrediction As New DBMPrediction
             Dim Patterns(DBMParameters.ComparePatterns),MeasValues(DBMParameters.EMAPreviousPeriods),PredValues(DBMParameters.EMAPreviousPeriods),LowContrLimits(DBMParameters.EMAPreviousPeriods),UppContrLimits(DBMParameters.EMAPreviousPeriods) As Double
-            Dim MeasValueEMA,PredValueEMA,LowContrLimitEMA,UppContrLimitEMA As Double
             Calculate=New DBMResult
             If SubstractDBMPoint IsNot PrevSubstractDBMPoint Then ' Can we reuse stored results?
                 DBMPredictions.Clear 'No, so clear results
@@ -69,21 +68,7 @@ Namespace DBM
                         LowContrLimits(EMACounter)=DBMPrediction.LowContrLimit
                         UppContrLimits(EMACounter)=DBMPrediction.UppContrLimit
                     Next EMACounter
-                    MeasValueEMA=DBMMath.CalculateExpMovingAvg(MeasValues)
-                    PredValueEMA=DBMMath.CalculateExpMovingAvg(PredValues)
-                    Calculate.AbsoluteErrors(DBMParameters.CorrelationPreviousPeriods-CorrelationCounter)=PredValueEMA-MeasValueEMA ' Absolute error compared to prediction
-                    Calculate.RelativeErrors(DBMParameters.CorrelationPreviousPeriods-CorrelationCounter)=PredValueEMA/MeasValueEMA-1 ' Relative error compared to prediction
-                    If Calculate.DBMPrediction Is Nothing Then
-                        LowContrLimitEMA=DBMMath.CalculateExpMovingAvg(LowContrLimits)
-                        UppContrLimitEMA=DBMMath.CalculateExpMovingAvg(UppContrLimits)
-                        If MeasValueEMA<LowContrLimitEMA Then ' Lower control limit exceeded
-                            Calculate.Factor=(PredValueEMA-MeasValueEMA)/(LowContrLimitEMA-PredValueEMA)
-                        ElseIf MeasValueEMA>UppContrLimitEMA Then ' Upper control limit exceeded
-                            Calculate.Factor=(MeasValueEMA-PredValueEMA)/(UppContrLimitEMA-PredValueEMA)
-                        End If
-                        Calculate.OriginalFactor=Calculate.Factor ' Store original factor before possible suppression
-                        Calculate.DBMPrediction=New DBMPrediction(MeasValueEMA,PredValueEMA,LowContrLimitEMA,UppContrLimitEMA)
-                    End If
+                    Calculate.Calculate(CorrelationCounter,DBMMath.CalculateExpMovingAvg(MeasValues),DBMMath.CalculateExpMovingAvg(PredValues),DBMMath.CalculateExpMovingAvg(LowContrLimits),DBMMath.CalculateExpMovingAvg(UppContrLimits))
                 End If
             Next CorrelationCounter
             Return Calculate

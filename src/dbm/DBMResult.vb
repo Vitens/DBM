@@ -36,6 +36,20 @@ Namespace DBM
             ReDim RelativeErrors(DBMParameters.CorrelationPreviousPeriods)
         End Sub
 
+        Public Sub Calculate(Index As Integer,MeasValueEMA As Double,PredValueEMA As Double,LowContrLimitEMA As Double,UppContrLimitEMA As Double) ' Calculates and stores prediction errors and initial results
+            AbsoluteErrors(Index)=PredValueEMA-MeasValueEMA ' Absolute prediction error (for prediction error correlation calculations)
+            RelativeErrors(Index)=PredValueEMA/MeasValueEMA-1 ' Relative prediction error (for prediction error correlation calculations)
+            If DBMPrediction Is Nothing Then ' Store initial (no time offset because of prediction error correlation calculations) results
+                If MeasValueEMA<LowContrLimitEMA Then ' Lower control limit exceeded
+                    Factor=(PredValueEMA-MeasValueEMA)/(LowContrLimitEMA-PredValueEMA)
+                ElseIf MeasValueEMA>UppContrLimitEMA Then ' Upper control limit exceeded
+                    Factor=(MeasValueEMA-PredValueEMA)/(UppContrLimitEMA-PredValueEMA)
+                End If
+                OriginalFactor=Factor ' Store original factor before possible suppression
+                DBMPrediction=New DBMPrediction(MeasValueEMA,PredValueEMA,LowContrLimitEMA,UppContrLimitEMA)
+            End If
+        End Sub
+
     End Class
 
 End Namespace
