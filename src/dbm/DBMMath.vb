@@ -123,9 +123,8 @@ Namespace DBM
         End Function
 
         Public Shared Function MeanAbsoluteDeviation(Values() As Double) As Double
-            Dim ValuesMean As Double
+            Dim ValuesMean As Double=Mean(Values)
             Dim i As Integer
-            ValuesMean=Mean(Values)
             For i=0 to Values.Length-1
                 Values(i)=Math.Abs(Values(i)-ValuesMean)
             Next i
@@ -133,9 +132,8 @@ Namespace DBM
         End Function
 
         Public Shared Function MedianAbsoluteDeviation(Values() As Double) As Double
-            Dim ValuesMedian As Double
+            Dim ValuesMedian As Double=Median(Values)
             Dim i As Integer
-            ValuesMedian=Median(Values)
             For i=0 to Values.Length-1
                 Values(i)=Math.Abs(Values(i)-ValuesMedian)
             Next i
