@@ -100,13 +100,15 @@ Module DBMTester
             Do While StartTimestamp<=EndTimestamp
                 Console.Write(FormatDateTime(StartTimestamp) & vbTab)
                 Result=_DBM.Result(InputPointDriver,CorrelationPoints,StartTimestamp)
-                Console.Write(FormatNumber(Result.Factor) & vbTab & FormatNumber(Result.Prediction.MeasuredValue) & vbTab & FormatNumber(Result.Prediction.PredictedValue) & vbTab & FormatNumber(Result.Prediction.LowerControlLimit) & vbTab & FormatNumber(Result.Prediction.UpperControlLimit) & vbTab)
-                Console.Write(FormatNumber(Result.AbsoluteErrorStats.Count) & vbTab & FormatNumber(Result.AbsoluteErrorStats.Slope) & vbTab & FormatNumber(Result.AbsoluteErrorStats.Angle) & vbTab & FormatNumber(Result.AbsoluteErrorStats.Intercept) & vbTab & FormatNumber(Result.AbsoluteErrorStats.StandardError) & vbTab & FormatNumber(Result.AbsoluteErrorStats.Correlation) & vbTab & FormatNumber(Result.AbsoluteErrorStats.ModifiedCorrelation) & vbTab & FormatNumber(Result.AbsoluteErrorStats.Determination) & vbTab)
-                Console.Write(FormatNumber(Result.RelativeErrorStats.Count) & vbTab & FormatNumber(Result.RelativeErrorStats.Slope) & vbTab & FormatNumber(Result.RelativeErrorStats.Angle) & vbTab & FormatNumber(Result.RelativeErrorStats.Intercept) & vbTab & FormatNumber(Result.RelativeErrorStats.StandardError) & vbTab & FormatNumber(Result.RelativeErrorStats.Correlation) & vbTab & FormatNumber(Result.RelativeErrorStats.ModifiedCorrelation) & vbTab & FormatNumber(Result.RelativeErrorStats.Determination))
-                For Each CorrelationPoint In CorrelationPoints
-                    Result=_DBM.Result(CorrelationPoint.PointDriver,Nothing,StartTimestamp)
-                    Console.Write(vbTab & FormatNumber(Result.Prediction.MeasuredValue) & vbTab & FormatNumber(Result.Prediction.PredictedValue) & vbTab & FormatNumber(Result.Prediction.LowerControlLimit) & vbTab & FormatNumber(Result.Prediction.UpperControlLimit))
-                Next
+                Console.Write(FormatNumber(Result.Factor) & vbTab & FormatNumber(Result.Prediction.MeasuredValue) & vbTab & FormatNumber(Result.Prediction.PredictedValue) & vbTab & FormatNumber(Result.Prediction.LowerControlLimit) & vbTab & FormatNumber(Result.Prediction.UpperControlLimit))
+                If Result.Factor<>0 And CorrelationPoints.Count>0 Then ' If an event is found and a correlation point is available
+                    Console.Write(vbTab & FormatNumber(Result.AbsoluteErrorStats.Count) & vbTab & FormatNumber(Result.AbsoluteErrorStats.Slope) & vbTab & FormatNumber(Result.AbsoluteErrorStats.Angle) & vbTab & FormatNumber(Result.AbsoluteErrorStats.Intercept) & vbTab & FormatNumber(Result.AbsoluteErrorStats.StandardError) & vbTab & FormatNumber(Result.AbsoluteErrorStats.Correlation) & vbTab & FormatNumber(Result.AbsoluteErrorStats.ModifiedCorrelation) & vbTab & FormatNumber(Result.AbsoluteErrorStats.Determination))
+                    Console.Write(vbTab & FormatNumber(Result.RelativeErrorStats.Count) & vbTab & FormatNumber(Result.RelativeErrorStats.Slope) & vbTab & FormatNumber(Result.RelativeErrorStats.Angle) & vbTab & FormatNumber(Result.RelativeErrorStats.Intercept) & vbTab & FormatNumber(Result.RelativeErrorStats.StandardError) & vbTab & FormatNumber(Result.RelativeErrorStats.Correlation) & vbTab & FormatNumber(Result.RelativeErrorStats.ModifiedCorrelation) & vbTab & FormatNumber(Result.RelativeErrorStats.Determination))
+                    For Each CorrelationPoint In CorrelationPoints
+                        Result=_DBM.Result(CorrelationPoint.PointDriver,Nothing,StartTimestamp)
+                        Console.Write(vbTab & FormatNumber(Result.Prediction.MeasuredValue) & vbTab & FormatNumber(Result.Prediction.PredictedValue) & vbTab & FormatNumber(Result.Prediction.LowerControlLimit) & vbTab & FormatNumber(Result.Prediction.UpperControlLimit))
+                    Next
+                End If
                 Console.Write(vbCrLf)
                 StartTimestamp=DateAdd("s",DBM.DBMParameters.CalculationInterval,StartTimestamp) ' Next interval
             Loop
