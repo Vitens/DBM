@@ -48,27 +48,26 @@ Namespace DBM
         End Function
 
         Public Shared Function Suppress(Factor As Double,AbsErrModCorr As Double,RelErrModCorr As Double,SubstractSelf As Boolean) As Double
-            Suppress=Factor
             If Not SubstractSelf And AbsErrModCorr<-DBMParameters.CorrelationThreshold Then ' If anticorrelation with adjacent measurement
-                If Suppress<-DBMParameters.CorrelationThreshold And Suppress>=-1 Then ' If already suppressed due to anticorrelation
-                    If AbsErrModCorr<Suppress Then ' Keep lowest value (strongest anticorrelation)
-                        Suppress=AbsErrModCorr ' Suppress
+                If Factor<-DBMParameters.CorrelationThreshold And Factor>=-1 Then ' If already suppressed due to anticorrelation
+                    If AbsErrModCorr<Factor Then ' Keep lowest value (strongest anticorrelation)
+                        Return AbsErrModCorr ' Suppress
                     End If
                 Else ' Not already suppressed due to anticorrelation
-                    Suppress=AbsErrModCorr ' Suppress
+                    Return AbsErrModCorr ' Suppress
                 End If
             ElseIf RelErrModCorr>DBMParameters.CorrelationThreshold Then ' If correlation with measurement
-                If Not (Suppress<-DBMParameters.CorrelationThreshold And Suppress>=-1) Then ' If not already suppressed due to anticorrelation
-                    If Suppress>DBMParameters.CorrelationThreshold And Suppress<=1 Then ' If already suppressed due to correlation
-                        If RelErrModCorr>Suppress Then ' Keep highest value (strongest correlation)
-                            Suppress=RelErrModCorr ' Suppress
+                If Not (Factor<-DBMParameters.CorrelationThreshold And Factor>=-1) Then ' If not already suppressed due to anticorrelation
+                    If Factor>DBMParameters.CorrelationThreshold And Factor<=1 Then ' If already suppressed due to correlation
+                        If RelErrModCorr>Factor Then ' Keep highest value (strongest correlation)
+                            Return RelErrModCorr ' Suppress
                         End If
                     Else ' Not already suppressed due to correlation
-                        Suppress=RelErrModCorr ' Suppress
+                        Return RelErrModCorr ' Suppress
                     End If
                 End If
             End If
-            Return Suppress
+            Return Factor
         End Function
 
         Public Function Result(InputPointDriver As DBMPointDriver,CorrelationPoints As Collections.Generic.List(Of DBMCorrelationPoint),Timestamp As DateTime) As DBMResult
