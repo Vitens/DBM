@@ -90,7 +90,7 @@ Module DBMTester
             End If
         Next
         If InputPointDriver Is Nothing Or StartTimestamp=DateTime.MinValue Then ' Perform unit tests
-            Console.WriteLine(DBM.DBM.Version)
+            Console.Write(DBM.DBM.Version)
         Else
             If EndTimestamp=DateTime.MinValue Then
                 EndTimestamp=StartTimestamp ' No end timestamp, set to start timestamp

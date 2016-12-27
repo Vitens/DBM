@@ -30,14 +30,14 @@ Namespace DBM
 
         Public Points As New Collections.Generic.Dictionary(Of Object,DBMPoint)
 
-        Public Shared Function Version As String
+        Public Shared Function Version(Optional SkipUnitTests As Boolean=False) As String
             Dim Ticks As Int64=DateTime.Now.Ticks
             Return System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).FileDescription & _
                 " v" & System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).FileVersion & vbCrLf & _
                 System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).ProductName & vbCrLf & _
                 System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).Comments & vbCrLf & vbCrLf & _
-                System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).LegalCopyright & vbCrLf & vbCrLf & _
-                " * Unit tests " & If(DBMUnitTests.TestResults,"PASSED","FAILED") & " in " & Math.Round((DateTime.Now.Ticks-Ticks)/10000) & "ms." & vbCrLf
+                System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).LegalCopyright & vbCrLf & _
+                If(SkipUnitTests,"",vbCrLf & " * Unit tests " & If(DBMUnitTests.TestResults,"PASSED","FAILED") & " in " & Math.Round((DateTime.Now.Ticks-Ticks)/10000) & "ms." & vbCrLf)
         End Function
 
         Private Function Point(PointDriver As DBMPointDriver) As DBMPoint
