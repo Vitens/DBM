@@ -98,7 +98,7 @@ DBM
 Dynamic Bandwidth Monitor  
 Leak detection method implemented in a real-time data historian
 
-Copyright (C) 2014, 2015, 2016 J.H. Fitié, Vitens N.V.
+Copyright (C) 2014, 2015, 2016, 2017  J.H. Fitié, Vitens N.V.
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
