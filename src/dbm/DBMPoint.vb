@@ -68,7 +68,7 @@ Namespace DBM
                         LowerControlLimits(EMACounter)=Prediction.LowerControlLimit
                         UpperControlLimits(EMACounter)=Prediction.UpperControlLimit
                     Next EMACounter
-                    Result.Calculate(CorrelationCounter,DBMMath.CalculateExpMovingAvg(MeasuredValues),DBMMath.CalculateExpMovingAvg(PredictedValues),DBMMath.CalculateExpMovingAvg(LowerControlLimits),DBMMath.CalculateExpMovingAvg(UpperControlLimits))
+                    Result.Calculate(CorrelationCounter,DBMMath.ExponentialMovingAverage(MeasuredValues),DBMMath.ExponentialMovingAverage(PredictedValues),DBMMath.ExponentialMovingAverage(LowerControlLimits),DBMMath.ExponentialMovingAverage(UpperControlLimits))
                 End If
             Next CorrelationCounter
             Return Result

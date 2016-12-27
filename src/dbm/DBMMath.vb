@@ -26,9 +26,8 @@ Namespace DBM
 
     Public Class DBMMath
 
-        Public Shared Function NormSInv(p As Double) As Double
+        Public Shared Function NormSInv(p As Double) As Double ' Returns the inverse of the standard normal cumulative distribution. The distribution has a mean of zero and a standard deviation of one.
             ' Approximation of inverse standard normal CDF developed by Peter J. Acklam
-            ' Returns the inverse of the standard normal cumulative distribution
             Const a1=-39.6968302866538,a2=220.946098424521,a3=-275.928510446969
             Const a4=138.357751867269,a5=-30.6647980661472,a6=2.50662827745924
             Const b1=-54.4760987982241,b2=161.585836858041,b3=-155.698979859887
@@ -51,9 +50,8 @@ Namespace DBM
             End If
         End Function
 
-        Public Shared Function TInv2T(p As Double,dof As Integer) As Double
+        Public Shared Function TInv2T(p As Double,dof As Integer) As Double ' Returns the two-tailed inverse of the Student's t-distribution.
             ' Hill's approx. inverse t-dist.: Comm. of A.C.M Vol.13 No.10 1970 pg 620
-            ' Returns the quantile for the two-tailed student's t distribution
             Dim a,b,c,d,x,y As Double
             If dof=1 Then
                 p*=Math.PI/2
@@ -83,15 +81,15 @@ Namespace DBM
             End If
         End Function
 
-        Public Shared Function TInv(p As Double,dof As Integer) As Double
+        Public Shared Function TInv(p As Double,dof As Integer) As Double ' Returns the left-tailed inverse of the Student's t-distribution.
             Return Math.Sign(p-0.5)*TInv2T(1-Math.Abs(p-0.5)*2,dof)
         End Function
 
-        Public Shared Function MeanAbsDevScaleFactor As Double ' Scale factor k
+        Public Shared Function MeanAbsoluteDeviationScaleFactor As Double ' Scale factor k
             Return Math.Sqrt(Math.PI/2)
         End Function
 
-        Public Shared Function MedianAbsDevScaleFactor(n As Integer) As Double ' Scale factor k
+        Public Shared Function MedianAbsoluteDeviationScaleFactor(n As Integer) As Double ' Scale factor k
             If n<30 Then
                 Return 1/TInv(0.75,n) ' n<30 Student's t-distribution
             Else
@@ -107,15 +105,15 @@ Namespace DBM
             End If
         End Function
 
-        Public Shared Function CalculateMean(Values() As Double) As Double
-            CalculateMean=0
+        Public Shared Function Mean(Values() As Double) As Double
+            Mean=0
             For Each Value In Values
-                CalculateMean+=Value/Values.Length
+                Mean+=Value/Values.Length
             Next
-            Return CalculateMean
+            Return Mean
         End Function
 
-        Public Shared Function CalculateMedian(Values() As Double) As Double
+        Public Shared Function Median(Values() As Double) As Double
             Array.Sort(Values)
             If Values.Length Mod 2=0 Then
                 Return (Values(Values.Length\2)+Values(Values.Length\2-1))/2
@@ -124,40 +122,40 @@ Namespace DBM
             End If
         End Function
 
-        Public Shared Function CalculateMeanAbsDev(Values() As Double) As Double
-            Dim Mean As Double
+        Public Shared Function MeanAbsoluteDeviation(Values() As Double) As Double
+            Dim ValuesMean As Double
             Dim i As Integer
-            Mean=CalculateMean(Values)
+            ValuesMean=Mean(Values)
             For i=0 to Values.Length-1
-                Values(i)=Math.Abs(Values(i)-Mean)
+                Values(i)=Math.Abs(Values(i)-ValuesMean)
             Next i
-            Return CalculateMean(Values)
+            Return Mean(Values)
         End Function
 
-        Public Shared Function CalculateMedianAbsDev(Values() As Double) As Double
-            Dim Median As Double
+        Public Shared Function MedianAbsoluteDeviation(Values() As Double) As Double
+            Dim ValuesMedian As Double
             Dim i As Integer
-            Median=CalculateMedian(Values)
+            ValuesMedian=Median(Values)
             For i=0 to Values.Length-1
-                Values(i)=Math.Abs(Values(i)-Median)
+                Values(i)=Math.Abs(Values(i)-ValuesMedian)
             Next i
-            Return CalculateMedian(Values)
+            Return Median(Values)
         End Function
 
         Public Shared Function RemoveOutliers(Values() As Double) As Double() ' Returns an array which contains the input data from which outliers are removed (NaN)
-            Dim Median,MedianAbsDev,Mean,MeanAbsDev As Double
+            Dim ValuesMedian,ValuesMedianAbsoluteDeviation,ValuesMean,ValuesMeanAbsoluteDeviation As Double
             Dim i As Integer
-            Median=CalculateMedian(Values.ToArray)
-            MedianAbsDev=CalculateMedianAbsDev(Values.ToArray)
-            Mean=CalculateMean(Values.ToArray)
-            MeanAbsDev=CalculateMeanAbsDev(Values.ToArray)
+            ValuesMedian=Median(Values.ToArray)
+            ValuesMedianAbsoluteDeviation=MedianAbsoluteDeviation(Values.ToArray)
+            ValuesMean=Mean(Values.ToArray)
+            ValuesMeanAbsoluteDeviation=MeanAbsoluteDeviation(Values.ToArray)
             For i=0 to Values.Length-1
-                If MedianAbsDev=0 Then ' Use Mean Absolute Deviation instead of Median Absolute Deviation to detect outliers
-                    If Math.Abs(Values(i)-Mean)>MeanAbsDev*MeanAbsDevScaleFactor*ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,Values.Length-1) Then ' If value is an outlier
+                If ValuesMedianAbsoluteDeviation=0 Then ' Use Mean Absolute Deviation instead of Median Absolute Deviation to detect outliers
+                    If Math.Abs(Values(i)-ValuesMean)>ValuesMeanAbsoluteDeviation*MeanAbsoluteDeviationScaleFactor*ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,Values.Length-1) Then ' If value is an outlier
                         Values(i)=Double.NaN ' Exclude outlier
                     End If
                 Else ' Use Median Absolute Deviation to detect outliers
-                    If Math.Abs(Values(i)-Median)>MedianAbsDev*MedianAbsDevScaleFactor(Values.Length-1)*ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,Values.Length-1) Then ' If value is an outlier
+                    If Math.Abs(Values(i)-ValuesMedian)>ValuesMedianAbsoluteDeviation*MedianAbsoluteDeviationScaleFactor(Values.Length-1)*ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,Values.Length-1) Then ' If value is an outlier
                         Values(i)=Double.NaN ' Exclude outlier
                     End If
                 End If
@@ -165,18 +163,18 @@ Namespace DBM
             Return Values
         End Function
 
-        Public Shared Function CalculateExpMovingAvg(Values() As Double) As Double ' Filter high frequency variation
+        Public Shared Function ExponentialMovingAverage(Values() As Double) As Double ' Filter high frequency variation
             Dim Weight,TotalWeight As Double
-            CalculateExpMovingAvg=0
+            ExponentialMovingAverage=0
             Weight=1 ' Initial weight
             TotalWeight=0
             For Each Value In Values ' Least significant value first
-                CalculateExpMovingAvg+=Value*Weight
+                ExponentialMovingAverage+=Value*Weight
                 TotalWeight+=Weight
                 Weight/=1-2/(Values.Length+1) ' Increase weight for newer values
             Next
-            CalculateExpMovingAvg/=TotalWeight
-            Return CalculateExpMovingAvg
+            ExponentialMovingAverage/=TotalWeight
+            Return ExponentialMovingAverage
         End Function
 
     End Class
