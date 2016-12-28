@@ -70,7 +70,7 @@ Module DBMTester
         Dim InputPointDriver As DBM.DBMPointDriver=Nothing
         Dim CorrelationPoints As New Collections.Generic.List(Of DBM.DBMCorrelationPoint)
         Dim StartTimestamp,EndTimestamp As DateTime
-        Dim NumThreads,IntervalsPerThread As Integer
+        Dim NumThreads,ThreadTimeOffset As Integer
         Dim ThreadEndTimestamp As DateTime
         Dim Thread As System.Threading.Thread
         For Each CommandLineArg In Environment.GetCommandLineArgs ' Parse command line arguments
@@ -120,9 +120,9 @@ Module DBMTester
                 EndTimestamp=DateAdd("s",-DBM.DBMParameters.CalculationInterval,EndTimestamp) ' Remove one interval from end timestamp
             End If
             NumThreads=CInt(Math.Min(2^6-1,System.Environment.ProcessorCount*2-1)) ' Maximum number of threads (1 to 63) based on number of processors
-            IntervalsPerThread=CInt(Math.Ceiling(Math.Max(24*3600/DBM.DBMParameters.CalculationInterval,(DateDiff("s",StartTimestamp,EndTimestamp)/DBM.DBMParameters.CalculationInterval+1)/NumThreads))) ' Minimum of 1 day per thread
+            ThreadTimeOffset=CInt(Math.Ceiling(Math.Max(24*3600/DBM.DBMParameters.CalculationInterval,(DateDiff("s",StartTimestamp,EndTimestamp)/DBM.DBMParameters.CalculationInterval+1)/NumThreads))) ' Minimum of 1 day per thread
             Do While StartTimestamp<=EndTimestamp
-                ThreadEndTimestamp=DateAdd("s",DBM.DBMParameters.CalculationInterval*(IntervalsPerThread-1),StartTimestamp)
+                ThreadEndTimestamp=DateAdd("s",DBM.DBMParameters.CalculationInterval*(ThreadTimeOffset-1),StartTimestamp)
                 If ThreadEndTimestamp>EndTimestamp Then
                     ThreadEndTimestamp=EndTimestamp
                 End If
