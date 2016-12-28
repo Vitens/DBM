@@ -28,19 +28,27 @@ Module DBMTester
 
     Private InternationalFormat As Boolean=False
 
-    Private Function FormatNumber(Value As Double) As String
-        If InternationalFormat Then
-            Return Value.ToString("0.####",System.Globalization.CultureInfo.InvariantCulture)
-        Else
-            Return Value.ToString("0.####")
-        End If
-    End Function
-
     Private Function FormatDateTime(Timestamp As DateTime) As String
         If InternationalFormat Then
             Return Timestamp.ToUniversalTime.ToString("s") & "Z" ' ISO 8601 UTC
         Else
             Return Timestamp.ToString("s") ' ISO 8601
+        End If
+    End Function
+
+    Private Function Separator As String
+        If InternationalFormat Then
+            Return ","
+        Else
+            Return vbTab
+        End If
+    End Function
+
+    Private Function FormatNumber(Value As Double) As String
+        If InternationalFormat Then
+            Return Value.ToString("0.####",System.Globalization.CultureInfo.InvariantCulture)
+        Else
+            Return Value.ToString("0.####")
         End If
     End Function
 
@@ -99,15 +107,15 @@ Module DBMTester
                 EndTimestamp=DateAdd("s",-DBM.DBMParameters.CalculationInterval,EndTimestamp) ' Remove one interval from end timestamp
             End If
             Do While StartTimestamp<=EndTimestamp
-                Output=FormatDateTime(StartTimestamp) & vbTab
+                Output=FormatDateTime(StartTimestamp) & Separator
                 Result=_DBM.Result(InputPointDriver,CorrelationPoints,StartTimestamp)
-                Output &= FormatNumber(Result.Factor) & vbTab & FormatNumber(Result.Prediction.MeasuredValue) & vbTab & FormatNumber(Result.Prediction.PredictedValue) & vbTab & FormatNumber(Result.Prediction.LowerControlLimit) & vbTab & FormatNumber(Result.Prediction.UpperControlLimit)
+                Output &= FormatNumber(Result.Factor) & Separator & FormatNumber(Result.Prediction.MeasuredValue) & Separator & FormatNumber(Result.Prediction.PredictedValue) & Separator & FormatNumber(Result.Prediction.LowerControlLimit) & Separator & FormatNumber(Result.Prediction.UpperControlLimit)
                 If Result.Factor<>0 And CorrelationPoints.Count>0 Then ' If an event is found and a correlation point is available
-                    Output &= vbTab & FormatNumber(Result.AbsoluteErrorStats.Count) & vbTab & FormatNumber(Result.AbsoluteErrorStats.Slope) & vbTab & FormatNumber(Result.AbsoluteErrorStats.Angle) & vbTab & FormatNumber(Result.AbsoluteErrorStats.Intercept) & vbTab & FormatNumber(Result.AbsoluteErrorStats.StandardError) & vbTab & FormatNumber(Result.AbsoluteErrorStats.Correlation) & vbTab & FormatNumber(Result.AbsoluteErrorStats.ModifiedCorrelation) & vbTab & FormatNumber(Result.AbsoluteErrorStats.Determination)
-                    Output &= vbTab & FormatNumber(Result.RelativeErrorStats.Count) & vbTab & FormatNumber(Result.RelativeErrorStats.Slope) & vbTab & FormatNumber(Result.RelativeErrorStats.Angle) & vbTab & FormatNumber(Result.RelativeErrorStats.Intercept) & vbTab & FormatNumber(Result.RelativeErrorStats.StandardError) & vbTab & FormatNumber(Result.RelativeErrorStats.Correlation) & vbTab & FormatNumber(Result.RelativeErrorStats.ModifiedCorrelation) & vbTab & FormatNumber(Result.RelativeErrorStats.Determination)
+                    Output &= Separator & FormatNumber(Result.AbsoluteErrorStats.Count) & Separator & FormatNumber(Result.AbsoluteErrorStats.Slope) & Separator & FormatNumber(Result.AbsoluteErrorStats.Angle) & Separator & FormatNumber(Result.AbsoluteErrorStats.Intercept) & Separator & FormatNumber(Result.AbsoluteErrorStats.StandardError) & Separator & FormatNumber(Result.AbsoluteErrorStats.Correlation) & Separator & FormatNumber(Result.AbsoluteErrorStats.ModifiedCorrelation) & Separator & FormatNumber(Result.AbsoluteErrorStats.Determination)
+                    Output &= Separator & FormatNumber(Result.RelativeErrorStats.Count) & Separator & FormatNumber(Result.RelativeErrorStats.Slope) & Separator & FormatNumber(Result.RelativeErrorStats.Angle) & Separator & FormatNumber(Result.RelativeErrorStats.Intercept) & Separator & FormatNumber(Result.RelativeErrorStats.StandardError) & Separator & FormatNumber(Result.RelativeErrorStats.Correlation) & Separator & FormatNumber(Result.RelativeErrorStats.ModifiedCorrelation) & Separator & FormatNumber(Result.RelativeErrorStats.Determination)
                     For Each CorrelationPoint In CorrelationPoints
                         Result=_DBM.Result(CorrelationPoint.PointDriver,Nothing,StartTimestamp)
-                        Output &= vbTab & FormatNumber(Result.Prediction.MeasuredValue) & vbTab & FormatNumber(Result.Prediction.PredictedValue) & vbTab & FormatNumber(Result.Prediction.LowerControlLimit) & vbTab & FormatNumber(Result.Prediction.UpperControlLimit)
+                        Output &= Separator & FormatNumber(Result.Prediction.MeasuredValue) & Separator & FormatNumber(Result.Prediction.PredictedValue) & Separator & FormatNumber(Result.Prediction.LowerControlLimit) & Separator & FormatNumber(Result.Prediction.UpperControlLimit)
                     Next
                 End If
                 Console.WriteLine(Output)
