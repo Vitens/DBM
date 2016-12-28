@@ -44,7 +44,7 @@ Module DBMTester
         End If
     End Function
 
-    Public Sub Calculate(StartTimestamp As DateTime,EndTimestamp As DateTime,InputPointDriver As DBM.DBMPointDriver,CorrelationPoints As Collections.Generic.List(Of DBM.DBMCorrelationPoint))
+    Private Sub Calculate(StartTimestamp As DateTime,EndTimestamp As DateTime,InputPointDriver As DBM.DBMPointDriver,CorrelationPoints As Collections.Generic.List(Of DBM.DBMCorrelationPoint))
         Dim Output As String
         Dim Result As DBM.DBMResult
         Dim _DBM As New DBM.DBM
