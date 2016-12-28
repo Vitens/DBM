@@ -27,7 +27,6 @@ Namespace DBM
     Public Class DBMPointDriver
 
         Public Point As Object
-        Private DataIsLoading As Boolean=False
         Private Values As Collections.Generic.Dictionary(Of DateTime,Double)
 
         Public Sub New(Point As Object)
@@ -37,11 +36,7 @@ Namespace DBM
         Public Function GetData(StartTimestamp As DateTime,EndTimestamp As DateTime) As Double
             Dim StreamReader As System.IO.StreamReader
             Dim Substrings() As String
-            Do While DataIsLoading ' Data is already loading in another thread
-                System.Threading.Thread.Sleep(100) ' Wait a bit
-            Loop
             If Values Is Nothing Then ' No data in memory yet
-                DataIsLoading=True
                 Values=New Collections.Generic.Dictionary(Of DateTime,Double)
                 Try
                     StreamReader=New System.IO.StreamReader(CStr(Point))
@@ -55,7 +50,6 @@ Namespace DBM
                     StreamReader.Close
                 Catch
                 End Try
-                DataIsLoading=False
             End If
             If Values.ContainsKey(StartTimestamp) Then ' In cache
                 Return Values.Item(StartTimestamp) ' Return value from cache
