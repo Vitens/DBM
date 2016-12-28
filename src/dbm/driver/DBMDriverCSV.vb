@@ -41,8 +41,8 @@ Namespace DBM
                 System.Threading.Thread.Sleep(100) ' Wait a bit
             Loop
             If Values Is Nothing Then ' No data in memory yet
-                Values=New Collections.Generic.Dictionary(Of DateTime,Double)
                 DataIsLoading=True
+                Values=New Collections.Generic.Dictionary(Of DateTime,Double)
                 Try
                     StreamReader=New System.IO.StreamReader(CStr(Point))
                     Do While Not StreamReader.EndOfStream
