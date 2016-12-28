@@ -31,7 +31,7 @@ Namespace DBMRt
         Private PIServers As New Collections.Generic.List(Of DBMRtPIServer)
 
         Public Sub New
-            PIServers.Add(New DBMRtPIServer(PISDK.Servers.DefaultServer))
+            PIServers.Add(New DBMRtPIServer(PISDK.Servers.DefaultServer)) ' Add default PI server
         End Sub
 
         Public Sub Calculate

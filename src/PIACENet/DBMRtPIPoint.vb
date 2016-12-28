@@ -34,13 +34,13 @@ Namespace DBMRt
             InputPointDriver=New DBM.DBMPointDriver(InputPIPoint)
             OutputPointDriver=New DBM.DBMPointDriver(OutputPIPoint)
             ExDesc=DirectCast(OutputPointDriver.Point,PISDK.PIPoint).PointAttributes("ExDesc").Value.ToString
-            If Text.RegularExpressions.Regex.IsMatch(ExDesc,"^[-]{0,1}[a-zA-Z0-9][a-zA-Z0-9_\.-]{0,}:[^:?*&]{1,}(&[-]{0,1}[a-zA-Z0-9][a-zA-Z0-9_\.-]{0,}:[^:?*&]{1,}){0,}$") Then
-                SubstringsA=ExDesc.Split(New Char(){"&"c})
+            If Text.RegularExpressions.Regex.IsMatch(ExDesc,"^[-]{0,1}[a-zA-Z0-9][a-zA-Z0-9_\.-]{0,}:[^:?*&]{1,}(&[-]{0,1}[a-zA-Z0-9][a-zA-Z0-9_\.-]{0,}:[^:?*&]{1,}){0,}$") Then ' ExDesc attribute should contain correlation PI point(s)
+                SubstringsA=ExDesc.Split(New Char(){"&"c}) ' Split multiple correlation PI points by &
                 For Each SubstringA In SubstringsA
-                    SubstringsB=SubstringA.Split(New Char(){":"c})
+                    SubstringsB=SubstringA.Split(New Char(){":"c}) ' Format: [-]PI server:PI point
                     Try
                         If DBMRtCalculator.PISDK.Servers(Mid(SubstringsB(0),1+If(Left(SubstringsB(0),1)="-",1,0))).PIPoints(SubstringsB(1)).Name<>"" Then
-                            CorrelationPoints.Add(New DBM.DBMCorrelationPoint(New DBM.DBMPointDriver(DBMRtCalculator.PISDK.Servers(Mid(SubstringsB(0),1+If(Left(SubstringsB(0),1)="-",1,0))).PIPoints(SubstringsB(1))),Left(SubstringsB(0),1)="-"))
+                            CorrelationPoints.Add(New DBM.DBMCorrelationPoint(New DBM.DBMPointDriver(DBMRtCalculator.PISDK.Servers(Mid(SubstringsB(0),1+If(Left(SubstringsB(0),1)="-",1,0))).PIPoints(SubstringsB(1))),Left(SubstringsB(0),1)="-")) ' Add to correlation points
                         End If
                     Catch
                     End Try

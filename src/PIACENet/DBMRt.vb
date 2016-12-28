@@ -32,8 +32,8 @@ Namespace DBMRt
 
         Private Calculator As DBMRtCalculator=Nothing
 
-        Public Overrides Sub ACECalculations
-            If Calculator IsNot Nothing Then
+        Public Overrides Sub ACECalculations ' Perform calculations
+            If Calculator IsNot Nothing Then ' If module and DBMRtCalculator are initialized
                 Calculator.Calculate
             End If
         End Sub
