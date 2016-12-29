@@ -37,7 +37,7 @@ Namespace DBM
                 System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).ProductName & vbCrLf & _
                 System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).Comments & vbCrLf & vbCrLf & _
                 System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).LegalCopyright & vbCrLf & _
-                If(SkipUnitTests,"",vbCrLf & " * Unit tests " & If(DBMUnitTests.TestResults,"PASSED","FAILED") & " in " & Math.Round((DateTime.Now.Ticks-Ticks)/10000) & "ms." & vbCrLf)
+                If(SkipUnitTests,"",vbCrLf & " * Unit tests " & If(DBMUnitTests.TestResults,"PASSED","FAILED") & " in " & Math.Round((DateTime.Now.Ticks-Ticks)/10000).ToString & "ms." & vbCrLf)
         End Function
 
         Private Function Point(PointDriver As DBMPointDriver) As DBMPoint
