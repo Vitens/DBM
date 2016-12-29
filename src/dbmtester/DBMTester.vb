@@ -64,7 +64,7 @@ Module DBMTester
             If Text.RegularExpressions.Regex.IsMatch(CommandLineArg,"^[-/](.+)=(.+)$") Then ' Parameter=Value
                 Substrings=CommandLineArg.Split(New Char(){"="c},2)
                 Try
-                    Select Case Mid(Substrings(0),2).ToLower
+                    Select Case Substrings(0).Substring(1).ToLower
                         Case "i"
                             InputPointDriver=New DBM.DBMPointDriver(Substrings(1))
                         Case "c"

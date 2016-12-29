@@ -39,8 +39,8 @@ Namespace DBMRt
                 For Each SubstringA In SubstringsA
                     SubstringsB=SubstringA.Split(New Char(){":"c}) ' Format: [-]PI server:PI point
                     Try
-                        If DBMRtCalculator.PISDK.Servers(Mid(SubstringsB(0),1+If(Left(SubstringsB(0),1)="-",1,0))).PIPoints(SubstringsB(1)).Name<>"" Then
-                            CorrelationPoints.Add(New DBM.DBMCorrelationPoint(New DBM.DBMPointDriver(DBMRtCalculator.PISDK.Servers(Mid(SubstringsB(0),1+If(Left(SubstringsB(0),1)="-",1,0))).PIPoints(SubstringsB(1))),Left(SubstringsB(0),1)="-")) ' Add to correlation points
+                        If DBMRtCalculator.PISDK.Servers(SubstringsB(0).Substring(If(SubstringsB(0).Substring(0,1)="-",1,0))).PIPoints(SubstringsB(1)).Name<>"" Then
+                            CorrelationPoints.Add(New DBM.DBMCorrelationPoint(New DBM.DBMPointDriver(DBMRtCalculator.PISDK.Servers(SubstringsB(0).Substring(If(SubstringsB(0).Substring(0,1)="-",1,0))).PIPoints(SubstringsB(1))),SubstringsB(0).Substring(0,1)="-")) ' Add to correlation points
                         End If
                     Catch
                     End Try
