@@ -104,7 +104,7 @@ Module DBMTester
             If EndTimestamp=DateTime.MinValue Then
                 EndTimestamp=StartTimestamp ' No end timestamp, set to start timestamp
             Else
-                EndTimestamp=DateAdd("s",-DBM.DBMParameters.CalculationInterval,EndTimestamp) ' Remove one interval from end timestamp
+                EndTimestamp=DateAdd(DateInterval.Second,-DBM.DBMParameters.CalculationInterval,EndTimestamp) ' Remove one interval from end timestamp
             End If
             Do While StartTimestamp<=EndTimestamp
                 Output=FormatDateTime(StartTimestamp) & Separator
@@ -119,7 +119,7 @@ Module DBMTester
                     Next
                 End If
                 Console.WriteLine(Output)
-                StartTimestamp=DateAdd("s",DBM.DBMParameters.CalculationInterval,StartTimestamp) ' Next interval
+                StartTimestamp=DateAdd(DateInterval.Second,DBM.DBMParameters.CalculationInterval,StartTimestamp) ' Next interval
             Loop
         End If
     End Sub

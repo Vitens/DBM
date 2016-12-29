@@ -42,7 +42,7 @@ Namespace DBM
                     DBMUnitTests.DataIndex=(DBMUnitTests.DataIndex+1) Mod DBMUnitTests.Data.Length ' Increase index
                 Else
                     Try
-                        Value=PointDriver.GetData(Timestamp,DateAdd("s",DBMParameters.CalculationInterval,Timestamp)) ' Get data using driver
+                        Value=PointDriver.GetData(Timestamp,DateAdd(DateInterval.Second,DBMParameters.CalculationInterval,Timestamp)) ' Get data using driver
                     Catch
                         Value=Double.NaN ' Error, return Not a Number
                     End Try
