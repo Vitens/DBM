@@ -177,8 +177,8 @@ Namespace DBM
             Return ExponentialMovingAverage
         End Function
 
-        Public Shared Function RandomNumber(Min As Integer,Max As Integer) As Integer
-            Return Random.Next(Min,Max) ' Returns a random number >=Min, <Max
+        Public Shared Function RandomNumber(Min As Integer,Max As Integer) As Integer ' Returns a random number between Min (inclusive) and Max (inclusive)
+            Return Random.Next(Min,Max+1)
         End Function
 
     End Class

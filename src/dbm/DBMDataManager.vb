@@ -48,7 +48,7 @@ Namespace DBM
                     End Try
                 End If
                 Do While Values.Count>=DBMParameters.MaxDataManagerValues ' Limit cache size
-                    Values.Remove(Values.ElementAt(DBMMath.RandomNumber(0,Values.Count)).Key) ' Remove random cached value
+                    Values.Remove(Values.ElementAt(DBMMath.RandomNumber(0,Values.Count-1)).Key) ' Remove random cached value
                 Loop
                 Values.Add(Timestamp,Value) ' Add to cache
             End If

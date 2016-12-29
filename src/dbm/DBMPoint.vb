@@ -59,7 +59,7 @@ Namespace DBM
                             Next PatternCounter
                             Prediction.Calculate(Patterns)
                             Do While Predictions.Count>=DBMParameters.MaxPointPredictions ' Limit cache size
-                                Predictions.Remove(Predictions.ElementAt(DBMMath.RandomNumber(0,Predictions.Count)).Key) ' Remove random cached value
+                                Predictions.Remove(Predictions.ElementAt(DBMMath.RandomNumber(0,Predictions.Count-1)).Key) ' Remove random cached value
                             Loop
                             Predictions.Add(PredictionTimestamp,Prediction.ShallowCopy) ' Add to cache
                         End If
