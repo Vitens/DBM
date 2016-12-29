@@ -26,6 +26,8 @@ Namespace DBM
 
     Public Class DBMMath
 
+        Private Shared Random As New Random
+
         Public Shared Function NormSInv(p As Double) As Double ' Returns the inverse of the standard normal cumulative distribution. The distribution has a mean of zero and a standard deviation of one.
             ' Approximation of inverse standard normal CDF developed by Peter J. Acklam
             Const a1=-39.6968302866538,a2=220.946098424521,a3=-275.928510446969
@@ -173,6 +175,10 @@ Namespace DBM
             Next
             ExponentialMovingAverage/=TotalWeight
             Return ExponentialMovingAverage
+        End Function
+
+        Public Shared Function RandomNumber(Min As Integer,Max As Integer) As Integer
+            Return Random.Next(Min,Max) ' Returns a random number >=Min, <Max
         End Function
 
     End Class
