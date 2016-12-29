@@ -29,8 +29,10 @@ if not exist build mkdir build
 del /Q build\*
 
 set vbc="%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\Vbc.exe" /win32icon:res\dbm.ico /optimize+ /nologo
-set PIRefs="%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDK.dll","%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDKCommon.dll"
-set PIACERefs="%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PITimeServer.dll","%PIHOME%\ACE\OSISoft.PIACENet.dll"
+set PICheck="%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDK.dll"
+set PIRefs=%PICheck%,"%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDKCommon.dll"
+set PIACECheck="%PIHOME%\ACE\OSISoft.PIACENet.dll"
+set PIACERefs=%PIACECheck%,"%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PITimeServer.dll"
 
 %vbc% /target:library /out:build\DBMDriverNull.dll src\shared\*.vb src\dbm\*.vb src\dbm\driver\DBMDriverNull.vb
 if not exist build\DBMDriverNull.dll goto ExitBuild
@@ -41,12 +43,12 @@ if not exist build\DBMDriverCSV.dll goto ExitBuild
 %vbc% /reference:build\DBMDriverCSV.dll /out:build\DBMTester.exe src\shared\*.vb src\dbmtester\*.vb
 if not exist build\DBMTester.exe goto ExitBuild
 
-if exist "%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDK.dll" (
+if exist %PICheck% (
 
     %vbc% /reference:%PIRefs% /target:library /out:build\DBMDriverOSIsoftPI.dll src\shared\*.vb src\dbm\*.vb src\dbm\driver\DBMDriverOSIsoftPI.vb
     if not exist build\DBMDriverOSIsoftPI.dll goto ExitBuild
 
-    if exist "%PIHOME%\ACE\OSISoft.PIACENet.dll" (
+    if exist %PIACECheck% (
 
         %vbc% /reference:%PIRefs%,%PIACERefs%,build\DBMDriverOSIsoftPI.dll /rootnamespace:PIACE.DBMRt /target:library /out:build\DBMRt.dll src\shared\*.vb src\PIACENet\*.vb
         if not exist build\DBMRt.dll goto ExitBuild
