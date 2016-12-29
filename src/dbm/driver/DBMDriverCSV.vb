@@ -39,7 +39,7 @@ Namespace DBM
             If Values Is Nothing Then ' No data in memory yet
                 Values=New Collections.Generic.Dictionary(Of DateTime,Double)
                 Try
-                    StreamReader=New System.IO.StreamReader(CStr(Point))
+                    StreamReader=New System.IO.StreamReader(DirectCast(Point,String))
                     Do While Not StreamReader.EndOfStream
                         Try
                             Substrings=StreamReader.ReadLine.Split(New Char(){","c,CChar(vbTab)},2) ' Comma and tab delimiters; split in 2 substrings
