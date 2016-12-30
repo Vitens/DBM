@@ -45,7 +45,7 @@ if not exist build\DBMTester.exe goto ExitBuild
 
 if exist %PICheck% (
 
-    %vbc% /reference:%PIRefs% /target:library /out:build\DBMDriverOSIsoftPI.dll src\shared\*.vb src\dbm\*.vb src\dbm\driver\DBMDriverOSIsoftPI.vb
+    %vbc% /reference:%PIRefs% /target:library /out:build\DBMDriverOSIsoftPI.dll src\shared\*.vb src\dbm\*.vb src\dbm\driver\DBMDriverOSIsoftPI.vb /novbruntimeref
     if not exist build\DBMDriverOSIsoftPI.dll goto ExitBuild
 
     if exist %PIACECheck% (

@@ -33,7 +33,7 @@ Namespace DBM
         End Sub
 
         Public Function GetData(StartTimestamp As DateTime,EndTimestamp As DateTime) As Double
-            Return CDbl(DirectCast(Point,PISDK.PIPoint).Data.Summary(StartTimestamp,EndTimestamp,PISDK.ArchiveSummaryTypeConstants.astAverage,PISDK.CalculationBasisConstants.cbTimeWeighted).Value)
+            Return DirectCast(DirectCast(Point,PISDK.PIPoint).Data.Summary(StartTimestamp,EndTimestamp,PISDK.ArchiveSummaryTypeConstants.astAverage,PISDK.CalculationBasisConstants.cbTimeWeighted).Value,Double)
         End Function
 
     End Class
