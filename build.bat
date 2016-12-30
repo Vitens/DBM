@@ -34,10 +34,10 @@ set PIRefs=%PICheck%,"%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDKCommon.dll"
 set PIACECheck="%PIHOME%\ACE\OSISoft.PIACENet.dll"
 set PIACERefs=%PIACECheck%,"%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PITimeServer.dll"
 
-%vbc% /target:library /out:build\DBMDriverNull.dll src\shared\*.vb src\dbm\*.vb src\dbm\driver\DBMDriverNull.vb
+%vbc% /target:library /out:build\DBMDriverNull.dll src\shared\*.vb src\dbm\*.vb src\dbm\driver\DBMDriverNull.vb /novbruntimeref
 if not exist build\DBMDriverNull.dll goto ExitBuild
 
-%vbc% /target:library /out:build\DBMDriverCSV.dll src\shared\*.vb src\dbm\*.vb src\dbm\driver\DBMDriverCSV.vb
+%vbc% /target:library /out:build\DBMDriverCSV.dll src\shared\*.vb src\dbm\*.vb src\dbm\driver\DBMDriverCSV.vb /novbruntimeref
 if not exist build\DBMDriverCSV.dll goto ExitBuild
 
 %vbc% /reference:build\DBMDriverCSV.dll /out:build\DBMTester.exe src\shared\*.vb src\dbmtester\*.vb
@@ -58,8 +58,8 @@ if exist %PICheck% (
 )
 
 build\DBMTester.exe
-
 call docs\calculatesamples.bat
+exit
 
 :ExitBuild
 pause

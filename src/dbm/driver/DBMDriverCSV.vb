@@ -42,8 +42,8 @@ Namespace DBM
                     StreamReader=New System.IO.StreamReader(DirectCast(Point,String))
                     Do While Not StreamReader.EndOfStream
                         Try
-                            Substrings=StreamReader.ReadLine.Split(New Char(){","c,CChar(vbTab)},2) ' Comma and tab delimiters; split in 2 substrings
-                            Values.Add(Convert.ToDateTime(Substrings(0)),Convert.ToDouble(Substrings(1))) ' timestamp,value
+                            Substrings=System.Text.RegularExpressions.Regex.Split(StreamReader.ReadLine,"^([^,\t]{0,})[,\t](.{0,})$") ' Comma and tab delimiters; split in 2 substrings
+                            Values.Add(Convert.ToDateTime(Substrings(1)),Convert.ToDouble(Substrings(2))) ' timestamp,value
                         Catch
                         End Try
                     Loop
