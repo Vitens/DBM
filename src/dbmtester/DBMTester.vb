@@ -88,9 +88,9 @@ Module DBMTester
                         Case "et"
                             EndTimestamp=Convert.ToDateTime(Substrings(1))
                         Case "f"
-                            If Substrings(1).ToLower="local" Then
+                            If Substrings(1).ToLower.Equals("local") Then
                                 InternationalFormat=False
-                            ElseIf Substrings(1).ToLower="intl" Then
+                            ElseIf Substrings(1).ToLower.Equals("intl") Then
                                 InternationalFormat=True
                             End If
                     End Select
