@@ -38,7 +38,7 @@ Namespace DBMRt
                     If Text.RegularExpressions.Regex.IsMatch(InstrTag,"^[a-zA-Z0-9_\.-]{1,}:[^:?*&]{1,}$") Then ' InstrumentTag attribute should contain input PI point
                         Substrings=InstrTag.Split(New Char(){":"c}) ' Format: PI server:PI point
                         Try
-                            If DBMRtCalculator.PISDK.Servers(Substrings(0)).PIPoints(Substrings(1)).Name<>"" Then
+                            If Not DBMRtCalculator.PISDK.Servers(Substrings(0)).PIPoints(Substrings(1)).Name.Equals(String.Empty) Then
                                 PIPoints.Add(New DBMRtPIPoint(DBMRtCalculator.PISDK.Servers(Substrings(0)).PIPoints(Substrings(1)),PIPoint)) ' Add to calculation points
                             End If
                         Catch

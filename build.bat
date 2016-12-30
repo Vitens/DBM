@@ -50,7 +50,7 @@ if exist %PICheck% (
 
     if exist %PIACECheck% (
 
-        %vbc% /reference:%PIRefs%,%PIACERefs%,build\DBMDriverOSIsoftPI.dll /rootnamespace:PIACE.DBMRt /target:library /out:build\DBMRt.dll src\shared\*.vb src\PIACENet\*.vb
+        %vbc% /reference:%PIRefs%,%PIACERefs%,build\DBMDriverOSIsoftPI.dll /rootnamespace:PIACE.DBMRt /target:library /out:build\DBMRt.dll src\shared\*.vb src\PIACENet\*.vb /novbruntimeref
         if not exist build\DBMRt.dll goto ExitBuild
 
     )
