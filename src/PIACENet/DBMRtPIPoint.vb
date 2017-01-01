@@ -34,7 +34,7 @@ Namespace DBMRt
             InputPointDriver=New DBM.DBMPointDriver(InputPIPoint)
             OutputPointDriver=New DBM.DBMPointDriver(OutputPIPoint)
             ExDesc=DirectCast(OutputPointDriver.Point,PISDK.PIPoint).PointAttributes("ExDesc").Value.ToString
-            If Text.RegularExpressions.Regex.IsMatch(ExDesc,"^[-]{0,1}[a-zA-Z0-9][a-zA-Z0-9_\.-]{0,}:[^:?*&]{1,}(&[-]{0,1}[a-zA-Z0-9][a-zA-Z0-9_\.-]{0,}:[^:?*&]{1,}){0,}$") Then ' ExDesc attribute should contain correlation PI point(s)
+            If Text.RegularExpressions.Regex.IsMatch(ExDesc,"^[-]?[\w\.-]+:[^:\?\*&]+(&[-]?[\w\.-]+:[^:\?\*&]+)*$") Then ' ExDesc attribute should contain correlation PI point(s)
                 SubstringsA=ExDesc.Split(New Char(){"&"c}) ' Split multiple correlation PI points by &
                 For Each SubstringA In SubstringsA
                     SubstringsB=SubstringA.Split(New Char(){":"c}) ' Format: [-]PI server:PI point

@@ -42,7 +42,7 @@ Namespace DBM
                     StreamReader=New System.IO.StreamReader(DirectCast(Point,String))
                     Do While Not StreamReader.EndOfStream
                         Try
-                            Substrings=System.Text.RegularExpressions.Regex.Split(StreamReader.ReadLine,"^([^,\t]{0,})[,\t](.{0,})$") ' Comma and tab delimiters; split in 2 substrings
+                            Substrings=System.Text.RegularExpressions.Regex.Split(StreamReader.ReadLine,"^([^,\t]+)[,\t](.+)$") ' Comma and tab delimiters; split in 2 substrings
                             Values.Add(Convert.ToDateTime(Substrings(1)),Convert.ToDouble(Substrings(2))) ' timestamp,value
                         Catch
                         End Try

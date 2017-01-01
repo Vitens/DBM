@@ -35,7 +35,7 @@ Namespace DBMRt
             Try
                 For Each PIPoint As PISDK.PIPoint In Me.PIServer.GetPointsSQL("PIpoint.Tag='*' AND PIpoint.PointSource='dbmrt' AND PIpoint.Scan=1") ' Search for DBM output PI points
                     InstrTag=PIPoint.PointAttributes("InstrumentTag").Value.ToString
-                    If Text.RegularExpressions.Regex.IsMatch(InstrTag,"^[a-zA-Z0-9_\.-]{1,}:[^:?*&]{1,}$") Then ' InstrumentTag attribute should contain input PI point
+                    If Text.RegularExpressions.Regex.IsMatch(InstrTag,"^[\w\.-]+:[^:\?\*&]+$") Then ' InstrumentTag attribute should contain input PI point
                         Substrings=InstrTag.Split(New Char(){":"c}) ' Format: PI server:PI point
                         Try
                             If Not DBMRtCalculator.PISDK.Servers(Substrings(0)).PIPoints(Substrings(1)).Name.Equals(String.Empty) Then
