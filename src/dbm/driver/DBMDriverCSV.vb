@@ -44,10 +44,12 @@ Namespace DBM
                     StreamReader=New System.IO.StreamReader(DirectCast(Point,String))
                     Do While Not StreamReader.EndOfStream
                         Substrings=System.Text.RegularExpressions.Regex.Split(StreamReader.ReadLine,"^([^,\t]+)[,\t](.+)$") ' Comma and tab delimiters; split in 2 substrings
-                        If DateTime.TryParse(Substrings(1),Timestamp) Then
-                            If Double.TryParse(Substrings(2),Value) Then
-                                If Not Values.ContainsKey(Timestamp) Then
-                                    Values.Add(Timestamp,Value)
+                        If Substrings.Length=4 Then ' If a match is found at the beginning or the end of the input string, an empty string is included at the beginning or the end of the returned array
+                            If DateTime.TryParse(Substrings(1),Timestamp) Then
+                                If Double.TryParse(Substrings(2),Value) Then
+                                    If Not Values.ContainsKey(Timestamp) Then
+                                        Values.Add(Timestamp,Value)
+                                    End If
                                 End If
                             End If
                         End If
