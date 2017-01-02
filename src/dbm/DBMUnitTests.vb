@@ -241,6 +241,27 @@ Namespace DBM
             TestResults=TestResults And DBMMath.Median({33,82,42,33,81,56,13,13,54,6})=37.5
             TestResults=TestResults And DBMMath.Median({55,40,75,23,53,85,59,9,72,44})=54
 
+            TestResults=TestResults And ArrayMultiplier(DBMMath.AbsoluteDeviation({100,44,43,45},44))=ArrayMultiplier({56,0,1,1})
+            TestResults=TestResults And ArrayMultiplier(DBMMath.AbsoluteDeviation({76,70,84,39},77))=ArrayMultiplier({1,7,7,38})
+            TestResults=TestResults And ArrayMultiplier(DBMMath.AbsoluteDeviation({15,74,54,23},93))=ArrayMultiplier({78,19,39,70})
+            TestResults=TestResults And ArrayMultiplier(DBMMath.AbsoluteDeviation({48,12,85,50},9))=ArrayMultiplier({39,3,76,41})
+            TestResults=TestResults And ArrayMultiplier(DBMMath.AbsoluteDeviation({7,24,28,41},69))=ArrayMultiplier({62,45,41,28})
+            TestResults=TestResults And ArrayMultiplier(DBMMath.AbsoluteDeviation({55,46,81,50},88))=ArrayMultiplier({33,42,7,38})
+            TestResults=TestResults And ArrayMultiplier(DBMMath.AbsoluteDeviation({84,14,23,54},52))=ArrayMultiplier({32,38,29,2})
+            TestResults=TestResults And ArrayMultiplier(DBMMath.AbsoluteDeviation({92,92,45,21},49))=ArrayMultiplier({43,43,4,28})
+            TestResults=TestResults And ArrayMultiplier(DBMMath.AbsoluteDeviation({3,9,70,51},36))=ArrayMultiplier({33,27,34,15})
+            TestResults=TestResults And ArrayMultiplier(DBMMath.AbsoluteDeviation({14,7,8,53},37))=ArrayMultiplier({23,30,29,16})
+            TestResults=TestResults And ArrayMultiplier(DBMMath.AbsoluteDeviation({66,37,23,80},3))=ArrayMultiplier({63,34,20,77})
+            TestResults=TestResults And ArrayMultiplier(DBMMath.AbsoluteDeviation({93,45,18,50},75))=ArrayMultiplier({18,30,57,25})
+            TestResults=TestResults And ArrayMultiplier(DBMMath.AbsoluteDeviation({2,73,13,0},37))=ArrayMultiplier({35,36,24,37})
+            TestResults=TestResults And ArrayMultiplier(DBMMath.AbsoluteDeviation({76,77,56,11},77))=ArrayMultiplier({1,0,21,66})
+            TestResults=TestResults And ArrayMultiplier(DBMMath.AbsoluteDeviation({90,36,72,54},81))=ArrayMultiplier({9,45,9,27})
+            TestResults=TestResults And ArrayMultiplier(DBMMath.AbsoluteDeviation({5,62,50,23},19))=ArrayMultiplier({14,43,31,4})
+            TestResults=TestResults And ArrayMultiplier(DBMMath.AbsoluteDeviation({79,51,54,24},60))=ArrayMultiplier({19,9,6,36})
+            TestResults=TestResults And ArrayMultiplier(DBMMath.AbsoluteDeviation({26,53,38,42},60))=ArrayMultiplier({34,7,22,18})
+            TestResults=TestResults And ArrayMultiplier(DBMMath.AbsoluteDeviation({4,100,32,23},32))=ArrayMultiplier({28,68,0,9})
+            TestResults=TestResults And ArrayMultiplier(DBMMath.AbsoluteDeviation({15,94,58,67},78))=ArrayMultiplier({63,16,20,11})
+
             TestResults=TestResults And Math.Round(DBMMath.MeanAbsoluteDeviation({19}),4)=0
             TestResults=TestResults And Math.Round(DBMMath.MeanAbsoluteDeviation({86}),4)=0
             TestResults=TestResults And Math.Round(DBMMath.MeanAbsoluteDeviation({7,24}),4)=8.5

@@ -126,7 +126,7 @@ Namespace DBM
             End If
         End Function
 
-        Private Shared Function AbsoluteDeviation(Values() As Double,From As Double) As Double()
+        Public Shared Function AbsoluteDeviation(Values() As Double,From As Double) As Double()
             Dim AbsDev(Values.Count-1) As Double
             For i=0 to Values.Length-1
                 AbsDev(i)=Math.Abs(Values(i)-From)
