@@ -130,9 +130,8 @@ Namespace DBM
             Dim ValuesMean As Double=Mean(Values)
             Dim MeanAbsoluteDeviationValues(Values.Count-1) As Double
             Dim i As Integer
-            Array.Copy(Values,MeanAbsoluteDeviationValues,Values.Count)
-            For i=0 to MeanAbsoluteDeviationValues.Length-1
-                MeanAbsoluteDeviationValues(i)=Math.Abs(MeanAbsoluteDeviationValues(i)-ValuesMean)
+            For i=0 to Values.Length-1
+                MeanAbsoluteDeviationValues(i)=Math.Abs(Values(i)-ValuesMean)
             Next i
             Return Mean(MeanAbsoluteDeviationValues)
         End Function
@@ -141,9 +140,8 @@ Namespace DBM
             Dim ValuesMedian As Double=Median(Values)
             Dim MedianAbsoluteDeviationValues(Values.Count-1) As Double
             Dim i As Integer
-            Array.Copy(Values,MedianAbsoluteDeviationValues,Values.Count)
-            For i=0 to MedianAbsoluteDeviationValues.Length-1
-                MedianAbsoluteDeviationValues(i)=Math.Abs(MedianAbsoluteDeviationValues(i)-ValuesMedian)
+            For i=0 to Values.Length-1
+                MedianAbsoluteDeviationValues(i)=Math.Abs(Values(i)-ValuesMedian)
             Next i
             Return Median(MedianAbsoluteDeviationValues)
         End Function
