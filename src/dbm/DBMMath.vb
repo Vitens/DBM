@@ -126,24 +126,20 @@ Namespace DBM
             End If
         End Function
 
-        Public Shared Function MeanAbsoluteDeviation(Values() As Double) As Double
-            Dim ValuesMean As Double=Mean(Values)
-            Dim i As Integer
-            Dim AbsoluteDeviation(Values.Count-1) As Double
+        Private Shared Function AbsoluteDeviation(Values() As Double,From As Double) As Double()
+            Dim AbsDev(Values.Count-1) As Double
             For i=0 to Values.Length-1
-                AbsoluteDeviation(i)=Math.Abs(Values(i)-ValuesMean)
+                AbsDev(i)=Math.Abs(Values(i)-From)
             Next i
-            Return Mean(AbsoluteDeviation)
+            Return AbsDev
+        End Function
+
+        Public Shared Function MeanAbsoluteDeviation(Values() As Double) As Double
+            Return Mean(AbsoluteDeviation(Values,Mean(Values)))
         End Function
 
         Public Shared Function MedianAbsoluteDeviation(Values() As Double) As Double
-            Dim ValuesMedian As Double=Median(Values)
-            Dim i As Integer
-            Dim AbsoluteDeviation(Values.Count-1) As Double
-            For i=0 to Values.Length-1
-                AbsoluteDeviation(i)=Math.Abs(Values(i)-ValuesMedian)
-            Next i
-            Return Median(AbsoluteDeviation)
+            Return Median(AbsoluteDeviation(Values,Median(Values)))
         End Function
 
         Public Shared Function RemoveOutliers(Values() As Double) As Double() ' Returns an array which contains the input data from which outliers are removed (NaN)
