@@ -36,16 +36,21 @@ Namespace DBM
         Public Function GetData(StartTimestamp As DateTime,EndTimestamp As DateTime) As Double
             Dim StreamReader As System.IO.StreamReader
             Dim Substrings() As String
+            Dim Timestamp As DateTime
+            Dim Value As Double
             If Values Is Nothing Then ' No data in memory yet
                 Values=New Collections.Generic.Dictionary(Of DateTime,Double)
                 Try
                     StreamReader=New System.IO.StreamReader(DirectCast(Point,String))
                     Do While Not StreamReader.EndOfStream
-                        Try
-                            Substrings=System.Text.RegularExpressions.Regex.Split(StreamReader.ReadLine,"^([^,\t]+)[,\t](.+)$") ' Comma and tab delimiters; split in 2 substrings
-                            Values.Add(Convert.ToDateTime(Substrings(1)),Convert.ToDouble(Substrings(2))) ' timestamp,value
-                        Catch
-                        End Try
+                        Substrings=System.Text.RegularExpressions.Regex.Split(StreamReader.ReadLine,"^([^,\t]+)[,\t](.+)$") ' Comma and tab delimiters; split in 2 substrings
+                        If DateTime.TryParse(Substrings(1),Timestamp) Then
+                            If Double.TryParse(Substrings(2),Value) Then
+                                If Not Values.ContainsKey(Timestamp) Then
+                                    Values.Add(Timestamp,Value)
+                                End If
+                            End If
+                        End If
                     Loop
                     StreamReader.Close
                 Catch
