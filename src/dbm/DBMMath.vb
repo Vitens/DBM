@@ -116,39 +116,45 @@ Namespace DBM
         End Function
 
         Public Shared Function Median(Values() As Double) As Double
-            Array.Sort(Values)
-            If Values.Length Mod 2=0 Then
-                Return (Values(Values.Length\2)+Values(Values.Length\2-1))/2
+            Dim MedianValues(Values.Count-1) As Double
+            Array.Copy(Values,MedianValues,Values.Count)
+            Array.Sort(MedianValues)
+            If MedianValues.Length Mod 2=0 Then
+                Return (MedianValues(MedianValues.Length\2)+MedianValues(MedianValues.Length\2-1))/2
             Else
-                Return Values(Values.Length\2)
+                Return MedianValues(MedianValues.Length\2)
             End If
         End Function
 
         Public Shared Function MeanAbsoluteDeviation(Values() As Double) As Double
             Dim ValuesMean As Double=Mean(Values)
+            Dim MeanAbsoluteDeviationValues(Values.Count-1) As Double
             Dim i As Integer
-            For i=0 to Values.Length-1
-                Values(i)=Math.Abs(Values(i)-ValuesMean)
+            Array.Copy(Values,MeanAbsoluteDeviationValues,Values.Count)
+            For i=0 to MeanAbsoluteDeviationValues.Length-1
+                MeanAbsoluteDeviationValues(i)=Math.Abs(MeanAbsoluteDeviationValues(i)-ValuesMean)
             Next i
-            Return Mean(Values)
+            Return Mean(MeanAbsoluteDeviationValues)
         End Function
 
         Public Shared Function MedianAbsoluteDeviation(Values() As Double) As Double
             Dim ValuesMedian As Double=Median(Values)
+            Dim MedianAbsoluteDeviationValues(Values.Count-1) As Double
             Dim i As Integer
-            For i=0 to Values.Length-1
-                Values(i)=Math.Abs(Values(i)-ValuesMedian)
+            Array.Copy(Values,MedianAbsoluteDeviationValues,Values.Count)
+            For i=0 to MedianAbsoluteDeviationValues.Length-1
+                MedianAbsoluteDeviationValues(i)=Math.Abs(MedianAbsoluteDeviationValues(i)-ValuesMedian)
             Next i
-            Return Median(Values)
+            Return Median(MedianAbsoluteDeviationValues)
         End Function
 
         Public Shared Function RemoveOutliers(Values() As Double) As Double() ' Returns an array which contains the input data from which outliers are removed (NaN)
             Dim ValuesMedian,ValuesMedianAbsoluteDeviation,ValuesMean,ValuesMeanAbsoluteDeviation As Double
             Dim i As Integer
-            ValuesMedian=Median(Values.ToArray)
-            ValuesMedianAbsoluteDeviation=MedianAbsoluteDeviation(Values.ToArray)
-            ValuesMean=Mean(Values.ToArray)
-            ValuesMeanAbsoluteDeviation=MeanAbsoluteDeviation(Values.ToArray)
+            ValuesMedian=Median(Values)
+            ValuesMedianAbsoluteDeviation=MedianAbsoluteDeviation(Values)
+            ValuesMean=Mean(Values)
+            ValuesMeanAbsoluteDeviation=MeanAbsoluteDeviation(Values)
             For i=0 to Values.Length-1
                 If ValuesMedianAbsoluteDeviation=0 Then ' Use Mean Absolute Deviation instead of Median Absolute Deviation to detect outliers
                     If Math.Abs(Values(i)-ValuesMean)>ValuesMeanAbsoluteDeviation*MeanAbsoluteDeviationScaleFactor*ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,Values.Length-1) Then ' If value is an outlier
