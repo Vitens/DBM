@@ -32,8 +32,8 @@ Namespace Vitens.DynamicBandwidthMonitor
             Me.Point=Point
         End Sub
 
-        Public Function GetData(StartTimestamp As DateTime,EndTimestamp As DateTime) As Double
-            Return DirectCast(DirectCast(Point,PISDK.PIPoint).Data.Summary(StartTimestamp,EndTimestamp,PISDK.ArchiveSummaryTypeConstants.astAverage,PISDK.CalculationBasisConstants.cbTimeWeighted).Value,Double)
+        Public Function GetData(StartTimestamp As DateTime, EndTimestamp As DateTime) As Double
+            Return DirectCast(DirectCast(Point, PISDK.PIPoint).Data.Summary(StartTimestamp, EndTimestamp, PISDK.ArchiveSummaryTypeConstants.astAverage, PISDK.CalculationBasisConstants.cbTimeWeighted).Value, Double)
         End Function
 
     End Class

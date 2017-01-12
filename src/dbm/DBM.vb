@@ -28,7 +28,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Class DBM
 
-        Public Points As New Collections.Generic.Dictionary(Of Object,DBMPoint)
+        Public Points As New Collections.Generic.Dictionary(Of Object, DBMPoint)
 
         Public Shared Function Version(Optional SkipUnitTests As Boolean=False) As String
             Dim Ticks As Int64=DateTime.Now.Ticks
@@ -40,17 +40,17 @@ Namespace Vitens.DynamicBandwidthMonitor
                 "This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version." & Environment.NewLine & Environment.NewLine & _
                 "This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details." & Environment.NewLine & Environment.NewLine & _
                 "You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>." & Environment.NewLine & _
-                If(SkipUnitTests,"",Environment.NewLine & " * Unit tests " & If(DBMUnitTests.TestResults,"PASSED","FAILED") & " in " & Math.Round((DateTime.Now.Ticks-Ticks)/10000).ToString & "ms." & Environment.NewLine)
+                If(SkipUnitTests, "", Environment.NewLine & " * Unit tests " & If(DBMUnitTests.TestResults, "PASSED", "FAILED") & " in " & Math.Round((DateTime.Now.Ticks-Ticks)/10000).ToString & "ms." & Environment.NewLine)
         End Function
 
         Private Function Point(PointDriver As DBMPointDriver) As DBMPoint
             If Not Points.ContainsKey(PointDriver.Point) Then
-                Points.Add(PointDriver.Point,New DBMPoint(PointDriver)) ' Add to dictionary
+                Points.Add(PointDriver.Point, New DBMPoint(PointDriver)) ' Add to dictionary
             End If
             Return Points.Item(PointDriver.Point)
         End Function
 
-        Public Shared Function Suppress(Factor As Double,AbsErrModCorr As Double,RelErrModCorr As Double,SubstractSelf As Boolean) As Double
+        Public Shared Function Suppress(Factor As Double, AbsErrModCorr As Double, RelErrModCorr As Double, SubstractSelf As Boolean) As Double
             If Not SubstractSelf And AbsErrModCorr<-DBMParameters.CorrelationThreshold Then ' If anticorrelation with adjacent measurement
                 If Factor<-DBMParameters.CorrelationThreshold And Factor>=-1 Then ' If already suppressed due to anticorrelation
                     If AbsErrModCorr<Factor Then ' Keep lowest value (strongest anticorrelation)
@@ -73,24 +73,24 @@ Namespace Vitens.DynamicBandwidthMonitor
             Return Factor
         End Function
 
-        Public Function Result(InputPointDriver As DBMPointDriver,CorrelationPoints As Collections.Generic.List(Of DBMCorrelationPoint),Timestamp As DateTime) As DBMResult
+        Public Function Result(InputPointDriver As DBMPointDriver, CorrelationPoints As Collections.Generic.List(Of DBMCorrelationPoint), Timestamp As DateTime) As DBMResult
             Dim CorrelationResult As DBMResult
-            Dim AbsoluteErrorStats,RelativeErrorStats As New DBMStatistics
+            Dim AbsoluteErrorStats, RelativeErrorStats As New DBMStatistics
             Dim Factor As Double
             If CorrelationPoints Is Nothing Then
                 CorrelationPoints=New Collections.Generic.List(Of DBMCorrelationPoint)
             End If
-            Result=Point(InputPointDriver).Result(Timestamp,True,CorrelationPoints.Count>0) ' Calculate for input point
+            Result=Point(InputPointDriver).Result(Timestamp, True, CorrelationPoints.Count>0) ' Calculate for input point
             If Result.Factor<>0 And CorrelationPoints.Count>0 Then ' If an event is found and a correlation point is available
                 For Each CorrelationPoint In CorrelationPoints
                     If CorrelationPoint.SubstractSelf Then ' If pattern of correlation point contains input point
-                        CorrelationResult=Point(CorrelationPoint.PointDriver).Result(Timestamp,False,True,Point(InputPointDriver)) ' Calculate for correlation point, substract input point
+                        CorrelationResult=Point(CorrelationPoint.PointDriver).Result(Timestamp, False, True, Point(InputPointDriver)) ' Calculate for correlation point, substract input point
                     Else
-                        CorrelationResult=Point(CorrelationPoint.PointDriver).Result(Timestamp,False,True) ' Calculate for correlation point
+                        CorrelationResult=Point(CorrelationPoint.PointDriver).Result(Timestamp, False, True) ' Calculate for correlation point
                     End If
-                    AbsoluteErrorStats.Calculate(CorrelationResult.AbsoluteErrors,Result.AbsoluteErrors) ' Absolute error compared to prediction
-                    RelativeErrorStats.Calculate(CorrelationResult.RelativeErrors,Result.RelativeErrors) ' Relative error compared to prediction
-                    Factor=Suppress(Result.Factor,AbsoluteErrorStats.ModifiedCorrelation,RelativeErrorStats.ModifiedCorrelation,CorrelationPoint.SubstractSelf)
+                    AbsoluteErrorStats.Calculate(CorrelationResult.AbsoluteErrors, Result.AbsoluteErrors) ' Absolute error compared to prediction
+                    RelativeErrorStats.Calculate(CorrelationResult.RelativeErrors, Result.RelativeErrors) ' Relative error compared to prediction
+                    Factor=Suppress(Result.Factor, AbsoluteErrorStats.ModifiedCorrelation, RelativeErrorStats.ModifiedCorrelation, CorrelationPoint.SubstractSelf)
                     If Factor<>Result.Factor Then ' Has event been suppressed
                         Result.Factor=Factor
                         Result.AbsoluteErrorStats=AbsoluteErrorStats.ShallowCopy

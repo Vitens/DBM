@@ -27,8 +27,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Class DBMResult
 
         Public Prediction As DBMPrediction
-        Public Factor,OriginalFactor,AbsoluteErrors(),RelativeErrors() As Double
-        Public AbsoluteErrorStats,RelativeErrorStats As New DBMStatistics
+        Public Factor, OriginalFactor, AbsoluteErrors(), RelativeErrors() As Double
+        Public AbsoluteErrorStats, RelativeErrorStats As New DBMStatistics
         Public SuppressedBy As DBMPointDriver
 
         Public Sub New
@@ -36,11 +36,11 @@ Namespace Vitens.DynamicBandwidthMonitor
             ReDim RelativeErrors(DBMParameters.CorrelationPreviousPeriods)
         End Sub
 
-        Public Sub Calculate(Index As Integer,MeasuredValueEMA As Double,PredictedValueEMA As Double,LowerControlLimitEMA As Double,UpperControlLimitEMA As Double) ' Calculates and stores prediction errors and initial results
+        Public Sub Calculate(Index As Integer, MeasuredValueEMA As Double, PredictedValueEMA As Double, LowerControlLimitEMA As Double, UpperControlLimitEMA As Double) ' Calculates and stores prediction errors and initial results
             AbsoluteErrors(Index)=PredictedValueEMA-MeasuredValueEMA ' Absolute prediction error (for prediction error correlation calculations)
             RelativeErrors(Index)=PredictedValueEMA/MeasuredValueEMA-1 ' Relative prediction error (for prediction error correlation calculations)
             If Prediction Is Nothing Then ' Store initial (no time offset because of prediction error correlation calculations) results
-                Prediction=New DBMPrediction(MeasuredValueEMA,PredictedValueEMA,LowerControlLimitEMA,UpperControlLimitEMA)
+                Prediction=New DBMPrediction(MeasuredValueEMA, PredictedValueEMA, LowerControlLimitEMA, UpperControlLimitEMA)
                 If MeasuredValueEMA<LowerControlLimitEMA Then ' Lower control limit exceeded
                     Factor=(PredictedValueEMA-MeasuredValueEMA)/(LowerControlLimitEMA-PredictedValueEMA)
                 ElseIf MeasuredValueEMA>UpperControlLimitEMA Then ' Upper control limit exceeded

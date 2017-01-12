@@ -30,15 +30,15 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         Public Shared Function NormSInv(p As Double) As Double ' Returns the inverse of the standard normal cumulative distribution. The distribution has a mean of zero and a standard deviation of one.
             ' Approximation of inverse standard normal CDF developed by Peter J. Acklam
-            Const a1=-39.6968302866538,a2=220.946098424521,a3=-275.928510446969
-            Const a4=138.357751867269,a5=-30.6647980661472,a6=2.50662827745924
-            Const b1=-54.4760987982241,b2=161.585836858041,b3=-155.698979859887
-            Const b4=66.8013118877197,b5=-13.2806815528857,c1=-7.78489400243029E-03
-            Const c2=-0.322396458041136,c3=-2.40075827716184,c4=-2.54973253934373
-            Const c5=4.37466414146497,c6=2.93816398269878,d1=7.78469570904146E-03
-            Const d2=0.32246712907004,d3=2.445134137143,d4=3.75440866190742
-            Const p_low=0.02425,p_high=1-p_low
-            Dim q,r As Double
+            Const a1=-39.6968302866538, a2=220.946098424521, a3=-275.928510446969
+            Const a4=138.357751867269, a5=-30.6647980661472, a6=2.50662827745924
+            Const b1=-54.4760987982241, b2=161.585836858041, b3=-155.698979859887
+            Const b4=66.8013118877197, b5=-13.2806815528857, c1=-7.78489400243029E-03
+            Const c2=-0.322396458041136, c3=-2.40075827716184, c4=-2.54973253934373
+            Const c5=4.37466414146497, c6=2.93816398269878, d1=7.78469570904146E-03
+            Const d2=0.32246712907004, d3=2.445134137143, d4=3.75440866190742
+            Const p_low=0.02425, p_high=1-p_low
+            Dim q, r As Double
             If p<p_low Then
                 q=Math.Sqrt(-2*Math.Log(p))
                 Return (((((c1*q+c2)*q+c3)*q+c4)*q+c5)*q+c6)/((((d1*q+d2)*q+d3)*q+d4)*q+1)
@@ -52,9 +52,9 @@ Namespace Vitens.DynamicBandwidthMonitor
             End If
         End Function
 
-        Public Shared Function TInv2T(p As Double,dof As Integer) As Double ' Returns the two-tailed inverse of the Student's t-distribution.
+        Public Shared Function TInv2T(p As Double, dof As Integer) As Double ' Returns the two-tailed inverse of the Student's t-distribution.
             ' Hill's approx. inverse t-dist.: Comm. of A.C.M Vol.13 No.10 1970 pg 620
-            Dim a,b,c,d,x,y As Double
+            Dim a, b, c, d, x, y As Double
             If dof=1 Then
                 p*=Math.PI/2
                 Return Math.Cos(p)/Math.Sin(p)
@@ -83,8 +83,8 @@ Namespace Vitens.DynamicBandwidthMonitor
             End If
         End Function
 
-        Public Shared Function TInv(p As Double,dof As Integer) As Double ' Returns the left-tailed inverse of the Student's t-distribution.
-            Return Math.Sign(p-0.5)*TInv2T(1-Math.Abs(p-0.5)*2,dof)
+        Public Shared Function TInv(p As Double, dof As Integer) As Double ' Returns the left-tailed inverse of the Student's t-distribution.
+            Return Math.Sign(p-0.5)*TInv2T(1-Math.Abs(p-0.5)*2, dof)
         End Function
 
         Public Shared Function MeanAbsoluteDeviationScaleFactor As Double ' Scale factor k
@@ -93,15 +93,15 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         Public Shared Function MedianAbsoluteDeviationScaleFactor(n As Integer) As Double ' Scale factor k
             If n<30 Then
-                Return 1/TInv(0.75,n) ' n<30 Student's t-distribution
+                Return 1/TInv(0.75, n) ' n<30 Student's t-distribution
             Else
                 Return 1/NormSInv(0.75) ' n>=30 Standard normal distribution
             End If
         End Function
 
-        Public Shared Function ControlLimitRejectionCriterion(p As Double,n As Integer) As Double
+        Public Shared Function ControlLimitRejectionCriterion(p As Double, n As Integer) As Double
             If n<30 Then
-                Return TInv((p+1)/2,n) ' n<30 Student's t-distribution
+                Return TInv((p+1)/2, n) ' n<30 Student's t-distribution
             Else
                 Return NormSInv((p+1)/2) ' n>=30 Standard normal distribution
             End If
@@ -117,7 +117,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         Public Shared Function Median(Values() As Double) As Double
             Dim MedianValues(Values.Count-1) As Double
-            Array.Copy(Values,MedianValues,Values.Count)
+            Array.Copy(Values, MedianValues, Values.Count)
             Array.Sort(MedianValues)
             If MedianValues.Length Mod 2=0 Then
                 Return (MedianValues(MedianValues.Length\2)+MedianValues(MedianValues.Length\2-1))/2
@@ -126,7 +126,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             End If
         End Function
 
-        Public Shared Function AbsoluteDeviation(Values() As Double,From As Double) As Double()
+        Public Shared Function AbsoluteDeviation(Values() As Double, From As Double) As Double()
             Dim AbsDev(Values.Count-1) As Double
             For i=0 to Values.Length-1
                 AbsDev(i)=Math.Abs(Values(i)-From)
@@ -135,15 +135,15 @@ Namespace Vitens.DynamicBandwidthMonitor
         End Function
 
         Public Shared Function MeanAbsoluteDeviation(Values() As Double) As Double
-            Return Mean(AbsoluteDeviation(Values,Mean(Values)))
+            Return Mean(AbsoluteDeviation(Values, Mean(Values)))
         End Function
 
         Public Shared Function MedianAbsoluteDeviation(Values() As Double) As Double
-            Return Median(AbsoluteDeviation(Values,Median(Values)))
+            Return Median(AbsoluteDeviation(Values, Median(Values)))
         End Function
 
         Public Shared Function RemoveOutliers(Values() As Double) As Double() ' Returns an array which contains the input data from which outliers are removed (NaN)
-            Dim ValuesMedian,ValuesMedianAbsoluteDeviation,ValuesMean,ValuesMeanAbsoluteDeviation As Double
+            Dim ValuesMedian, ValuesMedianAbsoluteDeviation, ValuesMean, ValuesMeanAbsoluteDeviation As Double
             Dim i As Integer
             ValuesMedian=Median(Values)
             ValuesMedianAbsoluteDeviation=MedianAbsoluteDeviation(Values)
@@ -151,11 +151,11 @@ Namespace Vitens.DynamicBandwidthMonitor
             ValuesMeanAbsoluteDeviation=MeanAbsoluteDeviation(Values)
             For i=0 to Values.Length-1
                 If ValuesMedianAbsoluteDeviation=0 Then ' Use Mean Absolute Deviation instead of Median Absolute Deviation to detect outliers
-                    If Math.Abs(Values(i)-ValuesMean)>ValuesMeanAbsoluteDeviation*MeanAbsoluteDeviationScaleFactor*ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,Values.Length-1) Then ' If value is an outlier
+                    If Math.Abs(Values(i)-ValuesMean)>ValuesMeanAbsoluteDeviation*MeanAbsoluteDeviationScaleFactor*ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval, Values.Length-1) Then ' If value is an outlier
                         Values(i)=Double.NaN ' Exclude outlier
                     End If
                 Else ' Use Median Absolute Deviation to detect outliers
-                    If Math.Abs(Values(i)-ValuesMedian)>ValuesMedianAbsoluteDeviation*MedianAbsoluteDeviationScaleFactor(Values.Length-1)*ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,Values.Length-1) Then ' If value is an outlier
+                    If Math.Abs(Values(i)-ValuesMedian)>ValuesMedianAbsoluteDeviation*MedianAbsoluteDeviationScaleFactor(Values.Length-1)*ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval, Values.Length-1) Then ' If value is an outlier
                         Values(i)=Double.NaN ' Exclude outlier
                     End If
                 End If
@@ -164,7 +164,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         End Function
 
         Public Shared Function ExponentialMovingAverage(Values() As Double) As Double ' Filter high frequency variation
-            Dim Weight,TotalWeight As Double
+            Dim Weight, TotalWeight As Double
             ExponentialMovingAverage=0
             Weight=1 ' Initial weight
             TotalWeight=0
@@ -177,8 +177,8 @@ Namespace Vitens.DynamicBandwidthMonitor
             Return ExponentialMovingAverage
         End Function
 
-        Public Shared Function RandomNumber(Min As Integer,Max As Integer) As Integer ' Returns a random number between Min (inclusive) and Max (inclusive)
-            Return Random.Next(Min,Max+1)
+        Public Shared Function RandomNumber(Min As Integer, Max As Integer) As Integer ' Returns a random number between Min (inclusive) and Max (inclusive)
+            Return Random.Next(Min, Max+1)
         End Function
 
     End Class

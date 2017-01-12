@@ -26,13 +26,13 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Class DBMPrediction
 
-        Public MeasuredValue,PredictedValue,LowerControlLimit,UpperControlLimit As Double
+        Public MeasuredValue, PredictedValue, LowerControlLimit, UpperControlLimit As Double
 
         Public Function ShallowCopy As DBMPrediction
-            Return DirectCast(Me.MemberwiseClone,DBMPrediction)
+            Return DirectCast(Me.MemberwiseClone, DBMPrediction)
         End Function
 
-        Public Sub New(Optional MeasuredValue As Double=0,Optional PredictedValue As Double=0,Optional LowerControlLimit As Double=0,Optional UpperControlLimit As Double=0)
+        Public Sub New(Optional MeasuredValue As Double=0, Optional PredictedValue As Double=0, Optional LowerControlLimit As Double=0, Optional UpperControlLimit As Double=0)
             Me.MeasuredValue=MeasuredValue
             Me.PredictedValue=PredictedValue
             Me.LowerControlLimit=LowerControlLimit
@@ -44,8 +44,8 @@ Namespace Vitens.DynamicBandwidthMonitor
             Statistics.Calculate(DBMMath.RemoveOutliers(Values.Take(Values.Length-1).ToArray)) ' Calculate statistics for data after removing outliers
             MeasuredValue=Values(DBMParameters.ComparePatterns)
             PredictedValue=DBMParameters.ComparePatterns*Statistics.Slope+Statistics.Intercept ' Extrapolate regression one interval
-            LowerControlLimit=PredictedValue-DBMMath.ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,Statistics.Count-1)*Statistics.StandardError
-            UpperControlLimit=PredictedValue+DBMMath.ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval,Statistics.Count-1)*Statistics.StandardError
+            LowerControlLimit=PredictedValue-DBMMath.ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval, Statistics.Count-1)*Statistics.StandardError
+            UpperControlLimit=PredictedValue+DBMMath.ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval, Statistics.Count-1)*Statistics.StandardError
         End Sub
 
     End Class

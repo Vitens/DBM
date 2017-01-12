@@ -48,7 +48,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         Private Shared Function FormatNumber(Value As Double) As String
             If InternationalFormat Then
-                Return Value.ToString("0.####",System.Globalization.CultureInfo.InvariantCulture)
+                Return Value.ToString("0.####", System.Globalization.CultureInfo.InvariantCulture)
             Else
                 Return Value.ToString("0.####")
             End If
@@ -58,19 +58,19 @@ Namespace Vitens.DynamicBandwidthMonitor
             Dim Substrings() As String
             Dim InputPointDriver As DBMPointDriver=Nothing
             Dim CorrelationPoints As New Collections.Generic.List(Of DBMCorrelationPoint)
-            Dim StartTimestamp,EndTimestamp As DateTime
+            Dim StartTimestamp, EndTimestamp As DateTime
             Dim Result As DBMResult
             Dim _DBM As New DBM
             For Each CommandLineArg In Environment.GetCommandLineArgs ' Parse command line arguments
-                If Text.RegularExpressions.Regex.IsMatch(CommandLineArg,"^[-/](.+)=(.+)$") Then ' Parameter=Value
-                    Substrings=CommandLineArg.Split(New Char(){"="c},2)
+                If Text.RegularExpressions.Regex.IsMatch(CommandLineArg, "^[-/](.+)=(.+)$") Then ' Parameter=Value
+                    Substrings=CommandLineArg.Split(New Char(){"="c}, 2)
                     Try
                         If Substrings(0).Substring(1).ToLower.Equals("i") Then
                             InputPointDriver=New DBMPointDriver(Substrings(1))
                         ElseIf Substrings(0).Substring(1).ToLower.Equals("c") Then
-                            CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver(Substrings(1)),False))
+                            CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver(Substrings(1)), False))
                         ElseIf Substrings(0).Substring(1).ToLower.Equals("cs") Then
-                            CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver(Substrings(1)),True))
+                            CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver(Substrings(1)), True))
                         ElseIf Substrings(0).Substring(1).ToLower.Equals("iv") Then
                             DBMParameters.CalculationInterval=Convert.ToInt32(Substrings(1))
                         ElseIf Substrings(0).Substring(1).ToLower.Equals("p") Then
@@ -108,13 +108,13 @@ Namespace Vitens.DynamicBandwidthMonitor
                 End If
                 Do While StartTimestamp<=EndTimestamp
                     Console.Write(FormatDateTime(StartTimestamp) & Separator)
-                    Result=_DBM.Result(InputPointDriver,CorrelationPoints,StartTimestamp)
+                    Result=_DBM.Result(InputPointDriver, CorrelationPoints, StartTimestamp)
                     Console.Write(FormatNumber(Result.Factor) & Separator & FormatNumber(Result.Prediction.MeasuredValue) & Separator & FormatNumber(Result.Prediction.PredictedValue) & Separator & FormatNumber(Result.Prediction.LowerControlLimit) & Separator & FormatNumber(Result.Prediction.UpperControlLimit))
                     If Result.Factor<>0 And CorrelationPoints.Count>0 Then ' If an event is found and a correlation point is available
                         Console.Write(Separator & FormatNumber(Result.AbsoluteErrorStats.Count) & Separator & FormatNumber(Result.AbsoluteErrorStats.Slope) & Separator & FormatNumber(Result.AbsoluteErrorStats.Angle) & Separator & FormatNumber(Result.AbsoluteErrorStats.Intercept) & Separator & FormatNumber(Result.AbsoluteErrorStats.StandardError) & Separator & FormatNumber(Result.AbsoluteErrorStats.Correlation) & Separator & FormatNumber(Result.AbsoluteErrorStats.ModifiedCorrelation) & Separator & FormatNumber(Result.AbsoluteErrorStats.Determination))
                         Console.Write(Separator & FormatNumber(Result.RelativeErrorStats.Count) & Separator & FormatNumber(Result.RelativeErrorStats.Slope) & Separator & FormatNumber(Result.RelativeErrorStats.Angle) & Separator & FormatNumber(Result.RelativeErrorStats.Intercept) & Separator & FormatNumber(Result.RelativeErrorStats.StandardError) & Separator & FormatNumber(Result.RelativeErrorStats.Correlation) & Separator & FormatNumber(Result.RelativeErrorStats.ModifiedCorrelation) & Separator & FormatNumber(Result.RelativeErrorStats.Determination))
                         For Each CorrelationPoint In CorrelationPoints
-                            Result=_DBM.Result(CorrelationPoint.PointDriver,Nothing,StartTimestamp)
+                            Result=_DBM.Result(CorrelationPoint.PointDriver, Nothing, StartTimestamp)
                             Console.Write(Separator & FormatNumber(Result.Prediction.MeasuredValue) & Separator & FormatNumber(Result.Prediction.PredictedValue) & Separator & FormatNumber(Result.Prediction.LowerControlLimit) & Separator & FormatNumber(Result.Prediction.UpperControlLimit))
                         Next
                     End If

@@ -27,7 +27,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Class DBMDataManager
 
         Public PointDriver As DBMPointDriver
-        Private Values As New Collections.Generic.Dictionary(Of DateTime,Double)
+        Private Values As New Collections.Generic.Dictionary(Of DateTime, Double)
 
         Public Sub New(PointDriver As DBMPointDriver)
             Me.PointDriver=PointDriver
@@ -42,15 +42,15 @@ Namespace Vitens.DynamicBandwidthMonitor
                     DBMUnitTests.DataIndex=(DBMUnitTests.DataIndex+1) Mod DBMUnitTests.Data.Length ' Increase index
                 Else
                     Try
-                        Value=PointDriver.GetData(Timestamp,Timestamp.AddSeconds(DBMParameters.CalculationInterval)) ' Get data using driver
+                        Value=PointDriver.GetData(Timestamp, Timestamp.AddSeconds(DBMParameters.CalculationInterval)) ' Get data using driver
                     Catch
                         Value=Double.NaN ' Error, return Not a Number
                     End Try
                 End If
                 Do While Values.Count>=DBMParameters.MaxDataManagerValues ' Limit cache size
-                    Values.Remove(Values.ElementAt(DBMMath.RandomNumber(0,Values.Count-1)).Key) ' Remove random cached value
+                    Values.Remove(Values.ElementAt(DBMMath.RandomNumber(0, Values.Count-1)).Key) ' Remove random cached value
                 Loop
-                Values.Add(Timestamp,Value) ' Add to cache
+                Values.Add(Timestamp, Value) ' Add to cache
             End If
             Return Value
         End Function

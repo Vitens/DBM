@@ -27,15 +27,15 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Class DBMStatistics
 
         Public Count As Integer
-        Public Slope,Angle,Intercept,StandardError,Correlation,ModifiedCorrelation,Determination As Double
+        Public Slope, Angle, Intercept, StandardError, Correlation, ModifiedCorrelation, Determination As Double
 
         Public Function ShallowCopy As DBMStatistics
-            Return DirectCast(Me.MemberwiseClone,DBMStatistics)
+            Return DirectCast(Me.MemberwiseClone, DBMStatistics)
         End Function
 
-        Public Sub Calculate(ValuesY() As Double,Optional ValuesX() As Double=Nothing)
+        Public Sub Calculate(ValuesY() As Double, Optional ValuesX() As Double=Nothing)
             Dim i As Integer
-            Dim SumX,SumY,SumXX,SumYY,SumXY As Double
+            Dim SumX, SumY, SumXX, SumYY, SumXY As Double
             If ValuesX Is Nothing Then
                 ReDim ValuesX(ValuesY.Length-1)
                 For i=0 To ValuesX.Length-1
