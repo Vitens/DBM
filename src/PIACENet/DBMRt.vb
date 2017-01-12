@@ -30,7 +30,7 @@ Namespace Vitens.DynamicBandwidthMonitor.RealTime
 
         Inherits OSIsoft.PI.ACE.PIACENetClassModule
 
-        Private Calculator As DBMRtCalculator=Nothing
+        Private Calculator As DBMRtCalculator
 
         Public Overrides Sub ACECalculations ' Perform calculations
             If Calculator IsNot Nothing Then ' If module and DBMRtCalculator are initialized
