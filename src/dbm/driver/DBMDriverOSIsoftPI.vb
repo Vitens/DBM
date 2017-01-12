@@ -29,7 +29,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Public Point As Object
 
         Public Sub New(Point As Object)
-            Me.Point=Point
+            Me.Point = Point
         End Sub
 
         Public Function GetData(StartTimestamp As DateTime, EndTimestamp As DateTime) As Double

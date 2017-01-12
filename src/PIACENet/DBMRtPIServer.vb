@@ -31,12 +31,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         Public Sub New(PIServer As PISDK.Server)
             Dim InstrTag, Substrings() As String
-            Me.PIServer=PIServer
+            Me.PIServer = PIServer
             Try
                 For Each PIPoint As PISDK.PIPoint In Me.PIServer.GetPointsSQL("PIpoint.Tag='*' AND PIpoint.PointSource='dbmrt' AND PIpoint.Scan=1") ' Search for DBM output PI points
-                    InstrTag=PIPoint.PointAttributes("InstrumentTag").Value.ToString
+                    InstrTag = PIPoint.PointAttributes("InstrumentTag").Value.ToString
                     If Text.RegularExpressions.Regex.IsMatch(InstrTag, "^[\w\.-]+:[^:\?\*&]+$") Then ' InstrumentTag attribute should contain input PI point
-                        Substrings=InstrTag.Split(New Char(){":"c}) ' Format: PI server:PI point
+                        Substrings = InstrTag.Split(New Char(){":"c}) ' Format: PI server:PI point
                         Try
                             If Not DBMRtCalculator.PISDK.Servers(Substrings(0)).PIPoints(Substrings(1)).Name.Equals(String.Empty) Then
                                 PIPoints.Add(New DBMRtPIPoint(DBMRtCalculator.PISDK.Servers(Substrings(0)).PIPoints(Substrings(1)), PIPoint)) ' Add to calculation points

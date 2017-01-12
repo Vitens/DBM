@@ -28,7 +28,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Class DBMTester
 
-        Private Shared InternationalFormat As Boolean=False
+        Private Shared InternationalFormat As Boolean = False
 
         Private Shared Function FormatDateTime(Timestamp As DateTime) As String
             If InternationalFormat Then
@@ -56,70 +56,70 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         Public Shared Sub Main
             Dim Substrings() As String
-            Dim InputPointDriver As DBMPointDriver=Nothing
+            Dim InputPointDriver As DBMPointDriver = Nothing
             Dim CorrelationPoints As New Collections.Generic.List(Of DBMCorrelationPoint)
             Dim StartTimestamp, EndTimestamp As DateTime
             Dim Result As DBMResult
             Dim _DBM As New DBM
             For Each CommandLineArg In Environment.GetCommandLineArgs ' Parse command line arguments
-                If Text.RegularExpressions.Regex.IsMatch(CommandLineArg, "^[-/](.+)=(.+)$") Then ' Parameter=Value
-                    Substrings=CommandLineArg.Split(New Char(){"="c}, 2)
+                If Text.RegularExpressions.Regex.IsMatch(CommandLineArg, "^[-/](.+)=(.+)$") Then ' Parameter = Value
+                    Substrings = CommandLineArg.Split(New Char(){"="c}, 2)
                     Try
                         If Substrings(0).Substring(1).ToLower.Equals("i") Then
-                            InputPointDriver=New DBMPointDriver(Substrings(1))
+                            InputPointDriver = New DBMPointDriver(Substrings(1))
                         ElseIf Substrings(0).Substring(1).ToLower.Equals("c") Then
                             CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver(Substrings(1)), False))
                         ElseIf Substrings(0).Substring(1).ToLower.Equals("cs") Then
                             CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver(Substrings(1)), True))
                         ElseIf Substrings(0).Substring(1).ToLower.Equals("iv") Then
-                            DBMParameters.CalculationInterval=Convert.ToInt32(Substrings(1))
+                            DBMParameters.CalculationInterval = Convert.ToInt32(Substrings(1))
                         ElseIf Substrings(0).Substring(1).ToLower.Equals("p") Then
-                            DBMParameters.ComparePatterns=Convert.ToInt32(Substrings(1))
+                            DBMParameters.ComparePatterns = Convert.ToInt32(Substrings(1))
                         ElseIf Substrings(0).Substring(1).ToLower.Equals("ep") Then
-                            DBMParameters.EMAPreviousPeriods=Convert.ToInt32(Substrings(1))
+                            DBMParameters.EMAPreviousPeriods = Convert.ToInt32(Substrings(1))
                         ElseIf Substrings(0).Substring(1).ToLower.Equals("ci") Then
-                            DBMParameters.ConfidenceInterval=Convert.ToDouble(Substrings(1))
+                            DBMParameters.ConfidenceInterval = Convert.ToDouble(Substrings(1))
                         ElseIf Substrings(0).Substring(1).ToLower.Equals("cp") Then
-                            DBMParameters.CorrelationPreviousPeriods=Convert.ToInt32(Substrings(1))
+                            DBMParameters.CorrelationPreviousPeriods = Convert.ToInt32(Substrings(1))
                         ElseIf Substrings(0).Substring(1).ToLower.Equals("ct") Then
-                            DBMParameters.CorrelationThreshold=Convert.ToDouble(Substrings(1))
+                            DBMParameters.CorrelationThreshold = Convert.ToDouble(Substrings(1))
                         ElseIf Substrings(0).Substring(1).ToLower.Equals("st") Then
-                            StartTimestamp=Convert.ToDateTime(Substrings(1))
+                            StartTimestamp = Convert.ToDateTime(Substrings(1))
                         ElseIf Substrings(0).Substring(1).ToLower.Equals("et") Then
-                            EndTimestamp=Convert.ToDateTime(Substrings(1))
+                            EndTimestamp = Convert.ToDateTime(Substrings(1))
                         ElseIf Substrings(0).Substring(1).ToLower.Equals("f") Then
                             If Substrings(1).ToLower.Equals("local") Then
-                                InternationalFormat=False
+                                InternationalFormat = False
                             ElseIf Substrings(1).ToLower.Equals("intl") Then
-                                InternationalFormat=True
+                                InternationalFormat = True
                             End If
                         End If
                     Catch
                     End Try
                 End If
             Next
-            If InputPointDriver Is Nothing Or StartTimestamp=DateTime.MinValue Then ' Perform unit tests
+            If InputPointDriver Is Nothing Or StartTimestamp = DateTime.MinValue Then ' Perform unit tests
                 Console.Write(DBM.Version)
             Else
-                If EndTimestamp=DateTime.MinValue Then
-                    EndTimestamp=StartTimestamp ' No end timestamp, set to start timestamp
+                If EndTimestamp = DateTime.MinValue Then
+                    EndTimestamp = StartTimestamp ' No end timestamp, set to start timestamp
                 Else
-                    EndTimestamp=EndTimestamp.AddSeconds(-DBMParameters.CalculationInterval) ' Remove one interval from end timestamp
+                    EndTimestamp = EndTimestamp.AddSeconds(-DBMParameters.CalculationInterval) ' Remove one interval from end timestamp
                 End If
-                Do While StartTimestamp<=EndTimestamp
+                Do While StartTimestamp <= EndTimestamp
                     Console.Write(FormatDateTime(StartTimestamp) & Separator)
-                    Result=_DBM.Result(InputPointDriver, CorrelationPoints, StartTimestamp)
+                    Result = _DBM.Result(InputPointDriver, CorrelationPoints, StartTimestamp)
                     Console.Write(FormatNumber(Result.Factor) & Separator & FormatNumber(Result.Prediction.MeasuredValue) & Separator & FormatNumber(Result.Prediction.PredictedValue) & Separator & FormatNumber(Result.Prediction.LowerControlLimit) & Separator & FormatNumber(Result.Prediction.UpperControlLimit))
-                    If Result.Factor<>0 And CorrelationPoints.Count>0 Then ' If an event is found and a correlation point is available
+                    If Result.Factor <> 0 And CorrelationPoints.Count > 0 Then ' If an event is found and a correlation point is available
                         Console.Write(Separator & FormatNumber(Result.AbsoluteErrorStats.Count) & Separator & FormatNumber(Result.AbsoluteErrorStats.Slope) & Separator & FormatNumber(Result.AbsoluteErrorStats.Angle) & Separator & FormatNumber(Result.AbsoluteErrorStats.Intercept) & Separator & FormatNumber(Result.AbsoluteErrorStats.StandardError) & Separator & FormatNumber(Result.AbsoluteErrorStats.Correlation) & Separator & FormatNumber(Result.AbsoluteErrorStats.ModifiedCorrelation) & Separator & FormatNumber(Result.AbsoluteErrorStats.Determination))
                         Console.Write(Separator & FormatNumber(Result.RelativeErrorStats.Count) & Separator & FormatNumber(Result.RelativeErrorStats.Slope) & Separator & FormatNumber(Result.RelativeErrorStats.Angle) & Separator & FormatNumber(Result.RelativeErrorStats.Intercept) & Separator & FormatNumber(Result.RelativeErrorStats.StandardError) & Separator & FormatNumber(Result.RelativeErrorStats.Correlation) & Separator & FormatNumber(Result.RelativeErrorStats.ModifiedCorrelation) & Separator & FormatNumber(Result.RelativeErrorStats.Determination))
                         For Each CorrelationPoint In CorrelationPoints
-                            Result=_DBM.Result(CorrelationPoint.PointDriver, Nothing, StartTimestamp)
+                            Result = _DBM.Result(CorrelationPoint.PointDriver, Nothing, StartTimestamp)
                             Console.Write(Separator & FormatNumber(Result.Prediction.MeasuredValue) & Separator & FormatNumber(Result.Prediction.PredictedValue) & Separator & FormatNumber(Result.Prediction.LowerControlLimit) & Separator & FormatNumber(Result.Prediction.UpperControlLimit))
                         Next
                     End If
                     Console.WriteLine
-                    StartTimestamp=StartTimestamp.AddSeconds(DBMParameters.CalculationInterval) ' Next interval
+                    StartTimestamp = StartTimestamp.AddSeconds(DBMParameters.CalculationInterval) ' Next interval
                 Loop
             End If
         End Sub

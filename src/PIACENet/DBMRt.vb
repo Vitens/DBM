@@ -42,11 +42,11 @@ Namespace Vitens.DynamicBandwidthMonitor
         End Sub
 
         Protected Overrides Sub ModuleDependentInitialization
-            Calculator=New DBMRtCalculator
+            Calculator = New DBMRtCalculator
         End Sub
 
         Protected Overrides Sub ModuleDependentTermination
-            Calculator=Nothing
+            Calculator = Nothing
         End Sub
 
     End Class

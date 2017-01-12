@@ -30,8 +30,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         Public Points As New Collections.Generic.Dictionary(Of Object, DBMPoint)
 
-        Public Shared Function Version(Optional SkipUnitTests As Boolean=False) As String
-            Dim Ticks As Int64=DateTime.Now.Ticks
+        Public Shared Function Version(Optional SkipUnitTests As Boolean = False) As String
+            Dim Ticks As Int64 = DateTime.Now.Ticks
             Return System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).FileDescription & _
                 " v" & System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).FileVersion & Environment.NewLine & _
                 System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).ProductName & Environment.NewLine & _
@@ -51,18 +51,18 @@ Namespace Vitens.DynamicBandwidthMonitor
         End Function
 
         Public Shared Function Suppress(Factor As Double, AbsErrModCorr As Double, RelErrModCorr As Double, SubstractSelf As Boolean) As Double
-            If Not SubstractSelf And AbsErrModCorr<-DBMParameters.CorrelationThreshold Then ' If anticorrelation with adjacent measurement
-                If Factor<-DBMParameters.CorrelationThreshold And Factor>=-1 Then ' If already suppressed due to anticorrelation
-                    If AbsErrModCorr<Factor Then ' Keep lowest value (strongest anticorrelation)
+            If Not SubstractSelf And AbsErrModCorr < -DBMParameters.CorrelationThreshold Then ' If anticorrelation with adjacent measurement
+                If Factor < -DBMParameters.CorrelationThreshold And Factor >= -1 Then ' If already suppressed due to anticorrelation
+                    If AbsErrModCorr < Factor Then ' Keep lowest value (strongest anticorrelation)
                         Return AbsErrModCorr ' Suppress
                     End If
                 Else ' Not already suppressed due to anticorrelation
                     Return AbsErrModCorr ' Suppress
                 End If
-            ElseIf RelErrModCorr>DBMParameters.CorrelationThreshold Then ' If correlation with measurement
-                If Not (Factor<-DBMParameters.CorrelationThreshold And Factor>=-1) Then ' If not already suppressed due to anticorrelation
-                    If Factor>DBMParameters.CorrelationThreshold And Factor<=1 Then ' If already suppressed due to correlation
-                        If RelErrModCorr>Factor Then ' Keep highest value (strongest correlation)
+            ElseIf RelErrModCorr > DBMParameters.CorrelationThreshold Then ' If correlation with measurement
+                If Not (Factor < -DBMParameters.CorrelationThreshold And Factor >= -1) Then ' If not already suppressed due to anticorrelation
+                    If Factor > DBMParameters.CorrelationThreshold And Factor <= 1 Then ' If already suppressed due to correlation
+                        If RelErrModCorr > Factor Then ' Keep highest value (strongest correlation)
                             Return RelErrModCorr ' Suppress
                         End If
                     Else ' Not already suppressed due to correlation
@@ -78,24 +78,24 @@ Namespace Vitens.DynamicBandwidthMonitor
             Dim AbsoluteErrorStats, RelativeErrorStats As New DBMStatistics
             Dim Factor As Double
             If CorrelationPoints Is Nothing Then
-                CorrelationPoints=New Collections.Generic.List(Of DBMCorrelationPoint)
+                CorrelationPoints = New Collections.Generic.List(Of DBMCorrelationPoint)
             End If
-            Result=Point(InputPointDriver).Result(Timestamp, True, CorrelationPoints.Count>0) ' Calculate for input point
-            If Result.Factor<>0 And CorrelationPoints.Count>0 Then ' If an event is found and a correlation point is available
+            Result = Point(InputPointDriver).Result(Timestamp, True, CorrelationPoints.Count > 0) ' Calculate for input point
+            If Result.Factor <> 0 And CorrelationPoints.Count > 0 Then ' If an event is found and a correlation point is available
                 For Each CorrelationPoint In CorrelationPoints
                     If CorrelationPoint.SubstractSelf Then ' If pattern of correlation point contains input point
-                        CorrelationResult=Point(CorrelationPoint.PointDriver).Result(Timestamp, False, True, Point(InputPointDriver)) ' Calculate for correlation point, substract input point
+                        CorrelationResult = Point(CorrelationPoint.PointDriver).Result(Timestamp, False, True, Point(InputPointDriver)) ' Calculate for correlation point, substract input point
                     Else
-                        CorrelationResult=Point(CorrelationPoint.PointDriver).Result(Timestamp, False, True) ' Calculate for correlation point
+                        CorrelationResult = Point(CorrelationPoint.PointDriver).Result(Timestamp, False, True) ' Calculate for correlation point
                     End If
                     AbsoluteErrorStats.Calculate(CorrelationResult.AbsoluteErrors, Result.AbsoluteErrors) ' Absolute error compared to prediction
                     RelativeErrorStats.Calculate(CorrelationResult.RelativeErrors, Result.RelativeErrors) ' Relative error compared to prediction
-                    Factor=Suppress(Result.Factor, AbsoluteErrorStats.ModifiedCorrelation, RelativeErrorStats.ModifiedCorrelation, CorrelationPoint.SubstractSelf)
-                    If Factor<>Result.Factor Then ' Has event been suppressed
-                        Result.Factor=Factor
-                        Result.AbsoluteErrorStats=AbsoluteErrorStats.ShallowCopy
-                        Result.RelativeErrorStats=RelativeErrorStats.ShallowCopy
-                        Result.SuppressedBy=CorrelationPoint.PointDriver ' Suppressed by
+                    Factor = Suppress(Result.Factor, AbsoluteErrorStats.ModifiedCorrelation, RelativeErrorStats.ModifiedCorrelation, CorrelationPoint.SubstractSelf)
+                    If Factor <> Result.Factor Then ' Has event been suppressed
+                        Result.Factor = Factor
+                        Result.AbsoluteErrorStats = AbsoluteErrorStats.ShallowCopy
+                        Result.RelativeErrorStats = RelativeErrorStats.ShallowCopy
+                        Result.SuppressedBy = CorrelationPoint.PointDriver ' Suppressed by
                     End If
                 Next
             End If

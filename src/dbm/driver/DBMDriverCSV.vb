@@ -30,7 +30,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Private Values As Collections.Generic.Dictionary(Of DateTime, Double)
 
         Public Sub New(Point As Object)
-            Me.Point=Point
+            Me.Point = Point
         End Sub
 
         Public Function GetData(StartTimestamp As DateTime, EndTimestamp As DateTime) As Double
@@ -39,12 +39,12 @@ Namespace Vitens.DynamicBandwidthMonitor
             Dim Timestamp As DateTime
             Dim Value As Double
             If Values Is Nothing Then ' No data in memory yet
-                Values=New Collections.Generic.Dictionary(Of DateTime, Double)
+                Values = New Collections.Generic.Dictionary(Of DateTime, Double)
                 Try
-                    StreamReader=New System.IO.StreamReader(DirectCast(Point, String))
+                    StreamReader = New System.IO.StreamReader(DirectCast(Point, String))
                     Do While Not StreamReader.EndOfStream
-                        Substrings=System.Text.RegularExpressions.Regex.Split(StreamReader.ReadLine, "^([^,\t]+)[,\t](.+)$") ' Comma and tab delimiters; split in 2 substrings
-                        If Substrings.Length=4 Then ' If a match is found at the beginning or the end of the input string, an empty string is included at the beginning or the end of the returned array
+                        Substrings = System.Text.RegularExpressions.Regex.Split(StreamReader.ReadLine, "^([^,\t]+)[,\t](.+)$") ' Comma and tab delimiters; split in 2 substrings
+                        If Substrings.Length = 4 Then ' If a match is found at the beginning or the end of the input string, an empty string is included at the beginning or the end of the returned array
                             If DateTime.TryParse(Substrings(1), Timestamp) Then
                                 If Double.TryParse(Substrings(2), Value) Then
                                     If Not Values.ContainsKey(Timestamp) Then
