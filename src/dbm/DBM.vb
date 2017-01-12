@@ -24,7 +24,7 @@ Option Strict
 
 <assembly:System.Reflection.AssemblyTitle("DBM")>
 
-Namespace DBM
+Namespace Vitens.DynamicBandwidthMonitor
 
     Public Class DBM
 
