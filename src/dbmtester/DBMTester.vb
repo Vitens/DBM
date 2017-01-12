@@ -22,11 +22,9 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
-Imports Vitens.DynamicBandwidthMonitor
-
 <assembly:System.Reflection.AssemblyTitle("DBMTester")>
 
-Namespace Vitens.DynamicBandwidthMonitor.Tester
+Namespace Vitens.DynamicBandwidthMonitor
 
     Public Class DBMTester
 

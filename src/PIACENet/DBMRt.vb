@@ -24,7 +24,7 @@ Option Strict
 
 <assembly:System.Reflection.AssemblyTitle("DBMRt")>
 
-Namespace Vitens.DynamicBandwidthMonitor.RealTime
+Namespace Vitens.DynamicBandwidthMonitor
 
     Public Class DBMRt
 

@@ -22,9 +22,7 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
-Imports Vitens.DynamicBandwidthMonitor
-
-Namespace Vitens.DynamicBandwidthMonitor.RealTime
+Namespace Vitens.DynamicBandwidthMonitor
 
     Public Class DBMRtPIPoint
 
