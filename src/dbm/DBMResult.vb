@@ -22,6 +22,8 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+Imports Vitens.DynamicBandwidthMonitor.DBMParameters
+
 Namespace Vitens.DynamicBandwidthMonitor
 
     Public Class DBMResult
@@ -32,8 +34,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         Public SuppressedBy As DBMPointDriver
 
         Public Sub New
-            ReDim AbsoluteErrors(DBMParameters.CorrelationPreviousPeriods)
-            ReDim RelativeErrors(DBMParameters.CorrelationPreviousPeriods)
+            ReDim AbsoluteErrors(CorrelationPreviousPeriods)
+            ReDim RelativeErrors(CorrelationPreviousPeriods)
         End Sub
 
         Public Sub Calculate(Index As Integer, MeasuredValueEMA As Double, PredictedValueEMA As Double, LowerControlLimitEMA As Double, UpperControlLimitEMA As Double) ' Calculates and stores prediction errors and initial results

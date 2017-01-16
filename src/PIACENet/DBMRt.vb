@@ -22,13 +22,15 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+Imports OSIsoft.PI.ACE
+
 <assembly:System.Reflection.AssemblyTitle("DBMRt")>
 
 Namespace Vitens.DynamicBandwidthMonitor
 
     Public Class DBMRt
 
-        Inherits OSIsoft.PI.ACE.PIACENetClassModule
+        Inherits PIACENetClassModule
 
         Private Calculator As DBMRtCalculator
 

@@ -22,12 +22,18 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+Imports System.Collections.Generic
+Imports System.Double
+Imports Vitens.DynamicBandwidthMonitor.DBMMath
+Imports Vitens.DynamicBandwidthMonitor.DBMParameters
+Imports Vitens.DynamicBandwidthMonitor.DBMUnitTests
+
 Namespace Vitens.DynamicBandwidthMonitor
 
     Public Class DBMDataManager
 
         Public PointDriver As DBMPointDriver
-        Private Values As New Collections.Generic.Dictionary(Of DateTime, Double)
+        Private Values As New Dictionary(Of DateTime, Double)
 
         Public Sub New(PointDriver As DBMPointDriver)
             Me.PointDriver = PointDriver
@@ -37,18 +43,18 @@ Namespace Vitens.DynamicBandwidthMonitor
             If Values.ContainsKey(Timestamp) Then ' In cache
                 Value = Values.Item(Timestamp) ' Return value from cache
             Else
-                If DBMUnitTests.UnitTestsRunning Then ' Do not use point driver when running unit tests
-                    Value = DBMUnitTests.Data(DBMUnitTests.DataIndex) ' Return item from unit tests data array
-                    DBMUnitTests.DataIndex = (DBMUnitTests.DataIndex+1) Mod DBMUnitTests.Data.Length ' Increase index
+                If UnitTestsRunning Then ' Do not use point driver when running unit tests
+                    Value = TestData(TestDataIndex) ' Return item from unit tests data array
+                    TestDataIndex = (TestDataIndex+1) Mod TestData.Length ' Increase index
                 Else
                     Try
-                        Value = PointDriver.GetData(Timestamp, Timestamp.AddSeconds(DBMParameters.CalculationInterval)) ' Get data using driver
+                        Value = PointDriver.GetData(Timestamp, Timestamp.AddSeconds(CalculationInterval)) ' Get data using driver
                     Catch
-                        Value = Double.NaN ' Error, return Not a Number
+                        Value = NaN ' Error, return Not a Number
                     End Try
                 End If
-                Do While Values.Count >= DBMParameters.MaxDataManagerValues ' Limit cache size
-                    Values.Remove(Values.ElementAt(DBMMath.RandomNumber(0, Values.Count-1)).Key) ' Remove random cached value
+                Do While Values.Count >= MaxDataManagerValues ' Limit cache size
+                    Values.Remove(Values.ElementAt(RandomNumber(0, Values.Count-1)).Key) ' Remove random cached value
                 Loop
                 Values.Add(Timestamp, Value) ' Add to cache
             End If

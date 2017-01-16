@@ -22,6 +22,10 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+Imports System.Double
+Imports System.Math
+Imports Vitens.DynamicBandwidthMonitor.DBMParameters
+
 Namespace Vitens.DynamicBandwidthMonitor
 
     Public Class DBMMath
@@ -40,14 +44,14 @@ Namespace Vitens.DynamicBandwidthMonitor
             Const p_low = 0.02425, p_high = 1-p_low
             Dim q, r As Double
             If p < p_low Then
-                q = Math.Sqrt(-2*Math.Log(p))
+                q = Sqrt(-2*Log(p))
                 Return (((((c1*q+c2)*q+c3)*q+c4)*q+c5)*q+c6)/((((d1*q+d2)*q+d3)*q+d4)*q+1)
             ElseIf p <= p_high Then
                 q = p-0.5
                 r = q*q
                 Return (((((a1*r+a2)*r+a3)*r+a4)*r+a5)*r+a6)*q/(((((b1*r+b2)*r+b3)*r+b4)*r+b5)*r+1)
             Else
-                q = Math.Sqrt(-2*Math.Log(1-p))
+                q = Sqrt(-2*Log(1-p))
                 Return -(((((c1*q+c2)*q+c3)*q+c4)*q+c5)*q+c6)/((((d1*q+d2)*q+d3)*q+d4)*q+1)
             End If
         End Function
@@ -56,15 +60,15 @@ Namespace Vitens.DynamicBandwidthMonitor
             ' Hill's approx. inverse t-dist.: Comm. of A.C.M Vol.13 No.10 1970 pg 620
             Dim a, b, c, d, x, y As Double
             If dof = 1 Then
-                p *= Math.PI/2
-                Return Math.Cos(p)/Math.Sin(p)
+                p *= PI/2
+                Return Cos(p)/Sin(p)
             ElseIf dof = 2 Then
-                Return Math.Sqrt(2/(p*(2-p))-2)
+                Return Sqrt(2/(p*(2-p))-2)
             Else
                 a = 1/(dof-0.5)
                 b = 48/(a^2)
                 c = ((20700*a/b-98)*a-16)*a+96.36
-                d = ((94.5/(b+c)-3)/b+1)*Math.Sqrt(a*Math.PI/2)*dof
+                d = ((94.5/(b+c)-3)/b+1)*Sqrt(a*PI/2)*dof
                 x = d*p
                 y = x^(2/dof)
                 If y > a+0.05 Then
@@ -75,20 +79,20 @@ Namespace Vitens.DynamicBandwidthMonitor
                     End If
                     c = (((d/2*x-0.5)*x-7)*x-2)*x+b+c
                     y = (((((0.4*y+6.3)*y+36)*y+94.5)/c-y-3)/b+1)*x
-                    y = Math.Exp(a*y^2)-1
+                    y = Exp(a*y^2)-1
                 Else
                     y = ((1/(((dof+6)/(dof*y)-0.089*d-0.822)*(dof+2)*3)+0.5/(dof+4))*y-1)*(dof+1)/(dof+2)+1/y
                 End If
-                Return Math.Sqrt(dof*y)
+                Return Sqrt(dof*y)
             End If
         End Function
 
         Public Shared Function TInv(p As Double, dof As Integer) As Double ' Returns the left-tailed inverse of the Student's t-distribution.
-            Return Math.Sign(p-0.5)*TInv2T(1-Math.Abs(p-0.5)*2, dof)
+            Return Sign(p-0.5)*TInv2T(1-Abs(p-0.5)*2, dof)
         End Function
 
         Public Shared Function MeanAbsoluteDeviationScaleFactor As Double ' Scale factor k
-            Return Math.Sqrt(Math.PI/2)
+            Return Sqrt(PI/2)
         End Function
 
         Public Shared Function MedianAbsoluteDeviationScaleFactor(n As Integer) As Double ' Scale factor k
@@ -129,7 +133,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Public Shared Function AbsoluteDeviation(Values() As Double, From As Double) As Double()
             Dim AbsDev(Values.Count-1) As Double
             For i = 0 to Values.Length-1
-                AbsDev(i) = Math.Abs(Values(i)-From)
+                AbsDev(i) = Abs(Values(i)-From)
             Next i
             Return AbsDev
         End Function
@@ -151,12 +155,12 @@ Namespace Vitens.DynamicBandwidthMonitor
             ValuesMeanAbsoluteDeviation = MeanAbsoluteDeviation(Values)
             For i = 0 to Values.Length-1
                 If ValuesMedianAbsoluteDeviation = 0 Then ' Use Mean Absolute Deviation instead of Median Absolute Deviation to detect outliers
-                    If Math.Abs(Values(i)-ValuesMean) > ValuesMeanAbsoluteDeviation*MeanAbsoluteDeviationScaleFactor*ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval, Values.Length-1) Then ' If value is an outlier
-                        Values(i) = Double.NaN ' Exclude outlier
+                    If Abs(Values(i)-ValuesMean) > ValuesMeanAbsoluteDeviation*MeanAbsoluteDeviationScaleFactor*ControlLimitRejectionCriterion(ConfidenceInterval, Values.Length-1) Then ' If value is an outlier
+                        Values(i) = NaN ' Exclude outlier
                     End If
                 Else ' Use Median Absolute Deviation to detect outliers
-                    If Math.Abs(Values(i)-ValuesMedian) > ValuesMedianAbsoluteDeviation*MedianAbsoluteDeviationScaleFactor(Values.Length-1)*ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval, Values.Length-1) Then ' If value is an outlier
-                        Values(i) = Double.NaN ' Exclude outlier
+                    If Abs(Values(i)-ValuesMedian) > ValuesMedianAbsoluteDeviation*MedianAbsoluteDeviationScaleFactor(Values.Length-1)*ControlLimitRejectionCriterion(ConfidenceInterval, Values.Length-1) Then ' If value is an outlier
+                        Values(i) = NaN ' Exclude outlier
                     End If
                 End If
             Next i

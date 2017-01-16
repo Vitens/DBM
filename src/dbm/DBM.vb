@@ -22,25 +22,33 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+Imports System.Collections.Generic
+Imports System.DateTime
+Imports System.Diagnostics
+Imports System.Environment
+Imports System.Math
+Imports Vitens.DynamicBandwidthMonitor.DBMParameters
+Imports Vitens.DynamicBandwidthMonitor.DBMUnitTests
+
 <assembly:System.Reflection.AssemblyTitle("DBM")>
 
 Namespace Vitens.DynamicBandwidthMonitor
 
     Public Class DBM
 
-        Public Points As New Collections.Generic.Dictionary(Of Object, DBMPoint)
+        Public Points As New Dictionary(Of Object, DBMPoint)
 
         Public Shared Function Version(Optional SkipUnitTests As Boolean = False) As String
-            Dim Ticks As Int64 = DateTime.Now.Ticks
-            Return System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).FileDescription & _
-                " v" & System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).FileVersion & Environment.NewLine & _
-                System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).ProductName & Environment.NewLine & _
-                System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).Comments & Environment.NewLine & Environment.NewLine & _
-                System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).LegalCopyright & Environment.NewLine & Environment.NewLine & _
-                "This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version." & Environment.NewLine & Environment.NewLine & _
-                "This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details." & Environment.NewLine & Environment.NewLine & _
-                "You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>." & Environment.NewLine & _
-                If(SkipUnitTests, "", Environment.NewLine & " * Unit tests " & If(DBMUnitTests.TestResults, "PASSED", "FAILED") & " in " & Math.Round((DateTime.Now.Ticks-Ticks)/10000).ToString & "ms." & Environment.NewLine)
+            Dim Ticks As Int64 = Now.Ticks
+            Return FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).FileDescription & _
+                " v" & FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).FileVersion & NewLine & _
+                FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).ProductName & NewLine & _
+                FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).Comments & NewLine & NewLine & _
+                FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).LegalCopyright & NewLine & NewLine & _
+                "This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version." & NewLine & NewLine & _
+                "This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details." & NewLine & NewLine & _
+                "You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>." & NewLine & _
+                If(SkipUnitTests, "", NewLine & " * Unit tests " & If(TestResults, "PASSED", "FAILED") & " in " & Round((Now.Ticks-Ticks)/10000).ToString & "ms." & NewLine)
         End Function
 
         Private Function Point(PointDriver As DBMPointDriver) As DBMPoint
@@ -51,17 +59,17 @@ Namespace Vitens.DynamicBandwidthMonitor
         End Function
 
         Public Shared Function Suppress(Factor As Double, AbsErrModCorr As Double, RelErrModCorr As Double, SubstractSelf As Boolean) As Double
-            If Not SubstractSelf And AbsErrModCorr < -DBMParameters.CorrelationThreshold Then ' If anticorrelation with adjacent measurement
-                If Factor < -DBMParameters.CorrelationThreshold And Factor >= -1 Then ' If already suppressed due to anticorrelation
+            If Not SubstractSelf And AbsErrModCorr < -CorrelationThreshold Then ' If anticorrelation with adjacent measurement
+                If Factor < -CorrelationThreshold And Factor >= -1 Then ' If already suppressed due to anticorrelation
                     If AbsErrModCorr < Factor Then ' Keep lowest value (strongest anticorrelation)
                         Return AbsErrModCorr ' Suppress
                     End If
                 Else ' Not already suppressed due to anticorrelation
                     Return AbsErrModCorr ' Suppress
                 End If
-            ElseIf RelErrModCorr > DBMParameters.CorrelationThreshold Then ' If correlation with measurement
-                If Not (Factor < -DBMParameters.CorrelationThreshold And Factor >= -1) Then ' If not already suppressed due to anticorrelation
-                    If Factor > DBMParameters.CorrelationThreshold And Factor <= 1 Then ' If already suppressed due to correlation
+            ElseIf RelErrModCorr > CorrelationThreshold Then ' If correlation with measurement
+                If Not (Factor < -CorrelationThreshold And Factor >= -1) Then ' If not already suppressed due to anticorrelation
+                    If Factor > CorrelationThreshold And Factor <= 1 Then ' If already suppressed due to correlation
                         If RelErrModCorr > Factor Then ' Keep highest value (strongest correlation)
                             Return RelErrModCorr ' Suppress
                         End If
@@ -73,12 +81,12 @@ Namespace Vitens.DynamicBandwidthMonitor
             Return Factor
         End Function
 
-        Public Function Result(InputPointDriver As DBMPointDriver, CorrelationPoints As Collections.Generic.List(Of DBMCorrelationPoint), Timestamp As DateTime) As DBMResult
+        Public Function Result(InputPointDriver As DBMPointDriver, CorrelationPoints As List(Of DBMCorrelationPoint), Timestamp As DateTime) As DBMResult
             Dim CorrelationResult As DBMResult
             Dim AbsoluteErrorStats, RelativeErrorStats As New DBMStatistics
             Dim Factor As Double
             If CorrelationPoints Is Nothing Then
-                CorrelationPoints = New Collections.Generic.List(Of DBMCorrelationPoint)
+                CorrelationPoints = New List(Of DBMCorrelationPoint)
             End If
             Result = Point(InputPointDriver).Result(Timestamp, True, CorrelationPoints.Count > 0) ' Calculate for input point
             If Result.Factor <> 0 And CorrelationPoints.Count > 0 Then ' If an event is found and a correlation point is available

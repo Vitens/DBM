@@ -22,6 +22,9 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+Imports Vitens.DynamicBandwidthMonitor.DBMMath
+Imports Vitens.DynamicBandwidthMonitor.DBMParameters
+
 Namespace Vitens.DynamicBandwidthMonitor
 
     Public Class DBMPrediction
@@ -41,11 +44,11 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         Public Sub Calculate(Values() As Double) ' Calculates and stores prediction and control limits
             Dim Statistics As New DBMStatistics
-            Statistics.Calculate(DBMMath.RemoveOutliers(Values.Take(Values.Length-1).ToArray)) ' Calculate statistics for data after removing outliers
-            MeasuredValue = Values(DBMParameters.ComparePatterns)
-            PredictedValue = DBMParameters.ComparePatterns*Statistics.Slope+Statistics.Intercept ' Extrapolate regression one interval
-            LowerControlLimit = PredictedValue-DBMMath.ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval, Statistics.Count-1)*Statistics.StandardError
-            UpperControlLimit = PredictedValue+DBMMath.ControlLimitRejectionCriterion(DBMParameters.ConfidenceInterval, Statistics.Count-1)*Statistics.StandardError
+            Statistics.Calculate(RemoveOutliers(Values.Take(Values.Length-1).ToArray)) ' Calculate statistics for data after removing outliers
+            MeasuredValue = Values(ComparePatterns)
+            PredictedValue = ComparePatterns*Statistics.Slope+Statistics.Intercept ' Extrapolate regression one interval
+            LowerControlLimit = PredictedValue-ControlLimitRejectionCriterion(ConfidenceInterval, Statistics.Count-1)*Statistics.StandardError
+            UpperControlLimit = PredictedValue+ControlLimitRejectionCriterion(ConfidenceInterval, Statistics.Count-1)*Statistics.StandardError
         End Sub
 
     End Class

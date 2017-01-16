@@ -22,6 +22,12 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+Imports System.Collections.Generic
+Imports System.Environment
+Imports System.Globalization.CultureInfo
+Imports System.Text.RegularExpressions
+Imports Vitens.DynamicBandwidthMonitor.DBMParameters
+
 <assembly:System.Reflection.AssemblyTitle("DBMTester")>
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -48,7 +54,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         Private Shared Function FormatNumber(Value As Double) As String
             If InternationalFormat Then
-                Return Value.ToString("0.####", System.Globalization.CultureInfo.InvariantCulture)
+                Return Value.ToString("0.####", InvariantCulture)
             Else
                 Return Value.ToString("0.####")
             End If
@@ -57,12 +63,12 @@ Namespace Vitens.DynamicBandwidthMonitor
         Public Shared Sub Main
             Dim Substrings() As String
             Dim InputPointDriver As DBMPointDriver = Nothing
-            Dim CorrelationPoints As New Collections.Generic.List(Of DBMCorrelationPoint)
+            Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
             Dim StartTimestamp, EndTimestamp As DateTime
             Dim Result As DBMResult
             Dim _DBM As New DBM
-            For Each CommandLineArg In Environment.GetCommandLineArgs ' Parse command line arguments
-                If Text.RegularExpressions.Regex.IsMatch(CommandLineArg, "^[-/](.+)=(.+)$") Then ' Parameter = Value
+            For Each CommandLineArg In GetCommandLineArgs ' Parse command line arguments
+                If Regex.IsMatch(CommandLineArg, "^[-/](.+)=(.+)$") Then ' Parameter = Value
                     Substrings = CommandLineArg.Split(New Char(){"="c}, 2)
                     Try
                         If Substrings(0).Substring(1).ToLower.Equals("i") Then
@@ -72,17 +78,17 @@ Namespace Vitens.DynamicBandwidthMonitor
                         ElseIf Substrings(0).Substring(1).ToLower.Equals("cs") Then
                             CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver(Substrings(1)), True))
                         ElseIf Substrings(0).Substring(1).ToLower.Equals("iv") Then
-                            DBMParameters.CalculationInterval = Convert.ToInt32(Substrings(1))
+                            CalculationInterval = Convert.ToInt32(Substrings(1))
                         ElseIf Substrings(0).Substring(1).ToLower.Equals("p") Then
-                            DBMParameters.ComparePatterns = Convert.ToInt32(Substrings(1))
+                            ComparePatterns = Convert.ToInt32(Substrings(1))
                         ElseIf Substrings(0).Substring(1).ToLower.Equals("ep") Then
-                            DBMParameters.EMAPreviousPeriods = Convert.ToInt32(Substrings(1))
+                            EMAPreviousPeriods = Convert.ToInt32(Substrings(1))
                         ElseIf Substrings(0).Substring(1).ToLower.Equals("ci") Then
-                            DBMParameters.ConfidenceInterval = Convert.ToDouble(Substrings(1))
+                            ConfidenceInterval = Convert.ToDouble(Substrings(1))
                         ElseIf Substrings(0).Substring(1).ToLower.Equals("cp") Then
-                            DBMParameters.CorrelationPreviousPeriods = Convert.ToInt32(Substrings(1))
+                            CorrelationPreviousPeriods = Convert.ToInt32(Substrings(1))
                         ElseIf Substrings(0).Substring(1).ToLower.Equals("ct") Then
-                            DBMParameters.CorrelationThreshold = Convert.ToDouble(Substrings(1))
+                            CorrelationThreshold = Convert.ToDouble(Substrings(1))
                         ElseIf Substrings(0).Substring(1).ToLower.Equals("st") Then
                             StartTimestamp = Convert.ToDateTime(Substrings(1))
                         ElseIf Substrings(0).Substring(1).ToLower.Equals("et") Then
@@ -104,7 +110,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                 If EndTimestamp = DateTime.MinValue Then
                     EndTimestamp = StartTimestamp ' No end timestamp, set to start timestamp
                 Else
-                    EndTimestamp = EndTimestamp.AddSeconds(-DBMParameters.CalculationInterval) ' Remove one interval from end timestamp
+                    EndTimestamp = EndTimestamp.AddSeconds(-CalculationInterval) ' Remove one interval from end timestamp
                 End If
                 Do While StartTimestamp <= EndTimestamp
                     Console.Write(FormatDateTime(StartTimestamp) & Separator)
@@ -119,7 +125,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                         Next
                     End If
                     Console.WriteLine
-                    StartTimestamp = StartTimestamp.AddSeconds(DBMParameters.CalculationInterval) ' Next interval
+                    StartTimestamp = StartTimestamp.AddSeconds(CalculationInterval) ' Next interval
                 Loop
             End If
         End Sub

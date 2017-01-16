@@ -22,6 +22,9 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+Imports System.Double
+Imports System.Math
+
 Namespace Vitens.DynamicBandwidthMonitor
 
     Public Class DBMStatistics
@@ -44,7 +47,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             End If
             Count = 0
             For i = 0 To ValuesY.Length-1
-                If Not Double.IsNaN(ValuesX(i)) And Not Double.IsNaN(ValuesY(i)) Then
+                If Not IsNaN(ValuesX(i)) And Not IsNaN(ValuesY(i)) Then
                     SumX += ValuesX(i)
                     SumY += ValuesY(i)
                     SumXX += ValuesX(i)^2
@@ -54,17 +57,17 @@ Namespace Vitens.DynamicBandwidthMonitor
                 End If
             Next i
             Slope = (Count*SumXY-SumX*SumY)/(Count*SumXX-SumX^2)
-            Angle = Math.Atan(Slope)/(2*Math.PI)*360 ' Angle in degrees
+            Angle = Atan(Slope)/(2*PI)*360 ' Angle in degrees
             Intercept = (SumX*SumXY-SumY*SumXX)/(SumX^2-Count*SumXX)
             StandardError = 0 ' Standard error of the predicted y-value for each x in the regression. The standard error is a measure of the amount of error in the prediction of y for an individual x
             For i = 0 to ValuesY.Length-1
-                If Not Double.IsNaN(ValuesX(i)) And Not Double.IsNaN(ValuesY(i)) Then
+                If Not IsNaN(ValuesX(i)) And Not IsNaN(ValuesY(i)) Then
                     StandardError += (ValuesY(i)-ValuesX(i)*Slope-Intercept)^2
                 End If
             Next i
-            StandardError = Math.Sqrt(StandardError/(Count-2)) ' n-2 is used because two parameters (slope and intercept) were estimated in order to estimate the sum of squares
-            Correlation = (Count*SumXY-SumX*SumY)/Math.Sqrt((Count*SumXX-SumX^2)*(Count*SumYY-SumY^2)) ' Wikipedia: A number that quantifies some type of correlation and dependence, meaning statistical relationships between two or more random variables or observed data values
-            ModifiedCorrelation = SumXY/Math.Sqrt(SumXX)/Math.Sqrt(SumYY) ' Average is not removed, as expected average is zero
+            StandardError = Sqrt(StandardError/(Count-2)) ' n-2 is used because two parameters (slope and intercept) were estimated in order to estimate the sum of squares
+            Correlation = (Count*SumXY-SumX*SumY)/Sqrt((Count*SumXX-SumX^2)*(Count*SumYY-SumY^2)) ' Wikipedia: A number that quantifies some type of correlation and dependence, meaning statistical relationships between two or more random variables or observed data values
+            ModifiedCorrelation = SumXY/Sqrt(SumXX)/Sqrt(SumYY) ' Average is not removed, as expected average is zero
             Determination = Correlation^2 ' Wikipedia: A number that indicates the proportion of the variance in the dependent variable that is predictable from the independent variable
         End Sub
 

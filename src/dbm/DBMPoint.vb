@@ -22,12 +22,16 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+Imports System.Collections.Generic
+Imports Vitens.DynamicBandwidthMonitor.DBMMath
+Imports Vitens.DynamicBandwidthMonitor.DBMParameters
+
 Namespace Vitens.DynamicBandwidthMonitor
 
     Public Class DBMPoint
 
         Public DataManager As DBMDataManager
-        Private Predictions As New Collections.Generic.Dictionary(Of DateTime, DBMPrediction)
+        Private Predictions As New Dictionary(Of DateTime, DBMPrediction)
         Private PredictionsSubstractPoint As DBMPoint
 
         Public Sub New(PointDriver As DBMPointDriver)
@@ -38,28 +42,28 @@ Namespace Vitens.DynamicBandwidthMonitor
             Dim CorrelationCounter, EMACounter, PatternCounter As Integer
             Dim PredictionTimestamp As DateTime
             Dim Prediction As New DBMPrediction
-            Dim Patterns(DBMParameters.ComparePatterns), MeasuredValues(DBMParameters.EMAPreviousPeriods), PredictedValues(DBMParameters.EMAPreviousPeriods), LowerControlLimits(DBMParameters.EMAPreviousPeriods), UpperControlLimits(DBMParameters.EMAPreviousPeriods) As Double
+            Dim Patterns(ComparePatterns), MeasuredValues(EMAPreviousPeriods), PredictedValues(EMAPreviousPeriods), LowerControlLimits(EMAPreviousPeriods), UpperControlLimits(EMAPreviousPeriods) As Double
             Result = New DBMResult
             If SubstractPoint IsNot PredictionsSubstractPoint Then ' Can we reuse stored results?
                 Predictions.Clear 'No, so clear results
                 PredictionsSubstractPoint = SubstractPoint
             End If
-            For CorrelationCounter = 0 To DBMParameters.CorrelationPreviousPeriods
+            For CorrelationCounter = 0 To CorrelationPreviousPeriods
                 If Result.Prediction Is Nothing Or (IsInputDBMPoint And Result.Factor <> 0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
-                    For EMACounter = 0 To DBMParameters.EMAPreviousPeriods
-                        PredictionTimestamp = Timestamp.AddSeconds(-(DBMParameters.EMAPreviousPeriods-EMACounter+CorrelationCounter)*DBMParameters.CalculationInterval)
+                    For EMACounter = 0 To EMAPreviousPeriods
+                        PredictionTimestamp = Timestamp.AddSeconds(-(EMAPreviousPeriods-EMACounter+CorrelationCounter)*CalculationInterval)
                         If Predictions.ContainsKey(PredictionTimestamp) Then ' From cache
                             Prediction = Predictions.Item(PredictionTimestamp).ShallowCopy
                         Else ' Calculate data
-                            For PatternCounter = 0 To DBMParameters.ComparePatterns
-                                Patterns(PatternCounter) = DataManager.Value(PredictionTimestamp.AddDays(-(DBMParameters.ComparePatterns-PatternCounter)*7))
+                            For PatternCounter = 0 To ComparePatterns
+                                Patterns(PatternCounter) = DataManager.Value(PredictionTimestamp.AddDays(-(ComparePatterns-PatternCounter)*7))
                                 If SubstractPoint IsNot Nothing Then
-                                    Patterns(PatternCounter) -= SubstractPoint.DataManager.Value(PredictionTimestamp.AddDays(-(DBMParameters.ComparePatterns-PatternCounter)*7))
+                                    Patterns(PatternCounter) -= SubstractPoint.DataManager.Value(PredictionTimestamp.AddDays(-(ComparePatterns-PatternCounter)*7))
                                 End If
                             Next PatternCounter
                             Prediction.Calculate(Patterns)
-                            Do While Predictions.Count >= DBMParameters.MaxPointPredictions ' Limit cache size
-                                Predictions.Remove(Predictions.ElementAt(DBMMath.RandomNumber(0, Predictions.Count-1)).Key) ' Remove random cached value
+                            Do While Predictions.Count >= MaxPointPredictions ' Limit cache size
+                                Predictions.Remove(Predictions.ElementAt(RandomNumber(0, Predictions.Count-1)).Key) ' Remove random cached value
                             Loop
                             Predictions.Add(PredictionTimestamp, Prediction.ShallowCopy) ' Add to cache
                         End If
@@ -68,7 +72,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                         LowerControlLimits(EMACounter) = Prediction.LowerControlLimit
                         UpperControlLimits(EMACounter) = Prediction.UpperControlLimit
                     Next EMACounter
-                    Result.Calculate(CorrelationCounter, DBMMath.ExponentialMovingAverage(MeasuredValues), DBMMath.ExponentialMovingAverage(PredictedValues), DBMMath.ExponentialMovingAverage(LowerControlLimits), DBMMath.ExponentialMovingAverage(UpperControlLimits))
+                    Result.Calculate(CorrelationCounter, ExponentialMovingAverage(MeasuredValues), ExponentialMovingAverage(PredictedValues), ExponentialMovingAverage(LowerControlLimits), ExponentialMovingAverage(UpperControlLimits))
                 End If
             Next CorrelationCounter
             Return Result

@@ -22,6 +22,10 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+Imports PISDK
+Imports PISDK.ArchiveSummaryTypeConstants
+Imports PISDK.CalculationBasisConstants
+
 Namespace Vitens.DynamicBandwidthMonitor
 
     Public Class DBMPointDriver
@@ -33,7 +37,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         End Sub
 
         Public Function GetData(StartTimestamp As DateTime, EndTimestamp As DateTime) As Double
-            Return DirectCast(DirectCast(Point, PISDK.PIPoint).Data.Summary(StartTimestamp, EndTimestamp, PISDK.ArchiveSummaryTypeConstants.astAverage, PISDK.CalculationBasisConstants.cbTimeWeighted).Value, Double)
+            Return DirectCast(DirectCast(Point, PIPoint).Data.Summary(StartTimestamp, EndTimestamp, astAverage, cbTimeWeighted).Value, Double)
         End Function
 
     End Class

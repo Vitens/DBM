@@ -22,20 +22,24 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+Imports PISDK
+Imports System.Collections.Generic
+Imports System.Text.RegularExpressions
+
 Namespace Vitens.DynamicBandwidthMonitor
 
     Public Class DBMRtPIServer
 
-        Private PIServer As PISDK.Server
-        Private PIPoints As New Collections.Generic.List(Of DBMRtPIPoint)
+        Private PIServer As Server
+        Private PIPoints As New List(Of DBMRtPIPoint)
 
-        Public Sub New(PIServer As PISDK.Server)
+        Public Sub New(PIServer As Server)
             Dim InstrTag, Substrings() As String
             Me.PIServer = PIServer
             Try
-                For Each PIPoint As PISDK.PIPoint In Me.PIServer.GetPointsSQL("PIpoint.Tag='*' AND PIpoint.PointSource='dbmrt' AND PIpoint.Scan=1") ' Search for DBM output PI points
+                For Each PIPoint As PIPoint In Me.PIServer.GetPointsSQL("PIpoint.Tag='*' AND PIpoint.PointSource='dbmrt' AND PIpoint.Scan=1") ' Search for DBM output PI points
                     InstrTag = PIPoint.PointAttributes("InstrumentTag").Value.ToString
-                    If Text.RegularExpressions.Regex.IsMatch(InstrTag, "^[\w\.-]+:[^:\?\*&]+$") Then ' InstrumentTag attribute should contain input PI point
+                    If Regex.IsMatch(InstrTag, "^[\w\.-]+:[^:\?\*&]+$") Then ' InstrumentTag attribute should contain input PI point
                         Substrings = InstrTag.Split(New Char(){":"c}) ' Format: PI server:PI point
                         Try
                             If Not DBMRtCalculator.PISDK.Servers(Substrings(0)).PIPoints(Substrings(1)).Name.Equals(String.Empty) Then
