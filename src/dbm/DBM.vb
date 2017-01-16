@@ -40,15 +40,13 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function Version(Optional SkipUnitTests As Boolean = False) As String
       Dim Ticks As Int64 = Now.Ticks
-      Return FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).FileDescription & _
-        " v" & FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).FileVersion & NewLine & _
-        FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).ProductName & NewLine & _
-        FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).Comments & NewLine & NewLine & _
-        FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location).LegalCopyright & NewLine & NewLine & _
-        "This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version." & NewLine & NewLine & _
-        "This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details." & NewLine & NewLine & _
-        "You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>." & NewLine & _
-        If(SkipUnitTests, "", NewLine & " * Unit tests " & If(TestResults, "PASSED", "FAILED") & " in " & Round((Now.Ticks-Ticks)/10000).ToString & "ms." & NewLine)
+      With FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly.Location)
+        Return .FileDescription & " v" & .FileVersion & NewLine & .ProductName & NewLine & .Comments & NewLine & NewLine & .LegalCopyright & NewLine & NewLine & _
+          "This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version." & NewLine & NewLine & _
+          "This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details." & NewLine & NewLine & _
+          "You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>." & NewLine & _
+          If(SkipUnitTests, "", NewLine & " * Unit tests " & If(TestResults, "PASSED", "FAILED") & " in " & Round((Now.Ticks-Ticks)/10000).ToString & "ms." & NewLine)
+      End With
     End Function
 
     Private Function Point(PointDriver As DBMPointDriver) As DBMPoint

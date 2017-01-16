@@ -45,7 +45,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Patterns(ComparePatterns), MeasuredValues(EMAPreviousPeriods), PredictedValues(EMAPreviousPeriods), LowerControlLimits(EMAPreviousPeriods), UpperControlLimits(EMAPreviousPeriods) As Double
       Result = New DBMResult
       If SubstractPoint IsNot PredictionsSubstractPoint Then ' Can we reuse stored results?
-        Predictions.Clear 'No, so clear results
+        Predictions.Clear ' No, so clear results
         PredictionsSubstractPoint = SubstractPoint
       End If
       For CorrelationCounter = 0 To CorrelationPreviousPeriods

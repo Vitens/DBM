@@ -37,7 +37,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private CorrelationPoints As New List(Of DBMCorrelationPoint)
 
     Public Sub New(InputPIPoint As PIPoint, OutputPIPoint As PIPoint)
-      Dim ExDesc, SubstringsA(), SubstringsB() As String
+      Dim ExDesc, SubstringsA(), SubstringsB(), Server, Point As String
+      Dim SubstractSelf As Boolean
       InputPointDriver = New DBMPointDriver(InputPIPoint)
       OutputPointDriver = New DBMPointDriver(OutputPIPoint)
       ExDesc = DirectCast(OutputPointDriver.Point, PIPoint).PointAttributes("ExDesc").Value.ToString
@@ -45,9 +46,12 @@ Namespace Vitens.DynamicBandwidthMonitor
         SubstringsA = ExDesc.Split(New Char(){"&"c}) ' Split multiple correlation PI points by &
         For Each SubstringA In SubstringsA
           SubstringsB = SubstringA.Split(New Char(){":"c}) ' Format: [-]PI server:PI point
+          SubstractSelf = SubstringsB(0).Substring(0, 1).Equals("-")
+          Server = SubstringsB(0).Substring(If(SubstractSelf, 1, 0))
+          Point = SubstringsB(1)
           Try
-            If Not DBMRtCalculator.PISDK.Servers(SubstringsB(0).Substring(If(SubstringsB(0).Substring(0, 1).Equals("-"), 1, 0))).PIPoints(SubstringsB(1)).Name.Equals(String.Empty) Then
-              CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver(DBMRtCalculator.PISDK.Servers(SubstringsB(0).Substring(If(SubstringsB(0).Substring(0, 1).Equals("-"), 1, 0))).PIPoints(SubstringsB(1))), SubstringsB(0).Substring(0, 1).Equals("-"))) ' Add to correlation points
+            If Not DBMRtCalculator.PISDK.Servers(Server).PIPoints(Point).Name.Equals(String.Empty) Then
+              CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver(DBMRtCalculator.PISDK.Servers(Server).PIPoints(Point)), SubstractSelf)) ' Add to correlation points
             End If
           Catch
           End Try
