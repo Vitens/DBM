@@ -28,18 +28,18 @@ Imports PISDK.CalculationBasisConstants
 
 Namespace Vitens.DynamicBandwidthMonitor
 
-    Public Class DBMPointDriver
+  Public Class DBMPointDriver
 
-        Public Point As Object
+    Public Point As Object
 
-        Public Sub New(Point As Object)
-            Me.Point = Point
-        End Sub
+    Public Sub New(Point As Object)
+      Me.Point = Point
+    End Sub
 
-        Public Function GetData(StartTimestamp As DateTime, EndTimestamp As DateTime) As Double
-            Return DirectCast(DirectCast(Point, PIPoint).Data.Summary(StartTimestamp, EndTimestamp, astAverage, cbTimeWeighted).Value, Double)
-        End Function
+    Public Function GetData(StartTimestamp As DateTime, EndTimestamp As DateTime) As Double
+      Return DirectCast(DirectCast(Point, PIPoint).Data.Summary(StartTimestamp, EndTimestamp, astAverage, cbTimeWeighted).Value, Double)
+    End Function
 
-    End Class
+  End Class
 
 End Namespace

@@ -24,18 +24,18 @@ Option Strict
 
 Namespace Vitens.DynamicBandwidthMonitor
 
-    Public Class DBMPointDriver
+  Public Class DBMPointDriver
 
-        Public Point As Object
+    Public Point As Object
 
-        Public Sub New(Point As Object)
-            Me.Point = Point
-        End Sub
+    Public Sub New(Point As Object)
+      Me.Point = Point
+    End Sub
 
-        Public Function GetData(StartTimestamp As DateTime, EndTimestamp As DateTime) As Double
-            Return 0
-        End Function
+    Public Function GetData(StartTimestamp As DateTime, EndTimestamp As DateTime) As Double
+      Return 0
+    End Function
 
-    End Class
+  End Class
 
 End Namespace

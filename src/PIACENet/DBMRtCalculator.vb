@@ -26,22 +26,22 @@ Imports System.Collections.Generic
 
 Namespace Vitens.DynamicBandwidthMonitor
 
-    Public Class DBMRtCalculator
+  Public Class DBMRtCalculator
 
-        Public Shared PISDK As New PISDK.PISDK
-        Public Shared DBM As New DBM
-        Private PIServers As New List(Of DBMRtPIServer)
+    Public Shared PISDK As New PISDK.PISDK
+    Public Shared DBM As New DBM
+    Private PIServers As New List(Of DBMRtPIServer)
 
-        Public Sub New
-            PIServers.Add(New DBMRtPIServer(PISDK.Servers.DefaultServer)) ' Add default PI server
-        End Sub
+    Public Sub New
+      PIServers.Add(New DBMRtPIServer(PISDK.Servers.DefaultServer)) ' Add default PI server
+    End Sub
 
-        Public Sub Calculate
-            For Each PIServer In PIServers
-                PIServer.Calculate
-            Next
-        End Sub
+    Public Sub Calculate
+      For Each PIServer In PIServers
+        PIServer.Calculate
+      Next
+    End Sub
 
-    End Class
+  End Class
 
 End Namespace

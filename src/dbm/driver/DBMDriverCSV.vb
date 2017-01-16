@@ -29,46 +29,46 @@ Imports System.Text.RegularExpressions
 
 Namespace Vitens.DynamicBandwidthMonitor
 
-    Public Class DBMPointDriver
+  Public Class DBMPointDriver
 
-        Public Point As Object
-        Private Values As Dictionary(Of DateTime, Double)
+    Public Point As Object
+    Private Values As Dictionary(Of DateTime, Double)
 
-        Public Sub New(Point As Object)
-            Me.Point = Point
-        End Sub
+    Public Sub New(Point As Object)
+      Me.Point = Point
+    End Sub
 
-        Public Function GetData(StartTimestamp As DateTime, EndTimestamp As DateTime) As Double
-            Dim StreamReader As StreamReader
-            Dim Substrings() As String
-            Dim Timestamp As DateTime
-            Dim Value As Double
-            If Values Is Nothing Then ' No data in memory yet
-                Values = New Dictionary(Of DateTime, Double)
-                If File.Exists(DirectCast(Point, String)) Then
-                    StreamReader = New StreamReader(DirectCast(Point, String))
-                    Do While Not StreamReader.EndOfStream
-                        Substrings = Regex.Split(StreamReader.ReadLine, "^([^,\t]+)[,\t](.+)$") ' Comma and tab delimiters; split in 2 substrings
-                        If Substrings.Length = 4 Then ' If a match is found at the beginning or the end of the input string, an empty string is included at the beginning or the end of the returned array
-                            If DateTime.TryParse(Substrings(1), Timestamp) Then
-                                If Double.TryParse(Substrings(2), Value) Then
-                                    If Not Values.ContainsKey(Timestamp) Then
-                                        Values.Add(Timestamp, Value)
-                                    End If
-                                End If
-                            End If
-                        End If
-                    Loop
-                    StreamReader.Close
+    Public Function GetData(StartTimestamp As DateTime, EndTimestamp As DateTime) As Double
+      Dim StreamReader As StreamReader
+      Dim Substrings() As String
+      Dim Timestamp As DateTime
+      Dim Value As Double
+      If Values Is Nothing Then ' No data in memory yet
+        Values = New Dictionary(Of DateTime, Double)
+        If File.Exists(DirectCast(Point, String)) Then
+          StreamReader = New StreamReader(DirectCast(Point, String))
+          Do While Not StreamReader.EndOfStream
+            Substrings = Regex.Split(StreamReader.ReadLine, "^([^,\t]+)[,\t](.+)$") ' Comma and tab delimiters; split in 2 substrings
+            If Substrings.Length = 4 Then ' If a match is found at the beginning or the end of the input string, an empty string is included at the beginning or the end of the returned array
+              If DateTime.TryParse(Substrings(1), Timestamp) Then
+                If Double.TryParse(Substrings(2), Value) Then
+                  If Not Values.ContainsKey(Timestamp) Then
+                    Values.Add(Timestamp, Value)
+                  End If
                 End If
+              End If
             End If
-            If Values.ContainsKey(StartTimestamp) Then ' In cache
-                Return Values.Item(StartTimestamp) ' Return value from cache
-            Else
-                Return NaN ' No data, return Not a Number
-            End If
-        End Function
+          Loop
+          StreamReader.Close
+        End If
+      End If
+      If Values.ContainsKey(StartTimestamp) Then ' In cache
+        Return Values.Item(StartTimestamp) ' Return value from cache
+      Else
+        Return NaN ' No data, return Not a Number
+      End If
+    End Function
 
-    End Class
+  End Class
 
 End Namespace

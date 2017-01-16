@@ -24,16 +24,16 @@ Option Strict
 
 Namespace Vitens.DynamicBandwidthMonitor
 
-    Public Class DBMCorrelationPoint
+  Public Class DBMCorrelationPoint
 
-        Public PointDriver As DBMPointDriver
-        Public SubstractSelf As Boolean
+    Public PointDriver As DBMPointDriver
+    Public SubstractSelf As Boolean
 
-        Public Sub New(PointDriver As DBMPointDriver, SubstractSelf As Boolean)
-            Me.PointDriver = PointDriver
-            Me.SubstractSelf = SubstractSelf
-        End Sub
+    Public Sub New(PointDriver As DBMPointDriver, SubstractSelf As Boolean)
+      Me.PointDriver = PointDriver
+      Me.SubstractSelf = SubstractSelf
+    End Sub
 
-    End Class
+  End Class
 
 End Namespace

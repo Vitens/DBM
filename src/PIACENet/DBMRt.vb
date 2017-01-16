@@ -28,29 +28,29 @@ Imports OSIsoft.PI.ACE
 
 Namespace Vitens.DynamicBandwidthMonitor
 
-    Public Class DBMRt
+  Public Class DBMRt
 
-        Inherits PIACENetClassModule
+    Inherits PIACENetClassModule
 
-        Private Calculator As DBMRtCalculator
+    Private Calculator As DBMRtCalculator
 
-        Public Overrides Sub ACECalculations ' Perform calculations
-            If Calculator IsNot Nothing Then ' If module and DBMRtCalculator are initialized
-                Calculator.Calculate
-            End If
-        End Sub
+    Public Overrides Sub ACECalculations ' Perform calculations
+      If Calculator IsNot Nothing Then ' If module and DBMRtCalculator are initialized
+        Calculator.Calculate
+      End If
+    End Sub
 
-        Protected Overrides Sub InitializePIACEPoints
-        End Sub
+    Protected Overrides Sub InitializePIACEPoints
+    End Sub
 
-        Protected Overrides Sub ModuleDependentInitialization
-            Calculator = New DBMRtCalculator
-        End Sub
+    Protected Overrides Sub ModuleDependentInitialization
+      Calculator = New DBMRtCalculator
+    End Sub
 
-        Protected Overrides Sub ModuleDependentTermination
-            Calculator = Nothing
-        End Sub
+    Protected Overrides Sub ModuleDependentTermination
+      Calculator = Nothing
+    End Sub
 
-    End Class
+  End Class
 
 End Namespace

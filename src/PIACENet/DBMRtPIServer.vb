@@ -28,40 +28,40 @@ Imports System.Text.RegularExpressions
 
 Namespace Vitens.DynamicBandwidthMonitor
 
-    Public Class DBMRtPIServer
+  Public Class DBMRtPIServer
 
-        Private PIServer As Server
-        Private PIPoints As New List(Of DBMRtPIPoint)
+    Private PIServer As Server
+    Private PIPoints As New List(Of DBMRtPIPoint)
 
-        Public Sub New(PIServer As Server)
-            Dim InstrTag, Substrings() As String
-            Me.PIServer = PIServer
+    Public Sub New(PIServer As Server)
+      Dim InstrTag, Substrings() As String
+      Me.PIServer = PIServer
+      Try
+        For Each PIPoint As PIPoint In Me.PIServer.GetPointsSQL("PIpoint.Tag='*' AND PIpoint.PointSource='dbmrt' AND PIpoint.Scan=1") ' Search for DBM output PI points
+          InstrTag = PIPoint.PointAttributes("InstrumentTag").Value.ToString
+          If Regex.IsMatch(InstrTag, "^[\w\.-]+:[^:\?\*&]+$") Then ' InstrumentTag attribute should contain input PI point
+            Substrings = InstrTag.Split(New Char(){":"c}) ' Format: PI server:PI point
             Try
-                For Each PIPoint As PIPoint In Me.PIServer.GetPointsSQL("PIpoint.Tag='*' AND PIpoint.PointSource='dbmrt' AND PIpoint.Scan=1") ' Search for DBM output PI points
-                    InstrTag = PIPoint.PointAttributes("InstrumentTag").Value.ToString
-                    If Regex.IsMatch(InstrTag, "^[\w\.-]+:[^:\?\*&]+$") Then ' InstrumentTag attribute should contain input PI point
-                        Substrings = InstrTag.Split(New Char(){":"c}) ' Format: PI server:PI point
-                        Try
-                            If Not DBMRtCalculator.PISDK.Servers(Substrings(0)).PIPoints(Substrings(1)).Name.Equals(String.Empty) Then
-                                PIPoints.Add(New DBMRtPIPoint(DBMRtCalculator.PISDK.Servers(Substrings(0)).PIPoints(Substrings(1)), PIPoint)) ' Add to calculation points
-                            End If
-                        Catch
-                        End Try
-                    End If
-                Next
+              If Not DBMRtCalculator.PISDK.Servers(Substrings(0)).PIPoints(Substrings(1)).Name.Equals(String.Empty) Then
+                PIPoints.Add(New DBMRtPIPoint(DBMRtCalculator.PISDK.Servers(Substrings(0)).PIPoints(Substrings(1)), PIPoint)) ' Add to calculation points
+              End If
             Catch
             End Try
-        End Sub
+          End If
+        Next
+      Catch
+      End Try
+    End Sub
 
-        Public Sub Calculate
-            For Each PIPoint In PIPoints
-                Try
-                    PIPoint.Calculate
-                Catch
-                End Try
-            Next
-        End Sub
+    Public Sub Calculate
+      For Each PIPoint In PIPoints
+        Try
+          PIPoint.Calculate
+        Catch
+        End Try
+      Next
+    End Sub
 
-    End Class
+  End Class
 
 End Namespace

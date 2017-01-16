@@ -27,50 +27,50 @@ Imports System.Math
 
 Namespace Vitens.DynamicBandwidthMonitor
 
-    Public Class DBMStatistics
+  Public Class DBMStatistics
 
-        Public Count As Integer
-        Public Slope, Angle, Intercept, StandardError, Correlation, ModifiedCorrelation, Determination As Double
+    Public Count As Integer
+    Public Slope, Angle, Intercept, StandardError, Correlation, ModifiedCorrelation, Determination As Double
 
-        Public Function ShallowCopy As DBMStatistics
-            Return DirectCast(Me.MemberwiseClone, DBMStatistics)
-        End Function
+    Public Function ShallowCopy As DBMStatistics
+      Return DirectCast(Me.MemberwiseClone, DBMStatistics)
+    End Function
 
-        Public Sub Calculate(ValuesY() As Double, Optional ValuesX() As Double = Nothing)
-            Dim i As Integer
-            Dim SumX, SumY, SumXX, SumYY, SumXY As Double
-            If ValuesX Is Nothing Then
-                ReDim ValuesX(ValuesY.Length-1)
-                For i = 0 To ValuesX.Length-1
-                    ValuesX(i) = i
-                Next i
-            End If
-            Count = 0
-            For i = 0 To ValuesY.Length-1
-                If Not IsNaN(ValuesX(i)) And Not IsNaN(ValuesY(i)) Then
-                    SumX += ValuesX(i)
-                    SumY += ValuesY(i)
-                    SumXX += ValuesX(i)^2
-                    SumYY += ValuesY(i)^2
-                    SumXY += ValuesX(i)*ValuesY(i)
-                    Count += 1
-                End If
-            Next i
-            Slope = (Count*SumXY-SumX*SumY)/(Count*SumXX-SumX^2)
-            Angle = Atan(Slope)/(2*PI)*360 ' Angle in degrees
-            Intercept = (SumX*SumXY-SumY*SumXX)/(SumX^2-Count*SumXX)
-            StandardError = 0 ' Standard error of the predicted y-value for each x in the regression. The standard error is a measure of the amount of error in the prediction of y for an individual x
-            For i = 0 to ValuesY.Length-1
-                If Not IsNaN(ValuesX(i)) And Not IsNaN(ValuesY(i)) Then
-                    StandardError += (ValuesY(i)-ValuesX(i)*Slope-Intercept)^2
-                End If
-            Next i
-            StandardError = Sqrt(StandardError/(Count-2)) ' n-2 is used because two parameters (slope and intercept) were estimated in order to estimate the sum of squares
-            Correlation = (Count*SumXY-SumX*SumY)/Sqrt((Count*SumXX-SumX^2)*(Count*SumYY-SumY^2)) ' Wikipedia: A number that quantifies some type of correlation and dependence, meaning statistical relationships between two or more random variables or observed data values
-            ModifiedCorrelation = SumXY/Sqrt(SumXX)/Sqrt(SumYY) ' Average is not removed, as expected average is zero
-            Determination = Correlation^2 ' Wikipedia: A number that indicates the proportion of the variance in the dependent variable that is predictable from the independent variable
-        End Sub
+    Public Sub Calculate(ValuesY() As Double, Optional ValuesX() As Double = Nothing)
+      Dim i As Integer
+      Dim SumX, SumY, SumXX, SumYY, SumXY As Double
+      If ValuesX Is Nothing Then
+        ReDim ValuesX(ValuesY.Length-1)
+        For i = 0 To ValuesX.Length-1
+          ValuesX(i) = i
+        Next i
+      End If
+      Count = 0
+      For i = 0 To ValuesY.Length-1
+        If Not IsNaN(ValuesX(i)) And Not IsNaN(ValuesY(i)) Then
+          SumX += ValuesX(i)
+          SumY += ValuesY(i)
+          SumXX += ValuesX(i)^2
+          SumYY += ValuesY(i)^2
+          SumXY += ValuesX(i)*ValuesY(i)
+          Count += 1
+        End If
+      Next i
+      Slope = (Count*SumXY-SumX*SumY)/(Count*SumXX-SumX^2)
+      Angle = Atan(Slope)/(2*PI)*360 ' Angle in degrees
+      Intercept = (SumX*SumXY-SumY*SumXX)/(SumX^2-Count*SumXX)
+      StandardError = 0 ' Standard error of the predicted y-value for each x in the regression. The standard error is a measure of the amount of error in the prediction of y for an individual x
+      For i = 0 to ValuesY.Length-1
+        If Not IsNaN(ValuesX(i)) And Not IsNaN(ValuesY(i)) Then
+          StandardError += (ValuesY(i)-ValuesX(i)*Slope-Intercept)^2
+        End If
+      Next i
+      StandardError = Sqrt(StandardError/(Count-2)) ' n-2 is used because two parameters (slope and intercept) were estimated in order to estimate the sum of squares
+      Correlation = (Count*SumXY-SumX*SumY)/Sqrt((Count*SumXX-SumX^2)*(Count*SumYY-SumY^2)) ' Wikipedia: A number that quantifies some type of correlation and dependence, meaning statistical relationships between two or more random variables or observed data values
+      ModifiedCorrelation = SumXY/Sqrt(SumXX)/Sqrt(SumYY) ' Average is not removed, as expected average is zero
+      Determination = Correlation^2 ' Wikipedia: A number that indicates the proportion of the variance in the dependent variable that is predictable from the independent variable
+    End Sub
 
-    End Class
+  End Class
 
 End Namespace
