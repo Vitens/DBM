@@ -38,41 +38,64 @@ Namespace Vitens.DynamicBandwidthMonitor
       DataManager = New DBMDataManager(PointDriver)
     End Sub
 
-    Public Function Result(Timestamp As DateTime, IsInputDBMPoint As Boolean, HasCorrelationDBMPoint As Boolean, Optional SubstractPoint As DBMPoint = Nothing) As DBMResult
+    Public Function Result(Timestamp As DateTime, IsInputDBMPoint As Boolean, _
+      HasCorrelationDBMPoint As Boolean, _
+      Optional SubstractPoint As DBMPoint = Nothing) As DBMResult
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
       Dim PredictionTimestamp As DateTime
       Dim Prediction As New DBMPrediction
-      Dim Patterns(ComparePatterns), MeasuredValues(EMAPreviousPeriods), PredictedValues(EMAPreviousPeriods), LowerControlLimits(EMAPreviousPeriods), UpperControlLimits(EMAPreviousPeriods) As Double
+      Dim Patterns(ComparePatterns), MeasuredValues(EMAPreviousPeriods), _
+        PredictedValues(EMAPreviousPeriods), _
+        LowerControlLimits(EMAPreviousPeriods), _
+        UpperControlLimits(EMAPreviousPeriods) As Double
       Result = New DBMResult
-      If SubstractPoint IsNot PredictionsSubstractPoint Then ' Can we reuse stored results?
+      ' Can we reuse stored results?
+      If SubstractPoint IsNot PredictionsSubstractPoint Then
         Predictions.Clear ' No, so clear results
         PredictionsSubstractPoint = SubstractPoint
       End If
       For CorrelationCounter = 0 To CorrelationPreviousPeriods
-        If Result.Prediction Is Nothing Or (IsInputDBMPoint And Result.Factor <> 0 And HasCorrelationDBMPoint) Or Not IsInputDBMPoint Then
+        If Result.Prediction Is Nothing Or (IsInputDBMPoint And _
+          Result.Factor <> 0 And HasCorrelationDBMPoint) Or _
+          Not IsInputDBMPoint Then
           For EMACounter = 0 To EMAPreviousPeriods
-            PredictionTimestamp = Timestamp.AddSeconds(-(EMAPreviousPeriods-EMACounter+CorrelationCounter)*CalculationInterval)
+            PredictionTimestamp = Timestamp.AddSeconds _
+              (-(EMAPreviousPeriods-EMACounter+CorrelationCounter)* _
+              CalculationInterval)
             If Predictions.ContainsKey(PredictionTimestamp) Then ' From cache
               Prediction = Predictions.Item(PredictionTimestamp).ShallowCopy
             Else ' Calculate data
               For PatternCounter = 0 To ComparePatterns
-                Patterns(PatternCounter) = DataManager.Value(PredictionTimestamp.AddDays(-(ComparePatterns-PatternCounter)*7))
+                Patterns(PatternCounter) = DataManager.Value _
+                (PredictionTimestamp.AddDays _
+                (-(ComparePatterns-PatternCounter)*7))
                 If SubstractPoint IsNot Nothing Then
-                  Patterns(PatternCounter) -= SubstractPoint.DataManager.Value(PredictionTimestamp.AddDays(-(ComparePatterns-PatternCounter)*7))
+                  Patterns(PatternCounter) -= _
+                    SubstractPoint.DataManager.Value _
+                    (PredictionTimestamp.AddDays _
+                    (-(ComparePatterns-PatternCounter)*7))
                 End If
               Next PatternCounter
               Prediction.Calculate(Patterns)
-              Do While Predictions.Count >= MaxPointPredictions ' Limit cache size
-                Predictions.Remove(Predictions.ElementAt(RandomNumber(0, Predictions.Count-1)).Key) ' Remove random cached value
+              ' Limit cache size
+              Do While Predictions.Count >= MaxPointPredictions
+              ' Remove random cached value
+                Predictions.Remove(Predictions.ElementAt _
+                  (RandomNumber(0, Predictions.Count-1)).Key)
               Loop
-              Predictions.Add(PredictionTimestamp, Prediction.ShallowCopy) ' Add to cache
+              ' Add to cache
+              Predictions.Add(PredictionTimestamp, Prediction.ShallowCopy)
             End If
             MeasuredValues(EMACounter) = Prediction.MeasuredValue
             PredictedValues(EMACounter) = Prediction.PredictedValue
             LowerControlLimits(EMACounter) = Prediction.LowerControlLimit
             UpperControlLimits(EMACounter) = Prediction.UpperControlLimit
           Next EMACounter
-          Result.Calculate(CorrelationCounter, ExponentialMovingAverage(MeasuredValues), ExponentialMovingAverage(PredictedValues), ExponentialMovingAverage(LowerControlLimits), ExponentialMovingAverage(UpperControlLimits))
+          Result.Calculate(CorrelationCounter, _
+            ExponentialMovingAverage(MeasuredValues), _
+            ExponentialMovingAverage(PredictedValues), _
+            ExponentialMovingAverage(LowerControlLimits), _
+            ExponentialMovingAverage(UpperControlLimits))
         End If
       Next CorrelationCounter
       Return Result

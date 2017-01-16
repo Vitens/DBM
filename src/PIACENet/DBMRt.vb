@@ -35,7 +35,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private Calculator As DBMRtCalculator
 
     Public Overrides Sub ACECalculations ' Perform calculations
-      If Calculator IsNot Nothing Then ' If module and DBMRtCalculator are initialized
+      ' If module and DBMRtCalculator are initialized
+      If Calculator IsNot Nothing Then
         Calculator.Calculate
       End If
     End Sub

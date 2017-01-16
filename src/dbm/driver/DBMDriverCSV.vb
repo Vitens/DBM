@@ -38,7 +38,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Me.Point = Point
     End Sub
 
-    Public Function GetData(StartTimestamp As DateTime, EndTimestamp As DateTime) As Double
+    Public Function GetData(StartTimestamp As DateTime, _
+      EndTimestamp As DateTime) As Double
       Dim StreamReader As StreamReader
       Dim Substrings() As String
       Dim Timestamp As DateTime
@@ -48,8 +49,13 @@ Namespace Vitens.DynamicBandwidthMonitor
         If File.Exists(DirectCast(Point, String)) Then
           StreamReader = New StreamReader(DirectCast(Point, String))
           Do While Not StreamReader.EndOfStream
-            Substrings = Regex.Split(StreamReader.ReadLine, "^([^,\t]+)[,\t](.+)$") ' Comma and tab delimiters; split in 2 substrings
-            If Substrings.Length = 4 Then ' If a match is found at the beginning or the end of the input string, an empty string is included at the beginning or the end of the returned array
+            ' Comma and tab delimiters; split in 2 substrings
+            Substrings = Regex.Split _
+              (StreamReader.ReadLine, "^([^,\t]+)[,\t](.+)$")
+            ' If a match is found at the beginning or the end of the input
+            ' string, an empty string is included at the beginning or the end
+            ' of the returned array
+            If Substrings.Length = 4 Then
               If DateTime.TryParse(Substrings(1), Timestamp) Then
                 If Double.TryParse(Substrings(2), Value) Then
                   If Not Values.ContainsKey(Timestamp) Then

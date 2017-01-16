@@ -39,22 +39,28 @@ Namespace Vitens.DynamicBandwidthMonitor
       Me.PointDriver = PointDriver
     End Sub
 
-    Public Function Value(Timestamp As DateTime) As Double ' Returns value at timestamp, either from cache or using driver
+    Public Function Value(Timestamp As DateTime) As Double
+      ' Returns value at timestamp, either from cache or using driver
       If Values.ContainsKey(Timestamp) Then ' In cache
         Value = Values.Item(Timestamp) ' Return value from cache
       Else
-        If UnitTestsRunning Then ' Do not use point driver when running unit tests
-          Value = TestData(TestDataIndex) ' Return item from unit tests data array
+        ' Do not use point driver when running unit tests
+        If UnitTestsRunning Then
+          ' Return item from unit tests data array
+          Value = TestData(TestDataIndex)
           TestDataIndex = (TestDataIndex+1) Mod TestData.Length ' Increase index
         Else
           Try
-            Value = PointDriver.GetData(Timestamp, Timestamp.AddSeconds(CalculationInterval)) ' Get data using driver
+            ' Get data using driver
+            Value = PointDriver.GetData _
+              (Timestamp, Timestamp.AddSeconds(CalculationInterval))
           Catch
             Value = NaN ' Error, return Not a Number
           End Try
         End If
         Do While Values.Count >= MaxDataManagerValues ' Limit cache size
-          Values.Remove(Values.ElementAt(RandomNumber(0, Values.Count-1)).Key) ' Remove random cached value
+          ' Remove random cached value
+          Values.Remove(Values.ElementAt(RandomNumber(0, Values.Count-1)).Key)
         Loop
         Values.Add(Timestamp, Value) ' Add to cache
       End If

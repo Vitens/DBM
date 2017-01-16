@@ -38,17 +38,32 @@ Namespace Vitens.DynamicBandwidthMonitor
       ReDim RelativeErrors(CorrelationPreviousPeriods)
     End Sub
 
-    Public Sub Calculate(Index As Integer, MeasuredValueEMA As Double, PredictedValueEMA As Double, LowerControlLimitEMA As Double, UpperControlLimitEMA As Double) ' Calculates and stores prediction errors and initial results
-      AbsoluteErrors(Index) = PredictedValueEMA-MeasuredValueEMA ' Absolute prediction error (for prediction error correlation calculations)
-      RelativeErrors(Index) = PredictedValueEMA/MeasuredValueEMA-1 ' Relative prediction error (for prediction error correlation calculations)
-      If Prediction Is Nothing Then ' Store initial (no time offset because of prediction error correlation calculations) results
-        Prediction = New DBMPrediction(MeasuredValueEMA, PredictedValueEMA, LowerControlLimitEMA, UpperControlLimitEMA)
-        If MeasuredValueEMA < LowerControlLimitEMA Then ' Lower control limit exceeded
-          Factor = (PredictedValueEMA-MeasuredValueEMA)/(LowerControlLimitEMA-PredictedValueEMA)
-        ElseIf MeasuredValueEMA > UpperControlLimitEMA Then ' Upper control limit exceeded
-          Factor = (MeasuredValueEMA-PredictedValueEMA)/(UpperControlLimitEMA-PredictedValueEMA)
+    Public Sub Calculate(Index As Integer, MeasuredValueEMA As Double, _
+      PredictedValueEMA As Double, LowerControlLimitEMA As Double, _
+      UpperControlLimitEMA As Double)
+      ' Calculates and stores prediction errors and initial results
+      ' Absolute prediction error (for prediction error
+      ' correlation calculations)
+      AbsoluteErrors(Index) = PredictedValueEMA-MeasuredValueEMA
+      ' Relative prediction error (for prediction error
+      ' correlation calculations)
+      RelativeErrors(Index) = PredictedValueEMA/MeasuredValueEMA-1
+      ' Store initial (no time offset because of prediction error
+      ' correlation calculations) results
+      If Prediction Is Nothing Then
+        Prediction = New DBMPrediction(MeasuredValueEMA, PredictedValueEMA, _
+          LowerControlLimitEMA, UpperControlLimitEMA)
+        ' Lower control limit exceeded
+        If MeasuredValueEMA < LowerControlLimitEMA Then
+          Factor = (PredictedValueEMA-MeasuredValueEMA)/ _
+            (LowerControlLimitEMA-PredictedValueEMA)
+        ' Upper control limit exceeded
+        ElseIf MeasuredValueEMA > UpperControlLimitEMA Then
+          Factor = (MeasuredValueEMA-PredictedValueEMA)/ _
+            (UpperControlLimitEMA-PredictedValueEMA)
         End If
-        OriginalFactor = Factor ' Store original factor before possible suppression
+        ' Store original factor before possible suppression
+        OriginalFactor = Factor
       End If
     End Sub
 

@@ -26,14 +26,37 @@ Namespace Vitens.DynamicBandwidthMonitor
 
   Public Class DBMParameters
 
-    Public Shared CalculationInterval As Integer =        300 ' seconds; 300=5 minutes. Time interval at which the calculation is run.
-    Public Shared ComparePatterns As Integer =            12 ' weeks. Number of weeks to look back to predict the current value and control limits.
-    Public Shared EMAPreviousPeriods As Integer =         CInt(0.5*3600/CalculationInterval) ' intervals; 6=35 minutes, current value inclusive. Number of previous intervals used to smooth the data.
-    Public Shared ConfidenceInterval As Double =          0.99 ' percent. Confidence interval used for removing outliers and determining control limits.
-    Public Shared CorrelationPreviousPeriods As Integer = CInt(2*3600/CalculationInterval-1) ' intervals; 23=2 hours, current value inclusive. Number of previous intervals used to calculate prediction error correlation when an exception is found.
-    Public Shared CorrelationThreshold As Double =        0.83666 ' Absolute correlation lower limit for detecting (anti)correlation.
-    Public Shared MaxPointPredictions As Integer =        CInt(24*3600/CalculationInterval+EMAPreviousPeriods+CorrelationPreviousPeriods) ' Maximum number of cached prediction results per point; large enough for at least one day.
-    Public Shared MaxDataManagerValues As Integer =       MaxPointPredictions*(ComparePatterns+1) ' Maximum number of cached values per point; large enough for at least one day.
+    ' Time interval at which the calculation is run (seconds)
+    Public Shared CalculationInterval As Integer = 300
+
+    ' Number of weeks to look back to predict the current value
+    ' and control limits.
+    Public Shared ComparePatterns As Integer = 12
+
+    ' Number of previous intervals used to smooth the data.
+    Public Shared EMAPreviousPeriods As Integer = _
+      CInt(0.5*3600/CalculationInterval)
+
+    ' Confidence interval used for removing outliers and determining
+    ' control limits (percent).
+    Public Shared ConfidenceInterval As Double = 0.99
+
+    ' Number of previous intervals used to calculate prediction error
+    ' correlation when an exception is found.
+    Public Shared CorrelationPreviousPeriods As Integer = _
+      CInt(2*3600/CalculationInterval-1)
+
+    ' Absolute correlation lower limit for detecting (anti)correlation.
+    Public Shared CorrelationThreshold As Double = 0.83666
+
+    ' Maximum number of cached prediction results per point.
+    Public Shared MaxPointPredictions As Integer = _
+      CInt(24*3600/CalculationInterval+ _
+      EMAPreviousPeriods+CorrelationPreviousPeriods)
+
+    ' Maximum number of cached values per point.
+    Public Shared MaxDataManagerValues As Integer = _
+      MaxPointPredictions*(ComparePatterns+1)
 
   End Class
 

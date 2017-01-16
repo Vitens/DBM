@@ -41,17 +41,25 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim SubstractSelf As Boolean
       InputPointDriver = New DBMPointDriver(InputPIPoint)
       OutputPointDriver = New DBMPointDriver(OutputPIPoint)
-      ExDesc = DirectCast(OutputPointDriver.Point, PIPoint).PointAttributes("ExDesc").Value.ToString
-      If Regex.IsMatch(ExDesc, "^[-]?[\w\.-]+:[^:\?\*&]+(&[-]?[\w\.-]+:[^:\?\*&]+)*$") Then ' ExDesc attribute should contain correlation PI point(s)
-        SubstringsA = ExDesc.Split(New Char(){"&"c}) ' Split multiple correlation PI points by &
+      ExDesc = DirectCast(OutputPointDriver.Point, PIPoint). _
+        PointAttributes("ExDesc").Value.ToString
+      ' ExDesc attribute should contain correlation PI point(s)
+      If Regex.IsMatch(ExDesc, _
+        "^[-]?[\w\.-]+:[^:\?\*&]+(&[-]?[\w\.-]+:[^:\?\*&]+)*$") Then
+        ' Split multiple correlation PI points by &
+        SubstringsA = ExDesc.Split(New Char(){"&"c})
         For Each SubstringA In SubstringsA
-          SubstringsB = SubstringA.Split(New Char(){":"c}) ' Format: [-]PI server:PI point
+          ' Format: [-]PI server:PI point
+          SubstringsB = SubstringA.Split(New Char(){":"c})
           SubstractSelf = SubstringsB(0).Substring(0, 1).Equals("-")
           Server = SubstringsB(0).Substring(If(SubstractSelf, 1, 0))
           Point = SubstringsB(1)
           Try
-            If Not DBMRtCalculator.PISDK.Servers(Server).PIPoints(Point).Name.Equals(String.Empty) Then
-              CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver(DBMRtCalculator.PISDK.Servers(Server).PIPoints(Point)), SubstractSelf)) ' Add to correlation points
+            If Not DBMRtCalculator.PISDK.Servers(Server). _
+              PIPoints(Point).Name.Equals(String.Empty) Then
+              CorrelationPoints.Add(New DBMCorrelationPoint _
+                (New DBMPointDriver(DBMRtCalculator.PISDK.Servers(Server). _
+                PIPoints(Point)), SubstractSelf)) ' Add to correlation points
             End If
           Catch
           End Try
@@ -61,15 +69,31 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Sub Calculate
       Dim InputTimestamp, OutputTimestamp As PITime
-      InputTimestamp = DirectCast(InputPointDriver.Point, PIPoint).Data.Snapshot.TimeStamp ' Timestamp of input point
-      For Each CorrelationPoint In CorrelationPoints ' Check timestamp of correlation points
-        InputTimestamp.UTCSeconds = Min(InputTimestamp.UTCSeconds, DirectCast(CorrelationPoint.PointDriver.Point, PIPoint).Data.Snapshot.TimeStamp.UTCSeconds) ' Timestamp of correlation point, keep earliest
+      ' Timestamp of input point
+      InputTimestamp = DirectCast _
+        (InputPointDriver.Point, PIPoint).Data.Snapshot.TimeStamp
+      ' Check timestamp of correlation points
+      For Each CorrelationPoint In CorrelationPoints
+        ' Timestamp of correlation point, keep earliest
+        InputTimestamp.UTCSeconds = Min(InputTimestamp.UTCSeconds, _
+          DirectCast(CorrelationPoint.PointDriver.Point, PIPoint). _
+          Data.Snapshot.TimeStamp.UTCSeconds)
       Next
-      InputTimestamp.UTCSeconds -= CalculationInterval+InputTimestamp.UTCSeconds Mod CalculationInterval ' Can calculate output until (inclusive)
-      OutputTimestamp = DirectCast(OutputPointDriver.Point, PIPoint).Data.Snapshot.TimeStamp ' Timestamp of output point
-      OutputTimestamp.UTCSeconds += CalculationInterval-OutputTimestamp.UTCSeconds Mod CalculationInterval ' Next calculation timestamp
-      If InputTimestamp.UTCSeconds >= OutputTimestamp.UTCSeconds Then ' If calculation timestamp can be calculated
-        DirectCast(OutputPointDriver.Point, PIPoint).Data.UpdateValue(DBMRtCalculator.DBM.Result(InputPointDriver, CorrelationPoints, InputTimestamp.LocalDate).Factor, InputTimestamp.LocalDate) ' Write calculated factor to output point
+      ' Can calculate output until (inclusive)
+      InputTimestamp.UTCSeconds -= _
+        CalculationInterval+InputTimestamp.UTCSeconds Mod CalculationInterval
+      ' Timestamp of output point
+      OutputTimestamp = _
+        DirectCast(OutputPointDriver.Point, PIPoint).Data.Snapshot.TimeStamp
+      ' Next calculation timestamp
+      OutputTimestamp.UTCSeconds += _
+        CalculationInterval-OutputTimestamp.UTCSeconds Mod CalculationInterval
+      ' If calculation timestamp can be calculated
+      If InputTimestamp.UTCSeconds >= OutputTimestamp.UTCSeconds Then
+        ' Write calculated factor to output point
+        DirectCast(OutputPointDriver.Point, PIPoint).Data.UpdateValue _
+          (DBMRtCalculator.DBM.Result(InputPointDriver, CorrelationPoints, _
+          InputTimestamp.LocalDate).Factor, InputTimestamp.LocalDate)
       End If
     End Sub
 

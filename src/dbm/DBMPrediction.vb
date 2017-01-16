@@ -29,26 +29,35 @@ Namespace Vitens.DynamicBandwidthMonitor
 
   Public Class DBMPrediction
 
-    Public MeasuredValue, PredictedValue, LowerControlLimit, UpperControlLimit As Double
+    Public MeasuredValue, PredictedValue, LowerControlLimit, _
+      UpperControlLimit As Double
 
     Public Function ShallowCopy As DBMPrediction
       Return DirectCast(Me.MemberwiseClone, DBMPrediction)
     End Function
 
-    Public Sub New(Optional MeasuredValue As Double = 0, Optional PredictedValue As Double = 0, Optional LowerControlLimit As Double = 0, Optional UpperControlLimit As Double = 0)
+    Public Sub New(Optional MeasuredValue As Double = 0, _
+      Optional PredictedValue As Double = 0, _
+      Optional LowerControlLimit As Double = 0, _
+      Optional UpperControlLimit As Double = 0)
       Me.MeasuredValue = MeasuredValue
       Me.PredictedValue = PredictedValue
       Me.LowerControlLimit = LowerControlLimit
       Me.UpperControlLimit = UpperControlLimit
     End Sub
 
-    Public Sub Calculate(Values() As Double) ' Calculates and stores prediction and control limits
+    Public Sub Calculate(Values() As Double)
+      ' Calculates and stores prediction and control limits
       Dim Statistics As New DBMStatistics
-      Statistics.Calculate(RemoveOutliers(Values.Take(Values.Length-1).ToArray)) ' Calculate statistics for data after removing outliers
+      ' Calculate statistics for data after removing outliers
+      Statistics.Calculate(RemoveOutliers(Values.Take(Values.Length-1).ToArray))
       MeasuredValue = Values(ComparePatterns)
-      PredictedValue = ComparePatterns*Statistics.Slope+Statistics.Intercept ' Extrapolate regression one interval
-      LowerControlLimit = PredictedValue-ControlLimitRejectionCriterion(ConfidenceInterval, Statistics.Count-1)*Statistics.StandardError
-      UpperControlLimit = PredictedValue+ControlLimitRejectionCriterion(ConfidenceInterval, Statistics.Count-1)*Statistics.StandardError
+      ' Extrapolate regression one interval
+      PredictedValue = ComparePatterns*Statistics.Slope+Statistics.Intercept
+      LowerControlLimit = PredictedValue-ControlLimitRejectionCriterion _
+        (ConfidenceInterval, Statistics.Count-1)*Statistics.StandardError
+      UpperControlLimit = PredictedValue+ControlLimitRejectionCriterion _
+        (ConfidenceInterval, Statistics.Count-1)*Statistics.StandardError
     End Sub
 
   End Class

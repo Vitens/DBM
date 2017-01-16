@@ -37,15 +37,22 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim InstrTag, Substrings(), Server, Point As String
       Me.PIServer = PIServer
       Try
-        For Each PIPoint As PIPoint In Me.PIServer.GetPointsSQL("PIpoint.Tag='*' AND PIpoint.PointSource='dbmrt' AND PIpoint.Scan=1") ' Search for DBM output PI points
+        ' Search for DBM output PI points
+        For Each PIPoint As PIPoint In Me.PIServer.GetPointsSQL _
+          ("PIpoint.Tag='*' AND PIpoint.PointSource='dbmrt' AND PIpoint.Scan=1")
           InstrTag = PIPoint.PointAttributes("InstrumentTag").Value.ToString
-          If Regex.IsMatch(InstrTag, "^[\w\.-]+:[^:\?\*&]+$") Then ' InstrumentTag attribute should contain input PI point
-            Substrings = InstrTag.Split(New Char(){":"c}) ' Format: PI server:PI point
+          ' InstrumentTag attribute should contain input PI point
+          If Regex.IsMatch(InstrTag, "^[\w\.-]+:[^:\?\*&]+$") Then
+            ' Format: PI server:PI point
+            Substrings = InstrTag.Split(New Char(){":"c})
             Server = Substrings(0)
             Point = Substrings(1)
             Try
-              If Not DBMRtCalculator.PISDK.Servers(Server).PIPoints(Point).Name.Equals(String.Empty) Then
-                PIPoints.Add(New DBMRtPIPoint(DBMRtCalculator.PISDK.Servers(Server).PIPoints(Point), PIPoint)) ' Add to calculation points
+              If Not DBMRtCalculator.PISDK.Servers(Server). _
+                PIPoints(Point).Name.Equals(String.Empty) Then
+                ' Add to calculation points
+                PIPoints.Add(New DBMRtPIPoint(DBMRtCalculator.PISDK. _
+                  Servers(Server).PIPoints(Point), PIPoint))
               End If
             Catch
             End Try

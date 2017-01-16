@@ -67,8 +67,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim StartTimestamp, EndTimestamp As DateTime
       Dim Result As DBMResult
       Dim _DBM As New DBM
-      For Each CommandLineArg In GetCommandLineArgs ' Parse command line arguments
-        If Regex.IsMatch(CommandLineArg, "^[-/](.+)=(.+)$") Then ' Parameter=Value
+      ' Parse command line arguments
+      For Each CommandLineArg In GetCommandLineArgs
+        ' Parameter=Value
+        If Regex.IsMatch(CommandLineArg, "^[-/](.+)=(.+)$") Then
           Substrings = CommandLineArg.Split(New Char(){"="c}, 2)
           Parameter = Substrings(0).Substring(1)
           Value = Substrings(1)
@@ -76,9 +78,11 @@ Namespace Vitens.DynamicBandwidthMonitor
             If Parameter.ToLower.Equals("i") Then
               InputPointDriver = New DBMPointDriver(Value)
             ElseIf Parameter.ToLower.Equals("c") Then
-              CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver(Value), False))
+              CorrelationPoints.Add _
+                (New DBMCorrelationPoint(New DBMPointDriver(Value), False))
             ElseIf Parameter.ToLower.Equals("cs") Then
-              CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver(Value), True))
+              CorrelationPoints.Add _
+                (New DBMCorrelationPoint(New DBMPointDriver(Value), True))
             ElseIf Parameter.ToLower.Equals("iv") Then
               CalculationInterval = Convert.ToInt32(Value)
             ElseIf Parameter.ToLower.Equals("p") Then
@@ -106,36 +110,67 @@ Namespace Vitens.DynamicBandwidthMonitor
           End Try
         End If
       Next
-      If InputPointDriver Is Nothing Or StartTimestamp = DateTime.MinValue Then ' Perform unit tests
+      If InputPointDriver Is Nothing Or StartTimestamp = DateTime.MinValue Then
+        ' Perform unit tests
         Console.Write(DBM.Version)
       Else
         If EndTimestamp = DateTime.MinValue Then
-          EndTimestamp = StartTimestamp ' No end timestamp, set to start timestamp
+          ' No end timestamp, set to start timestamp
+          EndTimestamp = StartTimestamp
         Else
-          EndTimestamp = EndTimestamp.AddSeconds(-CalculationInterval) ' Remove one interval from end timestamp
+          ' Remove one interval from end timestamp
+          EndTimestamp = EndTimestamp.AddSeconds(-CalculationInterval)
         End If
         Do While StartTimestamp <= EndTimestamp
           Console.Write(FormatDateTime(StartTimestamp) & Separator)
-          Result = _DBM.Result(InputPointDriver, CorrelationPoints, StartTimestamp)
+          Result = _DBM.Result _
+            (InputPointDriver, CorrelationPoints, StartTimestamp)
           With Result
-            Console.Write(FormatNumber(.Factor) & Separator & FormatNumber(.Prediction.MeasuredValue) & Separator & FormatNumber(.Prediction.PredictedValue) & Separator & FormatNumber(.Prediction.LowerControlLimit) & Separator & FormatNumber(.Prediction.UpperControlLimit))
+            Console.Write(FormatNumber(.Factor) & Separator & _
+              FormatNumber(.Prediction.MeasuredValue) & Separator & _
+              FormatNumber(.Prediction.PredictedValue) & Separator & _
+              FormatNumber(.Prediction.LowerControlLimit) & Separator & _
+              FormatNumber(.Prediction.UpperControlLimit))
           End With
-          If Result.Factor <> 0 And CorrelationPoints.Count > 0 Then ' If an event is found and a correlation point is available
+          ' If an event is found and a correlation point is available
+          If Result.Factor <> 0 And CorrelationPoints.Count > 0 Then
             With Result.AbsoluteErrorStats
-              Console.Write(Separator & FormatNumber(.Count) & Separator & FormatNumber(.Slope) & Separator & FormatNumber(.Angle) & Separator & FormatNumber(.Intercept) & Separator & FormatNumber(.StandardError) & Separator & FormatNumber(.Correlation) & Separator & FormatNumber(.ModifiedCorrelation) & Separator & FormatNumber(.Determination))
+              Console.Write(Separator & _
+                FormatNumber(.Count) & Separator & _
+                FormatNumber(.Slope) & Separator & _
+                FormatNumber(.Angle) & Separator & _
+                FormatNumber(.Intercept) & Separator & _
+                FormatNumber(.StandardError) & Separator & _
+                FormatNumber(.Correlation) & Separator & _
+                FormatNumber(.ModifiedCorrelation) & Separator & _
+                FormatNumber(.Determination))
             End With
             With Result.RelativeErrorStats
-              Console.Write(Separator & FormatNumber(.Count) & Separator & FormatNumber(.Slope) & Separator & FormatNumber(.Angle) & Separator & FormatNumber(.Intercept) & Separator & FormatNumber(.StandardError) & Separator & FormatNumber(.Correlation) & Separator & FormatNumber(.ModifiedCorrelation) & Separator & FormatNumber(.Determination))
+              Console.Write(Separator & _
+                FormatNumber(.Count) & Separator & _
+                FormatNumber(.Slope) & Separator & _
+                FormatNumber(.Angle) & Separator & _
+                FormatNumber(.Intercept) & Separator & _
+                FormatNumber(.StandardError) & Separator & _
+                FormatNumber(.Correlation) & Separator & _
+                FormatNumber(.ModifiedCorrelation) & Separator & _
+                FormatNumber(.Determination))
             End With
             For Each CorrelationPoint In CorrelationPoints
-              Result = _DBM.Result(CorrelationPoint.PointDriver, Nothing, StartTimestamp)
+              Result = _DBM.Result _
+                (CorrelationPoint.PointDriver, Nothing, StartTimestamp)
               With Result.Prediction
-                Console.Write(Separator & FormatNumber(.MeasuredValue) & Separator & FormatNumber(.PredictedValue) & Separator & FormatNumber(.LowerControlLimit) & Separator & FormatNumber(.UpperControlLimit))
+                Console.Write(Separator & _
+                  FormatNumber(.MeasuredValue) & Separator & _
+                  FormatNumber(.PredictedValue) & Separator & _
+                  FormatNumber(.LowerControlLimit) & Separator & _
+                  FormatNumber(.UpperControlLimit))
               End With
             Next
           End If
           Console.WriteLine
-          StartTimestamp = StartTimestamp.AddSeconds(CalculationInterval) ' Next interval
+          ' Next interval
+          StartTimestamp = StartTimestamp.AddSeconds(CalculationInterval)
         Loop
       End If
     End Sub
