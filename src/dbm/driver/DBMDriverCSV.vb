@@ -45,7 +45,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             Dim Value As Double
             If Values Is Nothing Then ' No data in memory yet
                 Values = New Dictionary(Of DateTime, Double)
-                Try
+                If File.Exists(DirectCast(Point, String)) Then
                     StreamReader = New StreamReader(DirectCast(Point, String))
                     Do While Not StreamReader.EndOfStream
                         Substrings = Regex.Split(StreamReader.ReadLine, "^([^,\t]+)[,\t](.+)$") ' Comma and tab delimiters; split in 2 substrings
@@ -60,8 +60,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                         End If
                     Loop
                     StreamReader.Close
-                Catch
-                End Try
+                End If
             End If
             If Values.ContainsKey(StartTimestamp) Then ' In cache
                 Return Values.Item(StartTimestamp) ' Return value from cache
