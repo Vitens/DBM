@@ -138,8 +138,8 @@ Namespace Vitens.DynamicBandwidthMonitor
               FormatNumber(.Prediction.UpperControlLimit))
           End With
           ' If an event is found and a correlation point is available
-          If (Result.Factor <> 0 And CorrelationPoints.Count > 0) Or _
-            AlwaysOutputCorrelationData Then
+          If CorrelationPoints.Count > 0 And _
+            (Result.Factor <> 0 Or AlwaysOutputCorrelationData) Then
             With Result.AbsoluteErrorStats
               Console.Write(Separator & _
                 FormatNumber(.Count) & Separator & _
