@@ -65,7 +65,7 @@ DBM uses drivers to read information from a source of data. The following driver
 | `DBMDriverOSIsoftPI.vb`       | Driver for OSIsoft PI.                                | `PISDK.PIPoint` (PI tag) | Used by PI ACE module `DBMRt`.                                         |
 
 ### Parameters
-DBM can be configured using several parameters. The values for these parameters can be changed at runtime in the `DBM.DBMParameters` class.
+DBM can be configured using several parameters. The values for these parameters can be changed at runtime in the `Vitens.DynamicBandwidthMonitor.DBMParameters` class.
 
 | Parameter                    | Default value | Units         | Description                                                                                             |
 | ---------------------------- | ------------- | ------------- | ------------------------------------------------------------------------------------------------------- |
