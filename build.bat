@@ -37,6 +37,9 @@ set PIACERefs=%PIACECheck%,"%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PITimeServer
 %vbc% /target:library /out:build\DBMDriverNull.dll src\shared\*.vb src\dbm\*.vb src\dbm\driver\DBMDriverNull.vb
 if not exist build\DBMDriverNull.dll goto ExitBuild
 
+%vbc% /target:library /out:build\DBMDriverWaterUsageModel.dll src\shared\*.vb src\dbm\*.vb src\dbm\driver\DBMDriverWaterUsageModel.vb
+if not exist build\DBMDriverWaterUsageModel.dll goto ExitBuild
+
 %vbc% /target:library /out:build\DBMDriverCSV.dll src\shared\*.vb src\dbm\*.vb src\dbm\driver\DBMDriverCSV.vb
 if not exist build\DBMDriverCSV.dll goto ExitBuild
 
