@@ -106,7 +106,9 @@ Namespace Vitens.DynamicBandwidthMonitor
                 InternationalFormat = True
               End If
             End If
-          Catch
+          Catch ex As Exception
+            Console.WriteLine(ex)
+            Exit Sub
           End Try
         End If
       Next

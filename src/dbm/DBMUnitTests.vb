@@ -61,6 +61,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim InputPointDriver, CorrelationPointDriver As DBMPointDriver
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim Result As DBMResult
+      UnitTestsRunning = True
       InputPointDriver = New DBMPointDriver(InputPoint)
       If CorrelationPoint IsNot Nothing Then
         CorrelationPointDriver = New DBMPointDriver(CorrelationPoint)
@@ -68,7 +69,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       Else
         CorrelationPointDriver = Nothing
       End If
-      UnitTestsRunning = True
       Result = DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
       UnitTestsRunning = False
       Return Hash({Round(Result.Factor, 3), Round(Result.OriginalFactor, 3), Round(Result.Prediction.MeasuredValue), Round(Result.Prediction.PredictedValue), Round(Result.Prediction.LowerControlLimit), Round(Result.Prediction.UpperControlLimit)}) = Hash(ExpResults) And _
