@@ -65,6 +65,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim InputPointDriver As DBMPointDriver = Nothing
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim StartTimestamp, EndTimestamp As DateTime
+      Dim AlwaysOutputCorrelationData As Boolean
       Dim Result As DBMResult
       Dim _DBM As New DBM
       ' Parse command line arguments
@@ -105,6 +106,8 @@ Namespace Vitens.DynamicBandwidthMonitor
               ElseIf Value.ToLower.Equals("intl") Then
                 InternationalFormat = True
               End If
+            ElseIf Parameter.ToLower.Equals("oc") Then
+              AlwaysOutputCorrelationData = Convert.ToBoolean(Value)
             End If
           Catch ex As Exception
             Console.WriteLine(ex)
@@ -135,7 +138,8 @@ Namespace Vitens.DynamicBandwidthMonitor
               FormatNumber(.Prediction.UpperControlLimit))
           End With
           ' If an event is found and a correlation point is available
-          If Result.Factor <> 0 And CorrelationPoints.Count > 0 Then
+          If (Result.Factor <> 0 And CorrelationPoints.Count > 0) Or _
+            AlwaysOutputCorrelationData Then
             With Result.AbsoluteErrorStats
               Console.Write(Separator & _
                 FormatNumber(.Count) & Separator & _
