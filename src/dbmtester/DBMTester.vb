@@ -110,7 +110,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               AlwaysOutputCorrelationData = Convert.ToBoolean(Value)
             End If
           Catch ex As Exception
-            Console.WriteLine(ex)
+            Console.WriteLine(ex.ToString)
             Exit Sub
           End Try
         End If
