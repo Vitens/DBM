@@ -83,7 +83,7 @@ DBMTester is a command line utility that can be used to quickly calculate DBM re
 | -------- | ------ | ---------------------------------------------------------------------------------------------------------------------- |
 | `-i=`    | 1      | Specifies the input point (CSV file).                                                                                  |
 | `-c=`    | 0..n   | Adds a correlation point (CSV file).                                                                                   |
-| `-cs=`   | 0..n   | Adds a correlation point (CSV file) from which the input point is substracted.                                         |
+| `-cs=`   | 0..n   | Adds a correlation point (CSV file) from which the input point is subtracted.                                          |
 | `-iv=`   | 0..1   | Changes the `CalculationInterval` parameter.                                                                           |
 | `-p=`    | 0..1   | Changes the `ComparePatterns` parameter.                                                                               |
 | `-ep=`   | 0..1   | Changes the `EMAPreviousPeriods` parameter.                                                                            |

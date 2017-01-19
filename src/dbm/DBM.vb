@@ -78,9 +78,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function Suppress(Factor As Double, _
       AbsErrModCorr As Double, RelErrModCorr As Double, _
-      SubstractSelf As Boolean) As Double
+      SubtractSelf As Boolean) As Double
       ' If anticorrelation with adjacent measurement
-      If Not SubstractSelf And AbsErrModCorr < -CorrelationThreshold Then
+      If Not SubtractSelf And AbsErrModCorr < -CorrelationThreshold Then
         ' If already suppressed due to anticorrelation
         If Factor < -CorrelationThreshold And Factor >= -1 Then
           ' Keep lowest value (strongest anticorrelation)
@@ -124,8 +124,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       If Result.Factor <> 0 And CorrelationPoints.Count > 0 Then
         For Each CorrelationPoint In CorrelationPoints
           ' If pattern of correlation point contains input point
-          If CorrelationPoint.SubstractSelf Then
-            ' Calculate for correlation point, substract input point
+          If CorrelationPoint.SubtractSelf Then
+            ' Calculate for correlation point, subtract input point
             CorrelationResult = Point(CorrelationPoint.PointDriver).Result _
               (Timestamp, False, True, Point(InputPointDriver))
           Else
@@ -142,7 +142,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           Factor = Suppress(Result.Factor, _
             AbsoluteErrorStats.ModifiedCorrelation, _
             RelativeErrorStats.ModifiedCorrelation, _
-            CorrelationPoint.SubstractSelf)
+            CorrelationPoint.SubtractSelf)
           If Factor <> Result.Factor Then ' Has event been suppressed
             Result.Factor = Factor
             Result.AbsoluteErrorStats = AbsoluteErrorStats.ShallowCopy

@@ -27,11 +27,11 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMCorrelationPoint
 
     Public PointDriver As DBMPointDriver
-    Public SubstractSelf As Boolean
+    Public SubtractSelf As Boolean
 
-    Public Sub New(PointDriver As DBMPointDriver, SubstractSelf As Boolean)
+    Public Sub New(PointDriver As DBMPointDriver, SubtractSelf As Boolean)
       Me.PointDriver = PointDriver
-      Me.SubstractSelf = SubstractSelf
+      Me.SubtractSelf = SubtractSelf
     End Sub
 
   End Class

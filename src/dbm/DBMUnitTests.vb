@@ -1357,7 +1357,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Shared Function TestCase(InputPoint As String,
       CorrelationPoint As String, Timestamp As DateTime, _
-      SubstractSelf As Boolean, ExpResults() As Double, _
+      SubtractSelf As Boolean, ExpResults() As Double, _
       ExpAbsErrStats() As Double, ExpRelErrStats() As Double) As Boolean
       Dim InputPointDriver, CorrelationPointDriver As DBMPointDriver
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
@@ -1367,7 +1367,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       If CorrelationPoint IsNot Nothing Then
         CorrelationPointDriver = New DBMPointDriver(CorrelationPoint)
         CorrelationPoints.Add _
-          (New DBMCorrelationPoint(CorrelationPointDriver, SubstractSelf))
+          (New DBMCorrelationPoint(CorrelationPointDriver, SubtractSelf))
       Else
         CorrelationPointDriver = Nothing
       End If
@@ -1998,7 +1998,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         TestResults = TestResults And TestCase("A", "A", New DateTime(2016, _
           1, 1, 1, 50, 0), False, {1, 1.206, 570, 378, 219, 537}, {24, 1, 45, _
           0, 0, 1, 1, 1}, {24, 1, 45, 0, 0, 1, 1, 1})
-        ' Substract self test, New year's day; Leeuwarden
+        ' Subtract self test, New year's day; Leeuwarden
         TestResults = TestResults And TestCase("A", "A", New DateTime(2016, _
           1, 1, 1, 50, 0), True, {1.206, 1.206, 570, 378, 219, 537}, {0, 0, _
           0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0})
@@ -2028,7 +2028,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           3, 12, 20, 10, 0), False, {0.846, 6.717, 2936, 953, 658, 1248}, _
           {24, 1.2448, 51.2229, 933.6339, 289.6342, 0.9722, 0.8323, 0.9452}, _
           {24, 0.068, 3.8886, 0.0167, 0.0056, 0.9738, 0.8463, 0.9483})
-        ' Substract test 2/2, Pipe burst; Leeuwarden/Vitens
+        ' Subtract test 2/2, Pipe burst; Leeuwarden/Vitens
         TestResults = TestResults And TestCase("A", "B", New DateTime(2013, _
           3, 12, 20, 10, 0), True, {6.717, 6.717, 2936, 953, 658, 1248}, {0, _
           0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0})

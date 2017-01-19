@@ -38,7 +38,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Sub New(InputPIPoint As PIPoint, OutputPIPoint As PIPoint)
       Dim ExDesc, SubstringsA(), SubstringsB(), Server, Point As String
-      Dim SubstractSelf As Boolean
+      Dim SubtractSelf As Boolean
       InputPointDriver = New DBMPointDriver(InputPIPoint)
       OutputPointDriver = New DBMPointDriver(OutputPIPoint)
       ExDesc = DirectCast(OutputPointDriver.Point, PIPoint). _
@@ -51,15 +51,15 @@ Namespace Vitens.DynamicBandwidthMonitor
         For Each SubstringA In SubstringsA
           ' Format: [-]PI server:PI point
           SubstringsB = SubstringA.Split(New Char(){":"c})
-          SubstractSelf = SubstringsB(0).Substring(0, 1).Equals("-")
-          Server = SubstringsB(0).Substring(If(SubstractSelf, 1, 0))
+          SubtractSelf = SubstringsB(0).Substring(0, 1).Equals("-")
+          Server = SubstringsB(0).Substring(If(SubtractSelf, 1, 0))
           Point = SubstringsB(1)
           Try
             If Not DBMRtCalculator.PISDK.Servers(Server). _
               PIPoints(Point).Name.Equals(String.Empty) Then
               CorrelationPoints.Add(New DBMCorrelationPoint _
                 (New DBMPointDriver(DBMRtCalculator.PISDK.Servers(Server). _
-                PIPoints(Point)), SubstractSelf)) ' Add to correlation points
+                PIPoints(Point)), SubtractSelf)) ' Add to correlation points
             End If
           Catch
           End Try

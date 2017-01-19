@@ -32,7 +32,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public DataManager As DBMDataManager
     Private Predictions As New Dictionary(Of DateTime, DBMPrediction)
-    Private PredictionsSubstractPoint As DBMPoint
+    Private PredictionsSubtractPoint As DBMPoint
 
     Public Sub New(PointDriver As DBMPointDriver)
       DataManager = New DBMDataManager(PointDriver)
@@ -40,7 +40,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Function Result(Timestamp As DateTime, IsInputDBMPoint As Boolean, _
       HasCorrelationDBMPoint As Boolean, _
-      Optional SubstractPoint As DBMPoint = Nothing) As DBMResult
+      Optional SubtractPoint As DBMPoint = Nothing) As DBMResult
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
       Dim PredictionTimestamp As DateTime
       Dim Prediction As New DBMPrediction
@@ -50,9 +50,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         UpperControlLimits(EMAPreviousPeriods) As Double
       Result = New DBMResult
       ' Can we reuse stored results?
-      If SubstractPoint IsNot PredictionsSubstractPoint Then
+      If SubtractPoint IsNot PredictionsSubtractPoint Then
         Predictions.Clear ' No, so clear results
-        PredictionsSubstractPoint = SubstractPoint
+        PredictionsSubtractPoint = SubtractPoint
       End If
       For CorrelationCounter = 0 To CorrelationPreviousPeriods
         If Result.Prediction Is Nothing Or (IsInputDBMPoint And _
@@ -69,9 +69,9 @@ Namespace Vitens.DynamicBandwidthMonitor
                 Patterns(PatternCounter) = DataManager.Value _
                 (PredictionTimestamp.AddDays _
                 (-(ComparePatterns-PatternCounter)*7))
-                If SubstractPoint IsNot Nothing Then
+                If SubtractPoint IsNot Nothing Then
                   Patterns(PatternCounter) -= _
-                    SubstractPoint.DataManager.Value _
+                    SubtractPoint.DataManager.Value _
                     (PredictionTimestamp.AddDays _
                     (-(ComparePatterns-PatternCounter)*7))
                 End If
