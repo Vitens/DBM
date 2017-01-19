@@ -37,18 +37,14 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Function GetData(StartTimestamp As DateTime, _
       EndTimestamp As DateTime) As Double
       ' Model based on hourly water usage in
-      ' Leeuwarden 2013 (+/-2% random noise)
+      ' Leeuwarden 2016 (+/-10% random noise)
       With StartTimestamp
-        Return RandomNumber(9800, 10200)/10000*738.419926* _
-          (-1.43724664E-05*.Hour^5+9.00975758E-04*.Hour^4- _
-          2.03426424E-02*.Hour^3+1.90423208E-01*.Hour^2- _
-          5.57660998E-01*.Hour+7.15188897E-01)* _
-          (-5.01427884E-05*.DayOfWeek^5-2.84447601E-04*.DayOfWeek^4+ _
-          8.68516927E-03*.DayOfWeek^3-4.82186003E-02*.DayOfWeek^2+ _
-          1.02809577E-01*.DayOfWeek+9.51091760E-01)* _
-          (-1.97603192E-05*.Month^5+3.81402902E-04*.Month^4 _
-          -4.72854346E-04*.Month^3-2.42464352E-02*.Month^2 _
-          +1.20188691E-01*.Month+8.80861005E-01)
+        Return RandomNumber(9000, 11000)/10000*790* _
+          (-0.00012*.Month^4+0.0035*.Month^3-0.032*.Month^2+0.1*.Month+0.93)* _
+          (0.000917*.DayOfWeek^3-0.0155*.DayOfWeek^2+0.0628*.DayOfWeek+0.956)* _
+          (-0.00001221*(.Hour+.Minute/60)^5+0.0007805*(.Hour+.Minute/60)^4- _
+          0.01796*(.Hour+.Minute/60)^3+0.1709*(.Hour+.Minute/60)^2- _
+          0.5032*(.Hour+.Minute/60)+0.7023)
       End With
     End Function
 
