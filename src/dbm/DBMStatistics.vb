@@ -24,6 +24,7 @@ Option Strict
 
 Imports System.Double
 Imports System.Math
+Imports Vitens.DynamicBandwidthMonitor.DBMMath
 
 Namespace Vitens.DynamicBandwidthMonitor
 
@@ -31,7 +32,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Count As Integer
     Public Slope, Angle, Intercept, StandardError, Correlation, _
-      ModifiedCorrelation, Determination As Double
+      Determination, ModifiedSlope, ModifiedAngle, _
+      ModifiedCorrelation As Double
 
     Public Function ShallowCopy As DBMStatistics
       Return DirectCast(Me.MemberwiseClone, DBMStatistics)
@@ -59,7 +61,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         End If
       Next i
       Slope = (Count*SumXY-SumX*SumY)/(Count*SumXX-SumX^2)
-      Angle = Atan(Slope)/(2*PI)*360 ' Angle in degrees
+      Angle = SlopeToAngle(Slope) ' Angle in degrees
       Intercept = (SumX*SumXY-SumY*SumXX)/(SumX^2-Count*SumXX)
       ' Standard error of the predicted y-value for each x in the regression.
       ' The standard error is a measure of the amount of error in the
@@ -78,12 +80,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' random variables or observed data values
       Correlation = (Count*SumXY-SumX*SumY)/ _
         Sqrt((Count*SumXX-SumX^2)*(Count*SumYY-SumY^2))
-      ' Average is not removed, as expected average is zero
-      ModifiedCorrelation = SumXY/Sqrt(SumXX)/Sqrt(SumYY)
       ' Wikipedia: A number that indicates the proportion of the variance in
       ' the dependent variable that is predictable from the
       ' independent variable
       Determination = Correlation^2
+      ' Average is not removed, as expected average is zero
+      ModifiedSlope = SumXY/SumXX
+      ModifiedAngle = SlopeToAngle(ModifiedSlope) ' Angle in degrees
+      ModifiedCorrelation = SumXY/Sqrt(SumXX)/Sqrt(SumYY)
     End Sub
 
   End Class

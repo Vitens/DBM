@@ -213,6 +213,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       Return ExponentialMovingAverage
     End Function
 
+    Public Shared Function SlopeToAngle(Slope As Double) As Double
+      Return Atan(Slope)/(2*PI)*360
+    End Function
+
     Public Shared Function RandomNumber(Min As Integer, _
       Max As Integer) As Integer
       ' Returns a random number between Min (inclusive) and Max (inclusive)
