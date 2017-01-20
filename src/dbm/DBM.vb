@@ -143,7 +143,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             (CorrelationResult.RelativeErrors, Result.RelativeErrors)
           Factor = Suppress(Result.Factor, _
             AbsoluteErrorStats.ModifiedCorrelation, _
-            AbsoluteErrorStats.ModifiedAngle, _
+            AbsoluteErrorStats.OriginAngle, _
             RelativeErrorStats.ModifiedCorrelation, _
             CorrelationPoint.SubtractSelf)
           If Factor <> Result.Factor Then ' Has event been suppressed

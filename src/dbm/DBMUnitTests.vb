@@ -1381,9 +1381,9 @@ Namespace Vitens.DynamicBandwidthMonitor
           Round(.Prediction.UpperControlLimit)}) = Hash(ExpResults) And _
           Hash({.AbsoluteErrorStats.Count, _
           Round(.AbsoluteErrorStats.Slope, 4), _
-          Round(.AbsoluteErrorStats.ModifiedSlope, 4), _
+          Round(.AbsoluteErrorStats.OriginSlope, 4), _
           Round(.AbsoluteErrorStats.Angle, 4), _
-          Round(.AbsoluteErrorStats.ModifiedAngle, 4), _
+          Round(.AbsoluteErrorStats.OriginAngle, 4), _
           Round(.AbsoluteErrorStats.Intercept, 4), _
           Round(.AbsoluteErrorStats.StandardError, 4), _
           Round(.AbsoluteErrorStats.Correlation, 4), _
@@ -1392,9 +1392,9 @@ Namespace Vitens.DynamicBandwidthMonitor
           Hash(ExpAbsErrStats) And _
           Hash({.RelativeErrorStats.Count, _
           Round(.RelativeErrorStats.Slope, 4), _
-          Round(.RelativeErrorStats.ModifiedSlope, 4), _
+          Round(.RelativeErrorStats.OriginSlope, 4), _
           Round(.RelativeErrorStats.Angle, 4), _
-          Round(.RelativeErrorStats.ModifiedAngle, 4), _
+          Round(.RelativeErrorStats.OriginAngle, 4), _
           Round(.RelativeErrorStats.Intercept, 4), _
           Round(.RelativeErrorStats.StandardError, 4), _
           Round(.RelativeErrorStats.Correlation, 4), _

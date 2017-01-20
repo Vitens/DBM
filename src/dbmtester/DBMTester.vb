@@ -146,9 +146,9 @@ Namespace Vitens.DynamicBandwidthMonitor
               Console.Write(Separator & _
                 FormatNumber(.Count) & Separator & _
                 FormatNumber(.Slope) & Separator & _
-                FormatNumber(.ModifiedSlope) & Separator & _
+                FormatNumber(.OriginSlope) & Separator & _
                 FormatNumber(.Angle) & Separator & _
-                FormatNumber(.ModifiedAngle) & Separator & _
+                FormatNumber(.OriginAngle) & Separator & _
                 FormatNumber(.Intercept) & Separator & _
                 FormatNumber(.StandardError) & Separator & _
                 FormatNumber(.Correlation) & Separator & _
@@ -159,9 +159,9 @@ Namespace Vitens.DynamicBandwidthMonitor
               Console.Write(Separator & _
                 FormatNumber(.Count) & Separator & _
                 FormatNumber(.Slope) & Separator & _
-                FormatNumber(.ModifiedSlope) & Separator & _
+                FormatNumber(.OriginSlope) & Separator & _
                 FormatNumber(.Angle) & Separator & _
-                FormatNumber(.ModifiedAngle) & Separator & _
+                FormatNumber(.OriginAngle) & Separator & _
                 FormatNumber(.Intercept) & Separator & _
                 FormatNumber(.StandardError) & Separator & _
                 FormatNumber(.Correlation) & Separator & _

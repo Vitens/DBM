@@ -31,9 +31,8 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMStatistics
 
     Public Count As Integer
-    Public Slope, Angle, Intercept, StandardError, Correlation, _
-      Determination, ModifiedSlope, ModifiedAngle, _
-      ModifiedCorrelation As Double
+    Public Slope, OriginSlope, Angle, OriginAngle, Intercept, StandardError, _
+      Correlation, Determination, ModifiedCorrelation As Double
 
     Public Function ShallowCopy As DBMStatistics
       Return DirectCast(Me.MemberwiseClone, DBMStatistics)
@@ -60,8 +59,10 @@ Namespace Vitens.DynamicBandwidthMonitor
           Count += 1
         End If
       Next i
-      Slope = (Count*SumXY-SumX*SumY)/(Count*SumXX-SumX^2)
+      Slope = (Count*SumXY-SumX*SumY)/(Count*SumXX-SumX^2) ' Regression
+      OriginSlope = SumXY/SumXX ' Regression through the origin
       Angle = SlopeToAngle(Slope) ' Angle in degrees
+      OriginAngle = SlopeToAngle(OriginSlope) ' Angle in degrees
       Intercept = (SumX*SumXY-SumY*SumXX)/(SumX^2-Count*SumXX)
       ' Standard error of the predicted y-value for each x in the regression.
       ' The standard error is a measure of the amount of error in the
@@ -85,8 +86,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' independent variable
       Determination = Correlation^2
       ' Average is not removed, as expected average is zero
-      ModifiedSlope = SumXY/SumXX ' Regression through the origin
-      ModifiedAngle = SlopeToAngle(ModifiedSlope) ' Angle in degrees
       ModifiedCorrelation = SumXY/Sqrt(SumXX)/Sqrt(SumYY)
     End Sub
 
