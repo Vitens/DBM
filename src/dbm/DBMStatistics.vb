@@ -85,7 +85,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' independent variable
       Determination = Correlation^2
       ' Average is not removed, as expected average is zero
-      ModifiedSlope = SumXY/SumXX
+      ModifiedSlope = SumXY/SumXX ' Regression through the origin
       ModifiedAngle = SlopeToAngle(ModifiedSlope) ' Angle in degrees
       ModifiedCorrelation = SumXY/Sqrt(SumXX)/Sqrt(SumYY)
     End Sub
