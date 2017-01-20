@@ -27,4 +27,4 @@ cd %~dp0
 ..\build\DBMTester.exe -i=sample1input.csv -st=24-11-2016 -et=29-11-2016 -f=intl > sample1.csv
 ..\build\DBMTester.exe -i=sample2input.csv -st=12-3-2013 -et=13-3-2013 -f=intl > sample2.csv
 ..\build\DBMTester.exe -i=sample3input.csv -c=sample3correlation.csv -st=1-1-2016 -et=2-1-2016 -f=intl > sample3.csv
-..\build\DBMTester.exe -i=sample4input.csv -c=sample4correlation.csv -st=13-11-2014 -et=14-11-2014 -f=intl > sample4.csv
+..\build\DBMTester.exe -i=sample4input.csv -c=sample4correlation.csv -st=13-11-2014 -et=14-11-2014 -f=intl -ar=180 > sample4.csv
