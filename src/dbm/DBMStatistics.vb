@@ -32,7 +32,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Count As Integer
     Public Slope, OriginSlope, Angle, OriginAngle, Intercept, StandardError, _
-      Correlation, Determination, ModifiedCorrelation As Double
+      Correlation, ModifiedCorrelation, Determination As Double
 
     Public Function ShallowCopy As DBMStatistics
       Return DirectCast(Me.MemberwiseClone, DBMStatistics)
@@ -81,12 +81,12 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' random variables or observed data values
       Correlation = (Count*SumXY-SumX*SumY)/ _
         Sqrt((Count*SumXX-SumX^2)*(Count*SumYY-SumY^2))
+      ' Average is not removed, as expected average is zero
+      ModifiedCorrelation = SumXY/Sqrt(SumXX)/Sqrt(SumYY)
       ' Wikipedia: A number that indicates the proportion of the variance in
       ' the dependent variable that is predictable from the
       ' independent variable
       Determination = Correlation^2
-      ' Average is not removed, as expected average is zero
-      ModifiedCorrelation = SumXY/Sqrt(SumXX)/Sqrt(SumYY)
     End Sub
 
   End Class
