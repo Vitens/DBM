@@ -75,6 +75,7 @@ DBM can be configured using several parameters. The values for these parameters 
 | `ConfidenceInterval`         | 0.99          | percent       | Confidence interval used for removing outliers and determining control limits.                          |
 | `CorrelationPreviousPeriods` | 23            | intervals     | Number of previous intervals used to calculate prediction error correlation when an exception is found. |
 | `CorrelationThreshold`       | 0.83666       | dimensionless | Absolute correlation lower limit for detecting (anti)correlation.                                       |
+| `AntiCorrelationAngleRange`  | 40            | degrees       | Regression angle range (around -45 degrees) required when suppressing based on anticorrelation.         |
 
 ### DBMTester
 DBMTester is a command line utility that can be used to quickly calculate DBM results using the CSV driver. The following arguments are available:
@@ -90,6 +91,7 @@ DBMTester is a command line utility that can be used to quickly calculate DBM re
 | `-ci=`   | 0..1   | Changes the `ConfidenceInterval` parameter.                                                                            |
 | `-cp=`   | 0..1   | Changes the `CorrelationPreviousPeriods` parameter.                                                                    |
 | `-ct=`   | 0..1   | Changes the `CorrelationThreshold` parameter.                                                                          |
+| `-ar=`   | 0..1   | Changes the `AntiCorrelationAngleRange` parameter.                                                                     |
 | `-st=`   | 1      | Start timestamp for calculations.                                                                                      |
 | `-et=`   | 0..1   | End timestamp for calculations, all intervals in between are calculated.                                               |
 | `-f=`    | 0..1   | Output format. `local` (default) for local formatting, `intl` for UTC time and international formatting (ISO 8601).    |

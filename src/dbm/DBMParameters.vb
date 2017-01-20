@@ -26,7 +26,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
   Public Class DBMParameters
 
-    ' Time interval at which the calculation is run (seconds)
+    ' Time interval at which the calculation is run (seconds).
     Public Shared CalculationInterval As Integer = 300
 
     ' Number of weeks to look back to predict the current value
@@ -48,6 +48,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     ' Absolute correlation lower limit for detecting (anti)correlation.
     Public Shared CorrelationThreshold As Double = 0.83666
+
+    ' Regression angle range (around -45 degrees) required when suppressing
+    ' based on anticorrelation (degrees).
+    Public Shared AntiCorrelationAngleRange As Integer = 40
 
     ' Maximum number of cached prediction results per point.
     Public Shared MaxPointPredictions As Integer = _

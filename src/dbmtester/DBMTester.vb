@@ -96,6 +96,8 @@ Namespace Vitens.DynamicBandwidthMonitor
               CorrelationPreviousPeriods = Convert.ToInt32(Value)
             ElseIf Parameter.ToLower.Equals("ct") Then
               CorrelationThreshold = Convert.ToDouble(Value)
+            ElseIf Parameter.ToLower.Equals("ar") Then
+              AntiCorrelationAngleRange = Convert.ToInt32(Value)
             ElseIf Parameter.ToLower.Equals("st") Then
               StartTimestamp = Convert.ToDateTime(Value)
             ElseIf Parameter.ToLower.Equals("et") Then
