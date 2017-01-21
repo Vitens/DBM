@@ -142,32 +142,22 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' If an event is found and a correlation point is available
           If CorrelationPoints.Count > 0 And _
             (Result.Factor <> 0 Or AlwaysOutputCorrelationData) Then
-            With Result.AbsoluteErrorStats
-              Console.Write(Separator & _
-                FormatNumber(.Count) & Separator & _
-                FormatNumber(.Slope) & Separator & _
-                FormatNumber(.OriginSlope) & Separator & _
-                FormatNumber(.Angle) & Separator & _
-                FormatNumber(.OriginAngle) & Separator & _
-                FormatNumber(.Intercept) & Separator & _
-                FormatNumber(.StandardError) & Separator & _
-                FormatNumber(.Correlation) & Separator & _
-                FormatNumber(.ModifiedCorrelation) & Separator & _
-                FormatNumber(.Determination))
-            End With
-            With Result.RelativeErrorStats
-              Console.Write(Separator & _
-                FormatNumber(.Count) & Separator & _
-                FormatNumber(.Slope) & Separator & _
-                FormatNumber(.OriginSlope) & Separator & _
-                FormatNumber(.Angle) & Separator & _
-                FormatNumber(.OriginAngle) & Separator & _
-                FormatNumber(.Intercept) & Separator & _
-                FormatNumber(.StandardError) & Separator & _
-                FormatNumber(.Correlation) & Separator & _
-                FormatNumber(.ModifiedCorrelation) & Separator & _
-                FormatNumber(.Determination))
-            End With
+            For Each ErrorStats In {Result.AbsoluteErrorStats, _
+              Result.RelativeErrorStats}
+              With ErrorStats
+                Console.Write(Separator & _
+                  FormatNumber(.Count) & Separator & _
+                  FormatNumber(.Slope) & Separator & _
+                  FormatNumber(.OriginSlope) & Separator & _
+                  FormatNumber(.Angle) & Separator & _
+                  FormatNumber(.OriginAngle) & Separator & _
+                  FormatNumber(.Intercept) & Separator & _
+                  FormatNumber(.StandardError) & Separator & _
+                  FormatNumber(.Correlation) & Separator & _
+                  FormatNumber(.ModifiedCorrelation) & Separator & _
+                  FormatNumber(.Determination))
+              End With
+            Next
             For Each CorrelationPoint In CorrelationPoints
               Result = _DBM.Result _
                 (CorrelationPoint.PointDriver, Nothing, StartTimestamp)
