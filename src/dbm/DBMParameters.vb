@@ -49,9 +49,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Absolute correlation lower limit for detecting (anti)correlation.
     Public Shared CorrelationThreshold As Double = 0.83666
 
-    ' Regression angle range (around -45 degrees) required when suppressing
-    ' based on anticorrelation (degrees).
-    Public Shared AntiCorrelationAngleRange As Integer = 40
+    ' Regression angle range (around -45/+45 degrees) required when suppressing
+    ' based on (anti)correlation (degrees).
+    Public Shared CorrelationAngleRange As Integer = 40
 
     ' Maximum number of cached prediction results per point.
     Public Shared MaxPointPredictions As Integer = _

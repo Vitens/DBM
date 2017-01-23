@@ -1417,26 +1417,26 @@ Namespace Vitens.DynamicBandwidthMonitor
         Hash({1, 5, 4, 7, 7, 8, 5, 1}) = 1043
 
       TestResults = TestResults And _
-        Suppress(5, 0, 0, 0, False) = 5 And _
-        Suppress(5, -0.8, 0, 0, False) = 5 And _
-        Suppress(5, -0.9, -45, 0, False) = -0.9 And _
-        Suppress(5, -0.9, 0, 0, True) = 5 And _
-        Suppress(5, 0, 0, 0.8, False) = 5 And _
-        Suppress(5, 0, 0, 0.9, False) = 0.9 And _
-        Suppress(5, 0, 0, 0.9, True) = 0.9 And _
-        Suppress(-0.9, -0.85, 0, 0, False) = -0.9 And _
-        Suppress(-0.9, -0.95, -45, 0, False) = -0.95 And _
-        Suppress(0.9, 0, 0, 0.85, False) = 0.9 And _
-        Suppress(0.9, 0, 0, 0.95, True) = 0.95 And _
-        Suppress(-0.9, -0.99, -45, 0, False) = -0.99 And _
-        Suppress(-0.9, 0.99, 0, 0, False) = -0.9 And _
-        Suppress(-0.9, 0.99, 0, 0, True) = -0.9 And _
-        Suppress(0.99, -0.9, -45, 0, False) = -0.9 And _
-        Suppress(0.99, -0.9, 0, 0, True) = 0.99 And _
-        Suppress(-0.99, 0, 0, 0, True) = -0.99 And _
-        Suppress(0.99, 0, 0, 0, True) = 0.99 And _
-        Suppress(-0.98, -0.99, -1, 0, False) = -0.98 And _
-        Suppress(-0.98, -0.99, -45, 0, False) = -0.99
+        Suppress(5, 0, 0, 0, 0, False) = 5 And _
+        Suppress(5, -0.8, 0, 0, 0, False) = 5 And _
+        Suppress(5, -0.9, -45, 0, 0, False) = -0.9 And _
+        Suppress(5, -0.9, 0, 0, 0, True) = 5 And _
+        Suppress(5, 0, 0, 0.8, 0, False) = 5 And _
+        Suppress(5, 0, 0, 0.9, 45, False) = 0.9 And _
+        Suppress(5, 0, 0, 0.9, 45, True) = 0.9 And _
+        Suppress(-0.9, -0.85, 0, 0, 0, False) = -0.9 And _
+        Suppress(-0.9, -0.95, -45, 0, 0, False) = -0.95 And _
+        Suppress(0.9, 0, 0, 0.85, 45, False) = 0.9 And _
+        Suppress(0.9, 0, 0, 0.95, 1, True) = 0.9 And _
+        Suppress(-0.9, -0.99, -45, 0, 0, False) = -0.99 And _
+        Suppress(-0.9, 0.99, 0, 0, 0, False) = -0.9 And _
+        Suppress(-0.9, 0.99, 0, 0, 0, True) = -0.9 And _
+        Suppress(0.99, -0.9, -45, 0, 0, False) = -0.9 And _
+        Suppress(0.99, -0.9, 0, 0, 0, True) = 0.99 And _
+        Suppress(-0.99, 0, 0, 0, 0, True) = -0.99 And _
+        Suppress(0.99, 0, 0, 0, 0, True) = 0.99 And _
+        Suppress(-0.98, -0.99, -1, 0, 0, False) = -0.98 And _
+        Suppress(-0.98, -0.99, -45, 0, 0, False) = -0.99
 
       TestResults = TestResults And _
         Round(NormSInv(0.7451), 4) = 0.6591 And _
@@ -2055,17 +2055,11 @@ Namespace Vitens.DynamicBandwidthMonitor
         TestResults = TestResults And TestCase("A", Nothing, New DateTime _
           (2013, 3, 12, 19, 35, 0), False, {5.818, 5.818, 3042, 1148, 822, _
           1473}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
-        ' Pipe burst; Leeuwarden/Vitens
+        ' Pipe burst 1/2; Leeuwarden/Vitens
         TestResults = TestResults And TestCase("A", "B", New DateTime _
           (2013, 3, 12, 19, 30, 0), True, {6.793, 6.793, 3075, 1140, 855, _
           1425}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
-        ' Sbst. test 1/2, Pipe burst (corr. rel. err.); Leeuwarden/Vitens
-        TestResults = TestResults And TestCase("A", "B", New DateTime _
-          (2013, 3, 12, 20, 10, 0), False, {0.846, 6.717, 2936, 953, 658, _
-          1248}, {24, 1.2448, 0.7429, 51.2229, 36.6072, 933.6339, 289.6342, _
-          0.9722, 0.8323, 0.9452}, {24, 0.068, 0.0431, 3.8886, 2.4685, 0.0167, _
-          0.0056, 0.9738, 0.8463, 0.9483})
-        ' Subtract test 2/2, Pipe burst; Leeuwarden/Vitens
+        ' Pipe burst 2/2; Leeuwarden/Vitens
         TestResults = TestResults And TestCase("A", "B", New DateTime _
           (2013, 3, 12, 20, 10, 0), True, {6.717, 6.717, 2936, 953, 658, _
           1248}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
