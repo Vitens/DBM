@@ -22,11 +22,14 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+Imports Vitens.DynamicBandwidthMonitor.DBMMath
+
 Namespace Vitens.DynamicBandwidthMonitor
 
   Public Class DBMParameters
 
     ' Time interval at which the calculation is run (seconds).
+    ' Default: 5 minutes.
     Public Shared CalculationInterval As Integer = 300
 
     ' Number of weeks to look back to predict the current value
@@ -34,6 +37,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared ComparePatterns As Integer = 12
 
     ' Number of previous intervals used to smooth the data.
+    ' Default: 35 minutes, current value inclusive.
     Public Shared EMAPreviousPeriods As Integer = _
       CInt(0.5*3600/CalculationInterval)
 
@@ -43,15 +47,18 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     ' Number of previous intervals used to calculate prediction error
     ' correlation when an exception is found.
+    ' Default: 2 hours, current value inclusive.
     Public Shared CorrelationPreviousPeriods As Integer = _
       CInt(2*3600/CalculationInterval-1)
 
     ' Absolute correlation lower limit for detecting (anti)correlation.
+    ' Default: 0.83666 for a determination of 0.7.
     Public Shared CorrelationThreshold As Double = 0.83666
 
     ' Regression angle range (around -45/+45 degrees) required when suppressing
     ' based on (anti)correlation (degrees).
-    Public Shared RegressionAngleRange As Integer = 40
+    ' Default: Allow 100% difference between values (18.435 degrees).
+    Public Shared RegressionAngleRange As Double = SlopeToAngle(2)-45
 
     ' Maximum number of cached prediction results per point.
     Public Shared MaxPointPredictions As Integer = _
