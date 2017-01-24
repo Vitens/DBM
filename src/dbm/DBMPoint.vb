@@ -86,10 +86,12 @@ Namespace Vitens.DynamicBandwidthMonitor
               ' Add to cache
               Predictions.Add(PredictionTimestamp, Prediction.ShallowCopy)
             End If
-            MeasuredValues(EMACounter) = Prediction.MeasuredValue
-            PredictedValues(EMACounter) = Prediction.PredictedValue
-            LowerControlLimits(EMACounter) = Prediction.LowerControlLimit
-            UpperControlLimits(EMACounter) = Prediction.UpperControlLimit
+            With Prediction
+              MeasuredValues(EMACounter) = .MeasuredValue
+              PredictedValues(EMACounter) = .PredictedValue
+              LowerControlLimits(EMACounter) = .LowerControlLimit
+              UpperControlLimits(EMACounter) = .UpperControlLimit
+            End With
           Next EMACounter
           Result.Calculate(CorrelationCounter, _
             ExponentialMovingAverage(MeasuredValues), _

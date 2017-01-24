@@ -73,42 +73,42 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Parameter=Value
         If Regex.IsMatch(CommandLineArg, "^[-/](.+)=(.+)$") Then
           Substrings = CommandLineArg.Split(New Char(){"="c}, 2)
-          Parameter = Substrings(0).Substring(1)
+          Parameter = Substrings(0).Substring(1).ToLower
           Value = Substrings(1)
           Try
-            If Parameter.ToLower.Equals("i") Then
+            If Parameter.Equals("i") Then
               InputPointDriver = New DBMPointDriver(Value)
-            ElseIf Parameter.ToLower.Equals("c") Then
+            ElseIf Parameter.Equals("c") Then
               CorrelationPoints.Add _
                 (New DBMCorrelationPoint(New DBMPointDriver(Value), False))
-            ElseIf Parameter.ToLower.Equals("cs") Then
+            ElseIf Parameter.Equals("cs") Then
               CorrelationPoints.Add _
                 (New DBMCorrelationPoint(New DBMPointDriver(Value), True))
-            ElseIf Parameter.ToLower.Equals("iv") Then
+            ElseIf Parameter.Equals("iv") Then
               CalculationInterval = Convert.ToInt32(Value)
-            ElseIf Parameter.ToLower.Equals("p") Then
+            ElseIf Parameter.Equals("p") Then
               ComparePatterns = Convert.ToInt32(Value)
-            ElseIf Parameter.ToLower.Equals("ep") Then
+            ElseIf Parameter.Equals("ep") Then
               EMAPreviousPeriods = Convert.ToInt32(Value)
-            ElseIf Parameter.ToLower.Equals("ci") Then
+            ElseIf Parameter.Equals("ci") Then
               ConfidenceInterval = Convert.ToDouble(Value)
-            ElseIf Parameter.ToLower.Equals("cp") Then
+            ElseIf Parameter.Equals("cp") Then
               CorrelationPreviousPeriods = Convert.ToInt32(Value)
-            ElseIf Parameter.ToLower.Equals("ct") Then
+            ElseIf Parameter.Equals("ct") Then
               CorrelationThreshold = Convert.ToDouble(Value)
-            ElseIf Parameter.ToLower.Equals("ra") Then
+            ElseIf Parameter.Equals("ra") Then
               RegressionAngleRange = Convert.ToDouble(Value)
-            ElseIf Parameter.ToLower.Equals("st") Then
+            ElseIf Parameter.Equals("st") Then
               StartTimestamp = Convert.ToDateTime(Value)
-            ElseIf Parameter.ToLower.Equals("et") Then
+            ElseIf Parameter.Equals("et") Then
               EndTimestamp = Convert.ToDateTime(Value)
-            ElseIf Parameter.ToLower.Equals("f") Then
+            ElseIf Parameter.Equals("f") Then
               If Value.ToLower.Equals("local") Then
                 InternationalFormat = False
               ElseIf Value.ToLower.Equals("intl") Then
                 InternationalFormat = True
               End If
-            ElseIf Parameter.ToLower.Equals("oc") Then
+            ElseIf Parameter.Equals("oc") Then
               AlwaysOutputCorrelationData = Convert.ToBoolean(Value)
             End If
           Catch ex As Exception

@@ -49,15 +49,17 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Sub Calculate(Values() As Double)
       ' Calculates and stores prediction and control limits
       Dim Statistics As New DBMStatistics
-      ' Calculate statistics for data after removing outliers
-      Statistics.Calculate(RemoveOutliers(Values.Take(Values.Length-1).ToArray))
-      MeasuredValue = Values(ComparePatterns)
-      ' Extrapolate regression one interval
-      PredictedValue = ComparePatterns*Statistics.Slope+Statistics.Intercept
-      LowerControlLimit = PredictedValue-ControlLimitRejectionCriterion _
-        (ConfidenceInterval, Statistics.Count-1)*Statistics.StandardError
-      UpperControlLimit = PredictedValue+ControlLimitRejectionCriterion _
-        (ConfidenceInterval, Statistics.Count-1)*Statistics.StandardError
+      With Statistics
+        ' Calculate statistics for data after removing outliers
+        .Calculate(RemoveOutliers(Values.Take(Values.Length-1).ToArray))
+        MeasuredValue = Values(ComparePatterns)
+        ' Extrapolate regression one interval
+        PredictedValue = ComparePatterns*.Slope+.Intercept
+        LowerControlLimit = PredictedValue-ControlLimitRejectionCriterion _
+          (ConfidenceInterval, .Count-1)*.StandardError
+        UpperControlLimit = PredictedValue+ControlLimitRejectionCriterion _
+          (ConfidenceInterval, .Count-1)*.StandardError
+      End With
     End Sub
 
   End Class
