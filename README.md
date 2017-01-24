@@ -50,7 +50,7 @@ In this example, an exception causes the measured value (black) to cross the low
 ### Requirements
 | Priority  | Requirement                                   | Version    |
 | --------- | --------------------------------------------- | ---------- |
-| Mandatory | Microsoft .NET Framework                      | v4.0.30319 |
+| Mandatory | Microsoft .NET Framework                      | 4.5        |
 | Optional  | OSIsoft PI Software Development Kit (PI SDK)  |            |
 | Optional  | OSIsoft PI Advanced Computing Engine (PI ACE) |            |
 
