@@ -48,11 +48,11 @@ In this example, an exception causes the measured value (black) to cross the low
 ## Program information
 
 ### Requirements
-| Priority  | Requirement                                   | Version    |
-| --------- | --------------------------------------------- | ---------- |
-| Mandatory | Microsoft .NET Framework                      | 4.5        |
-| Optional  | OSIsoft PI Software Development Kit (PI SDK)  |            |
-| Optional  | OSIsoft PI Advanced Computing Engine (PI ACE) |            |
+| Priority  | Requirement                                   | Version |
+| --------- | --------------------------------------------- | ------- |
+| Mandatory | Microsoft .NET Framework                      | 4.5     |
+| Optional  | OSIsoft PI Software Development Kit (PI SDK)  |         |
+| Optional  | OSIsoft PI Advanced Computing Engine (PI ACE) |         |
 
 ### Drivers
 DBM uses drivers to read information from a source of data. The following drivers are included:
