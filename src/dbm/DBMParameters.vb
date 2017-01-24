@@ -51,7 +51,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     ' Regression angle range (around -45/+45 degrees) required when suppressing
     ' based on (anti)correlation (degrees).
-    Public Shared CorrelationAngleRange As Integer = 40
+    Public Shared RegressionAngleRange As Integer = 40
 
     ' Maximum number of cached prediction results per point.
     Public Shared MaxPointPredictions As Integer = _

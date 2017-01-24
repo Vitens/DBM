@@ -83,7 +83,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' If anticorrelation with adjacent measurement and
       ' (absolute) prediction errors are about the same size
       If Not SubtractSelf And AbsErrCorr < -CorrelationThreshold And _
-        Abs(AbsErrAngle+45) <= CorrelationAngleRange Then
+        Abs(AbsErrAngle+45) <= RegressionAngleRange Then
         ' If already suppressed due to anticorrelation
         If Factor < -CorrelationThreshold And Factor >= -1 Then
           ' Keep lowest value (strongest anticorrelation)
@@ -96,7 +96,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' If correlation with measurement and
       ' (relative) prediction errors are about the same size
       ElseIf RelErrCorr > CorrelationThreshold And _
-        Abs(RelErrAngle-45) <= CorrelationAngleRange Then
+        Abs(RelErrAngle-45) <= RegressionAngleRange Then
         ' If not already suppressed due to anticorrelation
         If Not (Factor < -CorrelationThreshold And Factor >= -1) Then
           ' If already suppressed due to correlation
