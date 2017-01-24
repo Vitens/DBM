@@ -38,7 +38,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       CInt(0.5*3600/CalculationInterval)
 
     ' Confidence interval used for removing outliers and determining
-    ' control limits (percent).
+    ' control limits (ratio).
     Public Shared ConfidenceInterval As Double = 0.99
 
     ' Number of previous intervals used to calculate prediction error
