@@ -22,6 +22,7 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -53,7 +54,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     ' Absolute correlation lower limit for detecting (anti)correlation.
     ' Default: 0.83666 for a determination of 0.7.
-    Public Shared CorrelationThreshold As Double = 0.83666
+    Public Shared CorrelationThreshold As Double = Sqrt(0.7)
 
     ' Regression angle range (around -45/+45 degrees) required when suppressing
     ' based on (anti)correlation (degrees).
