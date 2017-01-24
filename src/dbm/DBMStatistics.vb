@@ -82,7 +82,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Correlation = (Count*SumXY-SumX*SumY)/ _
         Sqrt((Count*SumXX-SumX^2)*(Count*SumYY-SumY^2))
       ' Average is not removed, as expected average is zero
-      ModifiedCorrelation = SumXY/Sqrt(SumXX)/Sqrt(SumYY)
+      ModifiedCorrelation = SumXY/Sqrt(SumXX*SumYY)
       ' Wikipedia: A number that indicates the proportion of the variance in
       ' the dependent variable that is predictable from the
       ' independent variable
