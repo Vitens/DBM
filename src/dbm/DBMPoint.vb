@@ -42,7 +42,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       HasCorrelationDBMPoint As Boolean, _
       Optional SubtractPoint As DBMPoint = Nothing) As DBMResult
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
-      Dim PredictionTimestamp As DateTime
+      Dim PredictionTimestamp, PatternTimestamp As DateTime
       Dim Prediction As New DBMPrediction
       Dim Patterns(ComparePatterns), MeasuredValues(EMAPreviousPeriods), _
         PredictedValues(EMAPreviousPeriods), _
@@ -66,14 +66,12 @@ Namespace Vitens.DynamicBandwidthMonitor
               Prediction = Predictions.Item(PredictionTimestamp).ShallowCopy
             Else ' Calculate data
               For PatternCounter = 0 To ComparePatterns
-                Patterns(PatternCounter) = DataManager.Value _
-                (PredictionTimestamp.AddDays _
-                (-(ComparePatterns-PatternCounter)*7))
+                PatternTimestamp = PredictionTimestamp. _
+                  AddDays(-(ComparePatterns-PatternCounter)*7)
+                Patterns(PatternCounter) = DataManager.Value(PatternTimestamp)
                 If SubtractPoint IsNot Nothing Then
                   Patterns(PatternCounter) -= _
-                    SubtractPoint.DataManager.Value _
-                    (PredictionTimestamp.AddDays _
-                    (-(ComparePatterns-PatternCounter)*7))
+                    SubtractPoint.DataManager.Value(PatternTimestamp)
                 End If
               Next PatternCounter
               Prediction.Calculate(Patterns)
