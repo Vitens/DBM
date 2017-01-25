@@ -26,7 +26,7 @@ Imports System.Collections.Generic
 Imports System.Double
 Imports System.IO
 Imports System.Text.RegularExpressions
-Imports Vitens.DynamicBandwidthMonitor.DBMUnitTests
+Imports Vitens.DynamicBandwidthMonitor.DBMTests
 
 Namespace Vitens.DynamicBandwidthMonitor
 
@@ -38,7 +38,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Sub New(Point As Object)
       Me.Point = Point
       If Not File.Exists(DirectCast(Me.Point, String)) And _
-        Not UnitTestsRunning Then
+        Not TestsRunning Then
         Throw New FileNotFoundException(DirectCast(Me.Point, String))
       End If
     End Sub

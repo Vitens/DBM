@@ -28,7 +28,7 @@ Imports System.Diagnostics
 Imports System.Environment
 Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
-Imports Vitens.DynamicBandwidthMonitor.DBMUnitTests
+Imports Vitens.DynamicBandwidthMonitor.DBMTests
 
 <assembly:System.Reflection.AssemblyTitle("DBM")>
 
@@ -39,7 +39,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Points As New Dictionary(Of Object, DBMPoint)
 
     Public Shared Function Version _
-      (Optional SkipUnitTests As Boolean = False) As String
+      (Optional SkipTests As Boolean = False) As String
       Dim Ticks As Int64 = Now.Ticks
       With FileVersionInfo.GetVersionInfo(System.Reflection.Assembly. _
         GetExecutingAssembly.Location)
@@ -62,7 +62,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           "You should have received a copy of the GNU General Public " & _
           "License along with this program.  " & _
           "If not, see <http://www.gnu.org/licenses/>." & NewLine & _
-          If(SkipUnitTests, "", NewLine & " * Unit tests " & _
+          If(SkipTests, "", NewLine & " * Unit and integration tests " & _
           If(TestResults, "PASSED", "FAILED") & " in " & _
           Round((Now.Ticks-Ticks)/10000).ToString & "ms." & NewLine)
       End With

@@ -26,7 +26,7 @@ Imports System.Collections.Generic
 Imports System.Double
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
-Imports Vitens.DynamicBandwidthMonitor.DBMUnitTests
+Imports Vitens.DynamicBandwidthMonitor.DBMTests
 
 Namespace Vitens.DynamicBandwidthMonitor
 
@@ -44,9 +44,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       If Values.ContainsKey(Timestamp) Then ' In cache
         Value = Values.Item(Timestamp) ' Return value from cache
       Else
-        ' Do not use point driver when running unit tests
-        If UnitTestsRunning Then
-          ' Return item from unit tests data array
+        ' Do not use point driver when running unit and integration tests
+        If TestsRunning Then
+          ' Return item from tests data array
           Value = TestData(TestDataIndex)
           TestDataIndex = (TestDataIndex+1) Mod TestData.Length ' Increase index
         Else

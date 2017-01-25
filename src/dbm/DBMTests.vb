@@ -30,10 +30,10 @@ Imports Vitens.DynamicBandwidthMonitor.DBMMath
 
 Namespace Vitens.DynamicBandwidthMonitor
 
-  Public Class DBMUnitTests
+  Public Class DBMTests
 
     Private Shared DBM As DBM
-    Public Shared UnitTestsRunning As Boolean = False
+    Public Shared TestsRunning As Boolean = False
     Public Shared TestData() As Double = {1202.29479980469, 1138.34106445313, _
       1257.87829589844, 1202.65563964844, 1088.97351074219, 1219.72937011719, _
       1181.7626953125, 874.774108886719, 1198.32446289063, 1230.76867675781, _
@@ -1362,7 +1362,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim InputPointDriver, CorrelationPointDriver As DBMPointDriver
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim Result As DBMResult
-      UnitTestsRunning = True
+      TestsRunning = True
       InputPointDriver = New DBMPointDriver(InputPoint)
       If CorrelationPoint IsNot Nothing Then
         CorrelationPointDriver = New DBMPointDriver(CorrelationPoint)
@@ -1372,7 +1372,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         CorrelationPointDriver = Nothing
       End If
       Result = DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
-      UnitTestsRunning = False
+      TestsRunning = False
       With Result
         Return Hash({Round(.Factor, 3), Round(.OriginalFactor, 3), _
           Round(.Prediction.MeasuredValue), _
@@ -1410,6 +1410,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim i As Integer
       Dim Statistics As New DBMStatistics
       TestResults = True
+
+      ' **********
+      ' UNIT TESTS
+      ' **********
 
       TestResults = TestResults And _
         Hash({6, 4, 7, 1, 1, 4, 2, 4}) = 1552 And _
@@ -1988,6 +1992,10 @@ Namespace Vitens.DynamicBandwidthMonitor
             0.1029, 0.0412, 0.0146, 0.0002, 0.091, 0.022, 0.2803, 0.0974}(i)
         Next i
       End With
+
+      ' *****************
+      ' INTEGRATION TESTS
+      ' *****************
 
       DBM = New DBM
       For i = 0 To 1 ' Run all cases twice to test cache
