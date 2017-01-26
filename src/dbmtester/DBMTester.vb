@@ -71,7 +71,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Parse command line arguments
       For Each CommandLineArg In GetCommandLineArgs
         ' Parameter=Value
-        If Regex.IsMatch(CommandLineArg, "^[-/](.+)=(.+)$") Then
+        If Regex.IsMatch(CommandLineArg, "^[-/].+=.+$") Then
           Substrings = CommandLineArg.Split(New Char(){"="c}, 2)
           Parameter = Substrings(0).Substring(1).ToLower
           Value = Substrings(1)
