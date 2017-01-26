@@ -1406,21 +1406,17 @@ Namespace Vitens.DynamicBandwidthMonitor
       End With
     End Function
 
-    Public Shared Function TestResults As Boolean
+    Public Shared Function UnitTestResults As Boolean
       Dim i As Integer
       Dim Statistics As New DBMStatistics
-      TestResults = True
+      UnitTestResults = True
 
-      ' **********
-      ' UNIT TESTS
-      ' **********
-
-      TestResults = TestResults And _
+      UnitTestResults = UnitTestResults And _
         Hash({6, 4, 7, 1, 1, 4, 2, 4}) = 1552 And _
         Hash({8, 4, 7, 3, 2, 6, 5, 7}) = 1865 And _
         Hash({1, 5, 4, 7, 7, 8, 5, 1}) = 1043
 
-      TestResults = TestResults And _
+      UnitTestResults = UnitTestResults And _
         Suppress(5, 0, 0, 0, 0, False) = 5 And _
         Suppress(5, -0.8, 0, 0, 0, False) = 5 And _
         Suppress(5, -0.9, -45, 0, 0, False) = -0.9 And _
@@ -1442,7 +1438,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Suppress(-0.98, -0.99, -1, 0, 0, False) = -0.98 And _
         Suppress(-0.98, -0.99, -45, 0, 0, False) = -0.99
 
-      TestResults = TestResults And _
+      UnitTestResults = UnitTestResults And _
         Round(NormSInv(0.7451), 4) = 0.6591 And _
         Round(NormSInv(0.4188), 4) = -0.205 And _
         Round(NormSInv(0.1385), 4) = -1.0871 And _
@@ -1464,7 +1460,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Round(NormSInv(0.0353), 4) = -1.808 And _
         Round(NormSInv(0.9767), 4) = 1.9899
 
-      TestResults = TestResults And _
+      UnitTestResults = UnitTestResults And _
         Round(TInv2T(0.3353, 16), 4) = 0.9934 And _
         Round(TInv2T(0.4792, 12), 4) = 0.7303 And _
         Round(TInv2T(0.4384, 9), 4) = 0.8108 And _
@@ -1486,7 +1482,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Round(TInv2T(0.0862, 6), 4) = 2.0504 And _
         Round(TInv2T(0.6041, 10), 4) = 0.5354
 
-      TestResults = TestResults And _
+      UnitTestResults = UnitTestResults And _
         Round(TInv(0.4097, 8), 4) = -0.2359 And _
         Round(TInv(0.174, 19), 4) = -0.9623 And _
         Round(TInv(0.6545, 15), 4) = 0.4053 And _
@@ -1508,10 +1504,10 @@ Namespace Vitens.DynamicBandwidthMonitor
         Round(TInv(0.3776, 11), 4) = -0.3197 And _
         Round(TInv(0.5267, 15), 4) = 0.0681
 
-      TestResults = TestResults And _
+      UnitTestResults = UnitTestResults And _
         Round(MeanAbsoluteDeviationScaleFactor, 4) = 1.2533
 
-      TestResults = TestResults And _
+      UnitTestResults = UnitTestResults And _
         Round(MedianAbsoluteDeviationScaleFactor(1), 4) = 1 And _
         Round(MedianAbsoluteDeviationScaleFactor(2), 4) = 1.2247 And _
         Round(MedianAbsoluteDeviationScaleFactor(4), 4) = 1.3501 And _
@@ -1533,7 +1529,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Round(MedianAbsoluteDeviationScaleFactor(36), 4) = 1.4826 And _
         Round(MedianAbsoluteDeviationScaleFactor(38), 4) = 1.4826
 
-      TestResults = TestResults And _
+      UnitTestResults = UnitTestResults And _
         Round(ControlLimitRejectionCriterion(0.99, 1), 4) = 63.6567 And _
         Round(ControlLimitRejectionCriterion(0.99, 2), 4) = 9.9248 And _
         Round(ControlLimitRejectionCriterion(0.99, 4), 4) = 4.6041 And _
@@ -1555,7 +1551,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Round(ControlLimitRejectionCriterion(0.95, 25), 4) = 2.0595 And _
         Round(ControlLimitRejectionCriterion(0.90, 20), 4) = 1.7247
 
-      TestResults = TestResults And _
+      UnitTestResults = UnitTestResults And _
         Round(Mean({60}), 4) = 60 And _
         Round(Mean({72}), 4) = 72 And _
         Round(Mean({32, 95}), 4) = 63.5 And _
@@ -1577,7 +1573,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Round(Mean({18, 14, 54, 40, 73, 77, 4, 91, 53, 10}), 4) = 43.4 And _
         Round(Mean({80, 30, 1, 92, 44, 61, 18, 72, 63, 41}), 4) = 50.2
 
-      TestResults = TestResults And _
+      UnitTestResults = UnitTestResults And _
         Median({57}) = 57 And _
         Median({46}) = 46 And _
         Median({79, 86}) = 82.5 And _
@@ -1599,7 +1595,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Median({33, 82, 42, 33, 81, 56, 13, 13, 54, 6}) = 37.5 And _
         Median({55, 40, 75, 23, 53, 85, 59, 9, 72, 44}) = 54
 
-      TestResults = TestResults And _
+      UnitTestResults = UnitTestResults And _
         Hash(AbsoluteDeviation({100, 44, 43, 45}, 44)) = _
         Hash({56, 0, 1, 1}) And _
         Hash(AbsoluteDeviation({76, 70, 84, 39}, 77)) = _
@@ -1641,7 +1637,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Hash(AbsoluteDeviation({15, 94, 58, 67}, 78)) = _
         Hash({63, 16, 20, 11})
 
-      TestResults = TestResults And _
+      UnitTestResults = UnitTestResults And _
         Round(MeanAbsoluteDeviation _
         ({19}), 4) = 0 And _
         Round(MeanAbsoluteDeviation _
@@ -1683,7 +1679,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Round(MeanAbsoluteDeviation _
         ({7, 12, 84, 29, 41, 8, 18, 15, 16, 84}), 4) = 22.96
 
-      TestResults = TestResults And _
+      UnitTestResults = UnitTestResults And _
         MedianAbsoluteDeviation _
         ({2}) = 0 And _
         MedianAbsoluteDeviation _
@@ -1725,7 +1721,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         MedianAbsoluteDeviation _
         ({6, 96, 82, 26, 47, 84, 34, 39, 60, 99}) = 28
 
-      TestResults = TestResults And _
+      UnitTestResults = UnitTestResults And _
         Hash(RemoveOutliers({2282.4634, 3233.9927, 2313.853, 2145.928, _
         2809.7371, 2213.207, 2193.105, 2557.4885, 3927.1062, 2304.9473, _
         2086.3416, 2872.4075})) = Hash({2282.4634, NaN, 2313.853, 2145.928, _
@@ -1827,7 +1823,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         3312.1548, 3478.4153, 3080.0972, 2848.6597, 3197.1477, 3064.1587, _
         3100.6992, 2953.3582})
 
-      TestResults = TestResults And _
+      UnitTestResults = UnitTestResults And _
         Round(ExponentialMovingAverage _
         ({70.5547}), 4) = 70.5547 And _
         Round(ExponentialMovingAverage _
@@ -1869,7 +1865,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Round(ExponentialMovingAverage _
         ({26.1368, 78.5212, 37.8903, 28.9665, 91.9377, 63.1742}), 4) = 60.2045
 
-      TestResults = TestResults And _
+      UnitTestResults = UnitTestResults And _
         Round(SlopeToAngle(-4.5806), 4) = -77.6849 And _
         Round(SlopeToAngle(-4.2541), 4) = -76.7718 And _
         Round(SlopeToAngle(1.7964), 4) = 60.8967 And _
@@ -1954,7 +1950,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             .Calculate({3228, 3564, 2323, 3616, 2405, 3914, 2132, 2123, 3586, _
             2759, 2927, 2239}, {10, 15, 21, 22, 24, 32, 34, 43, 46, 53, 55, 63})
           End If
-          TestResults = TestResults And _
+          UnitTestResults = UnitTestResults And _
             Round(.Slope, 4) = {-24.1399, -67.5699, 51.3427, -56.9825, _
             27.3182, -2.6573, 32.1923, -46.8462, -11.1224, -61.5455, 9.4424, _
             -0.1602, 10.7659, 4.8889, -4.6572, -0.4548, -6.6652, 2.2442, _
@@ -1993,204 +1989,248 @@ Namespace Vitens.DynamicBandwidthMonitor
         Next i
       End With
 
-      ' *****************
-      ' INTEGRATION TESTS
-      ' *****************
+      Return UnitTestResults
+    End Function
 
+    Public Shared Function IntegrationTestResults As Boolean
+      Dim i As Integer
+      IntegrationTestResults = True
       DBM = New DBM
       For i = 0 To 1 ' Run all cases twice to test cache
         ' Normal situation; Leeuwarden
-        TestResults = TestResults And TestCase("A", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("A", Nothing, New DateTime _
           (2016, 2, 5, 10, 0, 0), False, {0, 0, 1154, 1192, 1023, 1361}, {0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Cache test 1/2, Normal situation; Leeuwarden
-        TestResults = TestResults And TestCase("A", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("A", Nothing, New DateTime _
           (2016, 2, 5, 10, 0, 0), False, {0, 0, 1154, 1192, 1023, 1361}, {0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Cache test 2/2, Normal situation; Leeuwarden
-        TestResults = TestResults And TestCase("A", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("A", Nothing, New DateTime _
           (2016, 2, 5, 10, 5, 0), False, {0, 0, 1141, 1194, 1021, 1367}, {0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Normal situation; Vitens
-        TestResults = TestResults And TestCase("B", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("B", Nothing, New DateTime _
           (2015, 5, 23, 2, 0, 0), False, {0, 0, 27087, 27408, 25605, 29212}, _
           {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Cache test, Normal situation; Vitens
-        TestResults = TestResults And TestCase("B", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("B", Nothing, New DateTime _
           (2015, 5, 23, 2, 0, 0), False, {0, 0, 27087, 27408, 25605, 29212}, _
           {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' New year's day; Leeuwarden
-        TestResults = TestResults And TestCase("A", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("A", Nothing, New DateTime _
           (2016, 1, 1, 1, 50, 0), False, {1.206, 1.206, 570, 378, 219, 537}, _
           {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' New year's day (correlation relative error); Leeuwarden/Franeker
-        TestResults = TestResults And TestCase("A", "C", New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("A", "C", New DateTime _
           (2016, 1, 1, 1, 50, 0), False, {0.849, 1.206, 570, 378, 219, 537}, _
           {24, 0.5621, 0.4322, 29.3416, 23.372, 28.3683, 28.2221, 0.911, _
           0.858, 0.8299}, {24, 0.9813, 0.7481, 44.459, 36.8017, 0.0877, _
           0.0829, 0.9129, 0.8487, 0.8333})
         ' New year's day (self-correlation); Leeuwarden
-        TestResults = TestResults And TestCase("A", "A", New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("A", "A", New DateTime _
           (2016, 1, 1, 1, 50, 0), False, {1, 1.206, 570, 378, 219, 537}, {24, _
           1, 1, 45, 45, 0, 0, 1, 1, 1}, {24, 1, 1, 45, 45, 0, 0, 1, 1, 1})
         ' Subtract self test, New year's day; Leeuwarden
-        TestResults = TestResults And TestCase("A", "A", New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("A", "A", New DateTime _
           (2016, 1, 1, 1, 50, 0), True, {1.206, 1.206, 570, 378, 219, 537}, _
           {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Unmeasured flow; Heerenveen
-        TestResults = TestResults And TestCase("D", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("D", Nothing, New DateTime _
           (2015, 8, 21, 1, 0, 0), False, {1.511, 1.511, 846, 281, -93, 655}, _
           {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Unmeasured flow (anticorrelation absolute error); Heerenveen/Joure
-        TestResults = TestResults And TestCase("D", "E", New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("D", "E", New DateTime _
           (2015, 8, 21, 1, 0, 0), False, {-0.996, 1.511, 846, 281, -93, 655}, _
           {24, -0.7001, -0.8208, -34.9959, -39.3783, 61.8779, 35.2858, _
           -0.8933, -0.9963, 0.798}, {24, -13.9813, 5.0997, -85.9089, 78.9056, _
           -11.7537, 2.0865, -0.3963, 0.8028, 0.157})
         ' Pipe burst; Leeuwarden
-        TestResults = TestResults And TestCase("A", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("A", Nothing, New DateTime _
           (2013, 3, 12, 19, 30, 0), False, {6.793, 6.793, 3075, 1140, 855, _
           1425}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Cache test, Pipe burst; Leeuwarden
-        TestResults = TestResults And TestCase("A", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("A", Nothing, New DateTime _
           (2013, 3, 12, 19, 35, 0), False, {5.818, 5.818, 3042, 1148, 822, _
           1473}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Pipe burst 1/2; Leeuwarden/Vitens
-        TestResults = TestResults And TestCase("A", "B", New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("A", "B", New DateTime _
           (2013, 3, 12, 19, 30, 0), True, {6.793, 6.793, 3075, 1140, 855, _
           1425}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Pipe burst 2/2; Leeuwarden/Vitens
-        TestResults = TestResults And TestCase("A", "B", New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("A", "B", New DateTime _
           (2013, 3, 12, 20, 10, 0), True, {6.717, 6.717, 2936, 953, 658, _
           1248}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Pipe burst; Sneek
-        TestResults = TestResults And TestCase("F", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("F", Nothing, New DateTime _
           (2016, 1, 4, 4, 0, 0), False, {3.206, 3.206, 1320, 390, 100, 680}, _
           {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Pipe burst; Sneek/Leeuwarden
-        TestResults = TestResults And TestCase("F", "A", New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("F", "A", New DateTime _
           (2016, 1, 4, 4, 0, 0), False, {3.206, 3.206, 1320, 390, 100, 680}, _
           {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Pipe burst; Arnhem
-        TestResults = TestResults And TestCase("G", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("G", Nothing, New DateTime _
           (2015, 11, 25, 10, 0, 0), False, {15.629, 15.629, 3180, 984, 844, _
           1125}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Pipe burst; Arnhem/Druten
-        TestResults = TestResults And TestCase("G", "H", New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("G", "H", New DateTime _
           (2015, 11, 25, 10, 0, 0), False, {15.629, 15.629, 3180, 984, 844, _
           1125}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Maintenance; Drachten
-        TestResults = TestResults And TestCase("I", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("I", Nothing, New DateTime _
           (2015, 4, 9, 13, 30, 0), False, {5.831, 5.831, 597, 355, 313, 396}, _
           {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Maintenance; Drachten/Gorredijk
-        TestResults = TestResults And TestCase("I", "J", New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("I", "J", New DateTime _
           (2015, 4, 9, 13, 30, 0), False, {5.831, 5.831, 597, 355, 313, 396}, _
           {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Week after summer break; Leeuwarden
-        TestResults = TestResults And TestCase("A", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("A", Nothing, New DateTime _
           (2015, 8, 21, 7, 30, 0), False, {1.399, 1.399, 1095, 627, 293, 961}, _
           {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Week after summer break (corr. rel. err.); Leeuwarden/Franeker
-        TestResults = TestResults And TestCase("A", "C", New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("A", "C", New DateTime _
           (2015, 8, 21, 7, 30, 0), False, {0.866, 1.399, 1095, 627, 293, 961}, _
           {24, 0.671, 0.8827, 33.8599, 41.4357, -77.4069, 51.4748, 0.9221, _
           0.9246, 0.8502}, {24, 0.7144, 1.0363, 35.5419, 46.0207, -0.158, _
           0.0668, 0.9234, 0.8656, 0.8526})
         ' Christmas morning; Leeuwarden
-        TestResults = TestResults And TestCase("A", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("A", Nothing, New DateTime _
           (2015, 12, 25, 9, 0, 0), False, {-1.041, -1.041, 1000, 1189, 1008, _
           1371}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Christmas morning (correlation relative error); Leeuwarden/Vitens
-        TestResults = TestResults And TestCase("A", "B", New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("A", "B", New DateTime _
           (2015, 12, 25, 9, 0, 0), True, {0.991, -1.041, 1000, 1189, 1008, _
           1371}, {24, 47.0847, 36.1824, 88.7833, 88.4169, -6689.9305, _
           2945.1424, 0.9511, 0.9863, 0.9046}, {24, 0.8099, 0.7176, 39.0053, _
           35.6623, -0.1303, 0.1104, 0.9761, 0.9908, 0.9527})
         ' Sequential cache test 1/4; Heerenveen
-        TestResults = TestResults And TestCase("D", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("D", Nothing, New DateTime _
           (2015, 8, 21, 2, 0, 0), False, {2.346, 2.346, 816, 222, -31, 476}, _
           {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Sequential cache test 2/4; Heerenveen
-        TestResults = TestResults And TestCase("D", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("D", Nothing, New DateTime _
           (2015, 8, 21, 2, 5, 0), False, {2.369, 2.369, 814, 216, -36, 469}, _
           {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Sequential cache test 3/4; Heerenveen
-        TestResults = TestResults And TestCase("D", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("D", Nothing, New DateTime _
           (2015, 8, 21, 2, 10, 0), False, {1.928, 1.928, 801, 235, -58, 529}, _
           {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Sequential cache test 4/4; Heerenveen
-        TestResults = TestResults And TestCase("D", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("D", Nothing, New DateTime _
           (2015, 8, 21, 2, 15, 0), False, {1.676, 1.676, 791, 279, -27, 584}, _
           {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Sequential cache test 1/4 (anticorr. abs. error); Heerenveen/Joure
-        TestResults = TestResults And TestCase("D", "E", New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("D", "E", New DateTime _
           (2015, 8, 21, 3, 0, 0), False, {-0.998, 1.993, 807, 225, -68, 517}, _
           {24, -0.2941, -1.0118, -16.3902, -45.3371, 428.3739, 25.428, _
           -0.4055, -0.9982, 0.1645}, {24, 0.0081, 1.8053, 0.4633, 61.0167, _
           -1.297, 0.0499, 0.0053, 0.9984, 0})
         ' Sequential cache test 2/4 (anticorr. abs. error); Heerenveen/Joure
-        TestResults = TestResults And TestCase("D", "E", New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("D", "E", New DateTime _
           (2015, 8, 21, 3, 5, 0), False, {-0.998, 1.926, 799, 221, -79, 521}, _
           {24, -0.2015, -1.0125, -11.3928, -45.3571, 485.3853, 23.4408, _
           -0.2971, -0.9982, 0.0883}, {24, 0.0793, 1.7968, 4.5337, 60.9017, _
           -1.2436, 0.0498, 0.0477, 0.9986, 0.0023})
         ' Sequential cache test 3/4 (anticorr. abs. error); Heerenveen/Joure
-        TestResults = TestResults And TestCase("D", "E", New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("D", "E", New DateTime _
           (2015, 8, 21, 3, 10, 0), False, {-0.998, 2.17, 799, 222, -45, 488}, _
           {24, -0.1723, -1.0158, -9.7788, -45.4486, 504.7356, 20.8608, _
           -0.2867, -0.9983, 0.0822}, {24, 0.1302, 1.7912, 7.4189, 60.8263, _
           -1.2053, 0.0496, 0.0753, 0.9987, 0.0057})
         ' Sequential cache test 4/4 (anticorr. abs. error); Heerenveen/Joure
-        TestResults = TestResults And TestCase("D", "E", New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("D", "E", New DateTime _
           (2015, 8, 21, 3, 15, 0), False, {-0.999, 2.541, 804, 226, -2, 453}, _
           {24, -0.2469, -1.0224, -13.8704, -45.636, 461.9018, 18.885, -0.4158, _
           -0.9986, 0.1728}, {24, 0.1302, 1.7871, 7.4176, 60.77, -1.2018, _
           0.048, 0.0779, 0.9988, 0.0061})
         ' MeanAD/MedianAD test 1/2 (mean); Vlieland
-        TestResults = TestResults And TestCase("K", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("K", Nothing, New DateTime _
           (2014, 12, 31, 9, 15, 0), False, {1.049, 1.049, 60, 19, -20, 58}, _
           {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' MeanAD/MedianAD test 2/2 (median); Vlieland
-        TestResults = TestResults And TestCase("K", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("K", Nothing, New DateTime _
           (2014, 12, 31, 9, 20, 0), False, {1.082, 1.082, 57, 14, -26, 54}, _
           {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Daylight saving time test 1/5; Wageningseberg
-        TestResults = TestResults And TestCase("L", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("L", Nothing, New DateTime _
           (2016, 4, 3, 1, 30, 0), False, {1.112, 1.112, 164, 134, 106, 161}, _
           {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Daylight saving time test 2/5; Wageningseberg
-        TestResults = TestResults And TestCase("L", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("L", Nothing, New DateTime _
           (2016, 4, 3, 2, 0, 0), False, {1.705, 1.705, 164, 136, 119, 153}, _
           {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Daylight saving time test 3/5; Wageningseberg
-        TestResults = TestResults And TestCase("L", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("L", Nothing, New DateTime _
           (2016, 4, 3, 2, 30, 0), False, {3.201, 3.201, 164, 133, 123, 143}, _
           {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Daylight saving time test 4/5; Wageningseberg
-        TestResults = TestResults And TestCase("L", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("L", Nothing, New DateTime _
           (2016, 4, 3, 3, 0, 0), False, {2.501, 2.501, 164, 132, 119, 145}, _
           {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Daylight saving time test 5/5; Wageningseberg
-        TestResults = TestResults And TestCase("L", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("L", Nothing, New DateTime _
           (2016, 4, 3, 3, 30, 0), False, {3.332, 3.332, 164, 132, 122, 142}, _
           {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Coming/going test 1/3; Eibergen
-        TestResults = TestResults And TestCase("M", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("M", Nothing, New DateTime _
           (2016, 4, 28, 17, 50, 0), False, {0, 0, 537, 595, 520, 671}, _
           {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Coming/going test 2/3; Eibergen
-        TestResults = TestResults And TestCase("M", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("M", Nothing, New DateTime _
           (2016, 4, 28, 17, 55, 0), False, {-1.024, -1.024, 535, 605, 537, _
           673}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Coming/going test 3/3; Eibergen
-        TestResults = TestResults And TestCase("M", Nothing, New DateTime _
+        IntegrationTestResults = IntegrationTestResults And _
+          TestCase("M", Nothing, New DateTime _
           (2016, 4, 28, 18, 0, 0), False, {0, 0, 548, 609, 538, 679}, _
           {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
       Next i
       DBM = Nothing
-
-      Return TestResults
+      Return IntegrationTestResults
     End Function
 
   End Class

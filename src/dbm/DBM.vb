@@ -62,9 +62,11 @@ Namespace Vitens.DynamicBandwidthMonitor
           "You should have received a copy of the GNU General Public " & _
           "License along with this program.  " & _
           "If not, see <http://www.gnu.org/licenses/>." & NewLine & _
-          If(SkipTests, "", NewLine & " * Unit and integration tests " & _
-          If(TestResults, "PASSED", "FAILED") & " in " & _
-          Round((Now.Ticks-Ticks)/10000).ToString & "ms." & NewLine)
+          If(SkipTests, "", NewLine & " Unit tests " & _
+          If(UnitTestResults, "PASSED", "FAILED") & NewLine & _
+          " Integration tests " & _
+          If(IntegrationTestResults, "PASSED", "FAILED") & NewLine & _
+          " " & Round((Now.Ticks-Ticks)/10000).ToString & "ms" & NewLine)
       End With
     End Function
 
