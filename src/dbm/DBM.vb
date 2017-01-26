@@ -85,9 +85,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' If already suppressed due to anticorrelation
         If Factor < -CorrelationThreshold And Factor >= -1 Then
           ' Keep lowest value (strongest anticorrelation)
-          If AbsErrCorr < Factor Then
-            Return AbsErrCorr ' Suppress
-          End If
+          Return Min(AbsErrCorr, Factor)
         Else ' Not already suppressed due to anticorrelation
           Return AbsErrCorr ' Suppress
         End If
@@ -100,9 +98,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' If already suppressed due to correlation
           If Factor > CorrelationThreshold And Factor <= 1 Then
             ' Keep highest value (strongest correlation)
-            If RelErrCorr > Factor Then
-              Return RelErrCorr ' Suppress
-            End If
+            Return Max(RelErrCorr, Factor)
           Else ' Not already suppressed due to correlation
             Return RelErrCorr ' Suppress
           End If
