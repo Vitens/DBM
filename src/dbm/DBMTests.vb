@@ -1407,8 +1407,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
     Public Shared Function UnitTestResults As Boolean
-      Dim i As Integer
       Dim Statistics As New DBMStatistics
+      Dim i As Integer
       UnitTestResults = True
 
       UnitTestResults = UnitTestResults And _
@@ -1998,236 +1998,228 @@ Namespace Vitens.DynamicBandwidthMonitor
       DBM = New DBM
       For i = 0 To 1 ' Run all cases twice to test cache
         ' Normal situation; Leeuwarden
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("A", Nothing, New DateTime _
-          (2016, 2, 5, 10, 0, 0), False, {0, 0, 1154, 1192, 1023, 1361}, {0, _
-          0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("A", _
+          Nothing, New DateTime(2016, 2, 5, 10, 0, 0), False, {0, 0, 1154, _
+          1192, 1023, 1361}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, _
+          0, 0, 0, 0, 0})
         ' Cache test 1/2, Normal situation; Leeuwarden
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("A", Nothing, New DateTime _
-          (2016, 2, 5, 10, 0, 0), False, {0, 0, 1154, 1192, 1023, 1361}, {0, _
-          0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("A", _
+          Nothing, New DateTime(2016, 2, 5, 10, 0, 0), False, {0, 0, 1154, _
+          1192, 1023, 1361}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, _
+          0, 0, 0, 0, 0})
         ' Cache test 2/2, Normal situation; Leeuwarden
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("A", Nothing, New DateTime _
-          (2016, 2, 5, 10, 5, 0), False, {0, 0, 1141, 1194, 1021, 1367}, {0, _
-          0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("A", _
+          Nothing, New DateTime(2016, 2, 5, 10, 5, 0), False, {0, 0, 1141, _
+          1194, 1021, 1367}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, _
+          0, 0, 0, 0, 0})
         ' Normal situation; Vitens
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("B", Nothing, New DateTime _
-          (2015, 5, 23, 2, 0, 0), False, {0, 0, 27087, 27408, 25605, 29212}, _
-          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("B", _
+          Nothing, New DateTime(2015, 5, 23, 2, 0, 0), False, {0, 0, 27087, _
+          27408, 25605, 29212}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, _
+          0, 0, 0, 0, 0, 0})
         ' Cache test, Normal situation; Vitens
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("B", Nothing, New DateTime _
-          (2015, 5, 23, 2, 0, 0), False, {0, 0, 27087, 27408, 25605, 29212}, _
-          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("B", _
+          Nothing, New DateTime(2015, 5, 23, 2, 0, 0), False, {0, 0, 27087, _
+          27408, 25605, 29212}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, _
+          0, 0, 0, 0, 0, 0})
         ' New year's day; Leeuwarden
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("A", Nothing, New DateTime _
-          (2016, 1, 1, 1, 50, 0), False, {1.206, 1.206, 570, 378, 219, 537}, _
-          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("A", _
+          Nothing, New DateTime(2016, 1, 1, 1, 50, 0), False, {1.206, 1.206, _
+          570, 378, 219, 537}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, _
+          0, 0, 0, 0, 0})
         ' New year's day (correlation relative error); Leeuwarden/Franeker
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("A", "C", New DateTime _
-          (2016, 1, 1, 1, 50, 0), False, {0.849, 1.206, 570, 378, 219, 537}, _
-          {24, 0.5621, 0.4322, 29.3416, 23.372, 28.3683, 28.2221, 0.911, _
-          0.858, 0.8299}, {24, 0.9813, 0.7481, 44.459, 36.8017, 0.0877, _
+        IntegrationTestResults = IntegrationTestResults And TestCase("A", "C", _
+          New DateTime(2016, 1, 1, 1, 50, 0), False, {0.849, 1.206, 570, 378, _
+          219, 537}, {24, 0.5621, 0.4322, 29.3416, 23.372, 28.3683, 28.2221, _
+          0.911, 0.858, 0.8299}, {24, 0.9813, 0.7481, 44.459, 36.8017, 0.0877, _
           0.0829, 0.9129, 0.8487, 0.8333})
         ' New year's day (self-correlation); Leeuwarden
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("A", "A", New DateTime _
-          (2016, 1, 1, 1, 50, 0), False, {1, 1.206, 570, 378, 219, 537}, {24, _
-          1, 1, 45, 45, 0, 0, 1, 1, 1}, {24, 1, 1, 45, 45, 0, 0, 1, 1, 1})
+        IntegrationTestResults = IntegrationTestResults And TestCase("A", "A", _
+          New DateTime(2016, 1, 1, 1, 50, 0), False, {1, 1.206, 570, 378, 219, _
+          537}, {24, 1, 1, 45, 45, 0, 0, 1, 1, 1}, {24, 1, 1, 45, 45, 0, 0, 1, _
+          1, 1})
         ' Subtract self test, New year's day; Leeuwarden
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("A", "A", New DateTime _
-          (2016, 1, 1, 1, 50, 0), True, {1.206, 1.206, 570, 378, 219, 537}, _
-          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("A", "A", _
+          New DateTime(2016, 1, 1, 1, 50, 0), True, {1.206, 1.206, 570, 378, _
+          219, 537}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, _
+          0, 0})
         ' Unmeasured flow; Heerenveen
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("D", Nothing, New DateTime _
-          (2015, 8, 21, 1, 0, 0), False, {1.511, 1.511, 846, 281, -93, 655}, _
-          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("D", _
+          Nothing, New DateTime(2015, 8, 21, 1, 0, 0), False, {1.511, 1.511, _
+          846, 281, -93, 655}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, _
+          0, 0, 0, 0, 0})
         ' Unmeasured flow (anticorrelation absolute error); Heerenveen/Joure
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("D", "E", New DateTime _
-          (2015, 8, 21, 1, 0, 0), False, {-0.996, 1.511, 846, 281, -93, 655}, _
-          {24, -0.7001, -0.8208, -34.9959, -39.3783, 61.8779, 35.2858, _
-          -0.8933, -0.9963, 0.798}, {24, -13.9813, 5.0997, -85.9089, 78.9056, _
-          -11.7537, 2.0865, -0.3963, 0.8028, 0.157})
+        IntegrationTestResults = IntegrationTestResults And TestCase("D", "E", _
+          New DateTime(2015, 8, 21, 1, 0, 0), False, {-0.996, 1.511, 846, 281, _
+          -93, 655}, {24, -0.7001, -0.8208, -34.9959, -39.3783, 61.8779, _
+          35.2858, -0.8933, -0.9963, 0.798}, {24, -13.9813, 5.0997, -85.9089, _
+          78.9056, -11.7537, 2.0865, -0.3963, 0.8028, 0.157})
         ' Pipe burst; Leeuwarden
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("A", Nothing, New DateTime _
-          (2013, 3, 12, 19, 30, 0), False, {6.793, 6.793, 3075, 1140, 855, _
-          1425}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("A", _
+          Nothing, New DateTime(2013, 3, 12, 19, 30, 0), False, {6.793, 6.793, _
+          3075, 1140, 855, 1425}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, _
+          0, 0, 0, 0, 0, 0})
         ' Cache test, Pipe burst; Leeuwarden
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("A", Nothing, New DateTime _
-          (2013, 3, 12, 19, 35, 0), False, {5.818, 5.818, 3042, 1148, 822, _
-          1473}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("A", _
+          Nothing, New DateTime(2013, 3, 12, 19, 35, 0), False, {5.818, 5.818, _
+          3042, 1148, 822, 1473}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, _
+          0, 0, 0, 0, 0, 0})
         ' Pipe burst 1/2; Leeuwarden/Vitens
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("A", "B", New DateTime _
-          (2013, 3, 12, 19, 30, 0), True, {6.793, 6.793, 3075, 1140, 855, _
-          1425}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("A", "B", _
+          New DateTime(2013, 3, 12, 19, 30, 0), True, {6.793, 6.793, 3075, _
+          1140, 855, 1425}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, _
+          0, 0, 0, 0})
         ' Pipe burst 2/2; Leeuwarden/Vitens
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("A", "B", New DateTime _
-          (2013, 3, 12, 20, 10, 0), True, {6.717, 6.717, 2936, 953, 658, _
-          1248}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("A", "B", _
+          New DateTime(2013, 3, 12, 20, 10, 0), True, {6.717, 6.717, 2936, _
+          953, 658, 1248}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, _
+          0, 0, 0, 0})
         ' Pipe burst; Sneek
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("F", Nothing, New DateTime _
-          (2016, 1, 4, 4, 0, 0), False, {3.206, 3.206, 1320, 390, 100, 680}, _
-          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("F", _
+          Nothing, New DateTime(2016, 1, 4, 4, 0, 0), False, {3.206, 3.206, _
+          1320, 390, 100, 680}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, _
+          0, 0, 0, 0, 0, 0})
         ' Pipe burst; Sneek/Leeuwarden
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("F", "A", New DateTime _
-          (2016, 1, 4, 4, 0, 0), False, {3.206, 3.206, 1320, 390, 100, 680}, _
-          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("F", "A", _
+          New DateTime(2016, 1, 4, 4, 0, 0), False, {3.206, 3.206, 1320, 390, _
+          100, 680}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, _
+          0, 0})
         ' Pipe burst; Arnhem
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("G", Nothing, New DateTime _
-          (2015, 11, 25, 10, 0, 0), False, {15.629, 15.629, 3180, 984, 844, _
-          1125}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("G", _
+          Nothing, New DateTime(2015, 11, 25, 10, 0, 0), False, {15.629, _
+          15.629, 3180, 984, 844, 1125}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, _
+          0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Pipe burst; Arnhem/Druten
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("G", "H", New DateTime _
-          (2015, 11, 25, 10, 0, 0), False, {15.629, 15.629, 3180, 984, 844, _
-          1125}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("G", "H", _
+          New DateTime(2015, 11, 25, 10, 0, 0), False, {15.629, 15.629, 3180, _
+          984, 844, 1125}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, _
+          0, 0, 0, 0})
         ' Maintenance; Drachten
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("I", Nothing, New DateTime _
-          (2015, 4, 9, 13, 30, 0), False, {5.831, 5.831, 597, 355, 313, 396}, _
-          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("I", _
+          Nothing, New DateTime(2015, 4, 9, 13, 30, 0), False, {5.831, 5.831, _
+          597, 355, 313, 396}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, _
+          0, 0, 0, 0, 0})
         ' Maintenance; Drachten/Gorredijk
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("I", "J", New DateTime _
-          (2015, 4, 9, 13, 30, 0), False, {5.831, 5.831, 597, 355, 313, 396}, _
-          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("I", "J", _
+          New DateTime(2015, 4, 9, 13, 30, 0), False, {5.831, 5.831, 597, 355, _
+          313, 396}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, _
+          0, 0})
         ' Week after summer break; Leeuwarden
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("A", Nothing, New DateTime _
-          (2015, 8, 21, 7, 30, 0), False, {1.399, 1.399, 1095, 627, 293, 961}, _
-          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("A", _
+          Nothing, New DateTime(2015, 8, 21, 7, 30, 0), False, {1.399, 1.399, _
+          1095, 627, 293, 961}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, _
+          0, 0, 0, 0, 0, 0})
         ' Week after summer break (corr. rel. err.); Leeuwarden/Franeker
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("A", "C", New DateTime _
-          (2015, 8, 21, 7, 30, 0), False, {0.866, 1.399, 1095, 627, 293, 961}, _
-          {24, 0.671, 0.8827, 33.8599, 41.4357, -77.4069, 51.4748, 0.9221, _
-          0.9246, 0.8502}, {24, 0.7144, 1.0363, 35.5419, 46.0207, -0.158, _
-          0.0668, 0.9234, 0.8656, 0.8526})
+        IntegrationTestResults = IntegrationTestResults And TestCase("A", "C", _
+          New DateTime(2015, 8, 21, 7, 30, 0), False, {0.866, 1.399, 1095, _
+          627, 293, 961}, {24, 0.671, 0.8827, 33.8599, 41.4357, -77.4069, _
+          51.4748, 0.9221, 0.9246, 0.8502}, {24, 0.7144, 1.0363, 35.5419, _
+          46.0207, -0.158, 0.0668, 0.9234, 0.8656, 0.8526})
         ' Christmas morning; Leeuwarden
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("A", Nothing, New DateTime _
-          (2015, 12, 25, 9, 0, 0), False, {-1.041, -1.041, 1000, 1189, 1008, _
-          1371}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("A", _
+          Nothing, New DateTime(2015, 12, 25, 9, 0, 0), False, {-1.041, _
+          -1.041, 1000, 1189, 1008, 1371}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, _
+          0, 0, 0, 0, 0, 0, 0, 0, 0})
         ' Christmas morning (correlation relative error); Leeuwarden/Vitens
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("A", "B", New DateTime _
-          (2015, 12, 25, 9, 0, 0), True, {0.991, -1.041, 1000, 1189, 1008, _
-          1371}, {24, 47.0847, 36.1824, 88.7833, 88.4169, -6689.9305, _
-          2945.1424, 0.9511, 0.9863, 0.9046}, {24, 0.8099, 0.7176, 39.0053, _
-          35.6623, -0.1303, 0.1104, 0.9761, 0.9908, 0.9527})
+        IntegrationTestResults = IntegrationTestResults And TestCase("A", "B", _
+          New DateTime(2015, 12, 25, 9, 0, 0), True, {0.991, -1.041, 1000, _
+          1189, 1008, 1371}, {24, 47.0847, 36.1824, 88.7833, 88.4169, _
+          -6689.9305, 2945.1424, 0.9511, 0.9863, 0.9046}, {24, 0.8099, 0.7176, _
+          39.0053, 35.6623, -0.1303, 0.1104, 0.9761, 0.9908, 0.9527})
         ' Sequential cache test 1/4; Heerenveen
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("D", Nothing, New DateTime _
-          (2015, 8, 21, 2, 0, 0), False, {2.346, 2.346, 816, 222, -31, 476}, _
-          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("D", _
+          Nothing, New DateTime(2015, 8, 21, 2, 0, 0), False, {2.346, 2.346, _
+          816, 222, -31, 476}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, _
+          0, 0, 0, 0, 0})
         ' Sequential cache test 2/4; Heerenveen
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("D", Nothing, New DateTime _
-          (2015, 8, 21, 2, 5, 0), False, {2.369, 2.369, 814, 216, -36, 469}, _
-          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("D", _
+          Nothing, New DateTime(2015, 8, 21, 2, 5, 0), False, {2.369, 2.369, _
+          814, 216, -36, 469}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, _
+          0, 0, 0, 0, 0})
         ' Sequential cache test 3/4; Heerenveen
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("D", Nothing, New DateTime _
-          (2015, 8, 21, 2, 10, 0), False, {1.928, 1.928, 801, 235, -58, 529}, _
-          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("D", _
+          Nothing, New DateTime(2015, 8, 21, 2, 10, 0), False, {1.928, 1.928, _
+          801, 235, -58, 529}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, _
+          0, 0, 0, 0, 0})
         ' Sequential cache test 4/4; Heerenveen
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("D", Nothing, New DateTime _
-          (2015, 8, 21, 2, 15, 0), False, {1.676, 1.676, 791, 279, -27, 584}, _
-          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("D", _
+          Nothing, New DateTime(2015, 8, 21, 2, 15, 0), False, {1.676, 1.676, _
+          791, 279, -27, 584}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, _
+          0, 0, 0, 0, 0})
         ' Sequential cache test 1/4 (anticorr. abs. error); Heerenveen/Joure
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("D", "E", New DateTime _
-          (2015, 8, 21, 3, 0, 0), False, {-0.998, 1.993, 807, 225, -68, 517}, _
-          {24, -0.2941, -1.0118, -16.3902, -45.3371, 428.3739, 25.428, _
-          -0.4055, -0.9982, 0.1645}, {24, 0.0081, 1.8053, 0.4633, 61.0167, _
-          -1.297, 0.0499, 0.0053, 0.9984, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("D", "E", _
+          New DateTime(2015, 8, 21, 3, 0, 0), False, {-0.998, 1.993, 807, 225, _
+          -68, 517}, {24, -0.2941, -1.0118, -16.3902, -45.3371, 428.3739, _
+          25.428, -0.4055, -0.9982, 0.1645}, {24, 0.0081, 1.8053, 0.4633, _
+          61.0167, -1.297, 0.0499, 0.0053, 0.9984, 0})
         ' Sequential cache test 2/4 (anticorr. abs. error); Heerenveen/Joure
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("D", "E", New DateTime _
-          (2015, 8, 21, 3, 5, 0), False, {-0.998, 1.926, 799, 221, -79, 521}, _
-          {24, -0.2015, -1.0125, -11.3928, -45.3571, 485.3853, 23.4408, _
-          -0.2971, -0.9982, 0.0883}, {24, 0.0793, 1.7968, 4.5337, 60.9017, _
-          -1.2436, 0.0498, 0.0477, 0.9986, 0.0023})
+        IntegrationTestResults = IntegrationTestResults And TestCase("D", "E", _
+          New DateTime(2015, 8, 21, 3, 5, 0), False, {-0.998, 1.926, 799, 221, _
+          -79, 521}, {24, -0.2015, -1.0125, -11.3928, -45.3571, 485.3853, _
+          23.4408, -0.2971, -0.9982, 0.0883}, {24, 0.0793, 1.7968, 4.5337, _
+          60.9017, -1.2436, 0.0498, 0.0477, 0.9986, 0.0023})
         ' Sequential cache test 3/4 (anticorr. abs. error); Heerenveen/Joure
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("D", "E", New DateTime _
-          (2015, 8, 21, 3, 10, 0), False, {-0.998, 2.17, 799, 222, -45, 488}, _
-          {24, -0.1723, -1.0158, -9.7788, -45.4486, 504.7356, 20.8608, _
-          -0.2867, -0.9983, 0.0822}, {24, 0.1302, 1.7912, 7.4189, 60.8263, _
-          -1.2053, 0.0496, 0.0753, 0.9987, 0.0057})
+        IntegrationTestResults = IntegrationTestResults And TestCase("D", "E", _
+          New DateTime(2015, 8, 21, 3, 10, 0), False, {-0.998, 2.17, 799, 222, _
+          -45, 488}, {24, -0.1723, -1.0158, -9.7788, -45.4486, 504.7356, _
+          20.8608, -0.2867, -0.9983, 0.0822}, {24, 0.1302, 1.7912, 7.4189, _
+          60.8263, -1.2053, 0.0496, 0.0753, 0.9987, 0.0057})
         ' Sequential cache test 4/4 (anticorr. abs. error); Heerenveen/Joure
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("D", "E", New DateTime _
-          (2015, 8, 21, 3, 15, 0), False, {-0.999, 2.541, 804, 226, -2, 453}, _
-          {24, -0.2469, -1.0224, -13.8704, -45.636, 461.9018, 18.885, -0.4158, _
-          -0.9986, 0.1728}, {24, 0.1302, 1.7871, 7.4176, 60.77, -1.2018, _
-          0.048, 0.0779, 0.9988, 0.0061})
+        IntegrationTestResults = IntegrationTestResults And TestCase("D", "E", _
+          New DateTime(2015, 8, 21, 3, 15, 0), False, {-0.999, 2.541, 804, _
+          226, -2, 453}, {24, -0.2469, -1.0224, -13.8704, -45.636, 461.9018, _
+          18.885, -0.4158, -0.9986, 0.1728}, {24, 0.1302, 1.7871, 7.4176, _
+          60.77, -1.2018, 0.048, 0.0779, 0.9988, 0.0061})
         ' MeanAD/MedianAD test 1/2 (mean); Vlieland
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("K", Nothing, New DateTime _
-          (2014, 12, 31, 9, 15, 0), False, {1.049, 1.049, 60, 19, -20, 58}, _
-          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("K", _
+          Nothing, New DateTime(2014, 12, 31, 9, 15, 0), False, {1.049, 1.049, _
+          60, 19, -20, 58}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, _
+          0, 0, 0, 0})
         ' MeanAD/MedianAD test 2/2 (median); Vlieland
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("K", Nothing, New DateTime _
-          (2014, 12, 31, 9, 20, 0), False, {1.082, 1.082, 57, 14, -26, 54}, _
-          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("K", _
+          Nothing, New DateTime(2014, 12, 31, 9, 20, 0), False, {1.082, 1.082, _
+          57, 14, -26, 54}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, _
+          0, 0, 0, 0})
         ' Daylight saving time test 1/5; Wageningseberg
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("L", Nothing, New DateTime _
-          (2016, 4, 3, 1, 30, 0), False, {1.112, 1.112, 164, 134, 106, 161}, _
-          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("L", _
+          Nothing, New DateTime(2016, 4, 3, 1, 30, 0), False, {1.112, 1.112, _
+          164, 134, 106, 161}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, _
+          0, 0, 0, 0, 0})
         ' Daylight saving time test 2/5; Wageningseberg
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("L", Nothing, New DateTime _
-          (2016, 4, 3, 2, 0, 0), False, {1.705, 1.705, 164, 136, 119, 153}, _
-          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("L", _
+          Nothing, New DateTime(2016, 4, 3, 2, 0, 0), False, {1.705, 1.705, _
+          164, 136, 119, 153}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, _
+          0, 0, 0, 0, 0})
         ' Daylight saving time test 3/5; Wageningseberg
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("L", Nothing, New DateTime _
-          (2016, 4, 3, 2, 30, 0), False, {3.201, 3.201, 164, 133, 123, 143}, _
-          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("L", _
+          Nothing, New DateTime(2016, 4, 3, 2, 30, 0), False, {3.201, 3.201, _
+          164, 133, 123, 143}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, _
+          0, 0, 0, 0, 0})
         ' Daylight saving time test 4/5; Wageningseberg
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("L", Nothing, New DateTime _
-          (2016, 4, 3, 3, 0, 0), False, {2.501, 2.501, 164, 132, 119, 145}, _
-          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("L", _
+          Nothing, New DateTime(2016, 4, 3, 3, 0, 0), False, {2.501, 2.501, _
+          164, 132, 119, 145}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, _
+          0, 0, 0, 0, 0})
         ' Daylight saving time test 5/5; Wageningseberg
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("L", Nothing, New DateTime _
-          (2016, 4, 3, 3, 30, 0), False, {3.332, 3.332, 164, 132, 122, 142}, _
-          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("L", _
+          Nothing, New DateTime(2016, 4, 3, 3, 30, 0), False, {3.332, 3.332, _
+          164, 132, 122, 142}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, _
+          0, 0, 0, 0, 0})
         ' Coming/going test 1/3; Eibergen
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("M", Nothing, New DateTime _
-          (2016, 4, 28, 17, 50, 0), False, {0, 0, 537, 595, 520, 671}, _
-          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("M", _
+          Nothing, New DateTime(2016, 4, 28, 17, 50, 0), False, {0, 0, 537, _
+          595, 520, 671}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, _
+          0, 0, 0, 0})
         ' Coming/going test 2/3; Eibergen
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("M", Nothing, New DateTime _
-          (2016, 4, 28, 17, 55, 0), False, {-1.024, -1.024, 535, 605, 537, _
-          673}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("M", _
+          Nothing, New DateTime(2016, 4, 28, 17, 55, 0), False, {-1.024, _
+          -1.024, 535, 605, 537, 673}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, _
+          0, 0, 0, 0, 0, 0, 0, 0})
         ' Coming/going test 3/3; Eibergen
-        IntegrationTestResults = IntegrationTestResults And _
-          TestCase("M", Nothing, New DateTime _
-          (2016, 4, 28, 18, 0, 0), False, {0, 0, 548, 609, 538, 679}, _
-          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+        IntegrationTestResults = IntegrationTestResults And TestCase("M", _
+          Nothing, New DateTime(2016, 4, 28, 18, 0, 0), False, {0, 0, 548, _
+          609, 538, 679}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, _
+          0, 0, 0, 0})
       Next i
       DBM = Nothing
       Return IntegrationTestResults
