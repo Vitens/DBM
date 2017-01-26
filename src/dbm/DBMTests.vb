@@ -34,7 +34,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
   Public Class DBMTests
 
-    Private Shared DBM As DBM
+    Private Shared DBM As New DBM
     Public Shared TestsRunning As Boolean = False
     Public Shared TestData() As Double = {1202.29479980469, 1138.34106445313, _
       1257.87829589844, 1202.65563964844, 1088.97351074219, 1219.72937011719, _
@@ -1997,7 +1997,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private Shared Function IntegrationTestResults As Boolean
       Dim i As Integer
       IntegrationTestResults = True
-      DBM = New DBM
       For i = 0 To 1 ' Run all cases twice to test cache
         ' Normal situation; Leeuwarden
         IntegrationTestResults = IntegrationTestResults And TestCase("A", _
@@ -2223,7 +2222,6 @@ Namespace Vitens.DynamicBandwidthMonitor
           609, 538, 679}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0})
       Next i
-      DBM = Nothing
       Return IntegrationTestResults
     End Function
 
