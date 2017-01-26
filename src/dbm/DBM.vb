@@ -27,6 +27,7 @@ Imports System.DateTime
 Imports System.Diagnostics
 Imports System.Environment
 Imports System.Math
+Imports System.Text.RegularExpressions
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMTests
 
@@ -43,7 +44,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Ticks As Int64 = Now.Ticks
       With FileVersionInfo.GetVersionInfo(System.Reflection.Assembly. _
         GetExecutingAssembly.Location)
-        Return .FileDescription & " v" & .FileVersion & NewLine & _
+        Return .FileDescription & " " & _
+          "v" & RegEx.Split(.FileVersion, "^(.+\..+\..+)\..+$")(1) & NewLine & _
           .ProductName & NewLine & _
           .Comments & NewLine & _
           NewLine & _
