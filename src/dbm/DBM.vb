@@ -23,7 +23,6 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 Imports System.Collections.Generic
-Imports System.DateTime
 Imports System.Diagnostics
 Imports System.Environment
 Imports System.Math
@@ -41,7 +40,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function Version _
       (Optional SkipTests As Boolean = False) As String
-      Dim Ticks As Int64 = Now.Ticks
       With FileVersionInfo.GetVersionInfo(System.Reflection.Assembly. _
         GetExecutingAssembly.Location)
         Return .FileDescription & " " & _
@@ -64,11 +62,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           "You should have received a copy of the GNU General Public " & _
           "License along with this program.  " & _
           "If not, see <http://www.gnu.org/licenses/>." & NewLine & _
-          If(SkipTests, "", NewLine & " Unit tests " & _
-          If(UnitTestResults, "PASSED", "FAILED") & NewLine & _
-          " Integration tests " & _
-          If(IntegrationTestResults, "PASSED", "FAILED") & NewLine & _
-          " " & Round((Now.Ticks-Ticks)/10000).ToString & "ms" & NewLine)
+          If(SkipTests, "", NewLine & TestResults)
       End With
     End Function
 

@@ -23,7 +23,9 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 Imports System.Collections.Generic
+Imports System.DateTime
 Imports System.Double
+Imports System.Environment
 Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBM
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
@@ -1406,7 +1408,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       End With
     End Function
 
-    Public Shared Function UnitTestResults As Boolean
+    Private Shared Function UnitTestResults As Boolean
       Dim Statistics As New DBMStatistics
       Dim i As Integer
       UnitTestResults = True
@@ -1992,7 +1994,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Return UnitTestResults
     End Function
 
-    Public Shared Function IntegrationTestResults As Boolean
+    Private Shared Function IntegrationTestResults As Boolean
       Dim i As Integer
       IntegrationTestResults = True
       DBM = New DBM
@@ -2223,6 +2225,19 @@ Namespace Vitens.DynamicBandwidthMonitor
       Next i
       DBM = Nothing
       Return IntegrationTestResults
+    End Function
+
+    Public Shared Function TestResults As String
+      Dim Ticks As Int64
+      Ticks = Now.Ticks
+      TestResults = " - Unit tests " & _
+        If(UnitTestResults, "PASSED", "FAILED") & " in " & _
+        Round((Now.Ticks-Ticks)/10000).ToString & "ms." & NewLine
+      Ticks = Now.Ticks
+      TestResults &= " - Integration tests " & _
+        If(IntegrationTestResults, "PASSED", "FAILED") & " in " & _
+        Round((Now.Ticks-Ticks)/10000).ToString & "ms." & NewLine
+      Return TestResults
     End Function
 
   End Class
