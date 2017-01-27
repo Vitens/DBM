@@ -1348,7 +1348,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared TestDataIndex As Integer = 0
 
     Private Shared Function Hash(Values() As Double, _
-      Optional Digits As Integer=15) As Double
+      Optional Digits As Integer = 15) As Double
       Hash = 1
       For Each Value In Values
         If Not IsNaN(Value) Then
@@ -1406,10 +1406,10 @@ Namespace Vitens.DynamicBandwidthMonitor
           Round(.RelativeErrorStats.ModifiedCorrelation, 4), _
           Round(.RelativeErrorStats.Determination, 4)}) = _
           Hash(ExpRelErrStats) And _
-          Hash(.AbsoluteErrors, 4) = Hash(ExpAbsErrs, 4) And _
-          Hash(.RelativeErrors, 4) = Hash(ExpRelErrs, 4) And _
-          Hash(.CorrelationAbsoluteErrors, 4) = Hash(ExpCorrAbsErrs, 4) And _
-          Hash(.CorrelationRelativeErrors, 4) = Hash(ExpCorrRelErrs, 4) And _
+          Hash(.AbsoluteErrors, 4) = Hash(ExpAbsErrs) And _
+          Hash(.RelativeErrors, 4) = Hash(ExpRelErrs) And _
+          Hash(.CorrelationAbsoluteErrors, 4) = Hash(ExpCorrAbsErrs) And _
+          Hash(.CorrelationRelativeErrors, 4) = Hash(ExpCorrRelErrs) And _
           (.SuppressedBy Is Nothing Or (.SuppressedBy IsNot Nothing And _
           CorrelationPointDriver Is .SuppressedBy))
       End With
