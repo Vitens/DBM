@@ -91,7 +91,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               UpperControlLimits(EMACounter) = .UpperControlLimit
             End With
           Next EMACounter
-          Result.Calculate(CorrelationCounter, _
+          Result.Calculate(CorrelationPreviousPeriods-CorrelationCounter, _
             ExponentialMovingAverage(MeasuredValues), _
             ExponentialMovingAverage(PredictedValues), _
             ExponentialMovingAverage(LowerControlLimits), _
