@@ -29,13 +29,16 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMResult
 
     Public Prediction As DBMPrediction
-    Public Factor, OriginalFactor, AbsoluteErrors(), RelativeErrors() As Double
+    Public Factor, OriginalFactor, AbsoluteErrors(), RelativeErrors(), _
+      CorrelationAbsoluteErrors(), CorrelationRelativeErrors() As Double
     Public AbsoluteErrorStats, RelativeErrorStats As New DBMStatistics
     Public SuppressedBy As DBMPointDriver
 
     Public Sub New
       ReDim AbsoluteErrors(CorrelationPreviousPeriods)
       ReDim RelativeErrors(CorrelationPreviousPeriods)
+      ReDim CorrelationAbsoluteErrors(CorrelationPreviousPeriods)
+      ReDim CorrelationRelativeErrors(CorrelationPreviousPeriods)
     End Sub
 
     Public Sub Calculate(Index As Integer, MeasuredValueEMA As Double, _

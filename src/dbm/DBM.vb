@@ -146,6 +146,12 @@ Namespace Vitens.DynamicBandwidthMonitor
             CorrelationPoint.SubtractSelf)
           If Factor <> Result.Factor Then ' Has event been suppressed
             Result.Factor = Factor
+            With CorrelationResult ' Store prediction errors for corr. point
+              Array.Copy(.AbsoluteErrors, Result.CorrelationAbsoluteErrors, _
+                .AbsoluteErrors.Count)
+              Array.Copy(.RelativeErrors, Result.CorrelationRelativeErrors, _
+                .RelativeErrors.Count)
+            End With
             Result.AbsoluteErrorStats = AbsoluteErrorStats.ShallowCopy
             Result.RelativeErrorStats = RelativeErrorStats.ShallowCopy
             Result.SuppressedBy = CorrelationPoint.PointDriver ' Suppressed by
