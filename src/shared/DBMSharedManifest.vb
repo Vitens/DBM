@@ -22,7 +22,7 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
-<assembly:System.Reflection.AssemblyVersion("1.7.11.*")>
+<assembly:System.Reflection.AssemblyVersion("1.8.0.*")>
 <assembly:System.Reflection.AssemblyProduct("Dynamic Bandwidth Monitor")>
 <assembly:System.Reflection.AssemblyDescription _
   ("Leak detection method implemented in a real-time data historian")>
