@@ -168,27 +168,28 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function RemoveOutliers(Values() As Double) As Double()
       ' Returns an array which contains the input data from which outliers
       ' are removed (NaN)
-      Dim ValuesMn, ValuesMnAbsoluteDeviation, ControlLimit As Double
+      Dim CentralTendency, CentralTendencyAbsoluteDeviation, _
+        ControlLimit As Double
       Dim i As Integer
-      ValuesMn = Median(Values)
-      ValuesMnAbsoluteDeviation = MedianAbsoluteDeviation(Values)
-      If ValuesMnAbsoluteDeviation = 0 Then
+      CentralTendency = Median(Values)
+      CentralTendencyAbsoluteDeviation = MedianAbsoluteDeviation(Values)
+      If CentralTendencyAbsoluteDeviation = 0 Then
         ' Use Mean Absolute Deviation instead of Median Absolute Deviation
         ' to detect outliers
-        ValuesMn = Mean(Values)
-        ValuesMnAbsoluteDeviation = MeanAbsoluteDeviation(Values)
-        ControlLimit = ValuesMnAbsoluteDeviation* _
+        CentralTendency = Mean(Values)
+        CentralTendencyAbsoluteDeviation = MeanAbsoluteDeviation(Values)
+        ControlLimit = CentralTendencyAbsoluteDeviation* _
             MeanAbsoluteDeviationScaleFactor* _
             ControlLimitRejectionCriterion(ConfidenceInterval, _
             Values.Length-1)
       Else ' Use Median Absolute Deviation to detect outliers
-        ControlLimit = ValuesMnAbsoluteDeviation* _
+        ControlLimit = CentralTendencyAbsoluteDeviation* _
             MedianAbsoluteDeviationScaleFactor(Values.Length-1)* _
             ControlLimitRejectionCriterion(ConfidenceInterval, _
             Values.Length-1)
       End If
       For i = 0 to Values.Length-1
-        If Abs(Values(i)-ValuesMn) > ControlLimit Then
+        If Abs(Values(i)-CentralTendency) > ControlLimit Then
           Values(i) = NaN ' Exclude outlier
         End If
       Next i
