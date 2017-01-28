@@ -142,6 +142,13 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' If an event is found and a correlation point is available
           If CorrelationPoints.Count > 0 And _
             (Result.Factor <> 0 Or AlwaysOutputCorrelationData) Then
+            For Each PredictionErrors In {Result.AbsoluteErrors, _
+              Result.RelativeErrors, Result.CorrelationAbsoluteErrors, _
+              Result.CorrelationRelativeErrors}
+              For Each PredictionError In PredictionErrors
+                Console.Write(Separator & FormatNumber(PredictionError))
+              Next
+            Next
             For Each ErrorStats In {Result.AbsoluteErrorStats, _
               Result.RelativeErrorStats}
               With ErrorStats
