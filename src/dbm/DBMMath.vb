@@ -168,30 +168,28 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function RemoveOutliers(Values() As Double) As Double()
       ' Returns an array which contains the input data from which outliers
       ' are removed (NaN)
-      Dim ValuesMedian, ValuesMedianAbsoluteDeviation, ValuesMean, _
-        ValuesMeanAbsoluteDeviation As Double
+      Dim ValuesMn, ValuesMnAbsoluteDeviation, ControlLimit As Double
       Dim i As Integer
-      ValuesMedian = Median(Values)
-      ValuesMedianAbsoluteDeviation = MedianAbsoluteDeviation(Values)
-      ValuesMean = Mean(Values)
-      ValuesMeanAbsoluteDeviation = MeanAbsoluteDeviation(Values)
-      For i = 0 to Values.Length-1
+      ValuesMn = Median(Values)
+      ValuesMnAbsoluteDeviation = MedianAbsoluteDeviation(Values)
+      If ValuesMnAbsoluteDeviation = 0 Then
         ' Use Mean Absolute Deviation instead of Median Absolute Deviation
         ' to detect outliers
-        If ValuesMedianAbsoluteDeviation = 0 Then
-          If Abs(Values(i)-ValuesMean) > ValuesMeanAbsoluteDeviation* _
+        ValuesMn = Mean(Values)
+        ValuesMnAbsoluteDeviation = MeanAbsoluteDeviation(Values)
+        ControlLimit = ValuesMnAbsoluteDeviation* _
             MeanAbsoluteDeviationScaleFactor* _
             ControlLimitRejectionCriterion(ConfidenceInterval, _
-            Values.Length-1) Then
-            Values(i) = NaN ' Exclude outlier
-          End If
-        Else ' Use Median Absolute Deviation to detect outliers
-          If Abs(Values(i)-ValuesMedian) > ValuesMedianAbsoluteDeviation* _
+            Values.Length-1)
+      Else ' Use Median Absolute Deviation to detect outliers
+        ControlLimit = ValuesMnAbsoluteDeviation* _
             MedianAbsoluteDeviationScaleFactor(Values.Length-1)* _
             ControlLimitRejectionCriterion(ConfidenceInterval, _
-            Values.Length-1) Then
-            Values(i) = NaN ' Exclude outlier
-          End If
+            Values.Length-1)
+      End If
+      For i = 0 to Values.Length-1
+        If Abs(Values(i)-ValuesMn) > ControlLimit Then
+          Values(i) = NaN ' Exclude outlier
         End If
       Next i
       Return Values
