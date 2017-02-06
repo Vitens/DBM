@@ -4,6 +4,9 @@
 Dynamic Bandwidth Monitor  
 Leak detection method implemented in a real-time data historian
 
+## CI
+[![Build status](https://ci.appveyor.com/api/projects/status/6hu41jj78xw443m5/branch/master?svg=true)](https://ci.appveyor.com/project/JohanFiti/dbm/branch/master)
+
 ## Authors
 | Name          | Company      | Role        | Contact                  |
 | ------------- | ------------ | ----------- | ------------------------ |
