@@ -64,7 +64,5 @@ if exist %PICheck% (
 
 build\DBMTester.exe
 
-call docs\calculatesamples.bat
-
 :ExitBuild
 pause
