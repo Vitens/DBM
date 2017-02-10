@@ -77,7 +77,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               Prediction.Calculate(Patterns)
               ' Limit cache size
               Do While Predictions.Count >= MaxPointPredictions
-              ' Remove random cached value
+                ' Remove random cached value
                 Predictions.Remove(Predictions.ElementAt _
                   (RandomNumber(0, Predictions.Count-1)).Key)
               Loop
