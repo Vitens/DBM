@@ -101,12 +101,6 @@ DBMTester is a command line utility that can be used to quickly calculate DBM re
 | `-oc=`   | 0..1   | Output correlation data. Default (`false`) is to only output data during an exception; set to `true` to always output. |
 
 ### License
-DBM  
-Dynamic Bandwidth Monitor  
-Leak detection method implemented in a real-time data historian
-
-Copyright (C) 2014, 2015, 2016, 2017  J.H. Fitié, Vitens N.V.
-
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
