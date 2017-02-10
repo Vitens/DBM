@@ -1,0 +1,19 @@
+version: 1.0.{build}
+cache: pidll.zip
+build_script:
+- cmd: >-
+    if not exist pidll.zip curl -s -L -o pidll.zip "https://drive.google.com/uc?export=download&id=0B4J7WiY9w-uUZjRsaGFRbGZza28"
+    7z x pidll.zip>NUL
+    set PIHOME=.\pidll
+    echo.|.\build.bat
+test_script:
+- cmd: >-
+    .\build\DBMTester.exe|find "Unit tests">"%TEMP%\log"&&set /p message=<"%TEMP%\log"
+    echo %message%|find "PASSED">NUL&&set result=Passed||set result=Failed
+    appveyor AddTest "%message%" -Framework "" -FileName "" -Outcome %result%
+    .\build\DBMTester.exe|find "Integration tests">"%TEMP%\log"&&set /p message=<"%TEMP%\log"
+    echo %message%|find "PASSED">NUL&&set result=Passed||set result=Failed
+    appveyor AddTest "%message%" -Framework "" -FileName "" -Outcome %result%
+artifacts:
+- path: build\*
+deploy: off
