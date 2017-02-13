@@ -33,11 +33,13 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private PIServers As New List(Of DBMRtPIServer)
 
     Public Sub New
-      ' Add default PI server
+      ' Add default PI server when instantiating new calculator object.
       PIServers.Add(New DBMRtPIServer(PISDK.Servers.DefaultServer))
+      ' More PI servers could be added to the list here if required.
     End Sub
 
     Public Sub Calculate
+      ' Perform calculation for each PI server.
       For Each PIServer In PIServers
         PIServer.Calculate
       Next

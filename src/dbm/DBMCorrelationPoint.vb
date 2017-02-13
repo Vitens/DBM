@@ -26,8 +26,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
   Public Class DBMCorrelationPoint
 
-    ' Contains a DBMPointDriver object and a boolean SubstractSelf which can be
-    ' set to true when the input tag has to be substracted from the correlation
+    ' Contains a DBMPointDriver object and a boolean SubtractSelf which can be
+    ' set to true when the input tag has to be subtracted from the correlation
     ' tag, for example when the correlation tag contains the input tag. Set to
     ' false for adjacent areas.
 

@@ -64,6 +64,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         PredictedValue = ComparePatterns*.Slope+.Intercept
         ControlLimit = ControlLimitRejectionCriterion(ConfidenceInterval, _
           .Count-1)*.StandardError
+        ' Set upper and lower control limits, based on prediction, rejection
+        ' criterion and standard error of the regression.
         LowerControlLimit = PredictedValue-ControlLimit
         UpperControlLimit = PredictedValue+ControlLimit
       End With

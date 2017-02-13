@@ -34,6 +34,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
   Public Class DBMTester
 
+    ' DBMTester is a command line utility that can be used to quickly
+    ' calculate DBM results using the CSV driver.
+
     Private Shared InternationalFormat As Boolean = False
 
     Private Shared Function FormatDateTime(Timestamp As DateTime) As String

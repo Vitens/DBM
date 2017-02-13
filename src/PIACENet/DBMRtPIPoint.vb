@@ -39,6 +39,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Sub New(InputPIPoint As PIPoint, OutputPIPoint As PIPoint)
       Dim ExDesc, SubstringsA(), SubstringsB(), Server, Point As String
       Dim SubtractSelf As Boolean
+      ' Set input and output DBMPointDriver objects.
       InputPointDriver = New DBMPointDriver(InputPIPoint)
       OutputPointDriver = New DBMPointDriver(OutputPIPoint)
       ExDesc = DirectCast(OutputPointDriver.Point, PIPoint). _
@@ -50,13 +51,17 @@ Namespace Vitens.DynamicBandwidthMonitor
         SubstringsA = ExDesc.Split(New Char(){"&"c})
         For Each SubstringA In SubstringsA
           ' Format: [-]PI server:PI point
+          ' If PI server is preceded by a '-', then set SubtractSelf to true,
+          ' meaning that the input tag has to be subtracted from the
+          ' correlation tag, for example when the correlation tag contains
+          ' the input tag instead of it being adjectend to the input tag.
           SubstringsB = SubstringA.Split(New Char(){":"c})
           SubtractSelf = SubstringsB(0).Substring(0, 1).Equals("-")
           Server = SubstringsB(0).Substring(If(SubtractSelf, 1, 0))
           Point = SubstringsB(1)
           Try
             If Not DBMRtCalculator.PISDK.Servers(Server). _
-              PIPoints(Point).Name.Equals(String.Empty) Then
+              PIPoints(Point).Name.Equals(String.Empty) Then ' Check input
               CorrelationPoints.Add(New DBMCorrelationPoint _
                 (New DBMPointDriver(DBMRtCalculator.PISDK.Servers(Server). _
                 PIPoints(Point)), SubtractSelf)) ' Add to correlation points
@@ -90,7 +95,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         CalculationInterval-OutputTimestamp.UTCSeconds Mod CalculationInterval
       ' If calculation timestamp can be calculated
       If InputTimestamp.UTCSeconds >= OutputTimestamp.UTCSeconds Then
-        ' Write calculated factor to output point
+        ' Perform calculations and write resulting factor to output point
         DirectCast(OutputPointDriver.Point, PIPoint).Data.UpdateValue _
           (DBMRtCalculator.DBM.Result(InputPointDriver, CorrelationPoints, _
           InputTimestamp.LocalDate).Factor, InputTimestamp.LocalDate)

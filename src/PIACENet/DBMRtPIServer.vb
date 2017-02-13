@@ -35,13 +35,16 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Sub New(PIServer As Server)
       Dim InstrTag, Substrings(), Server, Point As String
+      ' When instantiating a new PIServer object, dynamically search for
+      ' relevant PI tags and add them to the PIPoints list so that calculations
+      ' may be performed on them by the calculator.
       Me.PIServer = PIServer
       Try
-        ' Search for DBM output PI points
+        ' Search for active DBM output PI points by PointSource (dbmrt).
         For Each PIPoint As PIPoint In Me.PIServer.GetPointsSQL _
           ("PIpoint.Tag='*' AND PIpoint.PointSource='dbmrt' AND PIpoint.Scan=1")
           InstrTag = PIPoint.PointAttributes("InstrumentTag").Value.ToString
-          ' InstrumentTag attribute should contain input PI point
+          ' InstrumentTag attribute should contain input PI point.
           If Regex.IsMatch(InstrTag, "^[\w\.-]+:[^:\?\*&]+$") Then
             ' Format: PI server:PI point
             Substrings = InstrTag.Split(New Char(){":"c})
@@ -49,8 +52,8 @@ Namespace Vitens.DynamicBandwidthMonitor
             Point = Substrings(1)
             Try
               If Not DBMRtCalculator.PISDK.Servers(Server). _
-                PIPoints(Point).Name.Equals(String.Empty) Then
-                ' Add to calculation points
+                PIPoints(Point).Name.Equals(String.Empty) Then ' Check input
+                ' Add to calculation points list.
                 PIPoints.Add(New DBMRtPIPoint(DBMRtCalculator.PISDK. _
                   Servers(Server).PIPoints(Point), PIPoint))
               End If
@@ -63,8 +66,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
     Public Sub Calculate
+      ' Perform calculation for each PI point.
       For Each PIPoint In PIPoints
-        Try
+        Try ' Enclose in try/catch block to not halt calculations on errors.
           PIPoint.Calculate
         Catch
         End Try
