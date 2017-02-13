@@ -28,6 +28,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
   Public Class DBMResult
 
+    ' DBMResult is the object passed by DBM.Result and contains the final results
+    ' for the DBM calculation. It is also used for storing intermediate results of
+    ' (correlation) calculation results from a DBMPoint object.
+
     Public Prediction As DBMPrediction
     Public Factor, OriginalFactor, AbsoluteErrors(), RelativeErrors(), _
       CorrelationAbsoluteErrors(), CorrelationRelativeErrors() As Double
@@ -35,6 +39,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public SuppressedBy As DBMPointDriver
 
     Public Sub New
+      ' Initialize array sizes.
       ReDim AbsoluteErrors(CorrelationPreviousPeriods)
       ReDim RelativeErrors(CorrelationPreviousPeriods)
       ReDim CorrelationAbsoluteErrors(CorrelationPreviousPeriods)

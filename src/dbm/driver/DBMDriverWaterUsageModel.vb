@@ -28,6 +28,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
   Public Class DBMPointDriver
 
+    ' Description: Model based on hourly water usage in Leeuwarden 2016.
+    ' Identifier (Point): Object (unused)
+    ' Remarks: Model based on measured data with added random noise.
+
     Public Point As Object
 
     Public Sub New(Point As Object)

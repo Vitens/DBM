@@ -26,7 +26,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
   Public Class DBMPointDriver
 
-    ' Template for custom developed drivers.
+    ' Description: Returns zero for every request.
+    ' Identifier (Point): Object (unused)
+    ' Remarks: Template for custom developed drivers.
 
     Public Point As Object
 

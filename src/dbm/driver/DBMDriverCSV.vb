@@ -32,11 +32,19 @@ Namespace Vitens.DynamicBandwidthMonitor
 
   Public Class DBMPointDriver
 
+    ' Description: Driver for CSV files (timestamp,value).
+    ' Identifier (Point): String (CSV filename)
+    ' Remarks: Data interval must be the same as the CalculationInterval parameter.
+
     Public Point As Object
     Private Values As Dictionary(Of DateTime, Double)
 
     Public Sub New(Point As Object)
       Me.Point = Point
+      ' If Object passed does not represent a valid, existing file then thrown a
+      ' File Not Found Exception, unless integration tests are running (in which
+      ' case the internal test data array in DBMTests is used by
+      ' DBMDataManager).
       If Not File.Exists(DirectCast(Me.Point, String)) And _
         Not TestsRunning Then
         Throw New FileNotFoundException(DirectCast(Me.Point, String))

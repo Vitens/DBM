@@ -30,6 +30,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
   Public Class DBMPointDriver
 
+    ' Description: Driver for OSIsoft PI.
+    ' Identifier (Point): PISDK.PIPoint (PI tag)
+    ' Remarks: Used by PI ACE module DBMRt.
+
     Public Point As Object
 
     Public Sub New(Point As Object)

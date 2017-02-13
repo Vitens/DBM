@@ -53,7 +53,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
     Public Sub Calculate(Values() As Double)
-      ' Calculates and stores prediction and control limits
+      ' Calculates and stores prediction and control limits by removing
+      ' outliers from the Values array and extrapolating the regression
+      ' line by one interval.
       Dim Statistics As New DBMStatistics
       Dim ControlLimit As Double
       With Statistics
@@ -64,7 +66,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         PredictedValue = ComparePatterns*.Slope+.Intercept
         ControlLimit = ControlLimitRejectionCriterion(ConfidenceInterval, _
           .Count-1)*.StandardError
-        ' Set upper and lower control limits, based on prediction, rejection
+        ' Set upper and lower control limits based on prediction, rejection
         ' criterion and standard error of the regression.
         LowerControlLimit = PredictedValue-ControlLimit
         UpperControlLimit = PredictedValue+ControlLimit
