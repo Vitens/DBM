@@ -1,14 +1,16 @@
 version: 1.0.{build}
-cache: res\pidll.zip
+cache: .pidll\pidll.zip
 build_script:
 - cmd: >-
-    if not exist res\pidll.zip curl -s -L -o res\pidll.zip "https://drive.google.com/uc?export=download&id=0B4J7WiY9w-uUZjRsaGFRbGZza28"
+    if not exist .pidll mkdir .pidll
 
-    7z x res\pidll.zip>NUL
+    if not exist .pidll\pidll.zip curl -s -L -o .pidll\pidll.zip "https://drive.google.com/uc?export=download&id=0B4J7WiY9w-uUZjRsaGFRbGZza28"
 
-    set PIHOME=pidll
+    7z x .pidll\pidll.zip -o.pidll>NUL
 
-    echo.|build.bat>"%TEMP%\out"
+    set PIHOME=.pidll\pidll
+
+    echo.|build.bat>NUL
 test_script:
 - cmd: >-
     for /f "delims=" %%i in ('build\DBMTester.exe^|find "Unit tests"') do set message=%%i
@@ -30,6 +32,6 @@ deploy_script:
 
     appveyor PushArtifact build\%version: =_%_bin.zip
 
-    curl -s -L -o build\%version: =_%_src.zip https://github.com/jfitie/DBM/archive/master.zip
+    7z a build\%version: =_%_src.zip %APPVEYOR_BUILD_FOLDER%\ -xr!.*\ -xr!build\>NUL
 
     appveyor PushArtifact build\%version: =_%_src.zip
