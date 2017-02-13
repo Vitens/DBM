@@ -35,6 +35,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Module Database for configuration, but instead dynamically searches for
     ' relevant PI tags and performs calculations on these when needed. Note
     ' that there is no support for manual or automatic recalculation.
+    ' Suggested scheduling: type: clock; period: 60 seconds.
 
     Inherits PIACENetClassModule ' PI ACE specific
 

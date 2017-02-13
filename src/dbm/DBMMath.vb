@@ -107,7 +107,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function MeanAbsoluteDeviationScaleFactor As Double
       ' Estimator; scale factor k
-      ' For normally distributed data, multiply mad by scale factor k to
+      ' For normally distributed data, multiply MAD by scale factor k to
       ' obtain an estimate of the normal scale parameter sigma.
       ' R.C. Geary. The Ratio of the Mean Deviation to the Standard Deviation
       ' as a Test of Normality. Biometrika, 1935. Cited on page 8.
@@ -230,7 +230,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       For Each Value In Values ' Least significant value first
         ExponentialMovingAverage += Value*Weight
         TotalWeight += Weight
-        Weight /= 1-2/(Values.Length+1) ' Increase weight for newer values
+        Weight /= 1-2/(Values.Length+1) ' Increase weight for more recent values
       Next
       ExponentialMovingAverage /= TotalWeight
       Return ExponentialMovingAverage

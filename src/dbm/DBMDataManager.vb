@@ -62,7 +62,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           End Try
         End If
         Do While Values.Count >= MaxDataManagerValues ' Limit cache size
-          ' Remove random cached value
+          ' Remove random cached value when cache limit reached.
           Values.Remove(Values.ElementAt(RandomNumber(0, Values.Count-1)).Key)
         Loop
         Values.Add(Timestamp, Value) ' Add to cache

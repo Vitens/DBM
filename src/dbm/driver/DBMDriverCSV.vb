@@ -34,7 +34,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     ' Description: Driver for CSV files (timestamp,value).
     ' Identifier (Point): String (CSV filename)
-    ' Remarks: Data interval must be the same as the CalculationInterval parameter.
+    ' Remarks: Data interval must be the same as the CalculationInterval
+    '          parameter.
 
     Public Point As Object
     Private Values As Dictionary(Of DateTime, Double)

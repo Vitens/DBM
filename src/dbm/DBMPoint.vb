@@ -41,6 +41,10 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Function Result(Timestamp As DateTime, IsInputDBMPoint As Boolean, _
       HasCorrelationDBMPoint As Boolean, _
       Optional SubtractPoint As DBMPoint = Nothing) As DBMResult
+      ' Retrieves data and calculates prediction and control limits for
+      ' this point. Also calculates and stores prediction errors (historically
+      ' as well when needed) for correlation analysis later on. Results are
+      ' cached and then reused when possible.
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
       Dim PredictionTimestamp, PatternTimestamp As DateTime
       Dim Prediction As New DBMPrediction
@@ -57,19 +61,19 @@ Namespace Vitens.DynamicBandwidthMonitor
       For CorrelationCounter = 0 To CorrelationPreviousPeriods
         If Result.Prediction Is Nothing Or (IsInputDBMPoint And _
           Result.Factor <> 0 And HasCorrelationDBMPoint) Or _
-          Not IsInputDBMPoint Then
-          For EMACounter = 0 To EMAPreviousPeriods
+          Not IsInputDBMPoint Then ' Calculate history for event or correlation.
+          For EMACounter = 0 To EMAPreviousPeriods ' Filter variation.
             PredictionTimestamp = Timestamp.AddSeconds _
               (-(EMAPreviousPeriods-EMACounter+CorrelationCounter)* _
               CalculationInterval)
             If Predictions.ContainsKey(PredictionTimestamp) Then ' From cache
               Prediction = Predictions.Item(PredictionTimestamp).ShallowCopy
             Else ' Calculate data
-              For PatternCounter = 0 To ComparePatterns
+              For PatternCounter = 0 To ComparePatterns ' Data for regression.
                 PatternTimestamp = PredictionTimestamp. _
                   AddDays(-(ComparePatterns-PatternCounter)*7)
                 Patterns(PatternCounter) = DataManager.Value(PatternTimestamp)
-                If SubtractPoint IsNot Nothing Then
+                If SubtractPoint IsNot Nothing Then ' Subtract input if needed.
                   Patterns(PatternCounter) -= _
                     SubtractPoint.DataManager.Value(PatternTimestamp)
                 End If
@@ -77,20 +81,21 @@ Namespace Vitens.DynamicBandwidthMonitor
               Prediction.Calculate(Patterns)
               ' Limit cache size
               Do While Predictions.Count >= MaxPointPredictions
-                ' Remove random cached value
+                ' Remove random cached value when cache limit reached.
                 Predictions.Remove(Predictions.ElementAt _
                   (RandomNumber(0, Predictions.Count-1)).Key)
               Loop
-              ' Add to cache
+              ' Add calculated prediction to cache.
               Predictions.Add(PredictionTimestamp, Prediction.ShallowCopy)
             End If
-            With Prediction
+            With Prediction ' Store results in arrays for EMA calculation.
               MeasuredValues(EMACounter) = .MeasuredValue
               PredictedValues(EMACounter) = .PredictedValue
               LowerControlLimits(EMACounter) = .LowerControlLimit
               UpperControlLimits(EMACounter) = .UpperControlLimit
             End With
           Next EMACounter
+          ' Calculate final result using filtered calculation results.
           Result.Calculate(CorrelationPreviousPeriods-CorrelationCounter, _
             ExponentialMovingAverage(MeasuredValues), _
             ExponentialMovingAverage(PredictedValues), _

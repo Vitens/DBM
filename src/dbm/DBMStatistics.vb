@@ -58,6 +58,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Next i
       End If
       Count = 0
+      ' Calculate sums
       For i = 0 To ValuesY.Length-1
         If Not IsNaN(ValuesX(i)) And Not IsNaN(ValuesY(i)) Then
           SumX += ValuesX(i)
