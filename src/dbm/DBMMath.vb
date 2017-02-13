@@ -107,11 +107,19 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function MeanAbsoluteDeviationScaleFactor As Double
       ' Scale factor k
+      ' For normally distributed data, multiply mad by scale factor k to
+      ' obtain an estimate of the normal scale parameter sigma.
+      ' R.C. Geary. The Ratio of the Mean Deviation to the Standard Deviation
+      ' as a Test of Normality. Biometrika, 1935. Cited on page 8.
       Return Sqrt(PI/2)
     End Function
 
     Public Shared Function MedianAbsoluteDeviationScaleFactor _
       (n As Integer) As Double ' Scale factor k
+      ' k is a constant scale factor, which depends on the distribution.
+      ' For a symmetric distribution with zero mean, the population MAD is the
+      ' 75th percentile of the distribution.
+      ' Huber, P. J. (1981). Robust statistics. New York: John Wiley.
       If n < 30 Then
         Return 1/TInv(0.75, n) ' n<30 Student's t-distribution
       Else
@@ -121,6 +129,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function ControlLimitRejectionCriterion(p As Double, _
       n As Integer) As Double
+      ' Return two-sided critical z-values for confidence interval p.
       If n < 30 Then
         Return TInv((p+1)/2, n) ' n<30 Student's t-distribution
       Else
@@ -129,6 +138,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
     Public Shared Function Mean(Values() As Double) As Double
+      ' Returns the arithmetic mean; the sum of the sampled values divided
+      ' by the number of items in the sample.
       Mean = 0
       For Each Value In Values
         Mean += Value/Values.Length
@@ -137,6 +148,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
     Public Shared Function Median(Values() As Double) As Double
+      ' The median is the value separating the higher half of a data sample,
+      ' a population, or a probability distribution, from the lower half. In
+      ' simple terms, it may be thought of as the "middle" value of a data set.
       Dim MedianValues(Values.Count-1) As Double
       Array.Copy(Values, MedianValues, Values.Count)
       Array.Sort(MedianValues)
@@ -150,6 +164,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function AbsoluteDeviation(Values() As Double, _
       From As Double) As Double()
+      ' Returns an array which contains the absolute values of the input
+      ' array from which From has been subtracted.
       Dim AbsDev(Values.Count-1) As Double
       For i = 0 to Values.Length-1
         AbsDev(i) = Abs(Values(i)-From)
@@ -158,23 +174,29 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
     Public Shared Function MeanAbsoluteDeviation(Values() As Double) As Double
+      ' The mean absolute deviation (MAD) of a set of data
+      ' is the average distance between each data value and the mean.
       Return Mean(AbsoluteDeviation(Values, Mean(Values)))
     End Function
 
     Public Shared Function MedianAbsoluteDeviation(Values() As Double) As Double
+      ' The median absolute deviation (MAD) is a robust measure of the
+      ' variability of a univariate sample of quantitative data.
       Return Median(AbsoluteDeviation(Values, Median(Values)))
     End Function
 
     Public Shared Function RemoveOutliers(Values() As Double) As Double()
       ' Returns an array which contains the input data from which outliers
-      ' are removed (NaN)
+      ' are removed (NaN) using either the mean or median absolute deviation
+      ' function.
       Dim CentralTendency, MAD, ControlLimit As Double
       Dim i As Integer
       CentralTendency = Median(Values)
       MAD = MedianAbsoluteDeviation(Values)
       If MAD = 0 Then
         ' Use Mean Absolute Deviation instead of Median Absolute Deviation
-        ' to detect outliers
+        ' to detect outliers. Median absolute deviation has a 50% breakdown
+        ' point.
         CentralTendency = Mean(Values)
         MAD = MeanAbsoluteDeviation(Values)
         ControlLimit = MAD*MeanAbsoluteDeviationScaleFactor* _
@@ -197,6 +219,10 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function ExponentialMovingAverage _
       (Values() As Double) As Double
       ' Filter high frequency variation
+      ' An exponential moving average (EMA), is a type of infinite impulse
+      ' response filter that applies weighting factors which decrease
+      ' exponentially. The weighting for each older datum decreases
+      ' exponentially, never reaching zero.
       Dim Weight, TotalWeight As Double
       ExponentialMovingAverage = 0
       Weight = 1 ' Initial weight
@@ -211,6 +237,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
     Public Shared Function SlopeToAngle(Slope As Double) As Double
+      ' Returns angle in degrees for Slope.
       Return Atan(Slope)/(2*PI)*360
     End Function
 

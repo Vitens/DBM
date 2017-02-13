@@ -40,13 +40,16 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
     Public Function Value(Timestamp As DateTime) As Double
+      ' Value returns a specific value using the PointDriver object. Values are
+      ' cached in memory, and, if available for the requested timestamp, have
+      ' preference over using the PointDriver object.
       ' Returns value at timestamp, either from cache or using driver
       If Values.ContainsKey(Timestamp) Then ' In cache
         Value = Values.Item(Timestamp) ' Return value from cache
       Else
         ' Do not use point driver when running tests
         If TestsRunning Then
-          ' Return item from test data array
+          ' Return item from internal test data array in DBMTests
           Value = TestData(TestDataIndex)
           TestDataIndex = (TestDataIndex+1) Mod TestData.Length ' Increase index
         Else

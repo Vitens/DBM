@@ -29,6 +29,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
   Public Class DBMParameters
 
+    ' This class contains default values for several parameters which DBM uses
+    ' for its calculations. The values for these parameters can be changed
+    ' at runtime.
+
     ' Time interval at which the calculation is run (seconds).
     ' Default: 5 minutes.
     Public Shared CalculationInterval As Integer = 300

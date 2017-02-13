@@ -34,6 +34,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
   Public Class DBMTests
 
+    ' This class contains unit and integration tests. For integration tests, an
+    ' internal data array is used by DBMDataManager instead of data from a
+    ' DBMPointDriver object. This is done only when TestsRunning is True.
+
     Private Shared DBM As New DBM
     Public Shared TestsRunning As Boolean = False
     Public Shared TestData() As Double = {1202.29479980469, 1138.34106445313, _
@@ -1349,6 +1353,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Shared Function Hash(Values() As Double, _
       Optional Digits As Integer = 15) As Double
+      ' Simple hash function for checking array contents.
       Hash = 1
       For Each Value In Values
         If Not IsNaN(Value) Then
@@ -1364,6 +1369,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       ExpAbsErrStats() As Double, ExpRelErrStats() As Double, _
       ExpAbsErrs() As Double, ExpRelErrs() As Double, _
       ExpCorrAbsErrs() As Double, ExpCorrRelErrs() As Double) As Boolean
+      ' Runs a complete test case for integration testing. The internal data
+      ' array is used as input for tags, so order of tests is important and
+      ' can not be changed.
       Dim InputPointDriver, CorrelationPointDriver As DBMPointDriver
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim Result As DBMResult
@@ -1416,6 +1424,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
     Private Shared Function UnitTestResults As Boolean
+      ' Unit tests, returns True if all tests pass.
       Dim Statistics As New DBMStatistics
       Dim i As Integer
       UnitTestResults = True
@@ -1996,6 +2005,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
     Private Shared Function IntegrationTestResults As Boolean
+      ' Integration tests, returns True if all tests pass.
       Dim i As Integer
       IntegrationTestResults = True
       For i = 0 To 1 ' Run all cases twice to test cache
@@ -2525,6 +2535,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
     Public Shared Function TestResults As String
+      ' Returns a string containing test results (PASSED or FAILED) and
+      ' execution time for unit and integration tests.
       Dim Ticks As Int64
       Ticks = Now.Ticks
       TestResults = " - Unit tests " & _

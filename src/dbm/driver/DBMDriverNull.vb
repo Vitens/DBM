@@ -26,6 +26,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
   Public Class DBMPointDriver
 
+    ' Template for custom developed drivers.
+
     Public Point As Object
 
     Public Sub New(Point As Object)

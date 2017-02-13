@@ -35,14 +35,23 @@ Namespace Vitens.DynamicBandwidthMonitor
       Correlation, ModifiedCorrelation, Determination As Double
 
     Public Function ShallowCopy As DBMStatistics
+      ' The MemberwiseClone method creates a shallow copy by creating a new
+      ' object, and then copying the nonstatic fields of the current object to
+      ' the new object. If a field is a value type, a bit-by-bit copy of the
+      ' field is performed. If a field is a reference type, the reference is
+      ' copied but the referred object is not; therefore, the original object
+      ' and its clone refer to the same object.
       Return DirectCast(Me.MemberwiseClone, DBMStatistics)
     End Function
 
     Public Sub Calculate(ValuesY() As Double, _
       Optional ValuesX() As Double = Nothing)
+      ' Performs calculation of several statistics functions in the input
+      ' data. If no values for X are passed, a linear scale starting at 0 is
+      ' assumed.
       Dim i As Integer
       Dim SumX, SumY, SumXX, SumYY, SumXY As Double
-      If ValuesX Is Nothing Then
+      If ValuesX Is Nothing Then ' No X values, assume linear scale.
         ReDim ValuesX(ValuesY.Length-1)
         For i = 0 To ValuesX.Length-1
           ValuesX(i) = i
@@ -66,7 +75,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Intercept = (SumX*SumXY-SumY*SumXX)/(SumX^2-Count*SumXX)
       ' Standard error of the predicted y-value for each x in the regression.
       ' The standard error is a measure of the amount of error in the
-      ' prediction of y for an individual x
+      ' prediction of y for an individual x.
       StandardError = 0
       For i = 0 to ValuesY.Length-1
         If Not IsNaN(ValuesX(i)) And Not IsNaN(ValuesY(i)) Then
@@ -74,18 +83,17 @@ Namespace Vitens.DynamicBandwidthMonitor
         End If
       Next i
       ' n-2 is used because two parameters (slope and intercept) were
-      ' estimated in order to estimate the sum of squares
+      ' estimated in order to estimate the sum of squares.
       StandardError = Sqrt(StandardError/(Count-2))
-      ' Wikipedia: A number that quantifies some type of correlation and
-      ' dependence, meaning statistical relationships between two or more
-      ' random variables or observed data values
+      ' A number that quantifies some type of correlation and dependence,
+      ' meaning statistical relationships between two or more random
+      ' variables or observed data values.
       Correlation = (Count*SumXY-SumX*SumY)/ _
         Sqrt((Count*SumXX-SumX^2)*(Count*SumYY-SumY^2))
-      ' Average is not removed, as expected average is zero
+      ' Average is not removed, as expected average is zero.
       ModifiedCorrelation = SumXY/Sqrt(SumXX*SumYY)
-      ' Wikipedia: A number that indicates the proportion of the variance in
-      ' the dependent variable that is predictable from the
-      ' independent variable
+      ' A number that indicates the proportion of the variance in the
+      ' dependent variable that is predictable from the independent variable.
       Determination = Correlation^2
     End Sub
 

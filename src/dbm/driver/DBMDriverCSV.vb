@@ -59,7 +59,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               (StreamReader.ReadLine, "^([^,\t]+)[,\t](.+)$")
             ' If a match is found at the beginning or the end of the input
             ' string, an empty string is included at the beginning or the end
-            ' of the returned array
+            ' of the returned array.
             If Substrings.Length = 4 Then
               If DateTime.TryParse(Substrings(1), Timestamp) Then
                 If Double.TryParse(Substrings(2), Value) Then
