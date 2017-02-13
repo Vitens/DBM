@@ -106,7 +106,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
     Public Shared Function MeanAbsoluteDeviationScaleFactor As Double
-      ' Scale factor k
+      ' Estimator; scale factor k
       ' For normally distributed data, multiply mad by scale factor k to
       ' obtain an estimate of the normal scale parameter sigma.
       ' R.C. Geary. The Ratio of the Mean Deviation to the Standard Deviation
@@ -115,7 +115,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
     Public Shared Function MedianAbsoluteDeviationScaleFactor _
-      (n As Integer) As Double ' Scale factor k
+      (n As Integer) As Double ' Estimator; scale factor k
       ' k is a constant scale factor, which depends on the distribution.
       ' For a symmetric distribution with zero mean, the population MAD is the
       ' 75th percentile of the distribution.

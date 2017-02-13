@@ -22,6 +22,9 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+' This information is shared between all DBM binaries. A summary can be
+' returned using the DBM.Version function.
+
 <assembly:System.Reflection.AssemblyVersion("1.8.1.*")>
 <assembly:System.Reflection.AssemblyProduct("Dynamic Bandwidth Monitor")>
 <assembly:System.Reflection.AssemblyDescription _

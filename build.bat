@@ -24,37 +24,43 @@ rem along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 %~d0
 cd %~dp0
 
+rem Set up build directory
 if not exist build mkdir build
-
 del /Q build\*
-
 copy LICENSE build > NUL
 
+rem Variables
 set vbc="%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\Vbc.exe" /win32icon:res\dbm.ico /optimize+ /nologo /novbruntimeref
 set PICheck="%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDK.dll"
 set PIRefs=%PICheck%,"%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDKCommon.dll"
 set PIACECheck="%PIHOME%\ACE\OSISoft.PIACENet.dll"
 set PIACERefs=%PIACECheck%,"%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PITimeServer.dll"
 
+rem Build DBMDriverNull.dll
 %vbc% /target:library /out:build\DBMDriverNull.dll src\shared\*.vb src\dbm\*.vb src\dbm\driver\DBMDriverNull.vb
 if not exist build\DBMDriverNull.dll goto ExitBuild
 
+rem Build DBMDriverWaterUsageModel.dll
 %vbc% /target:library /out:build\DBMDriverWaterUsageModel.dll src\shared\*.vb src\dbm\*.vb src\dbm\driver\DBMDriverWaterUsageModel.vb
 if not exist build\DBMDriverWaterUsageModel.dll goto ExitBuild
 
+rem Build DBMDriverCSV.dll
 %vbc% /target:library /out:build\DBMDriverCSV.dll src\shared\*.vb src\dbm\*.vb src\dbm\driver\DBMDriverCSV.vb
 if not exist build\DBMDriverCSV.dll goto ExitBuild
 
+rem Build DBMTester.exe
 %vbc% /reference:build\DBMDriverCSV.dll /out:build\DBMTester.exe src\shared\*.vb src\dbmtester\*.vb
 if not exist build\DBMTester.exe goto ExitBuild
 
 if exist %PICheck% (
 
+  rem Build DBMDriverOSIsoftPI.dll
   %vbc% /reference:%PIRefs% /target:library /out:build\DBMDriverOSIsoftPI.dll src\shared\*.vb src\dbm\*.vb src\dbm\driver\DBMDriverOSIsoftPI.vb
   if not exist build\DBMDriverOSIsoftPI.dll goto ExitBuild
 
   if exist %PIACECheck% (
 
+    rem Build DBMRt.dll
     %vbc% /reference:%PIRefs%,%PIACERefs%,build\DBMDriverOSIsoftPI.dll /target:library /out:build\DBMRt.dll src\shared\*.vb src\PIACENet\*.vb
     if not exist build\DBMRt.dll goto ExitBuild
 
@@ -62,6 +68,7 @@ if exist %PICheck% (
 
 )
 
+rem Output version, copyright and license information and unit and integration test results
 build\DBMTester.exe
 
 :ExitBuild

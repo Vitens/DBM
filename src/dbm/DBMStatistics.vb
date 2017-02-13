@@ -46,7 +46,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Sub Calculate(ValuesY() As Double, _
       Optional ValuesX() As Double = Nothing)
-      ' Performs calculation of several statistics functions in the input
+      ' Performs calculation of several statistics functions on the input
       ' data. If no values for X are passed, a linear scale starting at 0 is
       ' assumed.
       Dim i As Integer

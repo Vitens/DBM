@@ -53,8 +53,8 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' Format: [-]PI server:PI point
           ' If PI server is preceded by a '-', then set SubtractSelf to true,
           ' meaning that the input tag has to be subtracted from the
-          ' correlation tag, for example when the correlation tag contains
-          ' the input tag instead of it being adjectend to the input tag.
+          ' correlation tag. For example when the correlation tag contains
+          ' the input tag instead of it being adjacent to the input tag.
           SubstringsB = SubstringA.Split(New Char(){":"c})
           SubtractSelf = SubstringsB(0).Substring(0, 1).Equals("-")
           Server = SubstringsB(0).Substring(If(SubtractSelf, 1, 0))
