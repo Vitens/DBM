@@ -11,23 +11,25 @@ build_script:
     echo.|build.bat>"%TEMP%\out"
 test_script:
 - cmd: >-
-    type "%TEMP%\out"|find "Unit tests">"%TEMP%\test"&&set /p message=<"%TEMP%\test"
+    for /f "delims=" %%i in ('build\DBMTester.exe^|find "Unit tests"') do set message=%%i
 
     echo %message%|find "PASSED">NUL&&set result=Passed||set result=Failed
 
-    appveyor AddTest "%message%" -Framework "" -FileName "" -Outcome %result%
+    appveyor AddTest "%message:~3%" -Framework "" -FileName "" -Outcome %result%
 
-    type "%TEMP%\out"|find "Integration tests">"%TEMP%\test"&&set /p message=<"%TEMP%\test"
+    for /f "delims=" %%i in ('build\DBMTester.exe^|find "Integration tests"') do set message=%%i
 
     echo %message%|find "PASSED">NUL&&set result=Passed||set result=Failed
 
-    appveyor AddTest "%message%" -Framework "" -FileName "" -Outcome %result%
+    appveyor AddTest "%message:~3%" -Framework "" -FileName "" -Outcome %result%
 deploy_script:
 - cmd: >-
-    type "%TEMP%\out"|find "DBM">"%TEMP%\version"&&set /p archive=<"%TEMP%\version"
+    for /f "delims=" %%i in ('build\DBMTester.exe^|find "DBM"') do set version=%%i
 
-    set archive=%archive: =_%_bin.zip
+    7z a build\%version: =_%_bin.zip build\>NUL
 
-    7z a build\%archive% build\>NUL
+    appveyor PushArtifact build\%version: =_%_bin.zip
 
-    appveyor PushArtifact build\%archive%
+    curl -s -L -o build\%version: =_%_src.zip https://github.com/jfitie/DBM/archive/master.zip
+
+    appveyor PushArtifact build\%version: =_%_src.zip
