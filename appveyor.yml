@@ -1,19 +1,33 @@
 version: 1.0.{build}
-cache: pidll.zip
+cache: res\pidll.zip
 build_script:
 - cmd: >-
-    if not exist pidll.zip curl -s -L -o pidll.zip "https://drive.google.com/uc?export=download&id=0B4J7WiY9w-uUZjRsaGFRbGZza28"
-    7z x pidll.zip>NUL
-    set PIHOME=.\pidll
-    echo.|.\build.bat
+    if not exist res\pidll.zip curl -s -L -o res\pidll.zip "https://drive.google.com/uc?export=download&id=0B4J7WiY9w-uUZjRsaGFRbGZza28"
+
+    7z x res\pidll.zip>NUL
+
+    set PIHOME=pidll
+
+    echo.|build.bat>"%TEMP%\out"
 test_script:
 - cmd: >-
-    .\build\DBMTester.exe|find "Unit tests">"%TEMP%\log"&&set /p message=<"%TEMP%\log"
+    type "%TEMP%\out"|find "Unit tests">"%TEMP%\test"&&set /p message=<"%TEMP%\test"
+
     echo %message%|find "PASSED">NUL&&set result=Passed||set result=Failed
+
     appveyor AddTest "%message%" -Framework "" -FileName "" -Outcome %result%
-    .\build\DBMTester.exe|find "Integration tests">"%TEMP%\log"&&set /p message=<"%TEMP%\log"
+
+    type "%TEMP%\out"|find "Integration tests">"%TEMP%\test"&&set /p message=<"%TEMP%\test"
+
     echo %message%|find "PASSED">NUL&&set result=Passed||set result=Failed
+
     appveyor AddTest "%message%" -Framework "" -FileName "" -Outcome %result%
-artifacts:
-- path: build\*
-deploy: off
+deploy_script:
+- cmd: >-
+    type "%TEMP%\out"|find "DBM">"%TEMP%\version"&&set /p archive=<"%TEMP%\version"
+
+    set archive=%archive: =_%_bin.zip
+
+    7z a build\%archive% build\>NUL
+
+    appveyor PushArtifact build\%archive%
