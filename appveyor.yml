@@ -28,10 +28,10 @@ deploy_script:
 - cmd: >-
     for /f "delims=" %%i in ('build\DBMTester.exe^|find "DBM"') do set version=%%i
 
-    7z a build\%version: =_%_bin.zip build\>NUL
+    7z a build\%version: =_%_bin.zip .\build\*>NUL
 
     appveyor PushArtifact build\%version: =_%_bin.zip
 
-    7z a build\%version: =_%_src.zip %APPVEYOR_BUILD_FOLDER%\ -xr!.*\ -xr!build\>NUL
+    7z a build\%version: =_%_src.zip %APPVEYOR_BUILD_FOLDER%\* -xr!.*\ -xr!build\>NUL
 
     appveyor PushArtifact build\%version: =_%_src.zip
