@@ -28,12 +28,12 @@ deploy_script:
 - cmd: >-
     for /f "delims=" %%i in ('build\DBMTester.exe^|find "DBM"') do set version=%%i
 
-    for /f "delims=" %%i in ('git rev-parse HEAD') do set hash=%%i
+    for /f "delims=" %%i in ('git rev-parse --short HEAD') do set hash=%%i
 
-    7z a build\%version: =_%_(%hash:~0,7%)_bin.zip .\build\*>NUL
+    7z a build\%version: =_%_(%hash%)_bin.zip .\build\*>NUL
 
-    appveyor PushArtifact build\%version: =_%_(%hash:~0,7%)_bin.zip
+    appveyor PushArtifact build\%version: =_%_(%hash%)_bin.zip
 
-    7z a build\%version: =_%_(%hash:~0,7%)_src.zip %APPVEYOR_BUILD_FOLDER%\* -xr!.*\ -xr!build\>NUL
+    7z a build\%version: =_%_(%hash%)_src.zip %APPVEYOR_BUILD_FOLDER%\* -xr!.*\ -xr!build\>NUL
 
-    appveyor PushArtifact build\%version: =_%_(%hash:~0,7%)_src.zip
+    appveyor PushArtifact build\%version: =_%_(%hash%)_src.zip
