@@ -221,8 +221,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Filter high frequency variation
       ' An exponential moving average (EMA), is a type of infinite impulse
       ' response filter that applies weighting factors which decrease
-      ' exponentially. The weighting for each older datum decreases
-      ' exponentially, never reaching zero.
+      ' exponentially.
       Dim Weight, TotalWeight As Double
       ExponentialMovingAverage = 0
       Weight = 1 ' Initial weight

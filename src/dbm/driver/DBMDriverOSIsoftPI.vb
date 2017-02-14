@@ -44,7 +44,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       EndTimestamp As DateTime) As Double
       Return DirectCast(DirectCast(Point, PIPoint).Data.Summary _
         (StartTimestamp, EndTimestamp, astAverage, cbTimeWeighted).Value, _
-        Double)
+        Double) ' Return time-weighted average for time range from PI.
     End Function
 
   End Class

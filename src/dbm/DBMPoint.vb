@@ -42,9 +42,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       HasCorrelationDBMPoint As Boolean, _
       Optional SubtractPoint As DBMPoint = Nothing) As DBMResult
       ' Retrieves data and calculates prediction and control limits for
-      ' this point. Also calculates and stores prediction errors (historically
-      ' as well when needed) for correlation analysis later on. Results are
-      ' cached and then reused when possible.
+      ' this point. Also calculates and stores (historic) prediction errors for
+      ' correlation analysis later on. Results are cached and then reused when
+      ' possible.
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
       Dim PredictionTimestamp, PatternTimestamp As DateTime
       Dim Prediction As New DBMPrediction
@@ -62,7 +62,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         If Result.Prediction Is Nothing Or (IsInputDBMPoint And _
           Result.Factor <> 0 And HasCorrelationDBMPoint) Or _
           Not IsInputDBMPoint Then ' Calculate history for event or correlation.
-          For EMACounter = 0 To EMAPreviousPeriods ' Filter variation.
+          For EMACounter = 0 To EMAPreviousPeriods ' For filtering HF variation.
             PredictionTimestamp = Timestamp.AddSeconds _
               (-(EMAPreviousPeriods-EMACounter+CorrelationCounter)* _
               CalculationInterval)

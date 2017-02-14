@@ -54,6 +54,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Function GetData(StartTimestamp As DateTime, _
       EndTimestamp As DateTime) As Double
+      ' Calling GetData for the first time retrieves information from a CSV
+      ' file and stores this in the Values dictionary. Subsequent calls to
+      ' GetData retrieves data from the dictionary directly. Non existing
+      ' timestamps return NaN.
       Dim StreamReader As StreamReader
       Dim Substrings() As String
       Dim Timestamp As DateTime
@@ -61,7 +65,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       If Values Is Nothing Then ' No data in memory yet
         Values = New Dictionary(Of DateTime, Double)
         If File.Exists(DirectCast(Point, String)) Then
-          StreamReader = New StreamReader(DirectCast(Point, String))
+          StreamReader = New StreamReader(DirectCast(Point, String)) ' Open CSV
           Do While Not StreamReader.EndOfStream
             ' Comma and tab delimiters; split in 2 substrings
             Substrings = Regex.Split _
@@ -79,7 +83,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               End If
             End If
           Loop
-          StreamReader.Close
+          StreamReader.Close ' Close CSV
         End If
       End If
       If Values.ContainsKey(StartTimestamp) Then ' In cache
