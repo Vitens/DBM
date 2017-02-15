@@ -39,7 +39,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public SuppressedBy As DBMPointDriver
 
     Public Sub New
-      ' Initialize array sizes.
+      ' Initialize array sizes. To be filled from back to front.
       ReDim AbsoluteErrors(CorrelationPreviousPeriods)
       ReDim RelativeErrors(CorrelationPreviousPeriods)
       ReDim CorrelationAbsoluteErrors(CorrelationPreviousPeriods)
@@ -59,6 +59,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Store initial (no time offset because of prediction error
       ' correlation calculations) results
       If Prediction Is Nothing Then
+        ' Store EMA results in new DBMPrediction object
         Prediction = New DBMPrediction(MeasuredValueEMA, PredictedValueEMA, _
           LowerControlLimitEMA, UpperControlLimitEMA)
         ' Lower control limit exceeded

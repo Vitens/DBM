@@ -38,7 +38,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Function GetData(StartTimestamp As DateTime, _
       EndTimestamp As DateTime) As Double
-      Return 0
+      Return 0 ' Return zero for every request.
     End Function
 
   End Class

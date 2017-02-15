@@ -35,6 +35,10 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private PredictionsSubtractPoint As DBMPoint
 
     Public Sub New(PointDriver As DBMPointDriver)
+      ' Each DBMPoint has a DBMDataManager which is responsible for retrieving
+      ' and caching input data. The Data Manager stores and uses a
+      ' DBMPointDriver object, which has a GetData method used for retrieving
+      ' data.
       DataManager = New DBMDataManager(PointDriver)
     End Sub
 

@@ -30,6 +30,7 @@ Imports System.Text.RegularExpressions
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMTests
 
+' Assembly title
 <assembly:System.Reflection.AssemblyTitle("DBM")>
 
 Namespace Vitens.DynamicBandwidthMonitor

@@ -58,7 +58,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             Value = PointDriver.GetData _
               (Timestamp, Timestamp.AddSeconds(CalculationInterval))
           Catch
-            Value = NaN ' Error, return Not a Number
+            Value = NaN ' Error getting data, return Not a Number
           End Try
         End If
         Do While Values.Count >= MaxDataManagerValues ' Limit cache size

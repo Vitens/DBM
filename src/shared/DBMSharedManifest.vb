@@ -25,7 +25,7 @@ Option Strict
 ' This information is shared between all DBM binaries. A summary can be
 ' returned using the DBM.Version function.
 
-<assembly:System.Reflection.AssemblyVersion("1.8.1.*")>
+<assembly:System.Reflection.AssemblyVersion("1.8.1.*")> ' Major.Minor.Revision.*
 <assembly:System.Reflection.AssemblyProduct("Dynamic Bandwidth Monitor")>
 <assembly:System.Reflection.AssemblyDescription _
   ("Leak detection method implemented in a real-time data historian")>

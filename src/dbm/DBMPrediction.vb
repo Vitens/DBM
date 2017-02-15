@@ -35,10 +35,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Function ShallowCopy As DBMPrediction
       ' The MemberwiseClone method creates a shallow copy by creating a new
       ' object, and then copying the nonstatic fields of the current object to
-      ' the new object. If a field is a value type, a bit-by-bit copy of the
-      ' field is performed. If a field is a reference type, the reference is
-      ' copied but the referred object is not; therefore, the original object
-      ' and its clone refer to the same object.
+      ' the new object.
       Return DirectCast(Me.MemberwiseClone, DBMPrediction)
     End Function
 
@@ -46,6 +43,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       Optional PredictedValue As Double = 0, _
       Optional LowerControlLimit As Double = 0, _
       Optional UpperControlLimit As Double = 0)
+      ' DBMResult objects can directly store results into a DBMPrediction
+      ' object. This is the result of an EMA on predictions calculated using
+      ' the Calculate method called from a DBMPoint object.
       Me.MeasuredValue = MeasuredValue
       Me.PredictedValue = PredictedValue
       Me.LowerControlLimit = LowerControlLimit

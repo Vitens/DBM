@@ -24,6 +24,7 @@ Option Strict
 
 Imports OSIsoft.PI.ACE
 
+' Assembly title
 <assembly:System.Reflection.AssemblyTitle("DBMRt")>
 
 Namespace Vitens.DynamicBandwidthMonitor

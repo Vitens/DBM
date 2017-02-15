@@ -28,6 +28,7 @@ Imports System.Globalization.CultureInfo
 Imports System.Text.RegularExpressions
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
+' Assembly title
 <assembly:System.Reflection.AssemblyTitle("DBMTester")>
 
 Namespace Vitens.DynamicBandwidthMonitor
