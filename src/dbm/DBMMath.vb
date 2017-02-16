@@ -203,6 +203,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Array.Copy(Values, MedianValues, Values.Count)
       Array.Sort(MedianValues)
+
       If MedianValues.Length Mod 2 = 0 Then
         Return (MedianValues(MedianValues.Length\2)+ _
           MedianValues(MedianValues.Length\2-1))/2

@@ -1401,6 +1401,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
       Result = DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
       TestsRunning = False
+
       With Result
         Return Hash({Round(.Factor, 3), Round(.OriginalFactor, 3), _
           Round(.Prediction.MeasuredValue), _

@@ -101,6 +101,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           StreamReader.Close ' Close CSV
         End If
       End If
+
       If Values.ContainsKey(StartTimestamp) Then ' In cache
         Return Values.Item(StartTimestamp) ' Return value from cache
       Else
