@@ -1,6 +1,7 @@
 Option Explicit
 Option Strict
 
+
 ' DBM
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
@@ -22,6 +23,7 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+
 Imports System.Collections.Generic
 Imports System.Diagnostics
 Imports System.Environment
@@ -30,14 +32,19 @@ Imports System.Text.RegularExpressions
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMTests
 
+
 ' Assembly title
 <assembly:System.Reflection.AssemblyTitle("DBM")>
 
+
 Namespace Vitens.DynamicBandwidthMonitor
+
 
   Public Class DBM
 
+
     Public Points As New Dictionary(Of Object, DBMPoint)
+
 
     Public Shared Function Version _
       (Optional SkipTests As Boolean = False) As String
@@ -69,6 +76,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       End With
     End Function
 
+
     Private Function Point(PointDriver As DBMPointDriver) As DBMPoint
       ' Returns DBMPoint object from Points dictionary.
       ' If dictionary does not yet contain object, it is added first.
@@ -78,6 +86,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
       Return Points.Item(PointDriver.Point)
     End Function
+
 
     Public Shared Function Suppress(Factor As Double, _
       AbsErrCorr As Double, AbsErrAngle As Double, _
@@ -115,6 +124,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
       Return Factor
     End Function
+
 
     Public Function Result(InputPointDriver As DBMPointDriver, _
       CorrelationPoints As List(Of DBMCorrelationPoint), _
@@ -173,6 +183,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Return Result
     End Function
 
+
   End Class
+
 
 End Namespace

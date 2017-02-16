@@ -1,6 +1,7 @@
 Option Explicit
 Option Strict
 
+
 ' DBM
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
@@ -22,26 +23,33 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+
 Imports System.Collections.Generic
 Imports System.Double
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMTests
 
+
 Namespace Vitens.DynamicBandwidthMonitor
 
+
   Public Class DBMDataManager
+
 
     ' The DBMDataManager is responsible for retrieving and caching input data.
     ' It stores and uses a DBMPointDriver object, which has a GetData method
     ' used for retrieving data.
 
+
     Public PointDriver As DBMPointDriver
     Private Values As New Dictionary(Of DateTime, Double)
+
 
     Public Sub New(PointDriver As DBMPointDriver)
       Me.PointDriver = PointDriver
     End Sub
+
 
     Public Function Value(Timestamp As DateTime) As Double
       ' Value returns a specific value using the PointDriver object. Values are
@@ -74,6 +82,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Return Value
     End Function
 
+
   End Class
+
 
 End Namespace

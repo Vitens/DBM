@@ -1,6 +1,7 @@
 Option Explicit
 Option Strict
 
+
 ' DBM
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
@@ -22,17 +23,22 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+
 Imports System.Collections.Generic
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
+
 Namespace Vitens.DynamicBandwidthMonitor
 
+
   Public Class DBMPoint
+
 
     Public DataManager As DBMDataManager
     Private Predictions As New Dictionary(Of DateTime, DBMPrediction)
     Private PredictionsSubtractPoint As DBMPoint
+
 
     Public Sub New(PointDriver As DBMPointDriver)
       ' Each DBMPoint has a DBMDataManager which is responsible for retrieving
@@ -42,6 +48,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       DataManager = New DBMDataManager(PointDriver)
     End Sub
 
+
     Public Function Result(Timestamp As DateTime, IsInputDBMPoint As Boolean, _
       HasCorrelationDBMPoint As Boolean, _
       Optional SubtractPoint As DBMPoint = Nothing) As DBMResult
@@ -49,8 +56,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' this point. Also calculates and stores (historic) prediction errors for
       ' correlation analysis later on. Prediction results are cached and then
       ' reused when possible. This is important because, due to the use of a
-      ' moving average, previously calculated result will often need to be
-      ' included in following calculations.
+      ' moving average, previously calculated results will often need to be
+      ' included in later calculations.
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
       Dim PredictionTimestamp, PatternTimestamp As DateTime
       Dim Prediction As New DBMPrediction
@@ -71,7 +78,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           For EMACounter = 0 To EMAPreviousPeriods ' For filtering HF variation.
             PredictionTimestamp = Timestamp.AddSeconds _
               (-(EMAPreviousPeriods-EMACounter+CorrelationCounter)* _
-              CalculationInterval)
+              CalculationInterval) ' Timestamp for prediction results
             If Predictions.ContainsKey(PredictionTimestamp) Then ' From cache
               Prediction = Predictions.Item(PredictionTimestamp).ShallowCopy
             Else ' Calculate prediction data
@@ -112,6 +119,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Return Result
     End Function
 
+
   End Class
+
 
 End Namespace

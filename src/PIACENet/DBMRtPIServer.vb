@@ -1,6 +1,7 @@
 ﻿Option Explicit
 Option Strict
 
+
 ' DBM
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
@@ -22,16 +23,21 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+
 Imports PISDK
 Imports System.Collections.Generic
 Imports System.Text.RegularExpressions
 
+
 Namespace Vitens.DynamicBandwidthMonitor
+
 
   Public Class DBMRtPIServer
 
+
     Private PIServer As Server
     Private PIPoints As New List(Of DBMRtPIPoint)
+
 
     Public Sub New(PIServer As Server)
       Dim InstrTag, Substrings(), Server, Point As String
@@ -65,6 +71,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       End Try
     End Sub
 
+
     Public Sub Calculate
       ' Perform calculation for each PI point.
       For Each PIPoint In PIPoints
@@ -75,6 +82,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Next
     End Sub
 
+
   End Class
+
 
 End Namespace

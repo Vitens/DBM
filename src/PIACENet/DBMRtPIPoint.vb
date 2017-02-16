@@ -1,6 +1,7 @@
 ﻿Option Explicit
 Option Strict
 
+
 ' DBM
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
@@ -22,6 +23,7 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+
 Imports PISDK
 Imports PITimeServer
 Imports System.Collections.Generic
@@ -29,12 +31,16 @@ Imports System.Math
 Imports System.Text.RegularExpressions
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
+
 Namespace Vitens.DynamicBandwidthMonitor
+
 
   Public Class DBMRtPIPoint
 
+
     Private InputPointDriver, OutputPointDriver As DBMPointDriver
     Private CorrelationPoints As New List(Of DBMCorrelationPoint)
+
 
     Public Sub New(InputPIPoint As PIPoint, OutputPIPoint As PIPoint)
       Dim ExDesc, SubstringsA(), SubstringsB(), Server, Point As String
@@ -72,29 +78,30 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
     End Sub
 
+
     Public Sub Calculate
       ' This method is called for each output PI tag on each PI server. It will
       ' first determine the latest possible timestamp that can be calculated and
       ' then performs the DBM calculation and stores the resulting factor in the
       ' output PI tag.
       Dim InputTimestamp, OutputTimestamp As PITime
-      ' Timestamp of input point
+      ' Timestamp of latest value in input point
       InputTimestamp = DirectCast _
         (InputPointDriver.Point, PIPoint).Data.Snapshot.TimeStamp
-      ' Check timestamp of correlation points
+      ' Check timestamp of latest value in correlation points
       For Each CorrelationPoint In CorrelationPoints
         ' Timestamp of correlation point, keep earliest
         InputTimestamp.UTCSeconds = Min(InputTimestamp.UTCSeconds, _
           DirectCast(CorrelationPoint.PointDriver.Point, PIPoint). _
           Data.Snapshot.TimeStamp.UTCSeconds)
       Next
-      ' Can calculate output until (inclusive)
+      ' Can calculate output until (inclusive); aligned on interval.
       InputTimestamp.UTCSeconds -= _
         CalculationInterval+InputTimestamp.UTCSeconds Mod CalculationInterval
       ' Timestamp of output point
       OutputTimestamp = _
         DirectCast(OutputPointDriver.Point, PIPoint).Data.Snapshot.TimeStamp
-      ' Next calculation timestamp
+      ' Next calculation timestamp; aligned on interval.
       OutputTimestamp.UTCSeconds += _
         CalculationInterval-OutputTimestamp.UTCSeconds Mod CalculationInterval
       ' If calculation timestamp can be calculated
@@ -106,6 +113,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
     End Sub
 
+
   End Class
+
 
 End Namespace

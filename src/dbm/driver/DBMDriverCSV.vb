@@ -1,6 +1,7 @@
 Option Explicit
 Option Strict
 
+
 ' DBM
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
@@ -22,23 +23,29 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+
 Imports System.Collections.Generic
 Imports System.Double
 Imports System.IO
 Imports System.Text.RegularExpressions
 Imports Vitens.DynamicBandwidthMonitor.DBMTests
 
+
 Namespace Vitens.DynamicBandwidthMonitor
 
+
   Public Class DBMPointDriver
+
 
     ' Description: Driver for CSV files (timestamp,value).
     ' Identifier (Point): String (CSV filename)
     ' Remarks: Data interval must be the same as the CalculationInterval
     '          parameter.
 
+
     Public Point As Object
     Private Values As Dictionary(Of DateTime, Double)
+
 
     Public Sub New(Point As Object)
       Me.Point = Point
@@ -51,6 +58,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Throw New FileNotFoundException(DirectCast(Me.Point, String))
       End If
     End Sub
+
 
     Public Function GetData(StartTimestamp As DateTime, _
       EndTimestamp As DateTime) As Double
@@ -93,6 +101,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
     End Function
 
+
   End Class
+
 
 End Namespace

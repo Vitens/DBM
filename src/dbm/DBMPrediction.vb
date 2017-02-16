@@ -1,6 +1,7 @@
 Option Explicit
 Option Strict
 
+
 ' DBM
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
@@ -22,15 +23,20 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
+
 Namespace Vitens.DynamicBandwidthMonitor
+
 
   Public Class DBMPrediction
 
+
     Public MeasuredValue, PredictedValue, LowerControlLimit, _
       UpperControlLimit As Double
+
 
     Public Function ShallowCopy As DBMPrediction
       ' The MemberwiseClone method creates a shallow copy by creating a new
@@ -38,6 +44,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' the new object.
       Return DirectCast(Me.MemberwiseClone, DBMPrediction)
     End Function
+
 
     Public Sub New(Optional MeasuredValue As Double = 0, _
       Optional PredictedValue As Double = 0, _
@@ -51,6 +58,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Me.LowerControlLimit = LowerControlLimit
       Me.UpperControlLimit = UpperControlLimit
     End Sub
+
 
     Public Sub Calculate(Values() As Double)
       ' Calculates and stores prediction and control limits by removing
@@ -81,6 +89,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       End With
     End Sub
 
+
   End Class
+
 
 End Namespace

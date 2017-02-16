@@ -1,6 +1,7 @@
 Option Explicit
 Option Strict
 
+
 ' DBM
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
@@ -22,21 +23,28 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
+
 
 Namespace Vitens.DynamicBandwidthMonitor
 
+
   Public Class DBMPointDriver
+
 
     ' Description: Model based on hourly water usage in Leeuwarden 2016.
     ' Identifier (Point): Object (unused)
     ' Remarks: Model based on measured data with added random noise.
 
+
     Public Point As Object
+
 
     Public Sub New(Point As Object)
       Me.Point = Point ' Required, but unused.
     End Sub
+
 
     Public Function GetData(StartTimestamp As DateTime, _
       EndTimestamp As DateTime) As Double
@@ -53,6 +61,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       End With
     End Function
 
+
   End Class
+
 
 End Namespace

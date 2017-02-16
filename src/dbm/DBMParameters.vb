@@ -1,6 +1,7 @@
 Option Explicit
 Option Strict
 
+
 ' DBM
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
@@ -22,16 +23,21 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+
 Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 
+
 Namespace Vitens.DynamicBandwidthMonitor
 
+
   Public Class DBMParameters
+
 
     ' This class contains default values for several parameters which DBM uses
     ' for its calculations. The values for these parameters can be changed
     ' at runtime.
+
 
     ' Time interval at which the calculation is run (seconds).
     ' Default: 5 minutes.
@@ -76,6 +82,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared MaxDataManagerValues As Integer = _
       MaxPointPredictions*(ComparePatterns+1)
 
+
   End Class
+
 
 End Namespace

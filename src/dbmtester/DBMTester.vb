@@ -1,6 +1,7 @@
 Option Explicit
 Option Strict
 
+
 ' DBM
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
@@ -22,23 +23,30 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+
 Imports System.Collections.Generic
 Imports System.Environment
 Imports System.Globalization.CultureInfo
 Imports System.Text.RegularExpressions
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
+
 ' Assembly title
 <assembly:System.Reflection.AssemblyTitle("DBMTester")>
 
+
 Namespace Vitens.DynamicBandwidthMonitor
 
+
   Public Class DBMTester
+
 
     ' DBMTester is a command line utility that can be used to quickly
     ' calculate DBM results using the CSV driver.
 
+
     Private Shared InternationalFormat As Boolean = False
+
 
     Private Shared Function FormatDateTime(Timestamp As DateTime) As String
       If InternationalFormat Then
@@ -48,6 +56,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
     End Function
 
+
     Private Shared Function Separator As String
       If InternationalFormat Then
         Return ","
@@ -56,6 +65,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
     End Function
 
+
     Private Shared Function FormatNumber(Value As Double) As String
       If InternationalFormat Then
         Return Value.ToString("0.####", InvariantCulture)
@@ -63,6 +73,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Return Value.ToString("0.####")
       End If
     End Function
+
 
     Public Shared Sub Main
       Dim Substrings(), Parameter, Value As String
@@ -188,6 +199,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
     End Sub
 
+
   End Class
+
 
 End Namespace

@@ -1,6 +1,7 @@
 Option Explicit
 Option Strict
 
+
 ' DBM
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
@@ -22,21 +23,27 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
+
 
 Namespace Vitens.DynamicBandwidthMonitor
 
+
   Public Class DBMResult
+
 
     ' DBMResult is the object passed by DBM.Result and contains the final results
     ' for the DBM calculation. It is also used for storing intermediate results of
     ' (correlation) calculation results from a DBMPoint object.
+
 
     Public Prediction As DBMPrediction
     Public Factor, OriginalFactor, AbsoluteErrors(), RelativeErrors(), _
       CorrelationAbsoluteErrors(), CorrelationRelativeErrors() As Double
     Public AbsoluteErrorStats, RelativeErrorStats As New DBMStatistics
     Public SuppressedBy As DBMPointDriver ' Can be set from DBM.Result
+
 
     Public Sub New
       ' Initialize array sizes. To be filled from back to front. When a
@@ -48,6 +55,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ReDim CorrelationAbsoluteErrors(CorrelationPreviousPeriods)
       ReDim CorrelationRelativeErrors(CorrelationPreviousPeriods)
     End Sub
+
 
     Public Sub Calculate(Index As Integer, MeasuredValueEMA As Double, _
       PredictedValueEMA As Double, LowerControlLimitEMA As Double, _
@@ -65,11 +73,11 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Store EMA results in new DBMPrediction object
         Prediction = New DBMPrediction(MeasuredValueEMA, PredictedValueEMA, _
           LowerControlLimitEMA, UpperControlLimitEMA)
-        ' Lower control limit exceeded
+        ' Lower control limit exceeded, calculate factor
         If MeasuredValueEMA < LowerControlLimitEMA Then
           Factor = (PredictedValueEMA-MeasuredValueEMA)/ _
             (LowerControlLimitEMA-PredictedValueEMA)
-        ' Upper control limit exceeded
+        ' Upper control limit exceeded, calculate factor
         ElseIf MeasuredValueEMA > UpperControlLimitEMA Then
           Factor = (MeasuredValueEMA-PredictedValueEMA)/ _
             (UpperControlLimitEMA-PredictedValueEMA)
@@ -79,6 +87,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
     End Sub
 
+
   End Class
+
 
 End Namespace

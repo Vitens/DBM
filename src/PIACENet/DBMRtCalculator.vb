@@ -1,6 +1,7 @@
 ﻿Option Explicit
 Option Strict
 
+
 ' DBM
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
@@ -22,21 +23,27 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+
 Imports System.Collections.Generic
+
 
 Namespace Vitens.DynamicBandwidthMonitor
 
+
   Public Class DBMRtCalculator
+
 
     Public Shared PISDK As New PISDK.PISDK
     Public Shared DBM As New DBM
     Private PIServers As New List(Of DBMRtPIServer)
+
 
     Public Sub New
       ' Add default PI server when instantiating new calculator object.
       PIServers.Add(New DBMRtPIServer(PISDK.Servers.DefaultServer))
       ' (More PI servers could be added to the list here if required)
     End Sub
+
 
     Public Sub Calculate
       ' Perform calculation for each PI server.
@@ -45,6 +52,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Next
     End Sub
 
+
   End Class
+
 
 End Namespace

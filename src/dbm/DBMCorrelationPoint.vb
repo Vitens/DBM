@@ -1,6 +1,7 @@
 ﻿Option Explicit
 Option Strict
 
+
 ' DBM
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
@@ -22,23 +23,30 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+
 Namespace Vitens.DynamicBandwidthMonitor
 
+
   Public Class DBMCorrelationPoint
+
 
     ' Contains a DBMPointDriver object and a boolean SubtractSelf which can be
     ' set to true when the input tag has to be subtracted from the correlation
     ' tag, for example when the correlation tag contains the input tag. Set to
     ' false for adjacent areas.
 
+
     Public PointDriver As DBMPointDriver
     Public SubtractSelf As Boolean ' True if input needs to be subtracted
+
 
     Public Sub New(PointDriver As DBMPointDriver, SubtractSelf As Boolean)
       Me.PointDriver = PointDriver
       Me.SubtractSelf = SubtractSelf
     End Sub
 
+
   End Class
+
 
 End Namespace

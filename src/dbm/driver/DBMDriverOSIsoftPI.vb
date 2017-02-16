@@ -1,6 +1,7 @@
 Option Explicit
 Option Strict
 
+
 ' DBM
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
@@ -22,23 +23,30 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+
 Imports PISDK
 Imports PISDK.ArchiveSummaryTypeConstants
 Imports PISDK.CalculationBasisConstants
 
+
 Namespace Vitens.DynamicBandwidthMonitor
 
+
   Public Class DBMPointDriver
+
 
     ' Description: Driver for OSIsoft PI.
     ' Identifier (Point): PISDK.PIPoint (PI tag)
     ' Remarks: Used by PI ACE module DBMRt.
 
+
     Public Point As Object
+
 
     Public Sub New(Point As Object)
       Me.Point = Point
     End Sub
+
 
     Public Function GetData(StartTimestamp As DateTime, _
       EndTimestamp As DateTime) As Double
@@ -47,6 +55,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         Double) ' Return time-weighted average for time range from PI.
     End Function
 
+
   End Class
+
 
 End Namespace

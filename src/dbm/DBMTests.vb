@@ -1,6 +1,7 @@
 Option Explicit
 Option Strict
 
+
 ' DBM
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
@@ -22,6 +23,7 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+
 Imports System.Collections.Generic
 Imports System.DateTime
 Imports System.Double
@@ -30,13 +32,17 @@ Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBM
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 
+
 Namespace Vitens.DynamicBandwidthMonitor
 
+
   Public Class DBMTests
+
 
     ' This class contains unit and integration tests. For integration tests, an
     ' internal data array is used by DBMDataManager instead of data from a
     ' DBMPointDriver object. This is done only when TestsRunning is True.
+
 
     Private Shared DBM As New DBM
     Public Shared TestsRunning As Boolean = False
@@ -1351,6 +1357,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       596.774047851563, 573.284545898438}
     Public Shared TestDataIndex As Integer = 0
 
+
     Private Shared Function Hash(Values() As Double, _
       Optional Digits As Integer = 15) As Double
       ' Simple hash function for checking array contents.
@@ -1362,6 +1369,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Next
       Return Hash
     End Function
+
 
     Private Shared Function TestCase(InputPoint As String,
       CorrelationPoint As String, Timestamp As DateTime, _
@@ -1422,6 +1430,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           CorrelationPointDriver Is .SuppressedBy))
       End With
     End Function
+
 
     Private Shared Function UnitTestResults As Boolean
       ' Unit tests, returns True if all tests pass.
@@ -2004,6 +2013,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Return UnitTestResults
     End Function
 
+
     Private Shared Function IntegrationTestResults As Boolean
       ' Integration tests, returns True if all tests pass.
       Dim i As Integer
@@ -2534,6 +2544,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Return IntegrationTestResults
     End Function
 
+
     Public Shared Function TestResults As String
       ' Returns a string containing test results (PASSED or FAILED) and
       ' execution time for unit and integration tests.
@@ -2549,6 +2560,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Return TestResults
     End Function
 
+
   End Class
+
 
 End Namespace

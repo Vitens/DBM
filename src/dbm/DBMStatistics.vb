@@ -1,6 +1,7 @@
 Option Explicit
 Option Strict
 
+
 ' DBM
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
@@ -22,21 +23,27 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+
 Imports System.Double
 Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 
+
 Namespace Vitens.DynamicBandwidthMonitor
 
+
   Public Class DBMStatistics
+
 
     ' Contains statistical functions which are calculated all at once on
     ' calling the Calculate method. Results can be retrieved from a
     ' DBMStatistics object through their public variables.
 
+
     Public Count As Integer
     Public Slope, OriginSlope, Angle, OriginAngle, Intercept, StandardError, _
       Correlation, ModifiedCorrelation, Determination As Double
+
 
     Public Function ShallowCopy As DBMStatistics
       ' The MemberwiseClone method creates a shallow copy by creating a new
@@ -44,6 +51,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' the new object.
       Return DirectCast(Me.MemberwiseClone, DBMStatistics)
     End Function
+
 
     Public Sub Calculate(ValuesY() As Double, _
       Optional ValuesX() As Double = Nothing)
@@ -100,6 +108,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Determination = Correlation^2
     End Sub
 
+
   End Class
+
 
 End Namespace

@@ -1,6 +1,7 @@
 ﻿Option Explicit
 Option Strict
 
+
 ' DBM
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
@@ -22,14 +23,19 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+
 Imports OSIsoft.PI.ACE
+
 
 ' Assembly title
 <assembly:System.Reflection.AssemblyTitle("DBMRt")>
 
+
 Namespace Vitens.DynamicBandwidthMonitor
 
+
   Public Class DBMRt
+
 
     ' DBMRt is a real-time calculation module for OSIsoft PI ACE (Advanced
     ' Computing Engine). It is non-standard in that it does not use the
@@ -38,9 +44,12 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' that there is no support for manual or automatic recalculation.
     ' Suggested scheduling: type: clock; period: 60 seconds.
 
+
     Inherits PIACENetClassModule ' PI ACE specific
 
+
     Private Calculator As DBMRtCalculator
+
 
     Public Overrides Sub ACECalculations
       ' This method is called by ACE Scheduler to execute calculations.
@@ -50,10 +59,12 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
     End Sub
 
+
     Protected Overrides Sub InitializePIACEPoints
       ' Initializes all PIACEPoint objects.
       ' Unused, but must be overridden.
     End Sub
+
 
     Protected Overrides Sub ModuleDependentInitialization
       ' Any custom initialization code can be implemented here. Any variable
@@ -63,6 +74,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Calculator = New DBMRtCalculator
     End Sub
 
+
     Protected Overrides Sub ModuleDependentTermination
       ' Contains code to dispose any user-defined objects.
       ' On module termination, mark the calculator object for
@@ -70,6 +82,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Calculator = Nothing
     End Sub
 
+
   End Class
+
 
 End Namespace

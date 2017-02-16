@@ -1,6 +1,7 @@
 Option Explicit
 Option Strict
 
+
 ' DBM
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
@@ -22,17 +23,23 @@ Option Strict
 ' You should have received a copy of the GNU General Public License
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
+
 Imports System.Double
 Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
+
 Namespace Vitens.DynamicBandwidthMonitor
+
 
   Public Class DBMMath
 
+
     ' Contains mathematical and statistical functions.
 
+
     Private Shared Random As New Random
+
 
     Public Shared Function NormSInv(p As Double) As Double
       ' Returns the inverse of the standard normal cumulative distribution.
@@ -68,6 +75,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
     End Function
 
+
     Public Shared Function TInv2T(p As Double, dof As Integer) As Double
       ' Returns the two-tailed inverse of the Student's t-distribution.
       ' Hill's approx. inverse t-dist.: Comm. of A.C.M Vol.13 No.10 1970 pg 620
@@ -102,10 +110,12 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
     End Function
 
+
     Public Shared Function TInv(p As Double, dof As Integer) As Double
       ' Returns the left-tailed inverse of the Student's t-distribution.
       Return Sign(p-0.5)*TInv2T(1-Abs(p-0.5)*2, dof)
     End Function
+
 
     Public Shared Function MeanAbsoluteDeviationScaleFactor As Double
       ' Estimator; scale factor k
@@ -115,6 +125,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       '  as a Test of Normality. Biometrika, 1935. Cited on page 8.
       Return Sqrt(PI/2)
     End Function
+
 
     Public Shared Function MedianAbsoluteDeviationScaleFactor _
       (n As Integer) As Double ' Estimator; scale factor k
@@ -128,6 +139,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Return 1/NormSInv(0.75) ' n>=30 Standard normal distribution
       End If
     End Function
+
 
     Public Shared Function ControlLimitRejectionCriterion(p As Double, _
       n As Integer) As Double
@@ -144,6 +156,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
     End Function
 
+
     Public Shared Function Mean(Values() As Double) As Double
       ' Returns the arithmetic mean; the sum of the sampled values divided
       ' by the number of items in the sample.
@@ -153,6 +166,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Next
       Return Mean
     End Function
+
 
     Public Shared Function Median(Values() As Double) As Double
       ' The median is the value separating the higher half of a data sample,
@@ -169,6 +183,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
     End Function
 
+
     Public Shared Function AbsoluteDeviation(Values() As Double, _
       From As Double) As Double()
       ' Returns an array which contains the absolute values of the input
@@ -180,17 +195,20 @@ Namespace Vitens.DynamicBandwidthMonitor
       Return AbsDev
     End Function
 
+
     Public Shared Function MeanAbsoluteDeviation(Values() As Double) As Double
       ' The mean absolute deviation (MAD) of a set of data
       ' is the average distance between each data value and the mean.
       Return Mean(AbsoluteDeviation(Values, Mean(Values)))
     End Function
 
+
     Public Shared Function MedianAbsoluteDeviation(Values() As Double) As Double
       ' The median absolute deviation (MAD) is a robust measure of the
       ' variability of a univariate sample of quantitative data.
       Return Median(AbsoluteDeviation(Values, Median(Values)))
     End Function
+
 
     Public Shared Function RemoveOutliers(Values() As Double) As Double()
       ' Returns an array which contains the input data from which outliers
@@ -223,6 +241,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Return Values
     End Function
 
+
     Public Shared Function ExponentialMovingAverage _
       (Values() As Double) As Double
       ' Filter high frequency variation
@@ -242,10 +261,12 @@ Namespace Vitens.DynamicBandwidthMonitor
       Return ExponentialMovingAverage
     End Function
 
+
     Public Shared Function SlopeToAngle(Slope As Double) As Double
       ' Returns angle in degrees for Slope.
       Return Atan(Slope)/(2*PI)*360
     End Function
+
 
     Public Shared Function RandomNumber(Min As Integer, _
       Max As Integer) As Integer
@@ -253,6 +274,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Return Random.Next(Min, Max+1)
     End Function
 
+
   End Class
+
 
 End Namespace
