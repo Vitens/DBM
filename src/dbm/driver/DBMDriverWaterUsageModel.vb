@@ -35,7 +35,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Point As Object
 
     Public Sub New(Point As Object)
-      Me.Point = Point
+      Me.Point = Point ' Required, but unused.
     End Sub
 
     Public Function GetData(StartTimestamp As DateTime, _

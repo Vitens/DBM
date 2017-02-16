@@ -73,6 +73,10 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
     Public Sub Calculate
+      ' This method is called for each output PI tag on each PI server. It will
+      ' first determine the latest possible timestamp that can be calculated and
+      ' then performs the DBM calculation and stores the resulting factor in the
+      ' output PI tag.
       Dim InputTimestamp, OutputTimestamp As PITime
       ' Timestamp of input point
       InputTimestamp = DirectCast _

@@ -172,7 +172,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function AbsoluteDeviation(Values() As Double, _
       From As Double) As Double()
       ' Returns an array which contains the absolute values of the input
-      ' array from which From has been subtracted.
+      ' array from which the central tendency has been subtracted.
       Dim AbsDev(Values.Count-1) As Double
       For i = 0 to Values.Length-1
         AbsDev(i) = Abs(Values(i)-From)
@@ -216,8 +216,8 @@ Namespace Vitens.DynamicBandwidthMonitor
           Values.Length-1)
       End If
       For i = 0 to Values.Length-1
-        If Abs(Values(i)-CentralTendency) > ControlLimit Then
-          Values(i) = NaN ' Exclude outlier
+        If Abs(Values(i)-CentralTendency) > ControlLimit Then ' Limit exceeded?
+          Values(i) = NaN ' Exclude outlier by setting to NaN.
         End If
       Next i
       Return Values

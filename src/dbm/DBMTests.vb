@@ -1375,7 +1375,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim InputPointDriver, CorrelationPointDriver As DBMPointDriver
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim Result As DBMResult
-      TestsRunning = True
+      TestsRunning = True ' Make DBMDataManager use internal array for data.
       InputPointDriver = New DBMPointDriver(InputPoint)
       If CorrelationPoint IsNot Nothing Then
         CorrelationPointDriver = New DBMPointDriver(CorrelationPoint)

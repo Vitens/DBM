@@ -36,10 +36,13 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Factor, OriginalFactor, AbsoluteErrors(), RelativeErrors(), _
       CorrelationAbsoluteErrors(), CorrelationRelativeErrors() As Double
     Public AbsoluteErrorStats, RelativeErrorStats As New DBMStatistics
-    Public SuppressedBy As DBMPointDriver
+    Public SuppressedBy As DBMPointDriver ' Can be set from DBM.Result
 
     Public Sub New
-      ' Initialize array sizes. To be filled from back to front.
+      ' Initialize array sizes. To be filled from back to front. When a
+      ' correlation calculation is not required (no exception detected or
+      ' no correlation points specified) only the last item in the arrays
+      ' contains a value.
       ReDim AbsoluteErrors(CorrelationPreviousPeriods)
       ReDim RelativeErrors(CorrelationPreviousPeriods)
       ReDim CorrelationAbsoluteErrors(CorrelationPreviousPeriods)

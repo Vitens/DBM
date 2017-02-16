@@ -51,14 +51,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       If Values.ContainsKey(Timestamp) Then ' In cache
         Value = Values.Item(Timestamp) ' Return value from cache
       Else
-        ' Do not use point driver when running tests
+        ' Do not use point driver when running integration tests
         If TestsRunning Then
           ' Return item from internal test data array in DBMTests
           Value = TestData(TestDataIndex)
           TestDataIndex = (TestDataIndex+1) Mod TestData.Length ' Increase index
         Else
           Try
-            ' Get data using driver
+            ' Get data using GetData method in driver.
             Value = PointDriver.GetData _
               (Timestamp, Timestamp.AddSeconds(CalculationInterval))
           Catch

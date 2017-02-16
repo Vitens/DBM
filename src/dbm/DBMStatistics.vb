@@ -30,9 +30,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
   Public Class DBMStatistics
 
-    ' Contains statistical functions. After calling the Calculate method,
-    ' results can be retrieved from a DBMStatistics object through their
-    ' public variables.
+    ' Contains statistical functions which are calculated all at once on
+    ' calling the Calculate method. Results can be retrieved from a
+    ' DBMStatistics object through their public variables.
 
     Public Count As Integer
     Public Slope, OriginSlope, Angle, OriginAngle, Intercept, StandardError, _
@@ -70,8 +70,8 @@ Namespace Vitens.DynamicBandwidthMonitor
           Count += 1
         End If
       Next i
-      Slope = (Count*SumXY-SumX*SumY)/(Count*SumXX-SumX^2) ' Regression
-      OriginSlope = SumXY/SumXX ' Regression through the origin
+      Slope = (Count*SumXY-SumX*SumY)/(Count*SumXX-SumX^2) ' Linear regression
+      OriginSlope = SumXY/SumXX ' Linear regression through the origin (alpha=0)
       Angle = SlopeToAngle(Slope) ' Angle in degrees
       OriginAngle = SlopeToAngle(OriginSlope) ' Angle in degrees
       Intercept = (SumX*SumXY-SumY*SumXX)/(SumX^2-Count*SumXX)

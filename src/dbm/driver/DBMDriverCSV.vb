@@ -67,7 +67,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         If File.Exists(DirectCast(Point, String)) Then
           StreamReader = New StreamReader(DirectCast(Point, String)) ' Open CSV
           Do While Not StreamReader.EndOfStream
-            ' Comma and tab delimiters; split in 2 substrings
+            ' Comma and tab delimiters; split in 2 substrings (timestamp, value)
             Substrings = Regex.Split _
               (StreamReader.ReadLine, "^([^,\t]+)[,\t](.+)$")
             ' If a match is found at the beginning or the end of the input
@@ -77,7 +77,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               If DateTime.TryParse(Substrings(1), Timestamp) Then
                 If Double.TryParse(Substrings(2), Value) Then
                   If Not Values.ContainsKey(Timestamp) Then
-                    Values.Add(Timestamp, Value)
+                    Values.Add(Timestamp, Value) ' Add valid data to dictionary
                   End If
                 End If
               End If
@@ -89,7 +89,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       If Values.ContainsKey(StartTimestamp) Then ' In cache
         Return Values.Item(StartTimestamp) ' Return value from cache
       Else
-        Return NaN ' No data, return Not a Number
+        Return NaN ' No data in memory for timestamp, return Not a Number.
       End If
     End Function
 

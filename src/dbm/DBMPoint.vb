@@ -74,7 +74,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               CalculationInterval)
             If Predictions.ContainsKey(PredictionTimestamp) Then ' From cache
               Prediction = Predictions.Item(PredictionTimestamp).ShallowCopy
-            Else ' Calculate data
+            Else ' Calculate prediction data
               For PatternCounter = 0 To ComparePatterns ' Data for regression.
                 PatternTimestamp = PredictionTimestamp. _
                   AddDays(-(ComparePatterns-PatternCounter)*7)

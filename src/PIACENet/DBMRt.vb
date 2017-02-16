@@ -44,7 +44,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Overrides Sub ACECalculations
       ' This method is called by ACE Scheduler to execute calculations.
-      ' If module and DBMRtCalculator are initialized.
+      ' Start calculation only if module and DBMRtCalculator are initialized.
       If Calculator IsNot Nothing Then
         Calculator.Calculate
       End If

@@ -136,18 +136,18 @@ Namespace Vitens.DynamicBandwidthMonitor
         For Each CorrelationPoint In CorrelationPoints
           ' If pattern of correlation point contains input point
           If CorrelationPoint.SubtractSelf Then
-            ' Calculate for correlation point, subtract input point
+            ' Calculate result for correlation point, subtract input point
             CorrelationResult = Point(CorrelationPoint.PointDriver).Result _
               (Timestamp, False, True, Point(InputPointDriver))
           Else
-            ' Calculate for correlation point
+            ' Calculate result for correlation point
             CorrelationResult = Point(CorrelationPoint.PointDriver).Result _
               (Timestamp, False, True)
           End If
-          ' Absolute error compared to prediction
+          ' Calculate statistics of absolute error compared to prediction
           AbsoluteErrorStats.Calculate _
             (CorrelationResult.AbsoluteErrors, Result.AbsoluteErrors)
-          ' Relative error compared to prediction
+          ' Calculate statistics of relative error compared to prediction
           RelativeErrorStats.Calculate _
             (CorrelationResult.RelativeErrors, Result.RelativeErrors)
           Factor = Suppress(Result.Factor, _
@@ -157,7 +157,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             RelativeErrorStats.OriginAngle, _
             CorrelationPoint.SubtractSelf) ' Suppress if not a local event.
           If Factor <> Result.Factor Then ' Has event been suppressed
-            Result.Factor = Factor
+            Result.Factor = Factor ' Store correlation coefficient
             With CorrelationResult ' Store prediction errors for corr. point
               Array.Copy(.AbsoluteErrors, Result.CorrelationAbsoluteErrors, _
                 .AbsoluteErrors.Count)
