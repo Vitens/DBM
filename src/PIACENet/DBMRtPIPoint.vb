@@ -43,8 +43,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Sub New(InputPIPoint As PIPoint, OutputPIPoint As PIPoint)
+
       Dim ExDesc, SubstringsA(), SubstringsB(), Server, Point As String
       Dim SubtractSelf As Boolean
+
       ' Set input and output DBMPointDriver objects.
       InputPointDriver = New DBMPointDriver(InputPIPoint)
       OutputPointDriver = New DBMPointDriver(OutputPIPoint)
@@ -76,15 +78,19 @@ Namespace Vitens.DynamicBandwidthMonitor
           End Try
         Next
       End If
+
     End Sub
 
 
     Public Sub Calculate
+
       ' This method is called for each output PI tag on each PI server. It will
       ' first determine the latest possible timestamp that can be calculated and
       ' then performs the DBM calculation and stores the resulting factor in the
       ' output PI tag.
+
       Dim InputTimestamp, OutputTimestamp As PITime
+
       ' Timestamp of latest value in input point
       InputTimestamp = DirectCast _
         (InputPointDriver.Point, PIPoint).Data.Snapshot.TimeStamp
@@ -111,6 +117,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           (DBMRtCalculator.DBM.Result(InputPointDriver, CorrelationPoints, _
           InputTimestamp.LocalDate).Factor, InputTimestamp.LocalDate)
       End If
+
     End Sub
 
 

@@ -48,28 +48,35 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Sub New(Point As Object)
+
       Me.Point = Point
+
       ' If Object passed does not represent a valid, existing file then thrown a
       ' File Not Found Exception, unless integration tests are running (in which
       ' case the internal test data array in DBMTests is used by
       ' DBMDataManager).
+
       If Not File.Exists(DirectCast(Me.Point, String)) And _
         Not TestsRunning Then
         Throw New FileNotFoundException(DirectCast(Me.Point, String))
       End If
+
     End Sub
 
 
     Public Function GetData(StartTimestamp As DateTime, _
       EndTimestamp As DateTime) As Double
+
       ' Calling GetData for the first time retrieves information from a CSV
       ' file and stores this in the Values dictionary. Subsequent calls to
       ' GetData retrieves data from the dictionary directly. Non existing
       ' timestamps return NaN.
+
       Dim StreamReader As StreamReader
       Dim Substrings() As String
       Dim Timestamp As DateTime
       Dim Value As Double
+
       If Values Is Nothing Then ' No data in memory yet
         Values = New Dictionary(Of DateTime, Double)
         If File.Exists(DirectCast(Point, String)) Then
@@ -99,6 +106,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Else
         Return NaN ' No data in memory for timestamp, return Not a Number.
       End If
+
     End Function
 
 

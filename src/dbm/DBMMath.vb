@@ -42,10 +42,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Shared Function NormSInv(p As Double) As Double
+
       ' Returns the inverse of the standard normal cumulative distribution.
       ' The distribution has a mean of zero and a standard deviation of one.
       ' Approximation of inverse standard normal CDF developed by
       ' Peter J. Acklam
+
       Const a1 = -39.6968302866538, a2 = 220.946098424521
       Const a3 = -275.928510446969, a4 = 138.357751867269
       Const a5 = -30.6647980661472, a6 = 2.50662827745924
@@ -58,7 +60,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       Const d1 = 7.78469570904146E-03, d2 = 0.32246712907004
       Const d3 = 2.445134137143, d4 = 3.75440866190742
       Const p_low = 0.02425, p_high = 1-p_low
+
       Dim q, r As Double
+
       If p < p_low Then
         q = Sqrt(-2*Log(p))
         Return (((((c1*q+c2)*q+c3)*q+c4)*q+c5)*q+c6)/ _
@@ -73,13 +77,17 @@ Namespace Vitens.DynamicBandwidthMonitor
         Return -(((((c1*q+c2)*q+c3)*q+c4)*q+c5)*q+c6)/ _
           ((((d1*q+d2)*q+d3)*q+d4)*q+1)
       End If
+
     End Function
 
 
     Public Shared Function TInv2T(p As Double, dof As Integer) As Double
+
       ' Returns the two-tailed inverse of the Student's t-distribution.
       ' Hill's approx. inverse t-dist.: Comm. of A.C.M Vol.13 No.10 1970 pg 620
+
       Dim a, b, c, d, x, y As Double
+
       If dof = 1 Then
         p *= PI/2
         Return Cos(p)/Sin(p)
@@ -108,71 +116,91 @@ Namespace Vitens.DynamicBandwidthMonitor
         End If
         Return Sqrt(dof*y)
       End If
+
     End Function
 
 
     Public Shared Function TInv(p As Double, dof As Integer) As Double
+
       ' Returns the left-tailed inverse of the Student's t-distribution.
+
       Return Sign(p-0.5)*TInv2T(1-Abs(p-0.5)*2, dof)
+
     End Function
 
 
     Public Shared Function MeanAbsoluteDeviationScaleFactor As Double
+
       ' Estimator; scale factor k
       ' For normally distributed data, multiply MAD by scale factor k to
       ' obtain an estimate of the normal scale parameter sigma.
       ' R.C. Geary. The Ratio of the Mean Deviation to the Standard Deviation
       '  as a Test of Normality. Biometrika, 1935. Cited on page 8.
+
       Return Sqrt(PI/2)
+
     End Function
 
 
     Public Shared Function MedianAbsoluteDeviationScaleFactor _
       (n As Integer) As Double ' Estimator; scale factor k
+
       ' k is a constant scale factor, which depends on the distribution.
       ' For a symmetric distribution with zero mean, the population MAD is the
       ' 75th percentile of the distribution.
       ' Huber, P. J. (1981). Robust statistics. New York: John Wiley.
+
       If n < 30 Then
         Return 1/TInv(0.75, n) ' n<30 Student's t-distribution
       Else
         Return 1/NormSInv(0.75) ' n>=30 Standard normal distribution
       End If
+
     End Function
 
 
     Public Shared Function ControlLimitRejectionCriterion(p As Double, _
       n As Integer) As Double
+
       ' Return two-sided critical z-values for confidence interval p.
       ' Student's t-distribution approaches the normal z distribution at
       ' 30 samples.
       ' Student. 1908. Probable error of a correlation
       '  coefficient. Biometrika 6, 2-3, 302–310.
       ' Hogg and Tanis' Probability and Statistical Inference (7e).
+
       If n < 30 Then
         Return TInv((p+1)/2, n) ' n<30 Student's t-distribution
       Else
         Return NormSInv((p+1)/2) ' n>=30 Standard normal distribution
       End If
+
     End Function
 
 
     Public Shared Function Mean(Values() As Double) As Double
+
       ' Returns the arithmetic mean; the sum of the sampled values divided
       ' by the number of items in the sample.
+
       Mean = 0
       For Each Value In Values
         Mean += Value/Values.Length
       Next
+
       Return Mean
+
     End Function
 
 
     Public Shared Function Median(Values() As Double) As Double
+
       ' The median is the value separating the higher half of a data sample,
       ' a population, or a probability distribution, from the lower half. In
       ' simple terms, it may be thought of as the "middle" value of a data set.
+
       Dim MedianValues(Values.Count-1) As Double
+
       Array.Copy(Values, MedianValues, Values.Count)
       Array.Sort(MedianValues)
       If MedianValues.Length Mod 2 = 0 Then
@@ -181,41 +209,56 @@ Namespace Vitens.DynamicBandwidthMonitor
       Else
         Return MedianValues(MedianValues.Length\2)
       End If
+
     End Function
 
 
     Public Shared Function AbsoluteDeviation(Values() As Double, _
       From As Double) As Double()
+
       ' Returns an array which contains the absolute values of the input
       ' array from which the central tendency has been subtracted.
+
       Dim AbsDev(Values.Count-1) As Double
+
       For i = 0 to Values.Length-1
         AbsDev(i) = Abs(Values(i)-From)
       Next i
+
       Return AbsDev
+
     End Function
 
 
     Public Shared Function MeanAbsoluteDeviation(Values() As Double) As Double
+
       ' The mean absolute deviation (MAD) of a set of data
       ' is the average distance between each data value and the mean.
+
       Return Mean(AbsoluteDeviation(Values, Mean(Values)))
+
     End Function
 
 
     Public Shared Function MedianAbsoluteDeviation(Values() As Double) As Double
+
       ' The median absolute deviation (MAD) is a robust measure of the
       ' variability of a univariate sample of quantitative data.
+
       Return Median(AbsoluteDeviation(Values, Median(Values)))
+
     End Function
 
 
     Public Shared Function RemoveOutliers(Values() As Double) As Double()
+
       ' Returns an array which contains the input data from which outliers
       ' are removed (NaN) using either the mean or median absolute deviation
       ' function.
+
       Dim CentralTendency, MAD, ControlLimit As Double
       Dim i As Integer
+
       CentralTendency = Median(Values)
       MAD = MedianAbsoluteDeviation(Values)
       If MAD = 0 Then
@@ -238,17 +281,22 @@ Namespace Vitens.DynamicBandwidthMonitor
           Values(i) = NaN ' Exclude outlier by setting to NaN.
         End If
       Next i
+
       Return Values
+
     End Function
 
 
     Public Shared Function ExponentialMovingAverage _
       (Values() As Double) As Double
+
       ' Filter high frequency variation
       ' An exponential moving average (EMA), is a type of infinite impulse
       ' response filter that applies weighting factors which decrease
       ' exponentially.
+
       Dim Weight, TotalWeight As Double
+
       ExponentialMovingAverage = 0
       Weight = 1 ' Initial weight
       TotalWeight = 0
@@ -258,20 +306,28 @@ Namespace Vitens.DynamicBandwidthMonitor
         Weight /= 1-2/(Values.Length+1) ' Increase weight for more recent values
       Next
       ExponentialMovingAverage /= TotalWeight
+
       Return ExponentialMovingAverage
+
     End Function
 
 
     Public Shared Function SlopeToAngle(Slope As Double) As Double
+
       ' Returns angle in degrees for Slope.
+
       Return Atan(Slope)/(2*PI)*360
+
     End Function
 
 
     Public Shared Function RandomNumber(Min As Integer, _
       Max As Integer) As Integer
+
       ' Returns a random number between Min (inclusive) and Max (inclusive)
+
       Return Random.Next(Min, Max+1)
+
     End Function
 
 

@@ -48,8 +48,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function Version _
       (Optional SkipTests As Boolean = False) As String
+
       ' Returns a string containing version, copyright and license information.
       ' Also outputs results of unit and integration tests (unless skipped).
+
       With FileVersionInfo.GetVersionInfo(System.Reflection.Assembly. _
         GetExecutingAssembly.Location)
         Return .FileDescription & " " & _
@@ -74,17 +76,22 @@ Namespace Vitens.DynamicBandwidthMonitor
           "If not, see <http://www.gnu.org/licenses/>." & NewLine & _
           If(SkipTests, "", NewLine & TestResults)
       End With
+
     End Function
 
 
     Private Function Point(PointDriver As DBMPointDriver) As DBMPoint
+
       ' Returns DBMPoint object from Points dictionary.
       ' If dictionary does not yet contain object, it is added first.
+
       If Not Points.ContainsKey(PointDriver.Point) Then
         ' Add to dictionary
         Points.Add(PointDriver.Point, New DBMPoint(PointDriver))
       End If
+
       Return Points.Item(PointDriver.Point)
+
     End Function
 
 
@@ -92,12 +99,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       AbsErrCorr As Double, AbsErrAngle As Double, _
       RelErrCorr As Double, RelErrAngle As Double, _
       SubtractSelf As Boolean) As Double
+
       ' Events can be suppressed when a strong correlation is found in the
       ' relative prediction errors of a containing area, or if a strong
       ' anti-correlation is found in the absolute prediction errors of an
       ' adjacent area.
       ' If anticorrelation with adjacent measurement and
       ' (absolute) prediction errors are about the same size.
+
       If Not SubtractSelf And AbsErrCorr < -CorrelationThreshold And _
         Abs(AbsErrAngle+45) <= RegressionAngleRange Then
         ' If already suppressed due to anticorrelation
@@ -122,19 +131,24 @@ Namespace Vitens.DynamicBandwidthMonitor
           End If
         End If
       End If
+
       Return Factor
+
     End Function
 
 
     Public Function Result(InputPointDriver As DBMPointDriver, _
       CorrelationPoints As List(Of DBMCorrelationPoint), _
       Timestamp As DateTime) As DBMResult
+
       ' This is the main function to call to retrieve results for a specific
       ' timestamp. If a list of DBMCorrelationPoints is passed, events can be
       ' suppressed if a strong correlation is found.
+
       Dim CorrelationResult As DBMResult
       Dim AbsoluteErrorStats, RelativeErrorStats As New DBMStatistics
       Dim Factor As Double
+
       If CorrelationPoints Is Nothing Then ' Empty list if Nothing was passed.
         CorrelationPoints = New List(Of DBMCorrelationPoint)
       End If
@@ -180,7 +194,9 @@ Namespace Vitens.DynamicBandwidthMonitor
           End If
         Next
       End If
+
       Return Result
+
     End Function
 
 

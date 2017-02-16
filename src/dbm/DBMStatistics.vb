@@ -46,20 +46,26 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Function ShallowCopy As DBMStatistics
+
       ' The MemberwiseClone method creates a shallow copy by creating a new
       ' object, and then copying the nonstatic fields of the current object to
       ' the new object.
+
       Return DirectCast(Me.MemberwiseClone, DBMStatistics)
+
     End Function
 
 
     Public Sub Calculate(ValuesY() As Double, _
       Optional ValuesX() As Double = Nothing)
+
       ' Performs calculation of several statistics functions on the input
       ' data. If no values for X are passed, a linear scale starting at 0 is
       ' assumed.
+
       Dim i As Integer
       Dim SumX, SumY, SumXX, SumYY, SumXY As Double
+
       If ValuesX Is Nothing Then ' No X values, assume linear scale; start at 0.
         ReDim ValuesX(ValuesY.Length-1)
         For i = 0 To ValuesX.Length-1
@@ -106,6 +112,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' A number that indicates the proportion of the variance in the
       ' dependent variable that is predictable from the independent variable.
       Determination = Correlation^2
+
     End Sub
 
 

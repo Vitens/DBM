@@ -46,20 +46,24 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Sub New
+
       ' Initialize array sizes. To be filled from back to front. When a
       ' correlation calculation is not required (no exception detected or
       ' no correlation points specified) only the last item in the arrays
       ' contains a value.
+
       ReDim AbsoluteErrors(CorrelationPreviousPeriods)
       ReDim RelativeErrors(CorrelationPreviousPeriods)
       ReDim CorrelationAbsoluteErrors(CorrelationPreviousPeriods)
       ReDim CorrelationRelativeErrors(CorrelationPreviousPeriods)
+
     End Sub
 
 
     Public Sub Calculate(Index As Integer, MeasuredValueEMA As Double, _
       PredictedValueEMA As Double, LowerControlLimitEMA As Double, _
       UpperControlLimitEMA As Double)
+
       ' Calculates and stores prediction errors and initial results
       ' Absolute prediction error (for prediction error
       ' correlation calculations)
@@ -85,6 +89,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Store original factor before possible suppression
         OriginalFactor = Factor
       End If
+
     End Sub
 
 

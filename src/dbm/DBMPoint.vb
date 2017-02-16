@@ -41,23 +41,28 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Sub New(PointDriver As DBMPointDriver)
+
       ' Each DBMPoint has a DBMDataManager which is responsible for retrieving
       ' and caching input data. The Data Manager stores and uses a
       ' DBMPointDriver object, which has a GetData method used for retrieving
       ' data.
+
       DataManager = New DBMDataManager(PointDriver)
+
     End Sub
 
 
     Public Function Result(Timestamp As DateTime, IsInputDBMPoint As Boolean, _
       HasCorrelationDBMPoint As Boolean, _
       Optional SubtractPoint As DBMPoint = Nothing) As DBMResult
+
       ' Retrieves data and calculates prediction and control limits for
       ' this point. Also calculates and stores (historic) prediction errors for
       ' correlation analysis later on. Prediction results are cached and then
       ' reused when possible. This is important because, due to the use of a
       ' moving average, previously calculated results will often need to be
       ' included in later calculations.
+
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
       Dim PredictionTimestamp, PatternTimestamp As DateTime
       Dim Prediction As New DBMPrediction
@@ -65,6 +70,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         PredictedValues(EMAPreviousPeriods), _
         LowerControlLimits(EMAPreviousPeriods), _
         UpperControlLimits(EMAPreviousPeriods) As Double
+
       Result = New DBMResult
       ' Can we reuse stored results?
       If SubtractPoint IsNot PredictionsSubtractPoint Then
@@ -116,7 +122,9 @@ Namespace Vitens.DynamicBandwidthMonitor
             ExponentialMovingAverage(UpperControlLimits))
         End If
       Next CorrelationCounter
+
       Return Result
+
     End Function
 
 

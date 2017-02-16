@@ -1360,14 +1360,18 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Shared Function Hash(Values() As Double, _
       Optional Digits As Integer = 15) As Double
+
       ' Simple hash function for checking array contents.
+
       Hash = 1
       For Each Value In Values
         If Not IsNaN(Value) Then
           Hash = (Hash+Round(Value, Digits)+1)/3
         End If
       Next
+
       Return Hash
+
     End Function
 
 
@@ -1377,12 +1381,15 @@ Namespace Vitens.DynamicBandwidthMonitor
       ExpAbsErrStats() As Double, ExpRelErrStats() As Double, _
       ExpAbsErrs() As Double, ExpRelErrs() As Double, _
       ExpCorrAbsErrs() As Double, ExpCorrRelErrs() As Double) As Boolean
+
       ' Runs a complete test case for integration testing. The internal data
       ' array is used as input for tags, so order of tests is important and
       ' can not be changed.
+
       Dim InputPointDriver, CorrelationPointDriver As DBMPointDriver
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim Result As DBMResult
+
       TestsRunning = True ' Make DBMDataManager use internal array for data.
       InputPointDriver = New DBMPointDriver(InputPoint)
       If CorrelationPoint IsNot Nothing Then
@@ -1429,13 +1436,17 @@ Namespace Vitens.DynamicBandwidthMonitor
           (.SuppressedBy Is Nothing Or (.SuppressedBy IsNot Nothing And _
           CorrelationPointDriver Is .SuppressedBy))
       End With
+
     End Function
 
 
     Private Shared Function UnitTestResults As Boolean
+
       ' Unit tests, returns True if all tests pass.
+
       Dim Statistics As New DBMStatistics
       Dim i As Integer
+
       UnitTestResults = True
 
       UnitTestResults = UnitTestResults And _
@@ -2011,14 +2022,19 @@ Namespace Vitens.DynamicBandwidthMonitor
       End With
 
       Return UnitTestResults
+
     End Function
 
 
     Private Shared Function IntegrationTestResults As Boolean
+
       ' Integration tests, returns True if all tests pass.
+
       Dim i As Integer
+
       IntegrationTestResults = True
       For i = 0 To 1 ' Run all cases twice to test cache
+
         ' Normal situation; Leeuwarden
         IntegrationTestResults = IntegrationTestResults And TestCase("A", _
           Nothing, New DateTime(2016, 2, 5, 10, 0, 0), False, {0, 0, 1154, _
@@ -2028,6 +2044,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0334}, {0, 0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Cache test 1/2, Normal situation; Leeuwarden
         IntegrationTestResults = IntegrationTestResults And TestCase("A", _
           Nothing, New DateTime(2016, 2, 5, 10, 0, 0), False, {0, 0, 1154, _
@@ -2037,6 +2054,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0334}, {0, 0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Cache test 2/2, Normal situation; Leeuwarden
         IntegrationTestResults = IntegrationTestResults And TestCase("A", _
           Nothing, New DateTime(2016, 2, 5, 10, 5, 0), False, {0, 0, 1141, _
@@ -2046,6 +2064,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0467}, {0, 0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Normal situation; Vitens
         IntegrationTestResults = IntegrationTestResults And TestCase("B", _
           Nothing, New DateTime(2015, 5, 23, 2, 0, 0), False, {0, 0, 27087, _
@@ -2055,6 +2074,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0119}, {0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Cache test, Normal situation; Vitens
         IntegrationTestResults = IntegrationTestResults And TestCase("B", _
           Nothing, New DateTime(2015, 5, 23, 2, 0, 0), False, {0, 0, 27087, _
@@ -2064,6 +2084,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0119}, {0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' New year's day; Leeuwarden
         IntegrationTestResults = IntegrationTestResults And TestCase("A", _
           Nothing, New DateTime(2016, 1, 1, 1, 50, 0), False, {1.206, 1.206, _
@@ -2073,6 +2094,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.3368}, {0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' New year's day (correlation relative error); Leeuwarden/Franeker
         IntegrationTestResults = IntegrationTestResults And TestCase("A", "C", _
           New DateTime(2016, 1, 1, 1, 50, 0), False, {0.849, 1.206, 570, 378, _
@@ -2093,6 +2115,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0.0867, 0.0263, 0.0313, -0.0338, -0.1233, -0.1893, -0.1989, -0.1613, _
           -0.1963, -0.2119, -0.2429, -0.2548, -0.2697, -0.2793, -0.296, _
           -0.2956})
+
         ' New year's day (self-correlation); Leeuwarden
         IntegrationTestResults = IntegrationTestResults And TestCase("A", "A", _
           New DateTime(2016, 1, 1, 1, 50, 0), False, {1, 1.206, 570, 378, 219, _
@@ -2111,6 +2134,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           -0.0474, 0.0132, -0.0212, -0.0015, 0.0254, 0.1913, 0.1281, 0.0709, _
           0.0025, -0.0086, -0.0182, -0.1288, -0.1302, -0.2172, -0.2232, _
           -0.3131, -0.2984, -0.3699, -0.327, -0.361, -0.4108, -0.4425, -0.3368})
+
         ' Subtract self test, New year's day; Leeuwarden
         IntegrationTestResults = IntegrationTestResults And TestCase("A", "A", _
           New DateTime(2016, 1, 1, 1, 50, 0), True, {1.206, 1.206, 570, 378, _
@@ -2125,6 +2149,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           -0.3368}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0})
+
         ' Unmeasured flow; Heerenveen
         IntegrationTestResults = IntegrationTestResults And TestCase("D", _
           Nothing, New DateTime(2015, 8, 21, 1, 0, 0), False, {1.511, 1.511, _
@@ -2134,6 +2159,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.6681}, {0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Unmeasured flow (anticorrelation absolute error); Heerenveen/Joure
         IntegrationTestResults = IntegrationTestResults And TestCase("D", "E", _
           New DateTime(2015, 8, 21, 1, 0, 0), False, {-0.996, 1.511, 846, 281, _
@@ -2155,6 +2181,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           -3.6096, -3.4004, -2.9626, -2.5859, -2.3803, -2.2672, -2.1796, _
           -2.1255, -2.0988, -2.0868, -2.0207, -1.9427, -1.7458, -1.5747, _
           -1.4795, -1.4114, -1.3614})
+
         ' Pipe burst; Leeuwarden
         IntegrationTestResults = IntegrationTestResults And TestCase("A", _
           Nothing, New DateTime(2013, 3, 12, 19, 30, 0), False, {6.793, 6.793, _
@@ -2164,6 +2191,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.6293}, {0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Cache test, Pipe burst; Leeuwarden
         IntegrationTestResults = IntegrationTestResults And TestCase("A", _
           Nothing, New DateTime(2013, 3, 12, 19, 35, 0), False, {5.818, 5.818, _
@@ -2173,6 +2201,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.6227}, {0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Pipe burst 1/2; Leeuwarden/Vitens
         IntegrationTestResults = IntegrationTestResults And TestCase("A", "B", _
           New DateTime(2013, 3, 12, 19, 30, 0), True, {6.793, 6.793, 3075, _
@@ -2187,6 +2216,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, _
           0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0})
+
         ' Pipe burst 2/2; Leeuwarden/Vitens
         IntegrationTestResults = IntegrationTestResults And TestCase("A", "B", _
           New DateTime(2013, 3, 12, 20, 10, 0), True, {6.717, 6.717, 2936, _
@@ -2201,6 +2231,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           -0.6219, -0.6337, -0.6512, -0.6663, -0.6754}, {0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Pipe burst; Sneek
         IntegrationTestResults = IntegrationTestResults And TestCase("F", _
           Nothing, New DateTime(2016, 1, 4, 4, 0, 0), False, {3.206, 3.206, _
@@ -2210,6 +2241,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.7043}, {0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Pipe burst; Sneek/Leeuwarden
         IntegrationTestResults = IntegrationTestResults And TestCase("F", "A", _
           New DateTime(2016, 1, 4, 4, 0, 0), False, {3.206, 3.206, 1320, 390, _
@@ -2224,6 +2256,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           -0.7394, -0.717, -0.7043}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Pipe burst; Arnhem
         IntegrationTestResults = IntegrationTestResults And TestCase("G", _
           Nothing, New DateTime(2015, 11, 25, 10, 0, 0), False, {15.629, _
@@ -2233,6 +2266,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.6904}, {0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Pipe burst; Arnhem/Druten
         IntegrationTestResults = IntegrationTestResults And TestCase("G", "H", _
           New DateTime(2015, 11, 25, 10, 0, 0), False, {15.629, 15.629, 3180, _
@@ -2248,6 +2282,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           -0.6972, -0.6949, -0.6904}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Maintenance; Drachten
         IntegrationTestResults = IntegrationTestResults And TestCase("I", _
           Nothing, New DateTime(2015, 4, 9, 13, 30, 0), False, {5.831, 5.831, _
@@ -2257,6 +2292,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.4059}, {0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Maintenance; Drachten/Gorredijk
         IntegrationTestResults = IntegrationTestResults And TestCase("I", "J", _
           New DateTime(2015, 4, 9, 13, 30, 0), False, {5.831, 5.831, 597, 355, _
@@ -2271,6 +2307,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           -0.3777, -0.3825, -0.3949, -0.4059}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Week after summer break; Leeuwarden
         IntegrationTestResults = IntegrationTestResults And TestCase("A", _
           Nothing, New DateTime(2015, 8, 21, 7, 30, 0), False, {1.399, 1.399, _
@@ -2280,6 +2317,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.4271}, {0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Week after summer break (corr. rel. err.); Leeuwarden/Franeker
         IntegrationTestResults = IntegrationTestResults And TestCase("A", "C", _
           New DateTime(2015, 8, 21, 7, 30, 0), False, {0.866, 1.399, 1095, _
@@ -2300,6 +2338,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           -0.0374, -0.022, -0.078, -0.128, -0.1986, -0.2617, -0.2824, -0.3042, _
           -0.319, -0.3419, -0.3832, -0.4004, -0.4065, -0.4067, -0.4203, _
           -0.4183, -0.4233, -0.4195, -0.3876, -0.3686})
+
         ' Christmas morning; Leeuwarden
         IntegrationTestResults = IntegrationTestResults And TestCase("A", _
           Nothing, New DateTime(2015, 12, 25, 9, 0, 0), False, {-1.041, _
@@ -2309,6 +2348,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.1894}, {0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Christmas morning (correlation relative error); Leeuwarden/Vitens
         IntegrationTestResults = IntegrationTestResults And TestCase("A", "B", _
           New DateTime(2015, 12, 25, 9, 0, 0), True, {0.991, -1.041, 1000, _
@@ -2330,6 +2370,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           1.3454, 1.2713, 1.1939, 1.0928, 0.9823, 0.874, 0.7762, 0.6789, _
           0.5879, 0.5081, 0.4327, 0.3618, 0.2997, 0.2472, 0.205, 0.1681, _
           0.1337, 0.1051, 0.0792})
+
         ' Sequential cache test 1/4; Heerenveen
         IntegrationTestResults = IntegrationTestResults And TestCase("D", _
           Nothing, New DateTime(2015, 8, 21, 2, 0, 0), False, {2.346, 2.346, _
@@ -2339,6 +2380,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.7276}, {0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Sequential cache test 2/4; Heerenveen
         IntegrationTestResults = IntegrationTestResults And TestCase("D", _
           Nothing, New DateTime(2015, 8, 21, 2, 5, 0), False, {2.369, 2.369, _
@@ -2348,6 +2390,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.7344}, {0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Sequential cache test 3/4; Heerenveen
         IntegrationTestResults = IntegrationTestResults And TestCase("D", _
           Nothing, New DateTime(2015, 8, 21, 2, 10, 0), False, {1.928, 1.928, _
@@ -2357,6 +2400,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.7061}, {0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Sequential cache test 4/4; Heerenveen
         IntegrationTestResults = IntegrationTestResults And TestCase("D", _
           Nothing, New DateTime(2015, 8, 21, 2, 15, 0), False, {1.676, 1.676, _
@@ -2366,6 +2410,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.6478}, {0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Sequential cache test 1/4 (anticorr. abs. error); Heerenveen/Joure
         IntegrationTestResults = IntegrationTestResults And TestCase("D", "E", _
           New DateTime(2015, 8, 21, 3, 0, 0), False, {-0.998, 1.993, 807, 225, _
@@ -2387,6 +2432,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           -1.3116, -1.2771, -1.2768, -1.315, -1.3486, -1.3366, -1.3211, _
           -1.306, -1.2969, -1.3052, -1.2677, -1.2391, -1.2403, -1.2255, _
           -1.232, -1.2398, -1.2655})
+
         ' Sequential cache test 2/4 (anticorr. abs. error); Heerenveen/Joure
         IntegrationTestResults = IntegrationTestResults And TestCase("D", "E", _
           New DateTime(2015, 8, 21, 3, 5, 0), False, {-0.998, 1.926, 799, 221, _
@@ -2408,6 +2454,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           -1.3228, -1.3116, -1.2771, -1.2768, -1.315, -1.3486, -1.3366, _
           -1.3211, -1.306, -1.2969, -1.3052, -1.2677, -1.2391, -1.2403, _
           -1.2255, -1.232, -1.2398, -1.2655, -1.2796})
+
         ' Sequential cache test 3/4 (anticorr. abs. error); Heerenveen/Joure
         IntegrationTestResults = IntegrationTestResults And TestCase("D", "E", _
           New DateTime(2015, 8, 21, 3, 10, 0), False, {-0.998, 2.17, 799, 222, _
@@ -2429,6 +2476,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           -1.2771, -1.2768, -1.315, -1.3486, -1.3366, -1.3211, -1.306, _
           -1.2969, -1.3052, -1.2677, -1.2391, -1.2403, -1.2255, -1.232, _
           -1.2398, -1.2655, -1.2796, -1.2878})
+
         ' Sequential cache test 4/4 (anticorr. abs. error); Heerenveen/Joure
         IntegrationTestResults = IntegrationTestResults And TestCase("D", "E", _
           New DateTime(2015, 8, 21, 3, 15, 0), False, {-0.999, 2.541, 804, _
@@ -2450,6 +2498,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           -1.2768, -1.315, -1.3486, -1.3366, -1.3211, -1.306, -1.2969, _
           -1.3052, -1.2677, -1.2391, -1.2403, -1.2255, -1.232, -1.2398, _
           -1.2655, -1.2796, -1.2878, -1.2768})
+
         ' MeanAD/MedianAD test 1/2 (mean); Vlieland
         IntegrationTestResults = IntegrationTestResults And TestCase("K", _
           Nothing, New DateTime(2014, 12, 31, 9, 15, 0), False, {1.049, 1.049, _
@@ -2459,6 +2508,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, -0.6815}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' MeanAD/MedianAD test 2/2 (median); Vlieland
         IntegrationTestResults = IntegrationTestResults And TestCase("K", _
           Nothing, New DateTime(2014, 12, 31, 9, 20, 0), False, {1.082, 1.082, _
@@ -2468,6 +2518,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, -0.7572}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Daylight saving time test 1/5; Wageningseberg
         IntegrationTestResults = IntegrationTestResults And TestCase("L", _
           Nothing, New DateTime(2016, 4, 3, 1, 30, 0), False, {1.112, 1.112, _
@@ -2477,6 +2528,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.188}, {0, 0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Daylight saving time test 2/5; Wageningseberg
         IntegrationTestResults = IntegrationTestResults And TestCase("L", _
           Nothing, New DateTime(2016, 4, 3, 2, 0, 0), False, {1.705, 1.705, _
@@ -2486,6 +2538,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.1735}, {0, 0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Daylight saving time test 3/5; Wageningseberg
         IntegrationTestResults = IntegrationTestResults And TestCase("L", _
           Nothing, New DateTime(2016, 4, 3, 2, 30, 0), False, {3.201, 3.201, _
@@ -2495,6 +2548,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.1907}, {0, 0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Daylight saving time test 4/5; Wageningseberg
         IntegrationTestResults = IntegrationTestResults And TestCase("L", _
           Nothing, New DateTime(2016, 4, 3, 3, 0, 0), False, {2.501, 2.501, _
@@ -2504,6 +2558,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.1968}, {0, 0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Daylight saving time test 5/5; Wageningseberg
         IntegrationTestResults = IntegrationTestResults And TestCase("L", _
           Nothing, New DateTime(2016, 4, 3, 3, 30, 0), False, {3.332, 3.332, _
@@ -2513,6 +2568,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -0.1989}, {0, 0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Coming/going test 1/3; Eibergen
         IntegrationTestResults = IntegrationTestResults And TestCase("M", _
           Nothing, New DateTime(2016, 4, 28, 17, 50, 0), False, {0, 0, 537, _
@@ -2522,6 +2578,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0.1084}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Coming/going test 2/3; Eibergen
         IntegrationTestResults = IntegrationTestResults And TestCase("M", _
           Nothing, New DateTime(2016, 4, 28, 17, 55, 0), False, {-1.024, _
@@ -2531,6 +2588,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.1299}, {0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
         ' Coming/going test 3/3; Eibergen
         IntegrationTestResults = IntegrationTestResults And TestCase("M", _
           Nothing, New DateTime(2016, 4, 28, 18, 0, 0), False, {0, 0, 548, _
@@ -2540,15 +2598,21 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0.1113}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, _
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+
       Next i
+
       Return IntegrationTestResults
+
     End Function
 
 
     Public Shared Function TestResults As String
+
       ' Returns a string containing test results (PASSED or FAILED) and
       ' execution time for unit and integration tests.
+
       Dim Ticks As Int64
+
       Ticks = Now.Ticks
       TestResults = " - Unit tests " & _
         If(UnitTestResults, "PASSED", "FAILED") & " in " & _
@@ -2557,7 +2621,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       TestResults &= " - Integration tests " & _
         If(IntegrationTestResults, "PASSED", "FAILED") & " in " & _
         Round((Now.Ticks-Ticks)/10000).ToString & "ms." & NewLine
+
       Return TestResults
+
     End Function
 
 

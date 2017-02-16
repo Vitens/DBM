@@ -40,10 +40,13 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Sub New(PIServer As Server)
-      Dim InstrTag, Substrings(), Server, Point As String
+
       ' When instantiating a new PIServer object, dynamically search for
       ' relevant PI tags and add them to the PIPoints list so that calculations
       ' may be performed on them by the calculator.
+
+      Dim InstrTag, Substrings(), Server, Point As String
+
       Me.PIServer = PIServer
       Try
         ' Search for active DBM output PI points by PointSource (dbmrt).
@@ -69,17 +72,21 @@ Namespace Vitens.DynamicBandwidthMonitor
         Next
       Catch
       End Try
+
     End Sub
 
 
     Public Sub Calculate
+
       ' Perform calculation for each PI point.
+
       For Each PIPoint In PIPoints
         Try ' Enclose in try/catch block to not halt calculations on errors.
           PIPoint.Calculate
         Catch
         End Try
       Next
+
     End Sub
 
 

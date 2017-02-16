@@ -49,33 +49,40 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private Shared Function FormatDateTime(Timestamp As DateTime) As String
+
       If InternationalFormat Then
         Return Timestamp.ToUniversalTime.ToString("s") & "Z" ' ISO 8601 UTC
       Else
         Return Timestamp.ToString("s") ' ISO 8601
       End If
+
     End Function
 
 
     Private Shared Function Separator As String
+
       If InternationalFormat Then
         Return ","
       Else
         Return "	" ' Tab character
       End If
+
     End Function
 
 
     Private Shared Function FormatNumber(Value As Double) As String
+
       If InternationalFormat Then
         Return Value.ToString("0.####", InvariantCulture)
       Else
         Return Value.ToString("0.####")
       End If
+
     End Function
 
 
     Public Shared Sub Main
+
       Dim Substrings(), Parameter, Value As String
       Dim InputPointDriver As DBMPointDriver = Nothing
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
@@ -83,6 +90,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim AlwaysOutputCorrelationData As Boolean
       Dim Result As DBMResult
       Dim _DBM As New DBM
+
       ' Parse command line arguments
       For Each CommandLineArg In GetCommandLineArgs
         ' Parameter=Value
@@ -197,6 +205,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           StartTimestamp = StartTimestamp.AddSeconds(CalculationInterval)
         Loop
       End If
+
     End Sub
 
 

@@ -39,10 +39,13 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Function ShallowCopy As DBMPrediction
+
       ' The MemberwiseClone method creates a shallow copy by creating a new
       ' object, and then copying the nonstatic fields of the current object to
       ' the new object.
+
       Return DirectCast(Me.MemberwiseClone, DBMPrediction)
+
     End Function
 
 
@@ -50,22 +53,28 @@ Namespace Vitens.DynamicBandwidthMonitor
       Optional PredictedValue As Double = 0, _
       Optional LowerControlLimit As Double = 0, _
       Optional UpperControlLimit As Double = 0)
+
       ' DBMResult objects can directly store results into a DBMPrediction
       ' object. This is the result of an EMA on predictions calculated using
       ' the Calculate method called from a DBMPoint object.
+
       Me.MeasuredValue = MeasuredValue
       Me.PredictedValue = PredictedValue
       Me.LowerControlLimit = LowerControlLimit
       Me.UpperControlLimit = UpperControlLimit
+
     End Sub
 
 
     Public Sub Calculate(Values() As Double)
+
       ' Calculates and stores prediction and control limits by removing
       ' outliers from the Values array and extrapolating the regression
       ' line by one interval.
+
       Dim Statistics As New DBMStatistics
       Dim ControlLimit As Double
+
       With Statistics
         ' Calculate statistics for data after removing outliers. Exclude the
         ' last sample in the array as this is the current measured value for
@@ -87,6 +96,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         LowerControlLimit = PredictedValue-ControlLimit
         UpperControlLimit = PredictedValue+ControlLimit
       End With
+
     End Sub
 
 

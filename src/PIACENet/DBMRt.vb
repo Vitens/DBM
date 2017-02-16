@@ -52,34 +52,45 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Overrides Sub ACECalculations
+
       ' This method is called by ACE Scheduler to execute calculations.
       ' Start calculation only if module and DBMRtCalculator are initialized.
+
       If Calculator IsNot Nothing Then
         Calculator.Calculate
       End If
+
     End Sub
 
 
     Protected Overrides Sub InitializePIACEPoints
+
       ' Initializes all PIACEPoint objects.
       ' Unused, but must be overridden.
+
     End Sub
 
 
     Protected Overrides Sub ModuleDependentInitialization
+
       ' Any custom initialization code can be implemented here. Any variable
       ' that does not change should be initialized here.
       ' On module initialization, create a new DBMRtCalculator object.
       ' Creating the object automatically adds tags from the default PI server.
+
       Calculator = New DBMRtCalculator
+
     End Sub
 
 
     Protected Overrides Sub ModuleDependentTermination
+
       ' Contains code to dispose any user-defined objects.
       ' On module termination, mark the calculator object for
       ' garbage collection.
+
       Calculator = Nothing
+
     End Sub
 
 
