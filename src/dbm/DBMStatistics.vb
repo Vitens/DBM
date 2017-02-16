@@ -30,6 +30,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
   Public Class DBMStatistics
 
+    ' Contains statistical functions. After calling the Calculate method,
+    ' results can be retrieved from a DBMStatistics object through their
+    ' public variables.
+
     Public Count As Integer
     Public Slope, OriginSlope, Angle, OriginAngle, Intercept, StandardError, _
       Correlation, ModifiedCorrelation, Determination As Double
@@ -48,7 +52,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' assumed.
       Dim i As Integer
       Dim SumX, SumY, SumXX, SumYY, SumXY As Double
-      If ValuesX Is Nothing Then ' No X values, assume linear scale.
+      If ValuesX Is Nothing Then ' No X values, assume linear scale; start at 0.
         ReDim ValuesX(ValuesY.Length-1)
         For i = 0 To ValuesX.Length-1
           ValuesX(i) = i
@@ -88,7 +92,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' variables or observed data values.
       Correlation = (Count*SumXY-SumX*SumY)/ _
         Sqrt((Count*SumXX-SumX^2)*(Count*SumYY-SumY^2))
-      ' Average is not removed, as expected average is zero.
+      ' Average is not removed in modified correlation as the expected average
+      ' is zero, assuming the calculated predictions are correct.
       ModifiedCorrelation = SumXY/Sqrt(SumXX*SumYY)
       ' A number that indicates the proportion of the variance in the
       ' dependent variable that is predictable from the independent variable.

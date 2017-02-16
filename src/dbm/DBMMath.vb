@@ -30,6 +30,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
   Public Class DBMMath
 
+    ' Contains mathematical and statistical functions.
+
     Private Shared Random As New Random
 
     Public Shared Function NormSInv(p As Double) As Double

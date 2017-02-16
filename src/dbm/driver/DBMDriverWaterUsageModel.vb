@@ -41,8 +41,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Function GetData(StartTimestamp As DateTime, _
       EndTimestamp As DateTime) As Double
       ' Model based on hourly water usage in Leeuwarden 2016 (+/-10% random
-      ' noise). Calculated using polynomial regressions based on hourly, daily
-      ' and monthly periodicity.
+      ' noise). Calculated using polynomial regressions based on
+      ' hourly (quintic), daily (cubic) and monthly (quartic) periodicity.
       With StartTimestamp
         Return RandomNumber(9000, 11000)/10000*790* _
           (-0.00012*.Month^4+0.0035*.Month^3-0.032*.Month^2+0.1*.Month+0.93)* _
