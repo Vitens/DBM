@@ -3,23 +3,37 @@ cache: .pidll\pidll.zip
 build_script:
 - cmd: >-
     if not exist .pidll mkdir .pidll
+
     if not exist .pidll\pidll.zip curl -s -L -o .pidll\pidll.zip "https://drive.google.com/uc?export=download&id=0B4J7WiY9w-uUZjRsaGFRbGZza28"
+
     7z x .pidll\pidll.zip -o.pidll>NUL
+
     set PIHOME=.pidll\pidll
+
     echo.|build.bat>NUL
 test_script:
 - cmd: >-
     for /f "delims=" %%i in ('build\DBMTester.exe^|find "Unit tests"') do set message=%%i
+
     echo %message%|find "PASSED">NUL&&set result=Passed||set result=Failed
+
     appveyor AddTest "%message:~3%" -Framework "" -FileName "" -Outcome %result%
+
     for /f "delims=" %%i in ('build\DBMTester.exe^|find "Integration tests"') do set message=%%i
+
     echo %message%|find "PASSED">NUL&&set result=Passed||set result=Failed
+
     appveyor AddTest "%message:~3%" -Framework "" -FileName "" -Outcome %result%
 deploy_script:
 - cmd: >-
     for /f "delims=" %%i in ('build\DBMTester.exe^|find "DBM"') do set version=%%i
+
     for /f "delims=" %%i in ('git rev-parse --short HEAD') do set filename=%version: =_%_(%%i)
+
     7z a build\%filename%_bin.zip .\build\*>NUL
+
     appveyor PushArtifact build\%filename%_bin.zip
+
     7z a build\%filename%_src.zip * -xr!.*\ -xr!build\>NUL
+
     appveyor PushArtifact build\%filename%_src.zip
