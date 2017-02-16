@@ -110,7 +110,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' For normally distributed data, multiply MAD by scale factor k to
       ' obtain an estimate of the normal scale parameter sigma.
       ' R.C. Geary. The Ratio of the Mean Deviation to the Standard Deviation
-      ' as a Test of Normality. Biometrika, 1935. Cited on page 8.
+      '  as a Test of Normality. Biometrika, 1935. Cited on page 8.
       Return Sqrt(PI/2)
     End Function
 
@@ -130,6 +130,11 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function ControlLimitRejectionCriterion(p As Double, _
       n As Integer) As Double
       ' Return two-sided critical z-values for confidence interval p.
+      ' Student's t-distribution approaches the normal z distribution at
+      ' 30 samples.
+      ' Student. 1908. Probable error of a correlation
+      '  coefficient. Biometrika 6, 2-3, 302–310.
+      ' Hogg and Tanis' Probability and Statistical Inference (7e).
       If n < 30 Then
         Return TInv((p+1)/2, n) ' n<30 Student's t-distribution
       Else

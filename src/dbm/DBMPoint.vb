@@ -47,8 +47,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       Optional SubtractPoint As DBMPoint = Nothing) As DBMResult
       ' Retrieves data and calculates prediction and control limits for
       ' this point. Also calculates and stores (historic) prediction errors for
-      ' correlation analysis later on. Results are cached and then reused when
-      ' possible.
+      ' correlation analysis later on. Prediction results are cached and then
+      ' reused when possible. This is important because, due to the use of a
+      ' moving average, previously calculated result will often need to be
+      ' included in following calculations.
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
       Dim PredictionTimestamp, PatternTimestamp As DateTime
       Dim Prediction As New DBMPrediction
