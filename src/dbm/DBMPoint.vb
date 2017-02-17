@@ -72,11 +72,13 @@ Namespace Vitens.DynamicBandwidthMonitor
         UpperControlLimits(EMAPreviousPeriods) As Double
 
       Result = New DBMResult
+
       ' Can we reuse stored results?
       If SubtractPoint IsNot PredictionsSubtractPoint Then
         Predictions.Clear ' No, so clear results
         PredictionsSubtractPoint = SubtractPoint
       End If
+
       For CorrelationCounter = 0 To CorrelationPreviousPeriods
         If Result.Prediction Is Nothing Or (IsInputDBMPoint And _
           Result.Factor <> 0 And HasCorrelationDBMPoint) Or _

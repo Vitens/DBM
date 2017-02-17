@@ -72,8 +72,9 @@ Namespace Vitens.DynamicBandwidthMonitor
           ValuesX(i) = i
         Next i
       End If
-      Count = 0
+
       ' Calculate sums
+      Count = 0
       For i = 0 To ValuesY.Length-1
         If Not IsNaN(ValuesX(i)) And Not IsNaN(ValuesY(i)) Then
           SumX += ValuesX(i)
@@ -84,11 +85,13 @@ Namespace Vitens.DynamicBandwidthMonitor
           Count += 1
         End If
       Next i
+
       Slope = (Count*SumXY-SumX*SumY)/(Count*SumXX-SumX^2) ' Linear regression
       OriginSlope = SumXY/SumXX ' Linear regression through the origin (alpha=0)
       Angle = SlopeToAngle(Slope) ' Angle in degrees
       OriginAngle = SlopeToAngle(OriginSlope) ' Angle in degrees
       Intercept = (SumX*SumXY-SumY*SumXX)/(SumX^2-Count*SumXX)
+
       ' Standard error of the predicted y-value for each x in the regression.
       ' The standard error is a measure of the amount of error in the
       ' prediction of y for an individual x.
@@ -101,14 +104,17 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' n-2 is used because two parameters (slope and intercept) were
       ' estimated in order to estimate the sum of squares.
       StandardError = Sqrt(StandardError/(Count-2))
+
       ' A number that quantifies some type of correlation and dependence,
       ' meaning statistical relationships between two or more random
       ' variables or observed data values.
       Correlation = (Count*SumXY-SumX*SumY)/ _
         Sqrt((Count*SumXX-SumX^2)*(Count*SumYY-SumY^2))
+
       ' Average is not removed in modified correlation as the expected average
       ' is zero, assuming the calculated predictions are correct.
       ModifiedCorrelation = SumXY/Sqrt(SumXX*SumYY)
+
       ' A number that indicates the proportion of the variance in the
       ' dependent variable that is predictable from the independent variable.
       Determination = Correlation^2

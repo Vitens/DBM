@@ -64,13 +64,16 @@ Namespace Vitens.DynamicBandwidthMonitor
       PredictedValueEMA As Double, LowerControlLimitEMA As Double, _
       UpperControlLimitEMA As Double)
 
-      ' Calculates and stores prediction errors and initial results
+      ' Calculates and stores prediction errors and initial results.
+
       ' Absolute prediction error (for prediction error
       ' correlation calculations)
       AbsoluteErrors(Index) = PredictedValueEMA-MeasuredValueEMA
+
       ' Relative prediction error (for prediction error
       ' correlation calculations)
       RelativeErrors(Index) = PredictedValueEMA/MeasuredValueEMA-1
+
       ' Store initial (no time offset because of prediction error
       ' correlation calculations) results
       If Prediction Is Nothing Then

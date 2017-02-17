@@ -152,9 +152,11 @@ Namespace Vitens.DynamicBandwidthMonitor
       If CorrelationPoints Is Nothing Then ' Empty list if Nothing was passed.
         CorrelationPoints = New List(Of DBMCorrelationPoint)
       End If
+
       ' Calculate for input point
       Result = Point(InputPointDriver).Result _
         (Timestamp, True, CorrelationPoints.Count > 0)
+
       ' If an event is found and a correlation point is available
       If Result.Factor <> 0 And CorrelationPoints.Count > 0 Then
         For Each CorrelationPoint In CorrelationPoints

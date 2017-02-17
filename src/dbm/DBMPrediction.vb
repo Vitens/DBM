@@ -76,14 +76,17 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim ControlLimit As Double
 
       With Statistics
+
         ' Calculate statistics for data after removing outliers. Exclude the
         ' last sample in the array as this is the current measured value for
         ' which we need to calculate a prediction and control limits.
         .Calculate(RemoveOutliers(Values.Take(Values.Length-1).ToArray))
         MeasuredValue = Values(ComparePatterns)
+
         ' Extrapolate regression by one interval and use this result as a
         ' prediction.
         PredictedValue = ComparePatterns*.Slope+.Intercept
+
         ' Control limits are determined by using measures of process variation
         ' and are based on the concepts surrounding hypothesis testing and
         ' interval estimation. They are used to detect signals in process data
@@ -91,10 +94,12 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' operating predictably.
         ControlLimit = ControlLimitRejectionCriterion(ConfidenceInterval, _
           .Count-1)*.StandardError
+
         ' Set upper and lower control limits based on prediction, rejection
         ' criterion and standard error of the regression.
         LowerControlLimit = PredictedValue-ControlLimit
         UpperControlLimit = PredictedValue+ControlLimit
+
       End With
 
     End Sub

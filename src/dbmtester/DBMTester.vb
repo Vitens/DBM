@@ -140,6 +140,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           End Try
         End If
       Next
+
       If InputPointDriver Is Nothing Or StartTimestamp = DateTime.MinValue Then
         ' Perform unit and integration tests
         Console.Write(DBM.Version)

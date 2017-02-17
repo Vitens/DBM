@@ -50,9 +50,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Set input and output DBMPointDriver objects.
       InputPointDriver = New DBMPointDriver(InputPIPoint)
       OutputPointDriver = New DBMPointDriver(OutputPIPoint)
+
+      ' ExDesc attribute should contain correlation PI point(s)
       ExDesc = DirectCast(OutputPointDriver.Point, PIPoint). _
         PointAttributes("ExDesc").Value.ToString
-      ' ExDesc attribute should contain correlation PI point(s)
       If Regex.IsMatch(ExDesc, _
         "^[-]?[\w\.-]+:[^:\?\*&]+(&[-]?[\w\.-]+:[^:\?\*&]+)*$") Then
         ' Split multiple correlation PI points by &
@@ -94,6 +95,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Timestamp of latest value in input point
       InputTimestamp = DirectCast _
         (InputPointDriver.Point, PIPoint).Data.Snapshot.TimeStamp
+
       ' Check timestamp of latest value in correlation points
       For Each CorrelationPoint In CorrelationPoints
         ' Timestamp of correlation point, keep earliest
@@ -101,15 +103,19 @@ Namespace Vitens.DynamicBandwidthMonitor
           DirectCast(CorrelationPoint.PointDriver.Point, PIPoint). _
           Data.Snapshot.TimeStamp.UTCSeconds)
       Next
+
       ' Can calculate output until (inclusive); aligned on interval.
       InputTimestamp.UTCSeconds -= _
         CalculationInterval+InputTimestamp.UTCSeconds Mod CalculationInterval
+
       ' Timestamp of output point
       OutputTimestamp = _
         DirectCast(OutputPointDriver.Point, PIPoint).Data.Snapshot.TimeStamp
+
       ' Next calculation timestamp; aligned on interval.
       OutputTimestamp.UTCSeconds += _
         CalculationInterval-OutputTimestamp.UTCSeconds Mod CalculationInterval
+
       ' If calculation timestamp can be calculated
       If InputTimestamp.UTCSeconds >= OutputTimestamp.UTCSeconds Then
         ' Perform calculations and write resulting factor to output point
