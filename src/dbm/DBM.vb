@@ -105,7 +105,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' relative prediction errors of a containing area, or if a strong
       ' anti-correlation is found in the absolute prediction errors of an
       ' adjacent area. In both cases, the direction (regression through origin)
-      ' of the error point cloud has to be around -45 or +45 degrees to idicate
+      ' of the error point cloud has to be around -45 or +45 degrees to indicate
       ' that both errors are about the same (absolute) size.
 
       ' If anticorrelation with adjacent measurement and

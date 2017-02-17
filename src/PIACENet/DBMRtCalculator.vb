@@ -43,7 +43,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Add default PI server when instantiating new calculator object.
 
       PIServers.Add(New DBMRtPIServer(PISDK.Servers.DefaultServer))
-      ' (Additional PI servers can be added to the list here if required)
 
     End Sub
 

@@ -51,7 +51,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       InputPointDriver = New DBMPointDriver(InputPIPoint)
       OutputPointDriver = New DBMPointDriver(OutputPIPoint)
 
-      ' ExDesc attribute should contain correlation PI point(s)
+      ' ExDesc attribute should contain correlation PI point(s).
       ExDesc = DirectCast(OutputPointDriver.Point, PIPoint). _
         PointAttributes("ExDesc").Value.ToString
       If Regex.IsMatch(ExDesc, _
@@ -70,10 +70,10 @@ Namespace Vitens.DynamicBandwidthMonitor
           Point = SubstringsB(1)
           Try
             If Not DBMRtCalculator.PISDK.Servers(Server). _
-              PIPoints(Point).Name.Equals(String.Empty) Then ' Check input
+              PIPoints(Point).Name.Equals(String.Empty) Then ' Check input.
               CorrelationPoints.Add(New DBMCorrelationPoint _
                 (New DBMPointDriver(DBMRtCalculator.PISDK.Servers(Server). _
-                PIPoints(Point)), SubtractSelf)) ' Add to correlation points
+                PIPoints(Point)), SubtractSelf)) ' Add to correlation points.
             End If
           Catch
           End Try
@@ -92,19 +92,19 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim InputTimestamp, OutputTimestamp As PITime
 
-      ' Timestamp of latest value in input point
+      ' Timestamp of latest value in input point.
       InputTimestamp = DirectCast _
         (InputPointDriver.Point, PIPoint).Data.Snapshot.TimeStamp
 
-      ' Check timestamp of latest value in correlation points
+      ' Check timestamp of latest value in correlation points.
       For Each CorrelationPoint In CorrelationPoints
-        ' Timestamp of latest value in correlation point, keep earliest
+        ' Timestamp of latest value in correlation point, keep earliest.
         InputTimestamp.UTCSeconds = Min(InputTimestamp.UTCSeconds, _
           DirectCast(CorrelationPoint.PointDriver.Point, PIPoint). _
           Data.Snapshot.TimeStamp.UTCSeconds)
       Next
 
-      ' Can calculate output until (inclusive); aligned on interval.
+      ' Latest possible output calculation timestamp; aligned on interval.
       InputTimestamp.UTCSeconds -= _
         CalculationInterval+InputTimestamp.UTCSeconds Mod CalculationInterval
 
@@ -116,9 +116,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       OutputTimestamp.UTCSeconds += _
         CalculationInterval-OutputTimestamp.UTCSeconds Mod CalculationInterval
 
-      ' If calculation timestamp can be calculated
+      ' If next calculation timestamp can be calculated.
       If InputTimestamp.UTCSeconds >= OutputTimestamp.UTCSeconds Then
-        ' Perform calculations and write resulting factor to output point
+        ' Perform calculations and write resulting factor to output point.
         DirectCast(OutputPointDriver.Point, PIPoint).Data.UpdateValue _
           (DBMRtCalculator.DBM.Result(InputPointDriver, CorrelationPoints, _
           InputTimestamp.LocalDate).Factor, InputTimestamp.LocalDate)

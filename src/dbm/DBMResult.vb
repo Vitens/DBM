@@ -67,29 +67,29 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Calculates and stores prediction errors and initial results.
 
       ' Absolute prediction error (for prediction error
-      ' correlation calculations)
+      ' correlation calculations).
       AbsoluteErrors(Index) = PredictedValueEMA-MeasuredValueEMA
 
       ' Relative prediction error (for prediction error
-      ' correlation calculations)
+      ' correlation calculations).
       RelativeErrors(Index) = PredictedValueEMA/MeasuredValueEMA-1
 
       ' Store initial (no time offset because of prediction error
-      ' correlation calculations) results
+      ' correlation calculations) results.
       If Prediction Is Nothing Then
-        ' Store EMA results in new DBMPrediction object
+        ' Store EMA results in new DBMPrediction object.
         Prediction = New DBMPrediction(MeasuredValueEMA, PredictedValueEMA, _
           LowerControlLimitEMA, UpperControlLimitEMA)
-        ' Lower control limit exceeded, calculate factor
+        ' Lower control limit exceeded, calculate factor.
         If MeasuredValueEMA < LowerControlLimitEMA Then
           Factor = (PredictedValueEMA-MeasuredValueEMA)/ _
             (LowerControlLimitEMA-PredictedValueEMA)
-        ' Upper control limit exceeded, calculate factor
+        ' Upper control limit exceeded, calculate factor.
         ElseIf MeasuredValueEMA > UpperControlLimitEMA Then
           Factor = (MeasuredValueEMA-PredictedValueEMA)/ _
             (UpperControlLimitEMA-PredictedValueEMA)
         End If
-        ' Store original factor before possible suppression
+        ' Store original factor before possible suppression.
         OriginalFactor = Factor
       End If
 

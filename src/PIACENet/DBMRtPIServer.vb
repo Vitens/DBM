@@ -61,7 +61,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             Point = Substrings(1)
             Try
               If Not DBMRtCalculator.PISDK.Servers(Server). _
-                PIPoints(Point).Name.Equals(String.Empty) Then ' Check input
+                PIPoints(Point).Name.Equals(String.Empty) Then ' Check input.
                 ' Add to calculation points list.
                 PIPoints.Add(New DBMRtPIPoint(DBMRtCalculator.PISDK. _
                   Servers(Server).PIPoints(Point), PIPoint))

@@ -63,7 +63,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim q, r As Double
 
-      If p < p_low Then
+      If p < p_low Then ' Left tail
         q = Sqrt(-2*Log(p))
         Return (((((c1*q+c2)*q+c3)*q+c4)*q+c5)*q+c6)/ _
           ((((d1*q+d2)*q+d3)*q+d4)*q+1)
@@ -72,7 +72,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         r = q*q
         Return (((((a1*r+a2)*r+a3)*r+a4)*r+a5)*r+a6)*q/ _
           (((((b1*r+b2)*r+b3)*r+b4)*r+b5)*r+1)
-      Else
+      Else ' Right tail
         q = Sqrt(-2*Log(1-p))
         Return -(((((c1*q+c2)*q+c3)*q+c4)*q+c5)*q+c6)/ _
           ((((d1*q+d2)*q+d3)*q+d4)*q+1)
@@ -262,7 +262,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       CentralTendency = Median(Values)
       MAD = MedianAbsoluteDeviation(Values)
-      If MAD = 0 Then
+      ControlLimit = MAD*MedianAbsoluteDeviationScaleFactor(Values.Length-1)* _
+        ControlLimitRejectionCriterion(ConfidenceInterval, Values.Length-1)
+
+      If ControlLimit = 0 Then ' This only happens when MAD equals 0.
         ' Use Mean Absolute Deviation instead of Median Absolute Deviation
         ' to detect outliers. Median absolute deviation has a 50% breakdown
         ' point.
@@ -271,12 +274,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         ControlLimit = MAD*MeanAbsoluteDeviationScaleFactor* _
           ControlLimitRejectionCriterion(ConfidenceInterval, _
           Values.Length-1)
-      Else ' Use Median Absolute Deviation to detect outliers
-        ControlLimit = _
-          MAD*MedianAbsoluteDeviationScaleFactor(Values.Length-1)* _
-          ControlLimitRejectionCriterion(ConfidenceInterval, _
-          Values.Length-1)
       End If
+
       For i = 0 to Values.Length-1
         If Abs(Values(i)-CentralTendency) > ControlLimit Then ' Limit exceeded?
           Values(i) = NaN ' Exclude outlier by setting to NaN.
@@ -325,7 +324,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function RandomNumber(Min As Integer, _
       Max As Integer) As Integer
 
-      ' Returns a random number between Min (inclusive) and Max (inclusive)
+      ' Returns a random number between Min (inclusive) and Max (inclusive).
 
       Return Random.Next(Min, Max+1)
 
