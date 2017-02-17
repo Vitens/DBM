@@ -26,4 +26,4 @@ test_script:
         for /f "delims=" %%i in ('build\DBMTester.exe^|find "Integration tests"') do set message=%%i
         echo %message%|find "PASSED">NUL&&set result=Passed||set result=Failed
         appveyor AddTest "%message:~3%" -Framework "" -FileName "" -Outcome %result%
-version: "1.8.1.{build}"
+version: "1.8.2.{build}"
