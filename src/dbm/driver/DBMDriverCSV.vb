@@ -98,7 +98,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               End If
             End If
           Loop
-          StreamReader.Close ' Close CSV
+          StreamReader.Close ' Close CSV file
         End If
       End If
 

@@ -98,7 +98,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Check timestamp of latest value in correlation points
       For Each CorrelationPoint In CorrelationPoints
-        ' Timestamp of correlation point, keep earliest
+        ' Timestamp of latest value in correlation point, keep earliest
         InputTimestamp.UTCSeconds = Min(InputTimestamp.UTCSeconds, _
           DirectCast(CorrelationPoint.PointDriver.Point, PIPoint). _
           Data.Snapshot.TimeStamp.UTCSeconds)
@@ -108,7 +108,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       InputTimestamp.UTCSeconds -= _
         CalculationInterval+InputTimestamp.UTCSeconds Mod CalculationInterval
 
-      ' Timestamp of output point
+      ' Timestamp of latest value in output point.
       OutputTimestamp = _
         DirectCast(OutputPointDriver.Point, PIPoint).Data.Snapshot.TimeStamp
 

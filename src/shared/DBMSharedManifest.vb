@@ -29,6 +29,8 @@ Option Strict
 
 
 <assembly:System.Reflection.AssemblyVersion("1.8.1.*")> ' Major.Minor.Revision.*
+' Note: when updating the version number, also modify version in appveyor.yml
+'       for AppVeyor continuous integration to use the same version numbering.
 
 <assembly:System.Reflection.AssemblyProduct("Dynamic Bandwidth Monitor")>
 

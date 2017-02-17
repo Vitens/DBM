@@ -29,6 +29,7 @@ Imports System.Diagnostics
 Imports System.Environment
 Imports System.Math
 Imports System.Text.RegularExpressions
+Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMTests
 
@@ -103,12 +104,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Events can be suppressed when a strong correlation is found in the
       ' relative prediction errors of a containing area, or if a strong
       ' anti-correlation is found in the absolute prediction errors of an
-      ' adjacent area.
+      ' adjacent area. In both cases, the direction (regression through origin)
+      ' of the error point cloud has to be around -45 or +45 degrees to idicate
+      ' that both errors are about the same (absolute) size.
+
       ' If anticorrelation with adjacent measurement and
       ' (absolute) prediction errors are about the same size.
-
       If Not SubtractSelf And AbsErrCorr < -CorrelationThreshold And _
-        Abs(AbsErrAngle+45) <= RegressionAngleRange Then
+        Abs(AbsErrAngle+SlopeToAngle(1)) <= RegressionAngleRange Then
         ' If already suppressed due to anticorrelation
         If Factor < -CorrelationThreshold And Factor >= -1 Then
           ' Keep lowest value (strongest anticorrelation)
@@ -117,9 +120,9 @@ Namespace Vitens.DynamicBandwidthMonitor
           Return AbsErrCorr ' Suppress
         End If
       ' If correlation with measurement and
-      ' (relative) prediction errors are about the same size
+      ' (relative) prediction errors are about the same size.
       ElseIf RelErrCorr > CorrelationThreshold And _
-        Abs(RelErrAngle-45) <= RegressionAngleRange Then
+        Abs(RelErrAngle-SlopeToAngle(1)) <= RegressionAngleRange Then
         ' If not already suppressed due to anticorrelation
         If Not (Factor < -CorrelationThreshold And Factor >= -1) Then
           ' If already suppressed due to correlation
