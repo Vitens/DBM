@@ -4,6 +4,8 @@ before_build:
     cmd: |-
         git submodule update --init --remote --recursive
         set PIHOME=%CD%\3rdParty\PILibraries\pidll
+        for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
+        powershell -Command "(Get-Content src\dbm\DBM.vb) -replace 'GITHASH', '%commit%' | Set-Content src\dbm\DBM.vb"
 build_script: 
   - 
     cmd: |-
@@ -21,7 +23,7 @@ deploy_script:
   - 
     cmd: |-
         for /f "delims=" %%i in ('build\DBMTester.exe^|find "DBM"') do set version=%%i
-        for /f "delims=" %%i in ('git rev-parse --short HEAD') do set filename=%version: =_%_(%%i)
+        set filename=%version: =_%
         7z a build\%filename%_bin.zip .\build\*>NUL
         appveyor PushArtifact build\%filename%_bin.zip
         7z a build\%filename%_src.zip *>NUL
