@@ -72,4 +72,3 @@ rem Output version, copyright and license information and unit and integration t
 build\DBMTester.exe
 
 :ExitBuild
-pause
