@@ -12,7 +12,7 @@ deploy_script:
         for /f "delims=" %%i in ('git rev-parse --short HEAD') do set filename=%version: =_%_(%%i)
         7z a build\%filename%_bin.zip .\build\*>NUL
         appveyor PushArtifact build\%filename%_bin.zip
-        7z a build\%filename%_src.zip * -xr!.*\ -xr!build\>NUL
+        7z a build\%filename%_src.zip *>NUL
         appveyor PushArtifact build\%filename%_src.zip
 test_script: 
   - 
