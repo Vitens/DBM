@@ -4,6 +4,8 @@ before_build:
     cmd: |-
         git submodule update --init --remote --recursive
         set PIHOME=%CD%\3rdParty\PILibraries\pidll
+        for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
+        powershell -Command "(Get-Content src\dbm\DBM.vb) -replace 'GITHASH', '%commit%' | Set-Content src\dbm\DBM.vb"
 build_script: 
   - 
     cmd: |-

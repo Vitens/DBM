@@ -56,7 +56,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       With FileVersionInfo.GetVersionInfo(System.Reflection.Assembly. _
         GetExecutingAssembly.Location)
         Return .FileDescription & " " & _
-          "v" & RegEx.Split(.FileVersion, "^(.+\..+\..+)\..+$")(1) & NewLine & _
+          "v" & RegEx.Split(.FileVersion, "^(.+\..+\..+)\..+$")(1) & _
+          "; Git commit hash: GITHASH" & NewLine & _
           .ProductName & NewLine & _
           .Comments & NewLine & _
           NewLine & _
