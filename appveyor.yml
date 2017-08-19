@@ -1,19 +1,13 @@
---- 
-build_script: 
+version: "1.8.2.{build}"
+before_build: 
   - 
     cmd: |-
         git submodule update --init --remote --recursive
         set PIHOME=%CD%\3rdParty\PILibraries\pidll
-        echo.|build.bat>NUL
-deploy_script: 
+build_script: 
   - 
     cmd: |-
-        for /f "delims=" %%i in ('build\DBMTester.exe^|find "DBM"') do set version=%%i
-        for /f "delims=" %%i in ('git rev-parse --short HEAD') do set filename=%version: =_%_(%%i)
-        7z a build\%filename%_bin.zip .\build\*>NUL
-        appveyor PushArtifact build\%filename%_bin.zip
-        7z a build\%filename%_src.zip *>NUL
-        appveyor PushArtifact build\%filename%_src.zip
+        echo.|build.bat>NUL
 test_script: 
   - 
     cmd: |-
@@ -23,4 +17,12 @@ test_script:
         for /f "delims=" %%i in ('build\DBMTester.exe^|find "Integration tests"') do set message=%%i
         echo %message%|find "PASSED">NUL&&set result=Passed||set result=Failed
         appveyor AddTest "%message:~3%" -Framework "" -FileName "" -Outcome %result%
-version: "1.8.2.{build}"
+deploy_script: 
+  - 
+    cmd: |-
+        for /f "delims=" %%i in ('build\DBMTester.exe^|find "DBM"') do set version=%%i
+        for /f "delims=" %%i in ('git rev-parse --short HEAD') do set filename=%version: =_%_(%%i)
+        7z a build\%filename%_bin.zip .\build\*>NUL
+        appveyor PushArtifact build\%filename%_bin.zip
+        7z a build\%filename%_src.zip *>NUL
+        appveyor PushArtifact build\%filename%_src.zip
