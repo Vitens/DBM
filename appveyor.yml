@@ -2,8 +2,8 @@
 build_script: 
   - 
     cmd: |-
-        set PIHOME=%CD%\3rdParty\PILibraries\pidll
         git submodule update --init --remote --recursive
+        set PIHOME=%CD%\3rdParty\PILibraries\pidll
         echo.|build.bat>NUL
 deploy_script: 
   - 
