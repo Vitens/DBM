@@ -25,4 +25,4 @@ rem along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 cd %~dp0
 
 for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
-powershell -Command "(Get-Content src\dbm\DBM.vb) -replace 'GITHASH', '%commit%' | Set-Content src\dbm\DBM.vb"
+powershell -Command "(Get-Content src\dbm\DBM.vb) -replace 'Const GITHASH As String = \".*?\"', 'Const GITHASH As String = \"%commit%\"' | Set-Content src\dbm\DBM.vb"
