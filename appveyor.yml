@@ -9,7 +9,7 @@ before_build:
 build_script: 
   - 
     cmd: |-
-        echo.|build.bat>NUL
+        echo.|build.bat
 test_script: 
   - 
     cmd: |-
