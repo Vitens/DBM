@@ -4,7 +4,6 @@ before_build:
     cmd: |-
         git submodule update --init --remote --recursive
         set PIHOME=%CD%\3rdParty\PILibraries\pidll
-        cipatch.bat
 build_script: 
   - 
     cmd: |-
