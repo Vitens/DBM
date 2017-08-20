@@ -29,6 +29,10 @@ if not exist build mkdir build
 del /Q build\*
 copy LICENSE build > NUL
 
+rem Apply patches
+for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
+powershell -Command "(Get-Content src\dbm\DBM.vb) -replace 'Const GITHASH As String = \".*?\"', 'Const GITHASH As String = \"%commit%\"' | Set-Content src\dbm\DBM.vb"
+
 rem Variables
 set vbc="%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\Vbc.exe" /win32icon:res\dbm.ico /optimize+ /nologo /novbruntimeref
 set PICheck="%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDK.dll"
