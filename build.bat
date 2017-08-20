@@ -30,7 +30,7 @@ del /Q build\*
 copy LICENSE build > NUL
 
 rem Apply patches
-for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
+for /f "delims=" %%i in ('xxxgit rev-parse --short HEAD') do set commit=%%i
 powershell -Command "(Get-Content src\dbm\DBM.vb) -replace 'Const GITHASH As String = \".*?\"', 'Const GITHASH As String = \"%commit%\"' | Set-Content src\dbm\DBM.vb"
 
 rem Variables
