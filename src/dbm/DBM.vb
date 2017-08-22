@@ -53,7 +53,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns a string containing version, copyright and license information.
       ' Also outputs results of unit and integration tests (unless skipped).
 
-      Const GITHASH As String = ""
+      Const GITHASH As String = "GITHASH"
 
       With FileVersionInfo.GetVersionInfo(System.Reflection.Assembly. _
         GetExecutingAssembly.Location)
