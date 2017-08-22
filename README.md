@@ -1,4 +1,4 @@
-![Logo](docs/dbmlogo.png)
+![Logo](img/dbmlogo.png)
 
 # DBM
 Dynamic Bandwidth Monitor  
@@ -29,24 +29,24 @@ Real-time, leak detection, demand forecasting, demand patterns, operational dash
 ## Samples
 
 ### Sample 1 - Prediction
-![Sample 1](docs/sample1.png)
+![Sample 1](img/sample1.png)
 
 In this example, two days before and after the current day are shown. For historic values, the measured data (black) is shown along with the predicted value (red). The upper and lower control limits (gray) were not crossed, so the DBM factor value (blue) equals zero. For future values, the prediction is shown along with the upper and lower control limits. Reliable predictions can be made for at least seven days in advance.
 
 ### Sample 2 - Exception
-![Sample 2](docs/sample2.png)
+![Sample 2](img/sample2.png)
 
 In this example, an exception causes the measured value (black) to cross the upper control limit (gray). The DBM factor value (blue) is greater than one during this time (calculated as _(measured value - predicted value)/(upper control limit - predicted value)_).
 
 ### Sample 3 - Suppressed exception (correlation)
-![Sample 3a](docs/sample3a.png)
-![Sample 3b](docs/sample3b.png)
+![Sample 3a](img/sample3a.png)
+![Sample 3b](img/sample3b.png)
 
 In this example, an exception causes the measured value (black) to cross the upper and lower control limits (gray). Because the pattern is checked against a similar pattern which has a comparable relative prediction error (calculated as _(predicted value / measured value) - 1_), the exception is suppressed. The DBM factor value is greater than zero and less than, or equal to one (correlation coefficient of the relative prediction error) during this time.
 
 ### Sample 4 - Suppressed exception (anticorrelation)
-![Sample 4a](docs/sample4a.png)
-![Sample 4b](docs/sample4b.png)
+![Sample 4a](img/sample4a.png)
+![Sample 4b](img/sample4b.png)
 
 In this example, an exception causes the measured value (black) to cross the lower control limit (gray). Because the pattern is checked against a similar, adjacent, pattern which has a comparable, but inverted, absolute prediction error (calculated as _predicted value - measured value_), the exception is suppressed. The DBM factor value is less than zero and greater than, or equal to negative one (correlation coefficient of the absolute prediction error) during this time.
 
@@ -112,6 +112,6 @@ Vitens is the largest drinking water company in The Netherlands. We deliver top 
 
 One of our main focus points is using advanced water quality, quantity and hydraulics models to further improve and optimize our treatment and distribution processes.
 
-![Vitens](docs/vitens.png)
+![Vitens](img/vitens.png)
 
 https://www.vitens.nl/
