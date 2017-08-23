@@ -26,6 +26,7 @@ cd %~dp0
 
 rem Variables
 set vbc="%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\Vbc.exe" /win32icon:res\dbm.ico /optimize+ /nologo /novbruntimeref
+set PIHOME=%CD%\3rdParty\PILibraries\pidll
 set PICheck="%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDK.dll"
 set PIRefs=%PICheck%,"%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDKCommon.dll"
 set PIACECheck="%PIHOME%\ACE\OSISoft.PIACENet.dll"
