@@ -7,8 +7,17 @@ build_script:
   - 
     cmd: |-
         build.bat
-test_script: 
+after_build:
   - 
+    cmd: |-
+        for /f "delims=" %%i in ('powershell -Command "(Get-Item build\DBMTester.exe).VersionInfo.ProductVersion"') do set binversion=%%i
+        for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
+        7z a %TEMP%\DBM_v%binversion%+%commit%_bin.zip .\build\*>NUL
+        appveyor PushArtifact %TEMP%\DBM_v%binversion%+%commit%_bin.zip
+        7z a %TEMP%\DBM_v%binversion%+%commit%_src.zip *>NUL
+        appveyor PushArtifact %TEMP%\DBM_v%binversion%+%commit%_src.zip
+test_script:
+  -
     cmd: |-
         for /f "delims=" %%i in ('build\DBMTester.exe^|find "Unit tests"') do set message=%%i
         echo %message%|find "PASSED">NUL&&set result=Passed||set result=Failed
@@ -16,12 +25,15 @@ test_script:
         for /f "delims=" %%i in ('build\DBMTester.exe^|find "Integration tests"') do set message=%%i
         echo %message%|find "PASSED">NUL&&set result=Passed||set result=Failed
         appveyor AddTest "%message:~3%" -Framework "" -FileName "" -Outcome %result%
-deploy_script: 
-  - 
-    cmd: |-
-        for /f "delims=" %%i in ('build\DBMTester.exe^|find "DBM"') do set version=%%i
-        set filename=%version: =_%
-        7z a build\%filename%_bin.zip .\build\*>NUL
-        appveyor PushArtifact build\%filename%_bin.zip
-        7z a build\%filename%_src.zip *>NUL
-        appveyor PushArtifact build\%filename%_src.zip
+deploy:
+  tag: 'v$(binversion)+$(commit)'
+  release: 'DBM v$(binversion)+$(commit)'
+  description: '$(APPVEYOR_REPO_COMMIT_MESSAGE)'
+  provider: GitHub
+  auth_token:
+    secure: BrTAHlG3kNuONUuCV7ZEqGZmiLwLr3bMDGexczO4xd+i8ZtVLUgMzBRMpEhdSzbK
+  artifact: /.*/
+  draft: false
+  prerelease: false
+  on:
+    branch: master
