@@ -5,9 +5,9 @@ Dynamic Bandwidth Monitor
 Leak detection method implemented in a real-time data historian
 
 ## Continuous integration
-| Build status                                                                                                                                                              | Test results                                                                                | Downloads                                                                                          |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| [![Build status](https://ci.appveyor.com/api/projects/status/yop6ltcux5bam7ed/branch/master?svg=true)](https://ci.appveyor.com/project/JohanFiti/dbm-jbrie/branch/master) | [:thumbsup: Tests](https://ci.appveyor.com/project/JohanFiti/dbm-jbrie/branch/master/tests) | [:package: Artifacts](https://ci.appveyor.com/project/JohanFiti/dbm-jbrie/branch/master/artifacts) |
+| Build status                                                                                                                                                              | Test results                                                                                | Downloads                                                                 |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| [![Build status](https://ci.appveyor.com/api/projects/status/yop6ltcux5bam7ed/branch/master?svg=true)](https://ci.appveyor.com/project/JohanFiti/dbm-jbrie/branch/master) | [:thumbsup: Tests](https://ci.appveyor.com/project/JohanFiti/dbm-jbrie/branch/master/tests) | [:package: Latest release](https://github.com/Vitens/DBM/releases/latest) |
 
 ## Authors
 | Name          | Company      | Role        | Contact                  |
