@@ -25,3 +25,15 @@ test_script:
         for /f "delims=" %%i in ('build\DBMTester.exe^|find "Integration tests"') do set message=%%i
         echo %message%|find "PASSED">NUL&&set result=Passed||set result=Failed
         appveyor AddTest "%message:~3%" -Framework "" -FileName "" -Outcome %result%
+deploy:
+  tag: 'v$(binversion)+$(commit)'
+  release: 'DBM v$(binversion)+$(commit)'
+  description: '$(APPVEYOR_REPO_COMMIT_MESSAGE)'
+  provider: GitHub
+  auth_token:
+    secure: BrTAHlG3kNuONUuCV7ZEqGZmiLwLr3bMDGexczO4xd+i8ZtVLUgMzBRMpEhdSzbK
+  artifact: /.*/
+  draft: false
+  prerelease: false
+  on:
+    branch: master
