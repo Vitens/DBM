@@ -69,7 +69,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Regression angle range (around -45/+45 degrees) required when suppressing
     ' based on (anti)correlation (degrees).
     ' Default: Allow factor 2 difference between values (18.435 degrees).
-    Public Shared RegressionAngleRange As Double = SlopeToAngle(2)-45
+    Public Shared RegressionAngleRange As Double = _
+      SlopeToAngle(2)-SlopeToAngle(1)
 
     ' Maximum number of cached prediction results per point.
     ' Default: large enough for one day.
