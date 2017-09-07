@@ -51,16 +51,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Me.Point = Point
 
-      ' If Object passed does not represent a valid, existing file then thrown a
-      ' File Not Found Exception, unless integration tests are running (in which
-      ' case the internal test data array in DBMTests is used by
-      ' DBMDataManager).
-
-      If Not File.Exists(DirectCast(Me.Point, String)) And _
-        Not TestsRunning Then
-        Throw New FileNotFoundException(DirectCast(Me.Point, String))
-      End If
-
     End Sub
 
 
@@ -99,6 +89,10 @@ Namespace Vitens.DynamicBandwidthMonitor
             End If
           Loop
           StreamReader.Close ' Close CSV file
+        Else
+          ' If Point does not represent a valid, existing file then throw a
+          ' File Not Found Exception.
+          Throw New FileNotFoundException(DirectCast(Point, String))
         End If
       End If
 
