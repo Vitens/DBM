@@ -70,7 +70,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' array is used as input for tags, so order of tests is important and
       ' can not be changed.
 
-      Dim InputPointDriver, CorrelationPointDriver As DBMPointDriver
+      Dim InputPointDriver, CorrelationPointDriver As DBMPointDriverTest
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim Result As DBMResult
 
