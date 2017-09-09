@@ -44,7 +44,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Sub New(Point As Object)
 
-      Me.Point = Point
+      MyBase.New(Point)
 
     End Sub
 
