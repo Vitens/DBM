@@ -33,7 +33,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
   Public Class DBMPointDriver
-
     Inherits DBMPointDriverAbstract
 
 
