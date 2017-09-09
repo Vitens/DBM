@@ -143,7 +143,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Function Result(InputPointDriver As DBMAbstractPointDriver, _
+    Public Function Result(InputPointDriver As DBMPointDriverAbstract, _
       CorrelationPoints As List(Of DBMCorrelationPoint), _
       Timestamp As DateTime) As DBMResult
 
