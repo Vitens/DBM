@@ -1353,7 +1353,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Function GetData(StartTimestamp As DateTime, _
       EndTimestamp As DateTime) As Double
 
-      Return 0
+      GetData = TestData(TestDataIndex)
+      TestDataIndex = (TestDataIndex+1) Mod TestData.Length ' Increase index
+      Return GetData
 
     End Function
 
