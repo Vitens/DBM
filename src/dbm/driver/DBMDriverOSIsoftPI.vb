@@ -52,7 +52,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Overridable Function GetData(StartTimestamp As DateTime, _
+    Public Overrides Function GetData(StartTimestamp As DateTime, _
       EndTimestamp As DateTime) As Double
 
       Return DirectCast(DirectCast(Point, PIPoint).Data.Summary _
