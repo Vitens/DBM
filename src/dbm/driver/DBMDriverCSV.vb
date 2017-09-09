@@ -35,6 +35,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
   Public Class DBMPointDriver
+    Inherits DBMPointDriverAbstract
 
 
     ' Description: Driver for CSV files (timestamp,value).
@@ -43,18 +44,17 @@ Namespace Vitens.DynamicBandwidthMonitor
     '          parameter.
 
 
-    Public Point As Object
     Private Values As Dictionary(Of DateTime, Double)
 
 
     Public Sub New(Point As Object)
 
-      Me.Point = Point
+      MyBase.New(Point)
 
     End Sub
 
 
-    Public Overridable Function GetData(StartTimestamp As DateTime, _
+    Public Overrides Function GetData(StartTimestamp As DateTime, _
       EndTimestamp As DateTime) As Double
 
       ' Calling GetData for the first time retrieves information from a CSV

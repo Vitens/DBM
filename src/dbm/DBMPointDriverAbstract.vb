@@ -24,38 +24,24 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 
-Imports PISDK
-Imports PISDK.ArchiveSummaryTypeConstants
-Imports PISDK.CalculationBasisConstants
-
-
 Namespace Vitens.DynamicBandwidthMonitor
 
 
-  Public Class DBMPointDriver
-    Inherits DBMPointDriverAbstract
+  Public MustInherit Class DBMPointDriverAbstract
 
 
-    ' Description: Driver for OSIsoft PI.
-    ' Identifier (Point): PISDK.PIPoint (PI tag)
-    ' Remarks: Used by PI ACE module DBMRt.
+    Public Point As Object
 
 
     Public Sub New(Point As Object)
 
-      MyBase.New(Point)
+      Me.Point = Point
 
     End Sub
 
 
-    Public Overrides Function GetData(StartTimestamp As DateTime, _
+    Public MustOverride Function GetData(StartTimestamp As DateTime, _
       EndTimestamp As DateTime) As Double
-
-      Return DirectCast(DirectCast(Point, PIPoint).Data.Summary _
-        (StartTimestamp, EndTimestamp, astAverage, cbTimeWeighted).Value, _
-        Double) ' Return time-weighted average for time range from PI.
-
-    End Function
 
 
   End Class
