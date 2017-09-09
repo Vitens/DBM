@@ -42,9 +42,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Remarks: Used by PI ACE module DBMRt.
 
 
-    Public Point As Object
-
-
     Public Sub New(Point As Object)
 
       Me.Point = Point

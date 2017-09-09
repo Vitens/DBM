@@ -45,7 +45,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     '          parameter.
 
 
-    Public Point As Object
     Private Values As Dictionary(Of DateTime, Double)
 
 
