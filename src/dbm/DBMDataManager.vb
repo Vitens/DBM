@@ -38,8 +38,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     ' The DBMDataManager is responsible for retrieving and caching input data.
-    ' It stores and uses a DBMPointDriver object, which has a GetData method
-    ' used for retrieving data.
+    ' It stores and uses a DBMPointDriverAbstract object, which has a GetData
+    ' method used for retrieving data.
 
 
     Public PointDriver As DBMPointDriverAbstract
