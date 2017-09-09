@@ -39,6 +39,11 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMTests
 
 
+    ' This class contains unit and integration tests. For integration tests, an
+    ' internal data array in the DBMPointDriverTest driver is used by
+    ' DBMDataManager.
+
+
     Private Shared DBM As New DBM
 
 
