@@ -44,6 +44,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public AbsoluteErrorStats, RelativeErrorStats As New DBMStatistics
     Public SuppressedBy As DBMPointDriverAbstract ' Can be set from DBM.Result
 
+
     Public Sub New
 
       ' Initialize array sizes. To be filled from back to front. When a
