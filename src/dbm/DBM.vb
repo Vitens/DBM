@@ -84,7 +84,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Private Function Point(PointDriver As DBMPointDriver) As DBMPoint
+    Private Function Point(PointDriver As DBMPointDriverAbstract) As DBMPoint
 
       ' Returns DBMPoint object from Points dictionary.
       ' If dictionary does not yet contain object, it is added first.
