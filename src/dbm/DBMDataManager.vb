@@ -42,11 +42,11 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' used for retrieving data.
 
 
-    Public PointDriver As DBMPointDriver
+    Public PointDriver As DBMPointDriverAbstract
     Private Values As New Dictionary(Of DateTime, Double)
 
 
-    Public Sub New(PointDriver As DBMPointDriver)
+    Public Sub New(PointDriver As DBMPointDriverAbstract)
 
       Me.PointDriver = PointDriver
 
