@@ -36,7 +36,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
   Public Class DBMPointDriver
 
-    Inherits DBMAbstractPointDriver
+    Inherits DBMPointDriverAbstract
 
 
     ' Description: Driver for CSV files (timestamp,value).

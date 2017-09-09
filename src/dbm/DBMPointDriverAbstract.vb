@@ -27,7 +27,7 @@ Option Strict
 Namespace Vitens.DynamicBandwidthMonitor
 
 
-  Public MustInherit Class DBMAbstractPointDriver
+  Public MustInherit Class DBMPointDriverAbstract
 
 
     Public Point As Object

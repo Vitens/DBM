@@ -34,7 +34,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
   Public Class DBMPointDriver
 
-    Inherits DBMAbstractPointDriver
+    Inherits DBMPointDriverAbstract
 
 
     ' Description: Driver for OSIsoft PI.
