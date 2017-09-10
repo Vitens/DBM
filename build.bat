@@ -41,28 +41,15 @@ rem Apply patches
 for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
 powershell -Command "(Get-Content src\dbm\DBM.vb) -replace 'Const GITHASH As String = \".*?\"', 'Const GITHASH As String = \"%commit%\"' | Set-Content src\dbm\DBM.vb"
 
-rem Build DBMDriverCSV.dll
-%vbc% /target:library /out:build\DBMDriverCSV.dll src\shared\*.vb src\dbm\*.vb src\dbm\driver\DBMDriverCSV.vb
-if not exist build\DBMDriverCSV.dll goto ExitBuild
-
-rem Build DBMTester.exe
-%vbc% /reference:build\DBMDriverCSV.dll /out:build\DBMTester.exe src\shared\*.vb src\dbmtester\*.vb
-if not exist build\DBMTester.exe goto ExitBuild
-
+Rem Build
+%vbc% /target:library /out:build\DBM.dll src\shared\*.vb src\dbm\*.vb
+%vbc% /reference:build\DBM.dll /target:library /out:build\DBMDriverCSV.dll src\shared\*.vb src\dbm\driver\DBMDriverCSV.vb
+%vbc% /reference:build\DBM.dll,build\DBMDriverCSV.dll /out:build\DBMTester.exe src\shared\*.vb src\dbmtester\*.vb
 if exist %PICheck% (
-
-  rem Build DBMDriverOSIsoftPI.dll
-  %vbc% /reference:%PIRefs% /target:library /out:build\DBMDriverOSIsoftPI.dll src\shared\*.vb src\dbm\*.vb src\dbm\driver\DBMDriverOSIsoftPI.vb
-  if not exist build\DBMDriverOSIsoftPI.dll goto ExitBuild
-
+  %vbc% /reference:%PIRefs%,build\DBM.dll /target:library /out:build\DBMDriverOSIsoftPI.dll src\shared\*.vb src\dbm\driver\DBMDriverOSIsoftPI.vb
   if exist %PIACECheck% (
-
-    rem Build DBMRt.dll
-    %vbc% /reference:%PIRefs%,%PIACERefs%,build\DBMDriverOSIsoftPI.dll /target:library /out:build\DBMRt.dll src\shared\*.vb src\PIACENet\*.vb
-    if not exist build\DBMRt.dll goto ExitBuild
-
+    %vbc% /reference:%PIRefs%,%PIACERefs%,build\DBM.dll,build\DBMDriverOSIsoftPI.dll /target:library /out:build\DBMRt.dll src\shared\*.vb src\PIACENet\*.vb
   )
-
 )
 
 rem Output version, copyright and license information and unit and integration test results
