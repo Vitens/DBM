@@ -62,10 +62,10 @@ In this example, an exception causes the measured value (black) to cross the low
 ### Drivers
 DBM uses drivers to read information from a source of data. The following drivers are included:
 
-| Driver                        | Description                                           | Identifier (`Point`)     | Remarks                                                                |
-| ----------------------------- | ----------------------------------------------------- | ------------------------ | ---------------------------------------------------------------------- |
-| `DBMDriverCSV.vb`             | Driver for CSV files (timestamp,value).               | `String` (CSV filename)  | Data interval must be the same as the `CalculationInterval` parameter. |
-| `DBMDriverOSIsoftPI.vb`       | Driver for OSIsoft PI.                                | `PISDK.PIPoint` (PI tag) | Used by PI ACE module `DBMRt`.                                         |
+| Driver                       | Description                             | Identifier (`Point`)     | Remarks                                                                |
+| ---------------------------- | --------------------------------------- | ------------------------ | ---------------------------------------------------------------------- |
+| `DBMPointDriverCSV.vb`       | Driver for CSV files (timestamp,value). | `String` (CSV filename)  | Data interval must be the same as the `CalculationInterval` parameter. |
+| `DBMPointDriverOSIsoftPI.vb` | Driver for OSIsoft PI.                  | `PISDK.PIPoint` (PI tag) | Used by PI ACE module `DBMRt`.                                         |
 
 ### Parameters
 DBM can be configured using several parameters. The values for these parameters can be changed at runtime in the `Vitens.DynamicBandwidthMonitor.DBMParameters` class.
