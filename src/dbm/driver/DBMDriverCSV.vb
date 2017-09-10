@@ -31,6 +31,10 @@ Imports System.Text.RegularExpressions
 Imports Vitens.DynamicBandwidthMonitor.DBMTests
 
 
+' Assembly title
+<assembly:System.Reflection.AssemblyTitle("DBMDriverCSV")>
+
+
 Namespace Vitens.DynamicBandwidthMonitor
 
 
