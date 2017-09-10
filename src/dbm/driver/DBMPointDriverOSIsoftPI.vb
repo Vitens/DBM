@@ -30,7 +30,7 @@ Imports PISDK.CalculationBasisConstants
 
 
 ' Assembly title
-<assembly:System.Reflection.AssemblyTitle("DBMDriverOSIsoftPI")>
+<assembly:System.Reflection.AssemblyTitle("DBMPointDriverOSIsoftPI")>
 
 
 Namespace Vitens.DynamicBandwidthMonitor

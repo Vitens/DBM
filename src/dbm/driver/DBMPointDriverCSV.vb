@@ -32,7 +32,7 @@ Imports Vitens.DynamicBandwidthMonitor.DBMTests
 
 
 ' Assembly title
-<assembly:System.Reflection.AssemblyTitle("DBMDriverCSV")>
+<assembly:System.Reflection.AssemblyTitle("DBMPointDriverCSV")>
 
 
 Namespace Vitens.DynamicBandwidthMonitor
