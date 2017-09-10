@@ -43,12 +43,12 @@ powershell -Command "(Get-Content src\dbm\DBM.vb) -replace 'Const GITHASH As Str
 
 Rem Build
 %vbc% /target:library /out:build\DBM.dll src\shared\*.vb src\dbm\*.vb
-%vbc% /reference:build\DBM.dll /target:library /out:build\DBMDriverCSV.dll src\shared\*.vb src\dbm\driver\DBMDriverCSV.vb
-%vbc% /reference:build\DBM.dll,build\DBMDriverCSV.dll /out:build\DBMTester.exe src\shared\*.vb src\dbmtester\*.vb
+%vbc% /reference:build\DBM.dll /target:library /out:build\DBMPointDriverCSV.dll src\shared\*.vb src\dbm\driver\DBMPointDriverCSV.vb
+%vbc% /reference:build\DBM.dll,build\DBMPointDriverCSV.dll /out:build\DBMTester.exe src\shared\*.vb src\dbmtester\*.vb
 if exist %PICheck% (
-  %vbc% /reference:%PIRefs%,build\DBM.dll /target:library /out:build\DBMDriverOSIsoftPI.dll src\shared\*.vb src\dbm\driver\DBMDriverOSIsoftPI.vb
+  %vbc% /reference:%PIRefs%,build\DBM.dll /target:library /out:build\DBMPointDriverOSIsoftPI.dll src\shared\*.vb src\dbm\driver\DBMPointDriverOSIsoftPI.vb
   if exist %PIACECheck% (
-    %vbc% /reference:%PIRefs%,%PIACERefs%,build\DBM.dll,build\DBMDriverOSIsoftPI.dll /target:library /out:build\DBMRt.dll src\shared\*.vb src\PIACENet\*.vb
+    %vbc% /reference:%PIRefs%,%PIACERefs%,build\DBM.dll,build\DBMPointDriverOSIsoftPI.dll /target:library /out:build\DBMRt.dll src\shared\*.vb src\PIACENet\*.vb
   )
 )
 

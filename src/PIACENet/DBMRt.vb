@@ -35,6 +35,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
   Public Class DBMRt
+    Inherits PIACENetClassModule ' PI ACE specific
 
 
     ' DBMRt is a real-time calculation module for OSIsoft PI ACE (Advanced
@@ -43,9 +44,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' relevant PI tags and performs calculations on these when needed. Note
     ' that there is no support for manual or automatic recalculation.
     ' Suggested scheduling: type: clock; period: 60 seconds.
-
-
-    Inherits PIACENetClassModule ' PI ACE specific
 
 
     Private Calculator As DBMRtCalculator
