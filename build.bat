@@ -26,15 +26,7 @@ cd %~dp0
 
 rem Variables
 set vbc="%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\Vbc.exe" /win32icon:res\dbm.ico /optimize+ /nologo /novbruntimeref
-
-echo a %PIHOME%
-
 if not defined PIHOME set PIHOME=%CD%\3rdParty\PILibraries
-
-echo b %PIHOME%
-if not defined PIHOME set PIHOME=aaa
-echo c %PIHOME%
-
 set PIRefs="%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDK.dll","%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDKCommon.dll"
 set PIACERefs="%PIHOME%\ACE\OSISoft.PIACENet.dll","%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PITimeServer.dll"
 
