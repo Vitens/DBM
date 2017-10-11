@@ -194,9 +194,9 @@ Namespace Vitens.DynamicBandwidthMonitor
             Result.Factor = Factor ' Store correlation coefficient
             With CorrelationResult ' Store prediction errors for corr. point
               Array.Copy(.AbsoluteErrors, Result.CorrelationAbsoluteErrors, _
-                .AbsoluteErrors.Count)
+                .AbsoluteErrors.Length)
               Array.Copy(.RelativeErrors, Result.CorrelationRelativeErrors, _
-                .RelativeErrors.Count)
+                .RelativeErrors.Length)
             End With
             Result.AbsoluteErrorStats = AbsoluteErrorStats.ShallowCopy
             Result.RelativeErrorStats = RelativeErrorStats.ShallowCopy
