@@ -53,6 +53,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Simple hash function for checking array contents.
 
+      Dim Value As Double
+
       Hash = 1
       For Each Value In Values
         If Not IsNaN(Value) Then
