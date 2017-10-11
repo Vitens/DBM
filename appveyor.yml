@@ -1,17 +1,17 @@
-version: "1.9.1.{build}"
+version: "1.9.2.{build}"
 skip_tags: true
-before_build: 
-  - 
+before_build:
+  -
     cmd: |-
         git submodule update --init --remote --recursive
-build_script: 
-  - 
+build_script:
+  -
     cmd: |-
         build.bat
 after_build:
-  - 
+  -
     cmd: |-
-        for /f "delims=" %%i in ('powershell -Command "(Get-Item build\DBMTester.exe).VersionInfo.ProductVersion"') do set binversion=%%i
+        for /f "delims=" %%i in ('powershell -Command "(Get-Item build\DBM.dll).VersionInfo.ProductVersion"') do set binversion=%%i
         for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
         7z a %TEMP%\DBM_v%binversion%+%commit%_bin.zip .\build\*>NUL
         appveyor PushArtifact %TEMP%\DBM_v%binversion%+%commit%_bin.zip

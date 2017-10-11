@@ -24,6 +24,7 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 
+Imports System
 Imports PISDK
 Imports PISDK.ArchiveSummaryTypeConstants
 Imports PISDK.CalculationBasisConstants

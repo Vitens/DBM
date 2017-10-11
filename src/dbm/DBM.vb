@@ -24,6 +24,7 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 
+Imports System
 Imports System.Collections.Generic
 Imports System.Diagnostics
 Imports System.Environment
@@ -151,6 +152,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' timestamp. If a list of DBMCorrelationPoints is passed, events can be
       ' suppressed if a strong correlation is found.
 
+      Dim CorrelationPoint As DBMCorrelationPoint
       Dim CorrelationResult As DBMResult
       Dim AbsoluteErrorStats, RelativeErrorStats As New DBMStatistics
       Dim Factor As Double
@@ -192,9 +194,9 @@ Namespace Vitens.DynamicBandwidthMonitor
             Result.Factor = Factor ' Store correlation coefficient
             With CorrelationResult ' Store prediction errors for corr. point
               Array.Copy(.AbsoluteErrors, Result.CorrelationAbsoluteErrors, _
-                .AbsoluteErrors.Count)
+                .AbsoluteErrors.Length)
               Array.Copy(.RelativeErrors, Result.CorrelationRelativeErrors, _
-                .RelativeErrors.Count)
+                .RelativeErrors.Length)
             End With
             Result.AbsoluteErrorStats = AbsoluteErrorStats.ShallowCopy
             Result.RelativeErrorStats = RelativeErrorStats.ShallowCopy

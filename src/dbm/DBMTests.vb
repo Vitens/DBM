@@ -24,6 +24,7 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 
+Imports System
 Imports System.Collections.Generic
 Imports System.DateTime
 Imports System.Double
@@ -51,6 +52,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Optional Digits As Integer = 15) As Double
 
       ' Simple hash function for checking array contents.
+
+      Dim Value As Double
 
       Hash = 1
       For Each Value In Values

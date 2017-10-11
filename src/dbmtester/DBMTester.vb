@@ -24,6 +24,7 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 
+Imports System
 Imports System.Collections.Generic
 Imports System.Environment
 Imports System.Globalization.CultureInfo
@@ -83,13 +84,16 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Sub Main
 
-      Dim Substrings(), Parameter, Value As String
+      Dim CommandLineArg, Substrings(), Parameter, Value As String
       Dim InputPointDriver As DBMPointDriver = Nothing
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim StartTimestamp, EndTimestamp As DateTime
       Dim AlwaysOutputCorrelationData As Boolean
       Dim Result As DBMResult
       Dim _DBM As New DBM
+      Dim PredictionErrors(), PredictionError As Double
+      Dim ErrorStats As DBMStatistics
+      Dim CorrelationPoint As DBMCorrelationPoint
 
       ' Parse command line arguments
       For Each CommandLineArg In GetCommandLineArgs

@@ -48,18 +48,19 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Approximation of inverse standard normal CDF developed by
       ' Peter J. Acklam
 
-      Const a1 = -39.6968302866538, a2 = 220.946098424521
-      Const a3 = -275.928510446969, a4 = 138.357751867269
-      Const a5 = -30.6647980661472, a6 = 2.50662827745924
-      Const b1 = -54.4760987982241, b2 = 161.585836858041
-      Const b3 = -155.698979859887, b4 = 66.8013118877197
-      Const b5 = -13.2806815528857
-      Const c1 = -7.78489400243029E-03, c2 = -0.322396458041136
-      Const c3 = -2.40075827716184, c4 = -2.54973253934373
-      Const c5 = 4.37466414146497, c6 = 2.93816398269878
-      Const d1 = 7.78469570904146E-03, d2 = 0.32246712907004
-      Const d3 = 2.445134137143, d4 = 3.75440866190742
-      Const p_low = 0.02425, p_high = 1-p_low
+      Const a1 As Double = -39.6968302866538, a2 As Double = 220.946098424521
+      Const a3 As Double = -275.928510446969, a4 As Double = 138.357751867269
+      Const a5 As Double = -30.6647980661472, a6 As Double = 2.50662827745924
+      Const b1 As Double = -54.4760987982241, b2 As Double = 161.585836858041
+      Const b3 As Double = -155.698979859887, b4 As Double = 66.8013118877197
+      Const b5 As Double = -13.2806815528857
+      Const c1 As Double = -7.78489400243029E-03
+      Const c2 As Double = -0.322396458041136
+      Const c3 As Double = -2.40075827716184, c4 As Double = -2.54973253934373
+      Const c5 As Double = 4.37466414146497, c6 As Double = 2.93816398269878
+      Const d1 As Double = 7.78469570904146E-03, d2 As Double = 0.32246712907004
+      Const d3 As Double = 2.445134137143, d4 As Double = 3.75440866190742
+      Const p_low As Double = 0.02425, p_high As Double = 1-p_low
 
       Dim q, r As Double
 
@@ -183,6 +184,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns the arithmetic mean; the sum of the sampled values divided
       ' by the number of items in the sample.
 
+      Dim Value As Double
+
       Mean = 0
       For Each Value In Values
         Mean += Value/Values.Length
@@ -199,9 +202,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' a population, or a probability distribution, from the lower half. In
       ' simple terms, it may be thought of as the "middle" value of a data set.
 
-      Dim MedianValues(Values.Count-1) As Double
+      Dim MedianValues(Values.Length-1) As Double
 
-      Array.Copy(Values, MedianValues, Values.Count)
+      Array.Copy(Values, MedianValues, Values.Length)
       Array.Sort(MedianValues)
 
       If MedianValues.Length Mod 2 = 0 Then
@@ -220,7 +223,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns an array which contains the absolute values of the input
       ' array from which the central tendency has been subtracted.
 
-      Dim AbsDev(Values.Count-1) As Double
+      Dim i As Integer
+      Dim AbsDev(Values.Length-1) As Double
 
       For i = 0 to Values.Length-1
         AbsDev(i) = Abs(Values(i)-From)
@@ -295,7 +299,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' response filter that applies weighting factors which decrease
       ' exponentially.
 
-      Dim Weight, TotalWeight As Double
+      Dim Weight, TotalWeight, Value As Double
 
       ExponentialMovingAverage = 0
       Weight = 1 ' Initial weight
