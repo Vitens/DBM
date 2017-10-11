@@ -91,6 +91,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim AlwaysOutputCorrelationData As Boolean
       Dim Result As DBMResult
       Dim _DBM As New DBM
+      Dim PredictionErrors(), PredictionError As Double
 
       ' Parse command line arguments
       For Each CommandLineArg In GetCommandLineArgs
