@@ -221,6 +221,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns an array which contains the absolute values of the input
       ' array from which the central tendency has been subtracted.
 
+      Dim i As Integer
       Dim AbsDev(Values.Length-1) As Double
 
       For i = 0 to Values.Length-1
