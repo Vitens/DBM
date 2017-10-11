@@ -84,7 +84,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Sub Main
 
-      Dim Substrings(), Parameter, Value As String
+      Dim CommandLineArg, Substrings(), Parameter, Value As String
       Dim InputPointDriver As DBMPointDriver = Nothing
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim StartTimestamp, EndTimestamp As DateTime
