@@ -200,9 +200,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' a population, or a probability distribution, from the lower half. In
       ' simple terms, it may be thought of as the "middle" value of a data set.
 
-      Dim MedianValues(Values.Count-1) As Double
+      Dim MedianValues(Values.Length-1) As Double
 
-      Array.Copy(Values, MedianValues, Values.Count)
+      Array.Copy(Values, MedianValues, Values.Length)
       Array.Sort(MedianValues)
 
       If MedianValues.Length Mod 2 = 0 Then
@@ -221,7 +221,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns an array which contains the absolute values of the input
       ' array from which the central tendency has been subtracted.
 
-      Dim AbsDev(Values.Count-1) As Double
+      Dim AbsDev(Values.Length-1) As Double
 
       For i = 0 to Values.Length-1
         AbsDev(i) = Abs(Values(i)-From)
