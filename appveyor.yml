@@ -1,15 +1,15 @@
 version: "1.9.1.{build}"
 skip_tags: true
-before_build: 
-  - 
+before_build:
+  -
     cmd: |-
         git submodule update --init --remote --recursive
-build_script: 
-  - 
+build_script:
+  -
     cmd: |-
         build.bat
 after_build:
-  - 
+  -
     cmd: |-
         for /f "delims=" %%i in ('powershell -Command "(Get-Item build\DBMTester.exe).VersionInfo.ProductVersion"') do set binversion=%%i
         for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
