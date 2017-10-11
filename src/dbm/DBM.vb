@@ -152,6 +152,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' timestamp. If a list of DBMCorrelationPoints is passed, events can be
       ' suppressed if a strong correlation is found.
 
+      Dim CorrelationPoint As DBMCorrelationPoint
       Dim CorrelationResult As DBMResult
       Dim AbsoluteErrorStats, RelativeErrorStats As New DBMStatistics
       Dim Factor As Double
