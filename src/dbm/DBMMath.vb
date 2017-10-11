@@ -185,7 +185,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' by the number of items in the sample.
 
       Mean = 0
-      For Each Value In Values
+      For Each Value As Double In Values
         Mean += Value/Values.Length
       Next
 
@@ -301,7 +301,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ExponentialMovingAverage = 0
       Weight = 1 ' Initial weight
       TotalWeight = 0
-      For Each Value In Values ' Least significant value first
+      For Each Value As Double In Values ' Least significant value first
         ExponentialMovingAverage += Value*Weight
         TotalWeight += Weight
         Weight /= 1-2/(Values.Length+1) ' Increase weight for more recent values
