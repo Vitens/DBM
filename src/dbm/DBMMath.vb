@@ -184,8 +184,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns the arithmetic mean; the sum of the sampled values divided
       ' by the number of items in the sample.
 
+      Dim Value As Double
+
       Mean = 0
-      For Each Value As Double In Values
+      For Each Value In Values
         Mean += Value/Values.Length
       Next
 
@@ -297,12 +299,12 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' response filter that applies weighting factors which decrease
       ' exponentially.
 
-      Dim Weight, TotalWeight As Double
+      Dim Weight, TotalWeight, Value As Double
 
       ExponentialMovingAverage = 0
       Weight = 1 ' Initial weight
       TotalWeight = 0
-      For Each Value As Double In Values ' Least significant value first
+      For Each Value In Values ' Least significant value first
         ExponentialMovingAverage += Value*Weight
         TotalWeight += Weight
         Weight /= 1-2/(Values.Length+1) ' Increase weight for more recent values
