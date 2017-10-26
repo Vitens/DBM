@@ -101,8 +101,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         End If
       End If
 
-      If Values.ContainsKey(StartTimestamp) Then ' In cache
-        Return Values.Item(StartTimestamp) ' Return value from cache
+      ' Look up data from memory
+      If Values.TryGetValue(StartTimestamp, Value) Then ' In cache
+        Return Value ' Return value from cache
       Else
         Return NaN ' No data in memory for timestamp, return Not a Number.
       End If

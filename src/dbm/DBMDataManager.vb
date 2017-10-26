@@ -61,9 +61,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' preference over using the PointDriver object.
       ' Returns value at timestamp, either from cache or using driver
 
-      If Values.ContainsKey(Timestamp) Then ' In cache
-        Value = Values.Item(Timestamp) ' Return value from cache
-      Else
+      If Not Values.TryGetValue(Timestamp, Value) Then ' Not in cache
         Try
           ' Get data using GetData method in driver.
           Value = PointDriver.GetData _
