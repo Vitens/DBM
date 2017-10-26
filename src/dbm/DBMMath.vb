@@ -184,14 +184,18 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns the arithmetic mean; the sum of the sampled values divided
       ' by the number of items in the sample.
 
+      Dim NonNaNCount As Integer = 0
       Dim Value As Double
+      Dim Sum As Double = 0
 
-      Mean = 0
       For Each Value In Values
-        Mean += Value/Values.Length
+        If Not IsNan(Value) Then
+          Sum += Value
+          NonNaNCount += 1
+        End If
       Next
 
-      Return Mean
+      Return Sum / NonNaNCount
 
     End Function
 
@@ -202,9 +206,18 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' a population, or a probability distribution, from the lower half. In
       ' simple terms, it may be thought of as the "middle" value of a data set.
 
-      Dim MedianValues(Values.Length-1) As Double
+      Dim NonNaNCount As Integer = Values.Count(Function(v) Not IsNaN(v))
+      Dim MedianValues(NonNaNCount-1) As Double
 
-      Array.Copy(Values, MedianValues, Values.Length)
+      ' Only use non NaN values
+      NonNaNCount = 0
+      For i as Integer = 0 to Values.Length-1
+        If Not IsNan(Values(i)) Then
+          MedianValues(NonNaNCount) = Values(i)
+          NonNaNCount += 1
+        End If
+      Next i
+
       Array.Sort(MedianValues)
 
       If MedianValues.Length Mod 2 = 0 Then
