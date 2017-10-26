@@ -264,10 +264,12 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim CentralTendency, MAD, ControlLimit As Double
       Dim i As Integer
 
+      Dim NonNaNCount As Integer = Values.Count(Function(v) Not IsNaN(v))
+
       CentralTendency = Median(Values)
       MAD = Median(AbsoluteDeviation(Values, CentralTendency))
-      ControlLimit = MAD*MedianAbsoluteDeviationScaleFactor(Values.Length-1)* _
-        ControlLimitRejectionCriterion(ConfidenceInterval, Values.Length-1)
+      ControlLimit = MAD*MedianAbsoluteDeviationScaleFactor(NonNaNCount)* _
+        ControlLimitRejectionCriterion(ConfidenceInterval, NonNaNCount)
 
       If ControlLimit = 0 Then ' This only happens when MAD equals 0.
         ' Use Mean Absolute Deviation instead of Median Absolute Deviation
@@ -276,8 +278,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         CentralTendency = Mean(Values)
         MAD = Mean(AbsoluteDeviation(Values, CentralTendency))
         ControlLimit = MAD*MeanAbsoluteDeviationScaleFactor* _
-          ControlLimitRejectionCriterion(ConfidenceInterval, _
-          Values.Length-1)
+          ControlLimitRejectionCriterion(ConfidenceInterval, NonNaNCount)
       End If
 
       For i = 0 to Values.Length-1
