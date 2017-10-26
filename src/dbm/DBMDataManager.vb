@@ -61,9 +61,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' preference over using the PointDriver object.
       ' Returns value at timestamp, either from cache or using driver
 
-      If Values.ContainsKey(Timestamp) Then ' In cache
-        Value = Values.Item(Timestamp) ' Return value from cache
-      Else
+      If Not Values.TryGetValue(Timestamp, Value) Then ' Not in cache
         Try
           ' Get data using GetData method in driver.
           Value = PointDriver.GetData _
@@ -73,7 +71,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         End Try
         Do While Values.Count >= MaxDataManagerValues ' Limit cache size
           ' Remove random cached value when cache limit reached.
-          Values.Remove(Values.ElementAt(RandomNumber(0, Values.Count-1)).Key)
+          Values.Remove(Values.ElementAt(0).Key)
         Loop
         Values.Add(Timestamp, Value) ' Add to cache
       End If
