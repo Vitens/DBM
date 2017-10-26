@@ -70,7 +70,9 @@ Namespace Vitens.DynamicBandwidthMonitor
           Value = NaN ' Error getting data, return Not a Number
         End Try
         Do While Values.Count >= MaxDataManagerValues ' Limit cache size
-          ' Remove random cached value when cache limit reached.
+          ' For the implementation of a random cache eviction policy, just
+          ' taking the first element of the dictionary is random enough as
+          ' a Dictionary in .NET is implemented as a hashtable.
           Values.Remove(Values.ElementAt(0).Key)
         Loop
         Values.Add(Timestamp, Value) ' Add to cache

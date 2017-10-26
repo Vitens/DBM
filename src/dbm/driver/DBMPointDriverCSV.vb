@@ -47,7 +47,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Remarks: Data interval must be the same as the CalculationInterval
     '          parameter.
 
-    Private Shared splitChars As char() = {","c, "	"c}     ' Comma and Tab characters
+
+    Const SplitChars As Char() = {","c, "	"c} ' Comma and tab characters
+
 
     Private Values As Dictionary(Of DateTime, Double)
 
@@ -77,7 +79,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           Using StreamReader As New StreamReader(DirectCast(Point, String)) ' Open CSV
             Do While Not StreamReader.EndOfStream
               ' Comma and tab delimiters; split in 2 substrings (timestamp, value)
-              Substrings = StreamReader.ReadLine.Split(splitChars, 2)
+              Substrings = StreamReader.ReadLine.Split(SplitChars, 2)
               If Substrings.Length = 2 Then
                 If DateTime.TryParse(Substrings(0), Timestamp) Then
                   If Double.TryParse(Substrings(1), Value) Then
