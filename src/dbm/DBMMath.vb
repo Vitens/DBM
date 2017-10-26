@@ -265,7 +265,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim i As Integer
 
       CentralTendency = Median(Values)
-      MAD = MedianAbsoluteDeviation(Values)
+      MAD = Median(AbsoluteDeviation(Values, CentralTendency))
       ControlLimit = MAD*MedianAbsoluteDeviationScaleFactor(Values.Length-1)* _
         ControlLimitRejectionCriterion(ConfidenceInterval, Values.Length-1)
 
@@ -274,7 +274,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' to detect outliers. Median absolute deviation has a 50% breakdown
         ' point.
         CentralTendency = Mean(Values)
-        MAD = MeanAbsoluteDeviation(Values)
+        MAD = Mean(AbsoluteDeviation(Values, CentralTendency))
         ControlLimit = MAD*MeanAbsoluteDeviationScaleFactor* _
           ControlLimitRejectionCriterion(ConfidenceInterval, _
           Values.Length-1)
