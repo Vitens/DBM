@@ -48,10 +48,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     '          parameter.
 
 
-    Const SplitChars As Char() = {","c, "	"c} ' Comma and tab characters
-
-
     Private Values As Dictionary(Of DateTime, Double)
+    Private Shared SplitChars As Char() = {","c, "	"c} ' Comma and tab
 
 
     Public Sub New(Point As Object)
