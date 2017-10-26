@@ -28,7 +28,6 @@ Imports System
 Imports System.Collections.Generic
 Imports System.Double
 Imports System.IO
-Imports System.Text.RegularExpressions
 Imports Vitens.DynamicBandwidthMonitor.DBMTests
 
 
@@ -48,6 +47,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Remarks: Data interval must be the same as the CalculationInterval
     '          parameter.
 
+    Private Shared splitChars As char() = {","c, "	"c}     ' Comma and Tab characters
 
     Private Values As Dictionary(Of DateTime, Double)
 
@@ -67,7 +67,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' GetData retrieves data from the dictionary directly. Non existing
       ' timestamps return NaN.
 
-      Dim StreamReader As StreamReader
       Dim Substrings() As String
       Dim Timestamp As DateTime
       Dim Value As Double
@@ -75,25 +74,21 @@ Namespace Vitens.DynamicBandwidthMonitor
       If Values Is Nothing Then ' No data in memory yet
         Values = New Dictionary(Of DateTime, Double)
         If File.Exists(DirectCast(Point, String)) Then
-          StreamReader = New StreamReader(DirectCast(Point, String)) ' Open CSV
-          Do While Not StreamReader.EndOfStream
-            ' Comma and tab delimiters; split in 2 substrings (timestamp, value)
-            Substrings = Regex.Split _
-              (StreamReader.ReadLine, "^([^,\t]+)[,\t](.+)$")
-            ' If a match is found at the beginning or the end of the input
-            ' string, an empty string is included at the beginning or the end
-            ' of the returned array.
-            If Substrings.Length = 4 Then
-              If DateTime.TryParse(Substrings(1), Timestamp) Then
-                If Double.TryParse(Substrings(2), Value) Then
-                  If Not Values.ContainsKey(Timestamp) Then
-                    Values.Add(Timestamp, Value) ' Add valid data to dictionary
+          Using StreamReader As New StreamReader(DirectCast(Point, String)) ' Open CSV
+            Do While Not StreamReader.EndOfStream
+              ' Comma and tab delimiters; split in 2 substrings (timestamp, value)
+              Substrings = StreamReader.ReadLine.Split(splitChars, 2)
+              If Substrings.Length = 2 Then
+                If DateTime.TryParse(Substrings(0), Timestamp) Then
+                  If Double.TryParse(Substrings(1), Value) Then
+                    If Not Values.ContainsKey(Timestamp) Then
+                      Values.Add(Timestamp, Value) ' Add valid data to dictionary
+                    End If
                   End If
                 End If
               End If
-            End If
-          Loop
-          StreamReader.Close ' Close CSV file
+            Loop
+          End Using ' Close CSV file
         Else
           ' If Point does not represent a valid, existing file then throw a
           ' File Not Found Exception.
