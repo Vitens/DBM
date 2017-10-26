@@ -102,10 +102,11 @@ Namespace Vitens.DynamicBandwidthMonitor
               Next PatternCounter
               Prediction.Calculate(Patterns)
               ' Limit cache size
-              Do While Predictions.Count >= MaxPointPredictions
-                ' Remove random cached value when cache limit reached.
-                Predictions.Remove(Predictions.ElementAt _
-                  (RandomNumber(0, Predictions.Count-1)).Key)
+              Do While Predictions.Count >= MaxPointPredictions ' Limit cache
+                ' For the implementation of a random cache eviction policy, just
+                ' taking the first element of the dictionary is random enough as
+                ' a Dictionary in .NET is implemented as a hashtable.
+                Predictions.Remove(Predictions.ElementAt(0).Key)
               Loop
               ' Add calculated prediction to cache.
               Predictions.Add(PredictionTimestamp, Prediction.ShallowCopy)
