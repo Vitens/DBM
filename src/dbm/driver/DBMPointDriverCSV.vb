@@ -63,13 +63,15 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private Function IsEquidistantList(l As IList(Of DateTime)) As Boolean
 
       ' Checks whether a list of timestamps has the same delta between
-      ' consecutive DateTimes. To allow for gaps in the data and irregularities
-      ' during DST transitions, only the delta of the first and last pair is
-      ' checked. If both are the same, the list is assumed to have equidistant
-      ' timestamps.
+      ' consecutive DateTimes. To allow for irregularities during DST
+      ' transitions, only the delta of the first and last pair is checked
+      ' agains the average delta for the whole list.
 
-      Return l(1).Subtract(l(0)).TotalSeconds = _
-        l(l.Count-1).Subtract(l(l.Count-2)).TotalSeconds
+      Dim dt_start As Double = l(1).Subtract(l(0)).TotalSeconds
+      Dim dt_end As Double = l(l.Count-1).Subtract(l(l.Count-2)).TotalSeconds
+      Dim dt_avg As Double = _
+        l(l.Count-1).Subtract(l(0)).TotalSeconds/(l.Count-1)
+      Return dt_start = dt_end And dt_start = dt_avg
 
     End Function
 
@@ -159,8 +161,8 @@ Namespace Vitens.DynamicBandwidthMonitor
                 If Substrings.Length = 2 Then
                   If DateTime.TryParse(Substrings(0), Timestamp) Then
                     If Double.TryParse(Substrings(1), Value) Then
+                      TimestampList.Add(Timestamp)
                       If Not Values.ContainsKey(Timestamp) Then
-                        TimestampList.Add(Timestamp)
                         Values.Add(Timestamp, Value) ' Add data to dictionary
                       End If
                     End If
