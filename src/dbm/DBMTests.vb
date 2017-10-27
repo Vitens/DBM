@@ -610,6 +610,11 @@ Namespace Vitens.DynamicBandwidthMonitor
         Round(SlopeToAngle(-1.6831), 4) = -59.2837 And _
         Round(SlopeToAngle(-2.0031), 4) = -63.4704
 
+      For i = 0 to 19
+        UnitTestResults = UnitTestResults And RandomNumber(0, i+1) >= 0 And _
+          RandomNumber(0, i+1) <= i+1
+      Next i
+
       With Statistics
         For i = 0 To 19
           If i = 0 Then
