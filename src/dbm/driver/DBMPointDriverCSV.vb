@@ -28,6 +28,7 @@ Imports System
 Imports System.Collections.Generic
 Imports System.Double
 Imports System.IO
+Imports System.Runtime.Serialization.Formatters.Binary
 Imports Vitens.DynamicBandwidthMonitor.DBMTests
 
 
@@ -59,6 +60,59 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
+    Private Function IsEquidistantList(l As IList(Of DateTime)) As Boolean
+      ' Checks whether a list of timestamps has the same delta between
+      ' consecutive DateTimes.  To allow for irregularities during DST
+      ' transitions, only the delta of the first and last pair is checked
+      ' agains the average delta for the whole list.
+      Dim dt_start As Double = l(1).Subtract(l(0)).TotalSeconds
+      Dim dt_end As Double = l(l.Count-1).Subtract(l(l.Count-2)).TotalSeconds
+      Dim dt_avg As Double = l(l.Count-1).Subtract(l(0)).TotalSeconds / (l.Count-1)
+      Return dt_start = dt_end And dt_start = dt_avg
+    End Function
+
+    Private Sub LoadBinaryData(SerializedCSVFileName As String)
+      ' Load Values dictionary from a serialized Double array for a set of
+      ' equidistant timestamps defined by a start timestamp and a delta.
+      Dim first_ts As DateTime
+      Dim dt As Integer = 0
+      Dim varray As Double() = Nothing
+      Dim formatter As BinaryFormatter = new BinaryFormatter()
+      Using fs As Stream = new FileStream(SerializedCSVFileName , FileMode.Open, FileAccess.Read, FileShare.Read)
+        first_ts = DirectCast(formatter.Deserialize(fs), DateTime)
+        dt = DirectCast(formatter.Deserialize(fs), Integer)
+        varray = DirectCast(formatter.Deserialize(fs), Double())
+      End Using
+      For i = 0 To varray.Count-1
+        Dim Timestamp = first_ts.AddSeconds(i * dt)
+        If Not Double.IsNaN(varray(i)) And Not Values.ContainsKey(Timestamp) Then
+          Values.Add(Timestamp, varray(i))
+        End If
+      Next
+    End Sub
+
+    Private Sub SaveBinaryData(SerializedCSVFileName As String, tslist As IList(Of DateTime))
+      ' Convert the Values dictionary into a Double array and serialize this array.
+      Dim first_ts = tslist(0)
+      Dim dt = CInt(tslist(1).Subtract(tslist(0)).TotalSeconds)
+      Dim varray = New Double(tslist.Count-1) {}
+      For i = 0 To tslist.Count-1
+        Dim Timestamp = first_ts.AddSeconds(i * dt)
+        If Values.ContainsKey(Timestamp) Then
+          varray(i) = Values.Item(Timestamp)
+        Else
+          varray(i) = NaN
+        End If
+      Next
+      Dim formatter As BinaryFormatter = new BinaryFormatter()
+      Using fs As Stream = new FileStream(SerializedCSVFileName , FileMode.Create, FileAccess.Write, FileShare.None)
+        formatter.Serialize(fs, first_ts)
+        formatter.Serialize(fs, dt)
+        formatter.Serialize(fs, varray)
+      End Using
+    End Sub
+
+
     Public Overrides Function GetData(StartTimestamp As DateTime, _
       EndTimestamp As DateTime) As Double
 
@@ -73,22 +127,38 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       If Values Is Nothing Then ' No data in memory yet
         Values = New Dictionary(Of DateTime, Double)
-        If File.Exists(DirectCast(Point, String)) Then
-          Using StreamReader As New StreamReader(DirectCast(Point, String)) ' Open CSV
-            Do While Not StreamReader.EndOfStream
-              ' Comma and tab delimiters; split in 2 substrings (timestamp, value)
-              Substrings = StreamReader.ReadLine.Split(SplitChars, 2)
-              If Substrings.Length = 2 Then
-                If DateTime.TryParse(Substrings(0), Timestamp) Then
-                  If Double.TryParse(Substrings(1), Value) Then
-                    If Not Values.ContainsKey(Timestamp) Then
-                      Values.Add(Timestamp, Value) ' Add valid data to dictionary
+        Dim CSVFileName As String = DirectCast(Point, String)
+        If File.Exists(CSVFileName) Then
+
+          Dim SerializedCSVFileName As String = CSVFileName + ".bin"
+          If File.Exists(SerializedCSVFileName) And _
+            File.GetLastWriteTime(CSVFileName) < File.GetLastWriteTime(SerializedCSVFileName) Then
+            LoadBinaryData(SerializedCSVFileName)
+          Else
+            Dim tslist As List(Of DateTime) = New List(Of DateTime)
+            Using StreamReader As New StreamReader(DirectCast(Point, String)) ' Open CSV
+              Do While Not StreamReader.EndOfStream
+                ' Comma and tab delimiters; split in 2 substrings (timestamp, value)
+                Substrings = StreamReader.ReadLine.Split(SplitChars, 2)
+                If Substrings.Length = 2 Then
+                  If DateTime.TryParse(Substrings(0), Timestamp) Then
+                    If Double.TryParse(Substrings(1), Value) Then
+                      tslist.Add(Timestamp)
+                      If Not Values.ContainsKey(Timestamp) Then
+                        Values.Add(Timestamp, Value) ' Add valid data to dictionary
+                      End If
                     End If
                   End If
                 End If
-              End If
-            Loop
-          End Using ' Close CSV file
+              Loop
+            End Using ' Close CSV file
+            If IsEquidistantList(tslist) Then
+              ' In case of equidistant timestamps:
+              ' serialize the Values dictionary to speed up the next run on the same data.
+              SaveBinaryData(SerializedCSVFileName, tslist)
+            End If
+          End If
+
         Else
           ' If Point does not represent a valid, existing file then throw a
           ' File Not Found Exception.
