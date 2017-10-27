@@ -72,6 +72,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim dt_avg As Double = _
         l(l.Count-1).Subtract(l(0)).TotalSeconds/(l.Count-1)
       Return dt_start = dt_end And dt_start = dt_avg
+
     End Function
 
 
@@ -97,6 +98,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           Values.Add(Timestamp, varray(i))
         End If
       Next
+
     End Sub
 
 
@@ -124,6 +126,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         formatter.Serialize(fs, dt)
         formatter.Serialize(fs, varray)
       End Using
+
     End Sub
 
 
@@ -158,8 +161,8 @@ Namespace Vitens.DynamicBandwidthMonitor
                 If Substrings.Length = 2 Then
                   If DateTime.TryParse(Substrings(0), Timestamp) Then
                     If Double.TryParse(Substrings(1), Value) Then
+                      TimestampList.Add(Timestamp)
                       If Not Values.ContainsKey(Timestamp) Then
-                        TimestampList.Add(Timestamp)
                         Values.Add(Timestamp, Value) ' Add data to dictionary
                       End If
                     End If
