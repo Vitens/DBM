@@ -110,7 +110,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Convert the Values dictionary into a Double array and
       ' serialize this array.
 
-      Dim first_ts, Timestamp
+      Dim first_ts, Timestamp As DateTime
       Dim dt, i As Integer
       Dim varray = New Double(tslist.Count-1){}
       Dim formatter As BinaryFormatter = new BinaryFormatter()
