@@ -71,6 +71,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim dt_end As Double = l(l.Count-1).Subtract(l(l.Count-2)).TotalSeconds
       Dim dt_avg As Double = _
         l(l.Count-1).Subtract(l(0)).TotalSeconds/(l.Count-1)
+
       Return dt_start = dt_end And dt_start = dt_avg
 
     End Function
@@ -81,10 +82,11 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Load Values dictionary from a serialized Double array for a set of
       ' equidistant timestamps defined by a start timestamp and a delta.
 
-      Dim first_ts As DateTime
+      Dim first_ts, Timestamp As DateTime
       Dim dt, i As Integer
       Dim varray As Double() = Nothing
       Dim formatter As BinaryFormatter = new BinaryFormatter()
+
       Using fs As Stream = new FileStream(SerializedCSVFileName, _
         FileMode.Open, FileAccess.Read, FileShare.Read)
         first_ts = DirectCast(formatter.Deserialize(fs), DateTime)
@@ -92,7 +94,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         varray = DirectCast(formatter.Deserialize(fs), Double())
       End Using
       For i = 0 To varray.Length-1
-        Dim Timestamp = first_ts.AddSeconds(i*dt)
+        Timestamp = first_ts.AddSeconds(i*dt)
         If Not Double.IsNaN(varray(i)) And _
           Not Values.ContainsKey(Timestamp) Then
           Values.Add(Timestamp, varray(i))
@@ -108,19 +110,21 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Convert the Values dictionary into a Double array and
       ' serialize this array.
 
-      Dim first_ts = tslist(0)
+      Dim first_ts, Timestamp
       Dim dt, i As Integer
       Dim varray = New Double(tslist.Count-1){}
+      Dim formatter As BinaryFormatter = new BinaryFormatter()
+
+      first_ts = tslist(0)
       dt = CInt(tslist(1).Subtract(tslist(0)).TotalSeconds)
       For i = 0 To tslist.Count-1
-        Dim Timestamp = first_ts.AddSeconds(i*dt)
+        Timestamp = first_ts.AddSeconds(i*dt)
         If Values.ContainsKey(Timestamp) Then
           varray(i) = Values.Item(Timestamp)
         Else
           varray(i) = NaN
         End If
       Next
-      Dim formatter As BinaryFormatter = new BinaryFormatter()
       Using fs As Stream = new FileStream(SerializedCSVFileName, _
         FileMode.Create, FileAccess.Write, FileShare.None)
         formatter.Serialize(fs, first_ts)
