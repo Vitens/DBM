@@ -82,7 +82,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' equidistant timestamps defined by a start timestamp and a delta.
 
       Dim first_ts As DateTime
-      Dim dt, i As Integer = 0
+      Dim dt, i As Integer
       Dim varray As Double() = Nothing
       Dim formatter As BinaryFormatter = new BinaryFormatter()
       Using fs As Stream = new FileStream(SerializedCSVFileName, _
@@ -109,8 +109,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' serialize this array.
 
       Dim first_ts = tslist(0)
-      Dim dt = CInt(tslist(1).Subtract(tslist(0)).TotalSeconds)
+      Dim dt, i As Integer
       Dim varray = New Double(tslist.Count-1){}
+      dt = CInt(tslist(1).Subtract(tslist(0)).TotalSeconds)
       For i = 0 To tslist.Count-1
         Dim Timestamp = first_ts.AddSeconds(i*dt)
         If Values.ContainsKey(Timestamp) Then
