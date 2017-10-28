@@ -81,6 +81,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' last sample in the array as this is the current measured value for
         ' which we need to calculate a prediction and control limits.
         .Calculate(RemoveOutliers(Values.Take(Values.Length-1).ToArray))
+        ' FIXME: 'Take' is not a member of 'System.Array'.
         MeasuredValue = Values(ComparePatterns)
 
         ' Extrapolate regression by one interval and use this result as a
