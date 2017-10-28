@@ -82,7 +82,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' equidistant timestamps defined by a start timestamp and a delta.
 
       Dim first_ts As DateTime
-      Dim dt As Integer = 0
+      Dim dt, i As Integer = 0
       Dim varray As Double() = Nothing
       Dim formatter As BinaryFormatter = new BinaryFormatter()
       Using fs As Stream = new FileStream(SerializedCSVFileName, _
