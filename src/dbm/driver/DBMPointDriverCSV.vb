@@ -91,7 +91,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         dt = DirectCast(formatter.Deserialize(fs), Integer)
         varray = DirectCast(formatter.Deserialize(fs), Double())
       End Using
-      For i = 0 To varray.Count-1
+      For i = 0 To varray.Length-1
         Dim Timestamp = first_ts.AddSeconds(i*dt)
         If Not Double.IsNaN(varray(i)) And _
           Not Values.ContainsKey(Timestamp) Then
