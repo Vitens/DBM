@@ -27,6 +27,7 @@ Option Strict
 Imports System
 Imports System.Collections.Generic
 Imports System.Double
+Imports System.Linq
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMTests
@@ -74,8 +75,6 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' taking the first element of the dictionary is random enough as
           ' a Dictionary in .NET is implemented as a hashtable.
           Values.Remove(Values.ElementAt(0).Key)
-          ' FIXME: 'ElementAt' is not a member of
-          '   'System.Collections.Generic.Dictionary(Of Date, Double)'.
         Loop
         Values.Add(Timestamp, Value) ' Add to cache
       End If

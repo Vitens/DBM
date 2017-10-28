@@ -26,6 +26,7 @@ Option Strict
 
 Imports System
 Imports System.Collections.Generic
+Imports System.Linq
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
@@ -106,9 +107,6 @@ Namespace Vitens.DynamicBandwidthMonitor
                 ' Remove random cached value when cache limit reached.
                 Predictions.Remove(Predictions.ElementAt _
                   (RandomNumber(0, Predictions.Count-1)).Key)
-                ' FIXME: 'ElementAt' is not a member of
-                '   'System.Collections.Generic.Dictionary(Of Date,
-                '   Vitens.DynamicBandwidthMonitor.DBMPrediction)'.
               Loop
               ' Add calculated prediction to cache.
               Predictions.Add(PredictionTimestamp, Prediction.ShallowCopy)
