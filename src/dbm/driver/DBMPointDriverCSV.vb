@@ -112,7 +112,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim first_ts, Timestamp As DateTime
       Dim dt, i As Integer
-      Dim varray = New Double(tslist.Count-1){}
+      Dim varray As Double() = New Double(tslist.Count-1){}
       Dim formatter As BinaryFormatter = new BinaryFormatter()
 
       first_ts = tslist(0)
