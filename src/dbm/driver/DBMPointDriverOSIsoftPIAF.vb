@@ -58,8 +58,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       EndTimestamp As DateTime) As Double
 
       Return DirectCast(DirectCast(Point, PIPoint).Summary _
-        (New AFTimeRange(AFTime(StartTimestamp), AFTime(EndTimestamp)), _
-        Average, TimeWeighted, EarliestTime).Item(Average).Value, Double)
+        (New AFTimeRange(New AFTime(StartTimestamp), _
+        New AFTime(EndTimestamp)), Average, TimeWeighted, EarliestTime).Item _
+        (Average).Value, Double)
 
     End Function
 
