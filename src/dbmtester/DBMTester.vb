@@ -28,6 +28,7 @@ Imports System
 Imports System.Collections.Generic
 Imports System.Environment
 Imports System.Globalization.CultureInfo
+Imports System.Text
 Imports System.Text.RegularExpressions
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
@@ -89,6 +90,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim StartTimestamp, EndTimestamp As DateTime
       Dim AlwaysOutputCorrelationData As Boolean
+      Dim Line as StringBuilder
       Dim Result As DBMResult
       Dim _DBM As New DBM
       Dim PredictionErrors(), PredictionError As Double
@@ -157,15 +159,20 @@ Namespace Vitens.DynamicBandwidthMonitor
           EndTimestamp = EndTimestamp.AddSeconds(-CalculationInterval)
         End If
         Do While StartTimestamp <= EndTimestamp
-          Console.Write(FormatDateTime(StartTimestamp) & Separator)
+          Line = New StringBuilder
+          Line.Append(FormatDateTime(StartTimestamp))
           Result = _DBM.Result _
             (InputPointDriver, CorrelationPoints, StartTimestamp)
           With Result
-            Console.Write(FormatNumber(.Factor) & Separator & _
-              FormatNumber(.Prediction.MeasuredValue) & Separator & _
-              FormatNumber(.Prediction.PredictedValue) & Separator & _
-              FormatNumber(.Prediction.LowerControlLimit) & Separator & _
-              FormatNumber(.Prediction.UpperControlLimit))
+            Line.Append(Separator).Append(FormatNumber(.Factor))
+            Line.Append(Separator). _
+              Append(FormatNumber(.Prediction.MeasuredValue))
+            Line.Append(Separator). _
+              Append(FormatNumber(.Prediction.PredictedValue))
+            Line.Append(Separator). _
+              Append(FormatNumber(.Prediction.LowerControlLimit))
+            Line.Append(Separator). _
+              Append(FormatNumber(.Prediction.UpperControlLimit))
           End With
           ' If an event is found and a correlation point is available
           If CorrelationPoints.Count > 0 And _
@@ -174,38 +181,37 @@ Namespace Vitens.DynamicBandwidthMonitor
               Result.RelativeErrors, Result.CorrelationAbsoluteErrors, _
               Result.CorrelationRelativeErrors}
               For Each PredictionError In PredictionErrors
-                Console.Write(Separator & FormatNumber(PredictionError))
+                Line.Append(Separator).Append(FormatNumber(PredictionError))
               Next
             Next
             For Each ErrorStats In {Result.AbsoluteErrorStats, _
               Result.RelativeErrorStats}
               With ErrorStats
-                Console.Write(Separator & _
-                  FormatNumber(.Count) & Separator & _
-                  FormatNumber(.Slope) & Separator & _
-                  FormatNumber(.OriginSlope) & Separator & _
-                  FormatNumber(.Angle) & Separator & _
-                  FormatNumber(.OriginAngle) & Separator & _
-                  FormatNumber(.Intercept) & Separator & _
-                  FormatNumber(.StandardError) & Separator & _
-                  FormatNumber(.Correlation) & Separator & _
-                  FormatNumber(.ModifiedCorrelation) & Separator & _
-                  FormatNumber(.Determination))
+                Line.Append(Separator).Append(FormatNumber(.Count))
+                Line.Append(Separator).Append(FormatNumber(.Slope))
+                Line.Append(Separator).Append(FormatNumber(.OriginSlope))
+                Line.Append(Separator).Append(FormatNumber(.Angle))
+                Line.Append(Separator).Append(FormatNumber(.OriginAngle))
+                Line.Append(Separator).Append(FormatNumber(.Intercept))
+                Line.Append(Separator).Append(FormatNumber(.StandardError))
+                Line.Append(Separator).Append(FormatNumber(.Correlation))
+                Line.Append(Separator). _
+                  Append(FormatNumber(.ModifiedCorrelation))
+                Line.Append(Separator).Append(FormatNumber(.Determination))
               End With
             Next
             For Each CorrelationPoint In CorrelationPoints
               Result = _DBM.Result _
                 (CorrelationPoint.PointDriver, Nothing, StartTimestamp)
               With Result.Prediction
-                Console.Write(Separator & _
-                  FormatNumber(.MeasuredValue) & Separator & _
-                  FormatNumber(.PredictedValue) & Separator & _
-                  FormatNumber(.LowerControlLimit) & Separator & _
-                  FormatNumber(.UpperControlLimit))
+                Line.Append(Separator).Append(FormatNumber(.MeasuredValue))
+                Line.Append(Separator).Append(FormatNumber(.PredictedValue))
+                Line.Append(Separator).Append(FormatNumber(.LowerControlLimit))
+                Line.Append(Separator).Append(FormatNumber(.UpperControlLimit))
               End With
             Next
           End If
-          Console.WriteLine ' End of line
+          Console.WriteLine(Line.ToString())
           ' Next interval
           StartTimestamp = StartTimestamp.AddSeconds(CalculationInterval)
         Loop
