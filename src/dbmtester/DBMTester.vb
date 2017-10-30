@@ -97,6 +97,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim ErrorStats As DBMStatistics
       Dim CorrelationPoint As DBMCorrelationPoint
 
+      DBMDataManager.UseCache = False
+
       ' Parse command line arguments
       For Each CommandLineArg In GetCommandLineArgs
         ' Parameter=Value
