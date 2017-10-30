@@ -25,6 +25,8 @@ Option Strict
 
 
 Imports System
+Imports System.DateTime
+Imports System.DateTimeKind
 Imports OSIsoft.AF.Data.AFCalculationBasis
 Imports OSIsoft.AF.Data.AFSummaryTypes
 Imports OSIsoft.AF.Data.AFTimestampCalculation
@@ -57,10 +59,10 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Function GetData(StartTimestamp As DateTime, _
       EndTimestamp As DateTime) As Double
 
-      Return DirectCast(DirectCast(Point, PIPoint).Summary _
-        (New AFTimeRange(New AFTime(StartTimestamp), _
-        New AFTime(EndTimestamp)), Average, TimeWeighted, EarliestTime).Item _
-        (Average).Value, Double)
+      Return DirectCast(DirectCast(Point, PIPoint).Summary(New AFTimeRange _
+        (New AFTime(SpecifyKind(StartTimestamp, Local)), New AFTime _
+        (SpecifyKind(EndTimestamp, Local))), Average, TimeWeighted, _
+        EarliestTime).Item(Average).Value, Double)
 
     End Function
 
