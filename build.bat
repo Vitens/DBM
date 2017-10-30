@@ -28,6 +28,7 @@ rem Variables
 set vbc="%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\Vbc.exe" /win32icon:res\dbm.ico /optimize+ /nologo /novbruntimeref
 if not defined PIHOME set PIHOME=%CD%\3rdParty\PILibraries
 set PIRefs="%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDK.dll","%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDKCommon.dll"
+set PIAFRefs="%PIHOME%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll"
 set PIACERefs="%PIHOME%\ACE\OSISoft.PIACENet.dll","%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PITimeServer.dll"
 
 rem Set up build directory
@@ -44,6 +45,7 @@ Rem Build
 %vbc% /reference:build\DBM.dll /target:library /out:build\DBMPointDriverCSV.dll src\shared\*.vb src\dbm\driver\DBMPointDriverCSV.vb
 %vbc% /reference:build\DBM.dll,build\DBMPointDriverCSV.dll /out:build\DBMTester.exe src\shared\*.vb src\dbmtester\*.vb
 %vbc% /reference:%PIRefs%,build\DBM.dll /target:library /out:build\DBMPointDriverOSIsoftPI.dll src\shared\*.vb src\dbm\driver\DBMPointDriverOSIsoftPI.vb
+%vbc% /reference:%PIAFRefs%,build\DBM.dll /target:library /out:build\DBMPointDriverOSIsoftPIAF.dll src\shared\*.vb src\dbm\driver\DBMPointDriverOSIsoftPIAF.vb
 %vbc% /reference:%PIRefs%,%PIACERefs%,build\DBM.dll,build\DBMPointDriverOSIsoftPI.dll /target:library /out:build\DBMRt.dll src\shared\*.vb src\PIACENet\*.vb
 
 rem Output version, copyright and license information and unit and integration test results

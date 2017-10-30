@@ -53,19 +53,21 @@ In this example, an exception causes the measured value (black) to cross the low
 ## Program information
 
 ### Requirements
-| Priority  | Requirement                                   | Version |
-| --------- | --------------------------------------------- | ------- |
-| Mandatory | Microsoft .NET Framework                      | 4.5     |
-| Optional  | OSIsoft PI Software Development Kit (PI SDK)  |         |
-| Optional  | OSIsoft PI Advanced Computing Engine (PI ACE) |         |
+| Priority  | Requirement                                                     | Version |
+| --------- | --------------------------------------------------------------- | ------- |
+| Mandatory | Microsoft .NET Framework                                        | 4.5     |
+| Optional  | OSIsoft PI Software Development Kit (PI SDK)                    |         |
+| Optional  | OSIsoft PI Asset Framework Software Development Kit (PI AF SDK) |         |
+| Optional  | OSIsoft PI Advanced Computing Engine (PI ACE)                   |         |
 
 ### Drivers
 DBM uses drivers to read information from a source of data. The following drivers are included:
 
-| Driver                       | Description                             | Identifier (`Point`)     | Remarks                                                                |
-| ---------------------------- | --------------------------------------- | ------------------------ | ---------------------------------------------------------------------- |
-| `DBMPointDriverCSV.vb`       | Driver for CSV files (timestamp,value). | `String` (CSV filename)  | Data interval must be the same as the `CalculationInterval` parameter. |
-| `DBMPointDriverOSIsoftPI.vb` | Driver for OSIsoft PI.                  | `PISDK.PIPoint` (PI tag) | Used by PI ACE module `DBMRt`.                                         |
+| Driver                         | Description                             | Identifier (`Point`)             | Remarks                                                                |
+| ------------------------------ | --------------------------------------- | -------------------------------- | ---------------------------------------------------------------------- |
+| `DBMPointDriverCSV.vb`         | Driver for CSV files (timestamp,value). | `String` (CSV filename)          | Data interval must be the same as the `CalculationInterval` parameter. |
+| `DBMPointDriverOSIsoftPI.vb`   | Driver for OSIsoft PI.                  | `PISDK.PIPoint` (PI tag)         | Used by PI ACE module `DBMRt`.                                         |
+| `DBMPointDriverOSIsoftPIAF.vb` | Driver for OSIsoft PI Asset Framework.  | `OSIsoft.AF.PI.PIPoint` (PI tag) |                                                                        |
 
 ### Parameters
 DBM can be configured using several parameters. The values for these parameters can be changed at runtime in the `Vitens.DynamicBandwidthMonitor.DBMParameters` class.
