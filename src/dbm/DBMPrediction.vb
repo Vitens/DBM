@@ -39,17 +39,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       UpperControlLimit As Double
 
 
-    Public Function ShallowCopy As DBMPrediction
-
-      ' The MemberwiseClone method creates a shallow copy by creating a new
-      ' object, and then copying the nonstatic fields of the current object to
-      ' the new object.
-
-      Return DirectCast(Me.MemberwiseClone, DBMPrediction)
-
-    End Function
-
-
     Public Sub New(Optional MeasuredValue As Double = 0, _
       Optional PredictedValue As Double = 0, _
       Optional LowerControlLimit As Double = 0, _
@@ -67,14 +56,15 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Sub Calculate(Values() As Double)
+    Public Shared Function Calculate(Values() As Double) As DBMPrediction
 
-      ' Calculates and stores prediction and control limits by removing
+      ' Calculates and prediction and control limits by removing
       ' outliers from the Values array and extrapolating the regression
       ' line by one interval.
+      ' The result of the calculation is returned as a new object.
 
       Dim Statistics As New DBMStatistics
-      Dim ControlLimit As Double
+      Dim P As New DBMPrediction()
 
       With Statistics
 
@@ -82,28 +72,30 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' last sample in the array as this is the current measured value for
         ' which we need to calculate a prediction and control limits.
         .Calculate(RemoveOutliers(Values.Take(Values.Length-1).ToArray))
-        MeasuredValue = Values(ComparePatterns)
+        P.MeasuredValue = Values(ComparePatterns)
 
         ' Extrapolate regression by one interval and use this result as a
         ' prediction.
-        PredictedValue = ComparePatterns*.Slope+.Intercept
+        P.PredictedValue = ComparePatterns*.Slope+.Intercept
 
         ' Control limits are determined by using measures of process variation
         ' and are based on the concepts surrounding hypothesis testing and
         ' interval estimation. They are used to detect signals in process data
         ' that indicate that a process is not in control and, therefore, not
         ' operating predictably.
-        ControlLimit = ControlLimitRejectionCriterion(ConfidenceInterval, _
+        Dim ControlLimit = ControlLimitRejectionCriterion(ConfidenceInterval, _
           .Count-1)*.StandardError
 
         ' Set upper and lower control limits based on prediction, rejection
         ' criterion and standard error of the regression.
-        LowerControlLimit = PredictedValue-ControlLimit
-        UpperControlLimit = PredictedValue+ControlLimit
+        P.LowerControlLimit = P.PredictedValue-ControlLimit
+        P.UpperControlLimit = P.PredictedValue+ControlLimit
 
       End With
 
-    End Sub
+      Return P
+
+    End Function
 
 
   End Class

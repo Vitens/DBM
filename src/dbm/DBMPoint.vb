@@ -39,6 +39,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public DataManager As DBMDataManager
     Private Predictions As New Dictionary(Of DateTime, DBMPrediction)
+    Private PredictionsQueue As New Queue(Of DateTime) ' Maintains insertion order of the Predictions Dictionary
     Private PredictionsSubtractPoint As DBMPoint
 
 
@@ -67,7 +68,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
       Dim PredictionTimestamp, PatternTimestamp As DateTime
-      Dim Prediction As New DBMPrediction
+      Dim Prediction As DBMPrediction = Nothing
       Dim Patterns(ComparePatterns), MeasuredValues(EMAPreviousPeriods), _
         PredictedValues(EMAPreviousPeriods), _
         LowerControlLimits(EMAPreviousPeriods), _
@@ -78,6 +79,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Can we reuse stored results?
       If SubtractPoint IsNot PredictionsSubtractPoint Then
         Predictions.Clear ' No, so clear results
+        PredictionsQueue.Clear
         PredictionsSubtractPoint = SubtractPoint
       End If
 
@@ -89,9 +91,8 @@ Namespace Vitens.DynamicBandwidthMonitor
             PredictionTimestamp = Timestamp.AddSeconds _
               (-(EMAPreviousPeriods-EMACounter+CorrelationCounter)* _
               CalculationInterval) ' Timestamp for prediction results
-            If Predictions.ContainsKey(PredictionTimestamp) Then ' From cache
-              Prediction = Predictions.Item(PredictionTimestamp).ShallowCopy
-            Else ' Calculate prediction data
+            If Not Predictions.TryGetValue(PredictionTimestamp, Prediction) Then
+              ' Calculate prediction data
               For PatternCounter = 0 To ComparePatterns ' Data for regression.
                 PatternTimestamp = PredictionTimestamp. _
                   AddDays(-(ComparePatterns-PatternCounter)*7)
@@ -101,15 +102,15 @@ Namespace Vitens.DynamicBandwidthMonitor
                     SubtractPoint.DataManager.Value(PatternTimestamp)
                 End If
               Next PatternCounter
-              Prediction.Calculate(Patterns)
+              Prediction = DBMPrediction.Calculate(Patterns)
               ' Limit cache size
-              Do While Predictions.Count >= MaxPointPredictions
-                ' Remove random cached value when cache limit reached.
-                Predictions.Remove(Predictions.ElementAt _
-                  (RandomNumber(0, Predictions.Count-1)).Key)
+              Do While Predictions.Count >= MaxPointPredictions ' Limit cache
+                ' Use the Queue to select the least recently inserted timestamp
+                Predictions.Remove(PredictionsQueue.Dequeue())
               Loop
               ' Add calculated prediction to cache.
-              Predictions.Add(PredictionTimestamp, Prediction.ShallowCopy)
+              Predictions.Add(PredictionTimestamp, Prediction)
+              PredictionsQueue.Enqueue(PredictionTimestamp)
             End If
             With Prediction ' Store results in arrays for EMA calculation.
               MeasuredValues(EMACounter) = .MeasuredValue

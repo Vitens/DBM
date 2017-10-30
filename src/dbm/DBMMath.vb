@@ -184,14 +184,18 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns the arithmetic mean; the sum of the sampled values divided
       ' by the number of items in the sample.
 
+      Dim NonNaNCount As Integer = 0
       Dim Value As Double
+      Dim Sum As Double = 0
 
-      Mean = 0
       For Each Value In Values
-        Mean += Value/Values.Length
+        If Not IsNan(Value) Then
+          Sum += Value
+          NonNaNCount += 1
+        End If
       Next
 
-      Return Mean
+      Return Sum / NonNaNCount
 
     End Function
 
@@ -202,9 +206,18 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' a population, or a probability distribution, from the lower half. In
       ' simple terms, it may be thought of as the "middle" value of a data set.
 
-      Dim MedianValues(Values.Length-1) As Double
+      Dim NonNaNCount As Integer = Values.Count(Function(v) Not IsNaN(v))
+      Dim MedianValues(NonNaNCount-1) As Double
 
-      Array.Copy(Values, MedianValues, Values.Length)
+      ' Only use non NaN values
+      NonNaNCount = 0
+      For i as Integer = 0 to Values.Length-1
+        If Not IsNan(Values(i)) Then
+          MedianValues(NonNaNCount) = Values(i)
+          NonNaNCount += 1
+        End If
+      Next i
+
       Array.Sort(MedianValues)
 
       If MedianValues.Length Mod 2 = 0 Then
@@ -264,10 +277,12 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim CentralTendency, MAD, ControlLimit As Double
       Dim i As Integer
 
+      Dim NonNaNCount As Integer = Values.Count(Function(v) Not IsNaN(v))
+
       CentralTendency = Median(Values)
       MAD = Median(AbsoluteDeviation(Values, CentralTendency))
-      ControlLimit = MAD*MedianAbsoluteDeviationScaleFactor(Values.Length-1)* _
-        ControlLimitRejectionCriterion(ConfidenceInterval, Values.Length-1)
+      ControlLimit = MAD*MedianAbsoluteDeviationScaleFactor(NonNaNCount)* _
+        ControlLimitRejectionCriterion(ConfidenceInterval, NonNaNCount)
 
       If ControlLimit = 0 Then ' This only happens when MAD equals 0.
         ' Use Mean Absolute Deviation instead of Median Absolute Deviation
@@ -276,8 +291,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         CentralTendency = Mean(Values)
         MAD = Mean(AbsoluteDeviation(Values, CentralTendency))
         ControlLimit = MAD*MeanAbsoluteDeviationScaleFactor* _
-          ControlLimitRejectionCriterion(ConfidenceInterval, _
-          Values.Length-1)
+          ControlLimitRejectionCriterion(ConfidenceInterval, NonNaNCount)
       End If
 
       For i = 0 to Values.Length-1

@@ -44,6 +44,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' method used for retrieving data.
 
 
+    Public Shared UseCache As Boolean = True
     Public PointDriver As DBMPointDriverAbstract
     Private Values As New Dictionary(Of DateTime, Double)
 
@@ -61,6 +62,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' cached in memory, and, if available for the requested timestamp, have
       ' preference over using the PointDriver object.
       ' Returns value at timestamp, either from cache or using driver
+
+      If Not UseCache Then
+        Return PointDriver.GetData(Timestamp, Timestamp.AddSeconds(CalculationInterval))
+      End If
 
       If Not Values.TryGetValue(Timestamp, Value) Then ' Not in cache
         Try
