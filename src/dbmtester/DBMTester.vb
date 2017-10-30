@@ -165,7 +165,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             (InputPointDriver, CorrelationPoints, StartTimestamp)
           With Result
             Line.Append(Separator).Append(FormatNumber(.Factor))
-            Line.Append(Separator)._
+            Line.Append(Separator). _
               Append(FormatNumber(.Prediction.MeasuredValue))
             Line.Append(Separator). _
               Append(FormatNumber(.Prediction.PredictedValue))
