@@ -90,6 +90,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim StartTimestamp, EndTimestamp As DateTime
       Dim AlwaysOutputCorrelationData As Boolean
+      Dim Line as StringBuilder
       Dim Result As DBMResult
       Dim _DBM As New DBM
       Dim PredictionErrors(), PredictionError As Double
@@ -158,7 +159,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           EndTimestamp = EndTimestamp.AddSeconds(-CalculationInterval)
         End If
         Do While StartTimestamp <= EndTimestamp
-          Dim Line as New StringBuilder()
+          Line = New StringBuilder
           Line.Append(FormatDateTime(StartTimestamp))
           Result = _DBM.Result _
             (InputPointDriver, CorrelationPoints, StartTimestamp)
