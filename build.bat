@@ -38,6 +38,7 @@ del /Q build\*
 copy LICENSE build > NUL
 
 rem Apply patches
+set
 if "%CI%" == "True" (
   for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
   powershell -Command "(Get-Content src\dbm\DBM.vb) -replace 'Const GITHASH As String = \".*?\"', 'Const GITHASH As String = \"%commit%\"' | Set-Content src\dbm\DBM.vb"
