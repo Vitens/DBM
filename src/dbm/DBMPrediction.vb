@@ -64,6 +64,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' The result of the calculation is returned as a new object.
 
       Dim Statistics As New DBMStatistics
+      Dim ControlLimit As Double
       Dim P As New DBMPrediction()
 
       With Statistics
@@ -83,7 +84,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' interval estimation. They are used to detect signals in process data
         ' that indicate that a process is not in control and, therefore, not
         ' operating predictably.
-        Dim ControlLimit = ControlLimitRejectionCriterion(ConfidenceInterval, _
+        ControlLimit = ControlLimitRejectionCriterion(ConfidenceInterval, _
           .Count-1)*.StandardError
 
         ' Set upper and lower control limits based on prediction, rejection
