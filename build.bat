@@ -38,8 +38,10 @@ del /Q build\*
 copy LICENSE build > NUL
 
 rem Apply patches
-for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
-powershell -Command "(Get-Content src\dbm\DBM.vb) -replace 'Const GITHASH As String = \".*?\"', 'Const GITHASH As String = \"%commit%\"' | Set-Content src\dbm\DBM.vb"
+if "%CI%" == "True" (
+  for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
+  powershell -Command "(Get-Content src\dbm\DBM.vb) -replace 'Const GITHASH As String = \".*?\"', 'Const GITHASH As String = \"%commit%\"' | Set-Content src\dbm\DBM.vb"
+)
 
 Rem Build
 %vbc% /target:library /out:build\DBM.dll src\shared\*.vb src\dbm\*.vb
