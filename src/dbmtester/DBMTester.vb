@@ -211,7 +211,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               End With
             Next
           End If
-          Console.WriteLine(Line.ToString())
+          Console.WriteLine(Line.ToString)
           ' Next interval
           StartTimestamp = StartTimestamp.AddSeconds(CalculationInterval)
         Loop
