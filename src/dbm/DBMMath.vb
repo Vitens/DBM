@@ -184,8 +184,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns the arithmetic mean; the sum of the sampled values divided
       ' by the number of items in the sample. NaNs are excluded.
 
-      Dim Count As Integer
       Dim Value, Sum As Double
+      Dim Count As Integer
 
       For Each Value In Values
         If Not IsNaN(Value) Then
@@ -273,13 +273,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' are removed (NaN) using either the mean or median absolute deviation
       ' function.
 
+      Dim Count, i As Integer
       Dim CentralTendency, MAD, ControlLimit As Double
-      Dim i As Integer
 
+      Count = Values.Count(Function(Value) Not IsNaN(Value))
       CentralTendency = Median(Values)
       MAD = Median(AbsoluteDeviation(Values, CentralTendency))
-      ControlLimit = MAD*MedianAbsoluteDeviationScaleFactor(Values.Length-1)* _
-        ControlLimitRejectionCriterion(ConfidenceInterval, Values.Length-1)
+      ControlLimit = MAD*MedianAbsoluteDeviationScaleFactor(Count-1)* _
+        ControlLimitRejectionCriterion(ConfidenceInterval, Count-1)
 
       If ControlLimit = 0 Then ' This only happens when MAD equals 0.
         ' Use Mean Absolute Deviation instead of Median Absolute Deviation
@@ -288,8 +289,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         CentralTendency = Mean(Values)
         MAD = Mean(AbsoluteDeviation(Values, CentralTendency))
         ControlLimit = MAD*MeanAbsoluteDeviationScaleFactor* _
-          ControlLimitRejectionCriterion(ConfidenceInterval, _
-          Values.Length-1)
+          ControlLimitRejectionCriterion(ConfidenceInterval, Count-1)
       End If
 
       For i = 0 to Values.Length-1
