@@ -38,8 +38,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public DataManager As DBMDataManager
-    Private Predictions As New Dictionary(Of DateTime, DBMPrediction)
     Private PredictionsSubtractPoint As DBMPoint
+    Private Predictions As New Dictionary(Of DateTime, DBMPrediction)
+    Private PredictionsQueue As New Queue(Of DateTime) ' Insertion order queue
 
 
     Public Sub New(PointDriver As DBMPointDriverAbstract)
@@ -77,8 +78,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Can we reuse stored results?
       If SubtractPoint IsNot PredictionsSubtractPoint Then
-        Predictions.Clear ' No, so clear results
         PredictionsSubtractPoint = SubtractPoint
+        Predictions.Clear ' No, so clear results
+        PredictionsQueue.Clear
       End If
 
       For CorrelationCounter = 0 To CorrelationPreviousPeriods
@@ -104,12 +106,12 @@ Namespace Vitens.DynamicBandwidthMonitor
               Prediction.Calculate(Patterns)
               ' Limit cache size
               Do While Predictions.Count >= MaxPointPredictions
-                ' Remove random cached value when cache limit reached.
-                Predictions.Remove(Predictions.ElementAt _
-                  (RandomNumber(0, Predictions.Count-1)).Key)
+                ' Use the queue to remove the least recently inserted timestamp.
+                Predictions.Remove(PredictionsQueue.Dequeue)
               Loop
-              ' Add calculated prediction to cache.
+              ' Add calculated prediction to cache and queue.
               Predictions.Add(PredictionTimestamp, Prediction.ShallowCopy)
+              PredictionsQueue.Enqueue(PredictionTimestamp)
             End If
             With Prediction ' Store results in arrays for EMA calculation.
               MeasuredValues(EMACounter) = .MeasuredValue
