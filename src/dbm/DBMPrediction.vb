@@ -68,6 +68,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       With Statistics
 
+        Calculate = New DBMPrediction
+
         ' Calculate statistics for data after removing outliers. Exclude the
         ' last sample in the array as this is the current measured value for
         ' which we need to calculate a prediction and control limits.
