@@ -212,8 +212,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Count = 0
       For Each Value In Values
         If Not IsNaN(Value) Then
-          MedianValues(Count) = Value
           Count += 1
+          MedianValues(Count) = Value
         End If
       Next
 
