@@ -26,7 +26,6 @@ cd %~dp0
 
 rem Variables
 set vbc="%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\Vbc.exe" /win32icon:res\dbm.ico /optimize+ /nologo /novbruntimeref
-rem      ^-- Use dotNetFx40_Full_x86_x64.exe
 if not defined PIHOME set PIHOME=%CD%\3rdParty\PILibraries
 set PIRefs="%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDK.dll","%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDKCommon.dll"
 set PIAFRefs="%PIHOME%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll"
