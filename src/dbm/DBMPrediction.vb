@@ -64,7 +64,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' The result of the calculation is returned as a new object.
 
       Dim Statistics As New DBMStatistics
-      Dim Prediction As New DBMPrediction()
+      Dim Prediction As New DBMPrediction
       Dim ControlLimit As Double
 
       With Statistics
