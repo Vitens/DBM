@@ -38,7 +38,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' results of (correlation) calculation results from a DBMPoint object.
 
 
-    Public Prediction As DBMPrediction
+    Public PredictionData As DBMPredictionData
     Public Factor, OriginalFactor, AbsoluteErrors(), RelativeErrors(), _
       CorrelationAbsoluteErrors(), CorrelationRelativeErrors() As Double
     Public AbsoluteErrorStats, RelativeErrorStats As New DBMStatistics
@@ -76,10 +76,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Store initial (no time offset because of prediction error
       ' correlation calculations) results.
-      If Prediction Is Nothing Then
-        ' Store EMA results in new DBMPrediction object.
-        Prediction = New DBMPrediction(MeasuredValueEMA, PredictedValueEMA, _
-          LowerControlLimitEMA, UpperControlLimitEMA)
+      If PredictionData Is Nothing Then
+        ' Store EMA results in new DBMPredictionData object.
+        PredictionData = New DBMPredictionData(MeasuredValueEMA, _
+          PredictedValueEMA, LowerControlLimitEMA, UpperControlLimitEMA)
         ' Lower control limit exceeded, calculate factor.
         If MeasuredValueEMA < LowerControlLimitEMA Then
           Factor = (PredictedValueEMA-MeasuredValueEMA)/ _
