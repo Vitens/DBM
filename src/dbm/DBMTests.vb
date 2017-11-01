@@ -307,10 +307,10 @@ Namespace Vitens.DynamicBandwidthMonitor
         Median({46}) = 46 And _
         Median({79, 86}) = 82.5 And _
         Median({46, 45}) = 45.5 And _
-        Median({21, 81, 13}) = 21 And _
+        Median({10, NaN, 20}) = 15 And _
         Median({58, 79, 68}) = 68 And _
-        Median({60, 42, 59, 23}) = 50.5 And _
-        Median({33, 23, 36, 47}) = 34.5 And _
+        Median({NaN, 10, 30, NaN}) = 20 And _
+        Median({30, 10, NaN, 15}) = 15 And _
         Median({99, 10, 41, 40, 55}) = 41 And _
         Median({19, 3, 9, 14, 31}) = 14 And _
         Median({2, 85, 33, 10, 38, 56}) = 35.5 And _
