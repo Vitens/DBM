@@ -189,8 +189,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       For Each Value In Values
         If Not IsNaN(Value) Then
-          Count += 1
           Sum += Value
+          Count += 1
         End If
       Next
 

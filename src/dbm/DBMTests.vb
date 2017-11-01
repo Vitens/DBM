@@ -540,8 +540,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         2340.9497, 2327.333})) = Hash({3010.9485, 2517.2876, 2057.7188, _
         2133.0801, 3192.0308, 2035.0759, NaN, 2391.8086, 2267.896, NaN, _
         2340.9497, 2327.333}) And _
-        Hash(RemoveOutliers({NaN, 10, NaN, 10, NaN, 10, NaN, 10, 10, NaN, _
-        999})) = Hash({NaN, 10, NaN, 10, NaN, 10, NaN, 10, 10, NaN, 999})
+        Hash(RemoveOutliers({NaN, 10, NaN, 10, NaN, 10, NaN, 30, 20, NaN, _
+        999})) = Hash({NaN, 10, NaN, 10, NaN, 10, NaN, 30, 20, NaN, NaN})
 
       UnitTestResults = UnitTestResults And _
         Round(ExponentialMovingAverage _
