@@ -58,7 +58,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function Calculate(Values() As Double) As DBMPrediction
 
-      ' Calculates and prediction and control limits by removing
+      ' Calculates and stores prediction and control limits by removing
       ' outliers from the Values array and extrapolating the regression
       ' line by one interval.
       ' The result of the calculation is returned as a new object.
