@@ -182,16 +182,19 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function Mean(Values() As Double) As Double
 
       ' Returns the arithmetic mean; the sum of the sampled values divided
-      ' by the number of items in the sample.
+      ' by the number of items in the sample. NaNs are excluded.
 
-      Dim Value As Double
+      Dim Count As Integer
+      Dim Value, Sum As Double
 
-      Mean = 0
       For Each Value In Values
-        Mean += Value/Values.Length
+        If Not IsNaN(Value) Then
+          Count += 1
+          Sum += Value
+        End If
       Next
 
-      Return Mean
+      Return Sum/Count
 
     End Function
 
@@ -201,10 +204,19 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' The median is the value separating the higher half of a data sample,
       ' a population, or a probability distribution, from the lower half. In
       ' simple terms, it may be thought of as the "middle" value of a data set.
+      ' NaNs are excluded.
 
-      Dim MedianValues(Values.Length-1) As Double
+      Dim Count As Integer = Values.Count(Function(Value) Not IsNaN(Value))
+      Dim MedianValues(Count-1) As Double
 
-      Array.Copy(Values, MedianValues, Values.Length)
+      Count = 0
+      For Each Value In Values
+        If Not IsNaN(Value) Then
+          MedianValues(Count) = Value
+          Count += 1
+        End If
+      Next
+
       Array.Sort(MedianValues)
 
       If MedianValues.Length Mod 2 = 0 Then
