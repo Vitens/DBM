@@ -68,7 +68,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
       Dim PredictionTimestamp, PatternTimestamp As DateTime
-      Dim Prediction As New DBMPrediction
+      Dim Prediction As DBMPrediction
       Dim Patterns(ComparePatterns), MeasuredValues(EMAPreviousPeriods), _
         PredictedValues(EMAPreviousPeriods), _
         LowerControlLimits(EMAPreviousPeriods), _
@@ -92,7 +92,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               (-(EMAPreviousPeriods-EMACounter+CorrelationCounter)* _
               CalculationInterval) ' Timestamp for prediction results
             If Predictions.ContainsKey(PredictionTimestamp) Then ' From cache
-              Prediction = Predictions.Item(PredictionTimestamp).ShallowCopy
+              Prediction = Predictions.Item(PredictionTimestamp)
             Else ' Calculate prediction data
               For PatternCounter = 0 To ComparePatterns ' Data for regression.
                 PatternTimestamp = PredictionTimestamp. _
@@ -103,14 +103,14 @@ Namespace Vitens.DynamicBandwidthMonitor
                     SubtractPoint.DataManager.Value(PatternTimestamp)
                 End If
               Next PatternCounter
-              Prediction.Calculate(Patterns)
+              Prediction = DBMPrediction.Calculate(Patterns)
               ' Limit cache size
               Do While Predictions.Count >= MaxPointPredictions
                 ' Use the queue to remove the least recently inserted timestamp.
                 Predictions.Remove(PredictionsQueue.Dequeue)
               Loop
               ' Add calculated prediction to cache and queue.
-              Predictions.Add(PredictionTimestamp, Prediction.ShallowCopy)
+              Predictions.Add(PredictionTimestamp, Prediction)
               PredictionsQueue.Enqueue(PredictionTimestamp)
             End If
             With Prediction ' Store results in arrays for EMA calculation.
