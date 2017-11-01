@@ -38,9 +38,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Contains mathematical and statistical functions.
 
 
-    Private Shared Random As New Random
-
-
     Public Shared Function NormSInv(p As Double) As Double
 
       ' Returns the inverse of the standard normal cumulative distribution.
@@ -182,16 +179,19 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function Mean(Values() As Double) As Double
 
       ' Returns the arithmetic mean; the sum of the sampled values divided
-      ' by the number of items in the sample.
+      ' by the number of items in the sample. NaNs are excluded.
 
-      Dim Value As Double
+      Dim Value, Sum As Double
+      Dim Count As Integer
 
-      Mean = 0
       For Each Value In Values
-        Mean += Value/Values.Length
+        If Not IsNaN(Value) Then
+          Sum += Value
+          Count += 1
+        End If
       Next
 
-      Return Mean
+      Return Sum/Count
 
     End Function
 
@@ -201,10 +201,19 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' The median is the value separating the higher half of a data sample,
       ' a population, or a probability distribution, from the lower half. In
       ' simple terms, it may be thought of as the "middle" value of a data set.
+      ' NaNs are excluded.
 
-      Dim MedianValues(Values.Length-1) As Double
+      Dim Count As Integer = Values.Count(Function(Value) Not IsNaN(Value))
+      Dim MedianValues(Count-1) As Double
 
-      Array.Copy(Values, MedianValues, Values.Length)
+      Count = 0
+      For Each Value In Values
+        If Not IsNaN(Value) Then
+          MedianValues(Count) = Value
+          Count += 1
+        End If
+      Next
+
       Array.Sort(MedianValues)
 
       If MedianValues.Length Mod 2 = 0 Then
@@ -261,13 +270,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' are removed (NaN) using either the mean or median absolute deviation
       ' function.
 
+      Dim Count, i As Integer
       Dim CentralTendency, MAD, ControlLimit As Double
-      Dim i As Integer
 
+      Count = Values.Count(Function(Value) Not IsNaN(Value))
       CentralTendency = Median(Values)
       MAD = Median(AbsoluteDeviation(Values, CentralTendency))
-      ControlLimit = MAD*MedianAbsoluteDeviationScaleFactor(Values.Length-1)* _
-        ControlLimitRejectionCriterion(ConfidenceInterval, Values.Length-1)
+      ControlLimit = MAD*MedianAbsoluteDeviationScaleFactor(Count-1)* _
+        ControlLimitRejectionCriterion(ConfidenceInterval, Count-1)
 
       If ControlLimit = 0 Then ' This only happens when MAD equals 0.
         ' Use Mean Absolute Deviation instead of Median Absolute Deviation
@@ -276,8 +286,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         CentralTendency = Mean(Values)
         MAD = Mean(AbsoluteDeviation(Values, CentralTendency))
         ControlLimit = MAD*MeanAbsoluteDeviationScaleFactor* _
-          ControlLimitRejectionCriterion(ConfidenceInterval, _
-          Values.Length-1)
+          ControlLimitRejectionCriterion(ConfidenceInterval, Count-1)
       End If
 
       For i = 0 to Values.Length-1
@@ -321,16 +330,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns angle in degrees for Slope.
 
       Return Atan(Slope)/(2*PI)*360
-
-    End Function
-
-
-    Public Shared Function RandomNumber(Min As Integer, _
-      Max As Integer) As Integer
-
-      ' Returns a random number between Min (inclusive) and Max (inclusive).
-
-      Return Random.Next(Min, Max+1)
 
     End Function
 

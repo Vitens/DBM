@@ -26,7 +26,6 @@ cd %~dp0
 
 rem Variables
 set vbc="%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\Vbc.exe" /win32icon:res\dbm.ico /optimize+ /nologo /novbruntimeref
-rem      ^-- Use dotNetFx40_Full_x86_x64.exe
 if not defined PIHOME set PIHOME=%CD%\3rdParty\PILibraries
 set PIRefs="%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDK.dll","%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDKCommon.dll"
 set PIAFRefs="%PIHOME%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll"
@@ -38,8 +37,8 @@ del /Q build\*
 copy LICENSE build > NUL
 
 rem Apply patches
-for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
-powershell -Command "(Get-Content src\dbm\DBM.vb) -replace 'Const GITHASH As String = \".*?\"', 'Const GITHASH As String = \"%commit%\"' | Set-Content src\dbm\DBM.vb"
+if "%CI%" == "True" for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
+if "%CI%" == "True" powershell -Command "(Get-Content src\dbm\DBM.vb) -replace 'Const GITHASH As String = \".*?\"', 'Const GITHASH As String = \"%commit%\"' | Set-Content src\dbm\DBM.vb"
 
 Rem Build
 %vbc% /target:library /out:build\DBM.dll src\shared\*.vb src\dbm\*.vb

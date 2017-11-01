@@ -286,10 +286,10 @@ Namespace Vitens.DynamicBandwidthMonitor
         Round(Mean({32, 95}), 4) = 63.5 And _
         Round(Mean({81, 75}), 4) = 78 And _
         Round(Mean({67, 76, 25}), 4) = 56 And _
-        Round(Mean({22, 70, 73}), 4) = 55 And _
+        Round(Mean({25, NaN, 27}), 4) = 26 And _
         Round(Mean({31, 73, 83, 81}), 4) = 67 And _
         Round(Mean({18, 58, 47, 47}), 4) = 42.5 And _
-        Round(Mean({22, 67, 45, 31, 76}), 4) = 48.2 And _
+        Round(Mean({10, NaN, 20, 30, NaN}), 4) = 20 And _
         Round(Mean({67, 90, 74, 32, 62}), 4) = 65 And _
         Round(Mean({78, 0, 98, 65, 69, 57}), 4) = 61.1667 And _
         Round(Mean({49, 35, 74, 25, 28, 92}), 4) = 50.5 And _
@@ -307,10 +307,10 @@ Namespace Vitens.DynamicBandwidthMonitor
         Median({46}) = 46 And _
         Median({79, 86}) = 82.5 And _
         Median({46, 45}) = 45.5 And _
-        Median({21, 81, 13}) = 21 And _
+        Median({10, NaN, 20}) = 15 And _
         Median({58, 79, 68}) = 68 And _
-        Median({60, 42, 59, 23}) = 50.5 And _
-        Median({33, 23, 36, 47}) = 34.5 And _
+        Median({NaN, 10, 30, NaN}) = 20 And _
+        Median({30, 10, NaN, 15}) = 15 And _
         Median({99, 10, 41, 40, 55}) = 41 And _
         Median({19, 3, 9, 14, 31}) = 14 And _
         Median({2, 85, 33, 10, 38, 56}) = 35.5 And _
@@ -540,11 +540,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         2340.9497, 2327.333})) = Hash({3010.9485, 2517.2876, 2057.7188, _
         2133.0801, 3192.0308, 2035.0759, NaN, 2391.8086, 2267.896, NaN, _
         2340.9497, 2327.333}) And _
-        Hash(RemoveOutliers({3009.2004, 3779.3677, 3500.9705, 3114.8486, _
-        3312.1548, 3478.4153, 3080.0972, 2848.6597, 3197.1477, 3064.1587, _
-        3100.6992, 2953.3582})) = Hash({3009.2004, NaN, 3500.9705, 3114.8486, _
-        3312.1548, 3478.4153, 3080.0972, 2848.6597, 3197.1477, 3064.1587, _
-        3100.6992, 2953.3582})
+        Hash(RemoveOutliers({NaN, 10, NaN, 10, NaN, 10, NaN, 30, 20, NaN, _
+        999})) = Hash({NaN, 10, NaN, 10, NaN, 10, NaN, 30, 20, NaN, NaN})
 
       UnitTestResults = UnitTestResults And _
         Round(ExponentialMovingAverage _
@@ -609,11 +606,6 @@ Namespace Vitens.DynamicBandwidthMonitor
         Round(SlopeToAngle(3.1088), 4) = 72.1687 And _
         Round(SlopeToAngle(-1.6831), 4) = -59.2837 And _
         Round(SlopeToAngle(-2.0031), 4) = -63.4704
-
-      For i = 0 to 19
-        UnitTestResults = UnitTestResults And RandomNumber(0, i+1) >= 0 And _
-          RandomNumber(0, i+1) <= i+1
-      Next i
 
       With Statistics
         For i = 0 To 19
