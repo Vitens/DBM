@@ -182,16 +182,19 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function Mean(Values() As Double) As Double
 
       ' Returns the arithmetic mean; the sum of the sampled values divided
-      ' by the number of items in the sample.
+      ' by the number of items in the sample. NaNs are excluded.
 
-      Dim Value As Double
+      Dim Count As Integer
+      Dim Value, Sum As Double
 
-      Mean = 0
       For Each Value In Values
-        Mean += Value/Values.Length
+        If Not IsNan(Value) Then
+          Count += 1
+          Sum += Value
+        End If
       Next
 
-      Return Mean
+      Return Sum/Count
 
     End Function
 

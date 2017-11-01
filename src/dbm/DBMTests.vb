@@ -286,10 +286,10 @@ Namespace Vitens.DynamicBandwidthMonitor
         Round(Mean({32, 95}), 4) = 63.5 And _
         Round(Mean({81, 75}), 4) = 78 And _
         Round(Mean({67, 76, 25}), 4) = 56 And _
-        Round(Mean({22, 70, 73}), 4) = 55 And _
+        Round(Mean({25, NaN, 27}), 4) = 26 And _
         Round(Mean({31, 73, 83, 81}), 4) = 67 And _
         Round(Mean({18, 58, 47, 47}), 4) = 42.5 And _
-        Round(Mean({22, 67, 45, 31, 76}), 4) = 48.2 And _
+        Round(Mean({10, NaN, 20, 30, NaN}), 4) = 20 And _
         Round(Mean({67, 90, 74, 32, 62}), 4) = 65 And _
         Round(Mean({78, 0, 98, 65, 69, 57}), 4) = 61.1667 And _
         Round(Mean({49, 35, 74, 25, 28, 92}), 4) = 50.5 And _
