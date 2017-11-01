@@ -64,8 +64,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' The result of the calculation is returned as a new object.
 
       Dim Statistics As New DBMStatistics
+      Dim Prediction As New DBMPrediction()
       Dim ControlLimit As Double
-      Dim P As New DBMPrediction()
 
       With Statistics
 
@@ -73,11 +73,11 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' last sample in the array as this is the current measured value for
         ' which we need to calculate a prediction and control limits.
         .Calculate(RemoveOutliers(Values.Take(Values.Length-1).ToArray))
-        P.MeasuredValue = Values(ComparePatterns)
+        Prediction.MeasuredValue = Values(ComparePatterns)
 
         ' Extrapolate regression by one interval and use this result as a
         ' prediction.
-        P.PredictedValue = ComparePatterns*.Slope+.Intercept
+        Prediction.PredictedValue = ComparePatterns*.Slope+.Intercept
 
         ' Control limits are determined by using measures of process variation
         ' and are based on the concepts surrounding hypothesis testing and
@@ -89,12 +89,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         ' Set upper and lower control limits based on prediction, rejection
         ' criterion and standard error of the regression.
-        P.LowerControlLimit = P.PredictedValue-ControlLimit
-        P.UpperControlLimit = P.PredictedValue+ControlLimit
+        Prediction.LowerControlLimit = Prediction.PredictedValue-ControlLimit
+        Prediction.UpperControlLimit = Prediction.PredictedValue+ControlLimit
 
       End With
 
-      Return P
+      Return Prediction
 
     End Function
 
