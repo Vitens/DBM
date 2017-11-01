@@ -39,7 +39,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public DataManager As DBMDataManager
     Private PredictionsSubtractPoint As DBMPoint
-    Private Predictions As New Dictionary(Of DateTime, DBMPrediction)
+    Private Predictions As New Dictionary(Of DateTime, DBMPredictionData)
     Private PredictionsQueue As New Queue(Of DateTime) ' Insertion order queue
 
 
@@ -68,7 +68,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
       Dim PredictionTimestamp, PatternTimestamp As DateTime
-      Dim Prediction As DBMPrediction
+      Dim Prediction As DBMPredictionData
       Dim Patterns(ComparePatterns), MeasuredValues(EMAPreviousPeriods), _
         PredictedValues(EMAPreviousPeriods), _
         LowerControlLimits(EMAPreviousPeriods), _
@@ -84,7 +84,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
 
       For CorrelationCounter = 0 To CorrelationPreviousPeriods
-        If Result.Prediction Is Nothing Or (IsInputDBMPoint And _
+        If Result.PredictionData Is Nothing Or (IsInputDBMPoint And _
           Result.Factor <> 0 And HasCorrelationDBMPoint) Or _
           Not IsInputDBMPoint Then ' Calculate history for event or correlation.
           For EMACounter = 0 To EMAPreviousPeriods ' For filtering HF variation.

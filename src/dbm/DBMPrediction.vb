@@ -35,28 +35,7 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMPrediction
 
 
-    Public MeasuredValue, PredictedValue, LowerControlLimit, _
-      UpperControlLimit As Double
-
-
-    Public Sub New(Optional MeasuredValue As Double = 0, _
-      Optional PredictedValue As Double = 0, _
-      Optional LowerControlLimit As Double = 0, _
-      Optional UpperControlLimit As Double = 0)
-
-      ' DBMResult objects can directly store results into a DBMPrediction
-      ' object. This is the result of an EMA on predictions calculated using
-      ' the Calculate method called from a DBMPoint object.
-
-      Me.MeasuredValue = MeasuredValue
-      Me.PredictedValue = PredictedValue
-      Me.LowerControlLimit = LowerControlLimit
-      Me.UpperControlLimit = UpperControlLimit
-
-    End Sub
-
-
-    Public Shared Function Calculate(Values() As Double) As DBMPrediction
+    Public Shared Function Calculate(Values() As Double) As DBMPredictionData
 
       ' Calculates and stores prediction and control limits by removing
       ' outliers from the Values array and extrapolating the regression
@@ -68,7 +47,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       With Statistics
 
-        Calculate = New DBMPrediction
+        Calculate = New DBMPredictionData
 
         ' Calculate statistics for data after removing outliers. Exclude the
         ' last sample in the array as this is the current measured value for

@@ -166,13 +166,13 @@ Namespace Vitens.DynamicBandwidthMonitor
           With Result
             Line.Append(Separator).Append(FormatNumber(.Factor))
             Line.Append(Separator). _
-              Append(FormatNumber(.Prediction.MeasuredValue))
+              Append(FormatNumber(.PredictionData.MeasuredValue))
             Line.Append(Separator). _
-              Append(FormatNumber(.Prediction.PredictedValue))
+              Append(FormatNumber(.PredictionData.PredictedValue))
             Line.Append(Separator). _
-              Append(FormatNumber(.Prediction.LowerControlLimit))
+              Append(FormatNumber(.PredictionData.LowerControlLimit))
             Line.Append(Separator). _
-              Append(FormatNumber(.Prediction.UpperControlLimit))
+              Append(FormatNumber(.PredictionData.UpperControlLimit))
           End With
           ' If an event is found and a correlation point is available
           If CorrelationPoints.Count > 0 And _
@@ -203,7 +203,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             For Each CorrelationPoint In CorrelationPoints
               Result = _DBM.Result _
                 (CorrelationPoint.PointDriver, Nothing, StartTimestamp)
-              With Result.Prediction
+              With Result.PredictionData
                 Line.Append(Separator).Append(FormatNumber(.MeasuredValue))
                 Line.Append(Separator).Append(FormatNumber(.PredictedValue))
                 Line.Append(Separator).Append(FormatNumber(.LowerControlLimit))

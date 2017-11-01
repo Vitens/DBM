@@ -94,10 +94,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       With Result
         Return Hash({Round(.Factor, 3), Round(.OriginalFactor, 3), _
-          Round(.Prediction.MeasuredValue), _
-          Round(.Prediction.PredictedValue), _
-          Round(.Prediction.LowerControlLimit), _
-          Round(.Prediction.UpperControlLimit)}) = Hash(ExpResults) And _
+          Round(.PredictionData.MeasuredValue), _
+          Round(.PredictionData.PredictedValue), _
+          Round(.PredictionData.LowerControlLimit), _
+          Round(.PredictionData.UpperControlLimit)}) = Hash(ExpResults) And _
           Hash({.AbsoluteErrorStats.Count, _
           Round(.AbsoluteErrorStats.Slope, 4), _
           Round(.AbsoluteErrorStats.OriginSlope, 4), _
