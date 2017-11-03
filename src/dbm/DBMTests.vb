@@ -281,6 +281,28 @@ Namespace Vitens.DynamicBandwidthMonitor
         Round(ControlLimitRejectionCriterion(0.90, 20), 4) = 1.7247
 
       UnitTestResults = UnitTestResults And _
+        NonNaNCount({60}) = 1 And _
+        NonNaNCount({60, 70}) = 2 And _
+        NonNaNCount({60, 70, NaN}) = 2 And _
+        NonNaNCount({60, 70, NaN, 20}) = 3 And _
+        NonNaNCount({60, 70, NaN, 20, NaN}) = 3 And _
+        NonNaNCount({60, 70, NaN, 20, NaN, NaN}) = 3 And _
+        NonNaNCount({70, NaN, 20, NaN, NaN, 5}) = 3 And _
+        NonNaNCount({NaN, 20, NaN, NaN, 5, 10}) = 3 And _
+        NonNaNCount({20, NaN, NaN, 5, 10, 15}) = 4 And _
+        NonNaNCount({NaN, NaN, 5, 10, 15, 20}) = 4 And _
+        NonNaNCount({NaN, 5, 10, 15, 20, 25}) = 5 And _
+        NonNaNCount({5, 10, 15, 20, 25, 30}) = 6 And _
+        NonNaNCount({10, 15, 20, 25, 30}) = 5 And _
+        NonNaNCount({15, 20, 25, 30}) = 4 And _
+        NonNaNCount({20, 25, 30}) = 3 And _
+        NonNaNCount({25, 30}) = 2 And _
+        NonNaNCount({30}) = 1 And _
+        NonNaNCount({}) = 0 And _
+        NonNaNCount({NaN}) = 0 And _
+        NonNaNCount({NaN, NaN}) = 0
+
+      UnitTestResults = UnitTestResults And _
         Round(Mean({60}), 4) = 60 And _
         Round(Mean({72}), 4) = 72 And _
         Round(Mean({32, 95}), 4) = 63.5 And _
