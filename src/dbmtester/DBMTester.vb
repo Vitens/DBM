@@ -94,7 +94,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Result As DBMResult
       Dim _DBM As New DBM
       Dim PredictionErrors(), PredictionError As Double
-      Dim ErrorStats As DBMStatistics
+      Dim ErrorStatsData As DBMStatisticsData
       Dim CorrelationPoint As DBMCorrelationPoint
 
       ' Parse command line arguments
@@ -184,9 +184,9 @@ Namespace Vitens.DynamicBandwidthMonitor
                 Line.Append(Separator).Append(FormatNumber(PredictionError))
               Next
             Next
-            For Each ErrorStats In {Result.AbsoluteErrorStats, _
-              Result.RelativeErrorStats}
-              With ErrorStats
+            For Each ErrorStatsData In {Result.AbsoluteErrorStatsData, _
+              Result.RelativeErrorStatsData}
+              With ErrorStatsData
                 Line.Append(Separator).Append(FormatNumber(.Count))
                 Line.Append(Separator).Append(FormatNumber(.Slope))
                 Line.Append(Separator).Append(FormatNumber(.OriginSlope))

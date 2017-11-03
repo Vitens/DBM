@@ -42,17 +42,19 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' line by one interval.
       ' The result of the calculation is returned as a new object.
 
-      Dim Statistics As New DBMStatistics
+      Dim StatisticsData As New DBMStatisticsData
       Dim ControlLimit As Double
 
-      With Statistics
+      Calculate = New DBMPredictionData
 
-        Calculate = New DBMPredictionData
+      ' Calculate statistics for data after removing outliers. Exclude the
+      ' last sample in the array as this is the current measured value for
+      ' which we need to calculate a prediction and control limits.
+      StatisticsData = DBMStatistics.Calculate _
+        (RemoveOutliers(Values.Take(Values.Length-1).ToArray))
 
-        ' Calculate statistics for data after removing outliers. Exclude the
-        ' last sample in the array as this is the current measured value for
-        ' which we need to calculate a prediction and control limits.
-        .Calculate(RemoveOutliers(Values.Take(Values.Length-1).ToArray))
+      With StatisticsData
+
         Calculate.MeasuredValue = Values(ComparePatterns)
 
         ' Extrapolate regression by one interval and use this result as a
