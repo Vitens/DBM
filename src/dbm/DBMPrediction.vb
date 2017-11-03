@@ -53,13 +53,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       StatisticsData = DBMStatistics.Calculate _
         (RemoveOutliers(Values.Take(Values.Length-1).ToArray))
 
-      With StatisticsData
+      With Calculate
 
-        Calculate.MeasuredValue = Values(ComparePatterns)
+        .MeasuredValue = Values(ComparePatterns)
 
         ' Extrapolate regression by one interval and use this result as a
         ' prediction.
-        Calculate.PredictedValue = ComparePatterns*.Slope+.Intercept
+        .PredictedValue = _
+          ComparePatterns*StatisticsData.Slope+StatisticsData.Intercept
 
         ' Control limits are determined by using measures of process variation
         ' and are based on the concepts surrounding hypothesis testing and
@@ -67,12 +68,12 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' that indicate that a process is not in control and, therefore, not
         ' operating predictably.
         ControlLimit = ControlLimitRejectionCriterion(ConfidenceInterval, _
-          .Count-1)*.StandardError
+          StatisticsData.Count-1)*StatisticsData.StandardError
 
         ' Set upper and lower control limits based on prediction, rejection
         ' criterion and standard error of the regression.
-        Calculate.LowerControlLimit = Calculate.PredictedValue-ControlLimit
-        Calculate.UpperControlLimit = Calculate.PredictedValue+ControlLimit
+        .LowerControlLimit = .PredictedValue-ControlLimit
+        .UpperControlLimit = .PredictedValue+ControlLimit
 
       End With
 
