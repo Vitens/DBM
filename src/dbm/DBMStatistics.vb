@@ -62,7 +62,6 @@ Namespace Vitens.DynamicBandwidthMonitor
         End If
 
         ' Calculate sums
-        .Count = 0
         For i = 0 To ValuesY.Length-1
           If Not IsNaN(ValuesX(i)) And Not IsNaN(ValuesY(i)) Then
             SumX += ValuesX(i)
@@ -83,7 +82,6 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Standard error of the predicted y-value for each x in the regression.
         ' The standard error is a measure of the amount of error in the
         ' prediction of y for an individual x.
-        .StandardError = 0
         For i = 0 to ValuesY.Length-1
           If Not IsNaN(ValuesX(i)) And Not IsNaN(ValuesY(i)) Then
             .StandardError += (ValuesY(i)-ValuesX(i)*.Slope-.Intercept)^2

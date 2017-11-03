@@ -320,7 +320,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ExponentialMovingAverage = 0
       Weight = 1 ' Initial weight
-      TotalWeight = 0
       For Each Value In Values ' Least significant value first
         ExponentialMovingAverage += Value*Weight
         TotalWeight += Weight
