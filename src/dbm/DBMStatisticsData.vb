@@ -24,11 +24,6 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 
-Imports System.Double
-Imports System.Math
-Imports Vitens.DynamicBandwidthMonitor.DBMMath
-
-
 Namespace Vitens.DynamicBandwidthMonitor
 
 
