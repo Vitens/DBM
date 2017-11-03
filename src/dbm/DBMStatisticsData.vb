@@ -24,20 +24,18 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 
-' This information is shared between all DBM binaries. A summary can be
-' returned using the DBM.Version function.
+Namespace Vitens.DynamicBandwidthMonitor
 
 
-<assembly:System.Reflection.AssemblyVersion("1.10.2.*")> ' Major.Minor.Revision.*
-' Note: when updating the version number, also modify version in appveyor.yml
-'       for AppVeyor continuous integration to use the same version numbering.
+  Public Class DBMStatisticsData
 
-<assembly:System.Reflection.AssemblyProduct("Dynamic Bandwidth Monitor")>
 
-<assembly:System.Reflection.AssemblyDescription _
-  ("Leak detection method implemented in a real-time data historian")>
+    Public Count As Integer
+    Public Slope, OriginSlope, Angle, OriginAngle, Intercept, StandardError, _
+      Correlation, ModifiedCorrelation, Determination As Double
 
-<assembly:System.Reflection.AssemblyCopyright _
-  ("Copyright (C) 2014, 2015, 2016, 2017  J.H. Fitié, Vitens N.V.")>
 
-<assembly:System.Reflection.AssemblyCompany("Vitens N.V.")>
+  End Class
+
+
+End Namespace

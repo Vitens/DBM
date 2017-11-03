@@ -42,22 +42,25 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' line by one interval.
       ' The result of the calculation is returned as a new object.
 
-      Dim Statistics As New DBMStatistics
+      Dim StatisticsData As New DBMStatisticsData
       Dim ControlLimit As Double
 
-      With Statistics
+      Calculate = New DBMPredictionData
 
-        Calculate = New DBMPredictionData
+      ' Calculate statistics for data after removing outliers. Exclude the
+      ' last sample in the array as this is the current measured value for
+      ' which we need to calculate a prediction and control limits.
+      StatisticsData = DBMStatistics.Calculate _
+        (RemoveOutliers(Values.Take(Values.Length-1).ToArray))
 
-        ' Calculate statistics for data after removing outliers. Exclude the
-        ' last sample in the array as this is the current measured value for
-        ' which we need to calculate a prediction and control limits.
-        .Calculate(RemoveOutliers(Values.Take(Values.Length-1).ToArray))
-        Calculate.MeasuredValue = Values(ComparePatterns)
+      With Calculate
+
+        .MeasuredValue = Values(ComparePatterns)
 
         ' Extrapolate regression by one interval and use this result as a
         ' prediction.
-        Calculate.PredictedValue = ComparePatterns*.Slope+.Intercept
+        .PredictedValue = _
+          ComparePatterns*StatisticsData.Slope+StatisticsData.Intercept
 
         ' Control limits are determined by using measures of process variation
         ' and are based on the concepts surrounding hypothesis testing and
@@ -65,12 +68,12 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' that indicate that a process is not in control and, therefore, not
         ' operating predictably.
         ControlLimit = ControlLimitRejectionCriterion(ConfidenceInterval, _
-          .Count-1)*.StandardError
+          StatisticsData.Count-1)*StatisticsData.StandardError
 
         ' Set upper and lower control limits based on prediction, rejection
         ' criterion and standard error of the regression.
-        Calculate.LowerControlLimit = Calculate.PredictedValue-ControlLimit
-        Calculate.UpperControlLimit = Calculate.PredictedValue+ControlLimit
+        .LowerControlLimit = .PredictedValue-ControlLimit
+        .UpperControlLimit = .PredictedValue+ControlLimit
 
       End With
 

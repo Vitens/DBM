@@ -29,6 +29,7 @@ Imports System.Collections.Generic
 Imports System.Linq
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
+Imports Vitens.DynamicBandwidthMonitor.DBMPrediction
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -103,7 +104,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                     SubtractPoint.DataManager.Value(PatternTimestamp)
                 End If
               Next PatternCounter
-              PredictionData = DBMPrediction.Calculate(Patterns)
+              PredictionData = Calculate(Patterns)
               ' Limit cache size
               Do While PredictionsData.Count >= MaxPointPredictions
                 ' Use the queue to remove the least recently inserted timestamp.

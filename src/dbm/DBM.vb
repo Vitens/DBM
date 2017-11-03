@@ -32,6 +32,7 @@ Imports System.Math
 Imports System.Text.RegularExpressions
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
+Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
 Imports Vitens.DynamicBandwidthMonitor.DBMTests
 
 
@@ -154,7 +155,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim CorrelationPoint As DBMCorrelationPoint
       Dim CorrelationResult As DBMResult
-      Dim AbsoluteErrorStats, RelativeErrorStats As New DBMStatistics
+      Dim AbsoluteErrorStatsData, _
+        RelativeErrorStatsData As New DBMStatisticsData
       Dim Factor As Double
 
       If CorrelationPoints Is Nothing Then ' Empty list if Nothing was passed.
@@ -179,16 +181,16 @@ Namespace Vitens.DynamicBandwidthMonitor
               (Timestamp, False, True)
           End If
           ' Calculate statistics of absolute error compared to prediction
-          AbsoluteErrorStats.Calculate _
+          AbsoluteErrorStatsData = Calculate _
             (CorrelationResult.AbsoluteErrors, Result.AbsoluteErrors)
           ' Calculate statistics of relative error compared to prediction
-          RelativeErrorStats.Calculate _
+          RelativeErrorStatsData = Calculate _
             (CorrelationResult.RelativeErrors, Result.RelativeErrors)
           Factor = Suppress(Result.Factor, _
-            AbsoluteErrorStats.ModifiedCorrelation, _
-            AbsoluteErrorStats.OriginAngle, _
-            RelativeErrorStats.ModifiedCorrelation, _
-            RelativeErrorStats.OriginAngle, _
+            AbsoluteErrorStatsData.ModifiedCorrelation, _
+            AbsoluteErrorStatsData.OriginAngle, _
+            RelativeErrorStatsData.ModifiedCorrelation, _
+            RelativeErrorStatsData.OriginAngle, _
             CorrelationPoint.SubtractSelf) ' Suppress if not a local event.
           If Factor <> Result.Factor Then ' Has event been suppressed
             Result.Factor = Factor ' Store correlation coefficient
@@ -198,8 +200,8 @@ Namespace Vitens.DynamicBandwidthMonitor
               Array.Copy(.RelativeErrors, Result.CorrelationRelativeErrors, _
                 .RelativeErrors.Length)
             End With
-            Result.AbsoluteErrorStats = AbsoluteErrorStats.ShallowCopy
-            Result.RelativeErrorStats = RelativeErrorStats.ShallowCopy
+            Result.AbsoluteErrorStatsData = AbsoluteErrorStatsData
+            Result.RelativeErrorStatsData = RelativeErrorStatsData
             Result.SuppressedBy = CorrelationPoint.PointDriver ' Suppressed by
           End If
         Next
