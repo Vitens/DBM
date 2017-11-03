@@ -68,7 +68,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
       Dim PredictionTimestamp, PatternTimestamp As DateTime
-      Dim PredictionData As DBMPredictionData
+      Dim PredictionData As DBMPredictionData = Nothing
       Dim Patterns(ComparePatterns), MeasuredValues(EMAPreviousPeriods), _
         PredictedValues(EMAPreviousPeriods), _
         LowerControlLimits(EMAPreviousPeriods), _
@@ -91,9 +91,9 @@ Namespace Vitens.DynamicBandwidthMonitor
             PredictionTimestamp = Timestamp.AddSeconds _
               (-(EMAPreviousPeriods-EMACounter+CorrelationCounter)* _
               CalculationInterval) ' Timestamp for prediction results
-            If PredictionsData.ContainsKey(PredictionTimestamp) Then ' In cache
-              PredictionData = PredictionsData.Item(PredictionTimestamp)
-            Else ' Calculate prediction data
+            If Not PredictionsData.TryGetValue(PredictionTimestamp, _
+              PredictionData) Then
+              ' Calculate prediction data
               For PatternCounter = 0 To ComparePatterns ' Data for regression.
                 PatternTimestamp = PredictionTimestamp. _
                   AddDays(-(ComparePatterns-PatternCounter)*7)
