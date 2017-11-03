@@ -176,6 +176,15 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Shared Function NonNaNCount(Values() As Double) As Integer
+
+      ' Returns number of values in the array excluding NaNs.
+
+      Return Values.Count(Function(Value) Not IsNaN(Value))
+
+    End Function
+
+
     Public Shared Function Mean(Values() As Double) As Double
 
       ' Returns the arithmetic mean; the sum of the sampled values divided
@@ -203,10 +212,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' simple terms, it may be thought of as the "middle" value of a data set.
       ' NaNs are excluded.
 
-      Dim Count As Integer = Values.Count(Function(Value) Not IsNaN(Value))
-      Dim MedianValues(Count-1) As Double
+      Dim Value, MedianValues(NonNaNCount(Values)-1) As Double
+      Dim Count As Integer
 
-      Count = 0
       For Each Value In Values
         If Not IsNaN(Value) Then
           MedianValues(Count) = Value
@@ -273,7 +281,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Count, i As Integer
       Dim CentralTendency, MAD, ControlLimit As Double
 
-      Count = Values.Count(Function(Value) Not IsNaN(Value))
+      Count = NonNaNCount(Values)
       CentralTendency = Median(Values)
       MAD = Median(AbsoluteDeviation(Values, CentralTendency))
       ControlLimit = MAD*MedianAbsoluteDeviationScaleFactor(Count-1)* _
