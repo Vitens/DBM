@@ -35,6 +35,7 @@ rem Set up build directory
 if not exist build mkdir build
 del /Q build\*
 copy LICENSE build > NUL
+copy gpl-v3-nl-101.pdf build > NUL
 
 rem Apply patches
 if "%CI%" == "True" for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
