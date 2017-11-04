@@ -181,10 +181,10 @@ Namespace Vitens.DynamicBandwidthMonitor
               (Timestamp, False, True)
           End If
           ' Calculate statistics of absolute error compared to prediction
-          AbsoluteErrorStatsData = Calculate _
+          AbsoluteErrorStatsData = Statistics _
             (CorrelationResult.AbsoluteErrors, Result.AbsoluteErrors)
           ' Calculate statistics of relative error compared to prediction
-          RelativeErrorStatsData = Calculate _
+          RelativeErrorStatsData = Statistics _
             (CorrelationResult.RelativeErrors, Result.RelativeErrors)
           Factor = Suppress(Result.Factor, _
             AbsoluteErrorStatsData.ModifiedCorrelation, _

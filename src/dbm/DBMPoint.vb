@@ -104,7 +104,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                     SubtractPoint.DataManager.Value(PatternTimestamp)
                 End If
               Next PatternCounter
-              PredictionData = Calculate(Patterns)
+              PredictionData = Prediction(Patterns)
               ' Limit cache size
               Do While PredictionsData.Count >= MaxPointPredictions
                 ' Use the queue to remove the least recently inserted timestamp.
