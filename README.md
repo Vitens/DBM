@@ -9,13 +9,6 @@ Leak detection method implemented in a real-time data historian
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
 | [![Build status](https://ci.appveyor.com/api/projects/status/yop6ltcux5bam7ed/branch/master?svg=true)](https://ci.appveyor.com/project/JohanFiti/dbm-jbrie/branch/master) | [:thumbsup: Tests](https://ci.appveyor.com/project/JohanFiti/dbm-jbrie/branch/master/tests) | [:package: Latest release](https://github.com/Vitens/DBM/releases/latest) |
 
-## Authors
-| Name          | Company      | Role        | Contact                  |
-| ------------- | ------------ | ----------- | ------------------------ |
-| J.H. Fitié    | Vitens N.V.  | Lead author | johan.fitie@vitens.nl    |
-| E.A. Trietsch | Vitens N.V.  | Co-author   | eelco.trietsch@vitens.nl |
-|               | VORtech B.V. | Contributor |                          |
-
 ## Description
 Water company Vitens has created a demonstration site called the Vitens Innovation Playground (VIP), in which new technologies and methodologies are developed, tested, and demonstrated. The projects conducted in the demonstration site can be categorized into one of four themes: energy optimization, real-time leak detection, online water quality monitoring, and customer interaction. In the real-time leak detection theme, a method for leak detection based on statistical demand forecasting was developed.
 
