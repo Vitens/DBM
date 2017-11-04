@@ -61,7 +61,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         GetExecutingAssembly.Location)
         Return .FileDescription & " " & _
           "v" & RegEx.Split(.FileVersion, "^(.+\..+\..+)\..+$")(1) & _
-          "+" & GITHASH & NewLine & _
+          If(GITHASH = "", "", "+" & GITHASH) & NewLine & _
           .ProductName & NewLine & _
           .Comments & NewLine & _
           NewLine & _
@@ -80,6 +80,24 @@ Namespace Vitens.DynamicBandwidthMonitor
           "You should have received a copy of the GNU General Public " & _
           "License along with this program.  " & _
           "If not, see <http://www.gnu.org/licenses/>." & NewLine & _
+          NewLine & _
+          .LegalCopyright.Replace("Copyright", "Auteursrecht") & NewLine & _
+          NewLine & _
+          "Dit programma is vrije software: je mag het herdistribueren " & _
+          "en/of wijzigen onder de voorwaarden van de GNU Algemene " & _
+          "Publieke Licentie zoals gepubliceerd door de Free Software " & _
+          "Foundation, onder versie 3 van de Licentie of (naar jouw keuze) " & _
+          "elke latere versie." & NewLine & _
+          NewLine & _
+          "Dit programma is gedistribueerd in de hoop dat het nuttig zal " & _
+          "zijn maar ZONDER ENIGE GARANTIE; zelfs zonder de impliciete " & _
+          "garanties die GEBRUIKELIJK ZIJN IN DE HANDEL of voor " & _
+          "BRUIKBAARHEID VOOR EEN SPECIFIEK DOEL.  Zie de GNU Algemene " & _
+          "Publieke Licentie voor meer details." & NewLine & _
+          NewLine & _
+          "Je hoort een kopie van de GNU Algemene Publieke Licentie te " & _
+          "hebben ontvangen samen met dit programma.  Als dat niet het " & _
+          "geval is, zie <http://www.gnu.org/licenses/>." & NewLine & _
           If(SkipTests, "", NewLine & TestResults)
       End With
 
