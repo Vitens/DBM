@@ -61,7 +61,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         GetExecutingAssembly.Location)
         Return .FileDescription & " " & _
           "v" & RegEx.Split(.FileVersion, "^(.+\..+\..+)\..+$")(1) & _
-          "+" & GITHASH & NewLine & _
+          If(GITHASH = "", "", "+" & GITHASH) & NewLine & _
           .ProductName & NewLine & _
           .Comments & NewLine & _
           NewLine & _
