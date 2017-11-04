@@ -36,10 +36,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     ' Contains statistical functions which are returned all at once on
-    ' calling the Calculate method.
+    ' calling the Statistics method.
 
 
-    Public Shared Function Calculate(ValuesY() As Double, _
+    Public Shared Function Statistics(ValuesY() As Double, _
       Optional ValuesX() As Double = Nothing) As DBMStatisticsData
 
       ' Performs calculation of several statistics functions on the input
@@ -50,9 +50,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim i As Integer
       Dim SumX, SumY, SumXX, SumYY, SumXY As Double
 
-      Calculate = New DBMStatisticsData
+      Statistics = New DBMStatisticsData
 
-      With Calculate
+      With Statistics
 
         If ValuesX Is Nothing Then ' No X values, assume linear scale from 0.
           ReDim ValuesX(ValuesY.Length-1)
@@ -107,7 +107,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       End With
 
-      Return Calculate
+      Return Statistics
 
     End Function
 

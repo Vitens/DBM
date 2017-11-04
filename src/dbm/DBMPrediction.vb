@@ -27,6 +27,7 @@ Option Strict
 Imports System.Linq
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
+Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -35,7 +36,7 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMPrediction
 
 
-    Public Shared Function Calculate(Values() As Double) As DBMPredictionData
+    Public Shared Function Prediction(Values() As Double) As DBMPredictionData
 
       ' Calculates and stores prediction and control limits by removing
       ' outliers from the Values array and extrapolating the regression
@@ -45,15 +46,15 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim StatisticsData As New DBMStatisticsData
       Dim ControlLimit As Double
 
-      Calculate = New DBMPredictionData
+      Prediction = New DBMPredictionData
 
       ' Calculate statistics for data after removing outliers. Exclude the
       ' last sample in the array as this is the current measured value for
       ' which we need to calculate a prediction and control limits.
-      StatisticsData = DBMStatistics.Calculate _
-        (RemoveOutliers(Values.Take(Values.Length-1).ToArray))
+      StatisticsData = _
+        Statistics(RemoveOutliers(Values.Take(Values.Length-1).ToArray))
 
-      With Calculate
+      With Prediction
 
         .MeasuredValue = Values(ComparePatterns)
 
@@ -77,7 +78,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       End With
 
-      Return Calculate
+      Return Prediction
 
     End Function
 
