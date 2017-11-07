@@ -8,15 +8,6 @@ build_script:
   -
     cmd: |-
         build.bat
-after_build:
-  -
-    cmd: |-
-        for /f "delims=" %%i in ('powershell -Command "(Get-Item build\DBM.dll).VersionInfo.ProductVersion"') do set binversion=%%i
-        for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
-        7z a %TEMP%\DBM_v%binversion%+%commit%_bin.zip .\build\*>NUL
-        appveyor PushArtifact %TEMP%\DBM_v%binversion%+%commit%_bin.zip
-        7z a %TEMP%\DBM_v%binversion%+%commit%_src.zip *>NUL
-        appveyor PushArtifact %TEMP%\DBM_v%binversion%+%commit%_src.zip
 test_script:
   -
     cmd: |-
@@ -45,6 +36,15 @@ test_script:
         build\DBMTester.exe -i=res\data\ACE-FR-Deelbalansgebied-Leeuwarden-levering_nl-NL.csv -c=res\data\ACE-FR-Deelbalansgebied-Burgum-levering_nl-NL.csv -c=res\data\ACE-FR-Deelbalansgebied-Dokkum-levering_nl-NL.csv -c=res\data\ACE-FR-Deelbalansgebied-Dronrijp-levering_nl-NL.csv -c=res\data\ACE-FR-Deelbalansgebied-Franeker-levering_nl-NL.csv -c=res\data\ACE-FR-Deelbalansgebied-Grou-levering_nl-NL.csv -cs=res\data\ACE-FR-Balansgebied-Leeuwarden_Franeker-levering_nl-NL.csv -st=01-01-2016 -et=01-02-2016 -oc=true>%TEMP%\sample5boutput_nl-NL.csv
         powershell -Command "Get-FileHash %TEMP%\sample5boutput_nl-NL.csv -Algorithm MD5"|find "7B16A683A66EBA61ED0F3105466D4F1B">NUL&&set result=Passed||set result=Failed
         appveyor AddTest "Sample 5b" -Framework "" -FileName "" -Outcome %result%
+before_deploy:
+  -
+    cmd: |-
+        for /f "delims=" %%i in ('powershell -Command "(Get-Item build\DBM.dll).VersionInfo.ProductVersion"') do set binversion=%%i
+        for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
+        7z a %TEMP%\DBM_v%binversion%+%commit%_bin.zip .\build\*>NUL
+        appveyor PushArtifact %TEMP%\DBM_v%binversion%+%commit%_bin.zip
+        7z a %TEMP%\DBM_v%binversion%+%commit%_src.zip *>NUL
+        appveyor PushArtifact %TEMP%\DBM_v%binversion%+%commit%_src.zip
 deploy:
   tag: 'v$(binversion)+$(commit)'
   release: 'DBM v$(binversion)+$(commit)'
