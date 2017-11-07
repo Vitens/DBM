@@ -334,7 +334,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Median({58, 79, 68}) = 68 And _
         Median({NaN, 10, 30, NaN}) = 20 And _
         Median({30, 10, NaN, 15}) = 15 And _
-        Median({99, 10, 41, 40, 55}) = 41 And _
+        IsNaN(Median({NaN, NaN, NaN, NaN, NaN})) And _
         Median({19, 3, 9, 14, 31}) = 14 And _
         Median({2, 85, 33, 10, 38, 56}) = 35.5 And _
         Median({42, 65, 57, 92, 56, 59}) = 58 And _
