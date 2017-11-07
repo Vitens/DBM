@@ -212,8 +212,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' simple terms, it may be thought of as the "middle" value of a data set.
       ' NaNs are excluded.
 
-      Dim Value, MedianValues(NonNaNCount(Values)-1) As Double
+      Dim MedianValues(NonNaNCount(Values)-1), Value As Double
       Dim Count As Integer
+
+      If MedianValues.Length = 0 Then Return NaN ' No non-NaN values.
 
       For Each Value In Values
         If Not IsNaN(Value) Then
