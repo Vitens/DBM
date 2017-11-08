@@ -34,6 +34,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Point As Object
+    Public HasInternalCache As Boolean = False
 
 
     Public Sub New(Point As Object)
