@@ -33,8 +33,8 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public MustInherit Class DBMPointDriverAbstract
 
 
-    Public Point As Object
-    Public HasInternalCache As Boolean = False
+    Public Property Point As Object
+    Public Property HasInternalCache As Boolean = False
 
 
     Public Sub New(Point As Object)
