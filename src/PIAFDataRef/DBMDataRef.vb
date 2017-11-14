@@ -109,7 +109,7 @@ Namespace DBMDataRef
 
 
     Private Function AlignTime(Timestamp As DateTime, Interval As Integer) As DateTime
-      Return Timestamp.Subtract(New TimeSpan(0, 0, CInt((Timestamp-DateTime.MinValue).TotalSeconds Mod Interval)))
+      Return Timestamp.AddSeconds(-(Timestamp.Minute*60+Timestamp.Second+Timestamp.Millisecond/1000))
     End Function
 
 
@@ -122,7 +122,6 @@ Namespace DBMDataRef
       Else
         Timestamp = DirectCast(timeContext, AFTime).LocalTime
       End If
-      ' TODO Timestamp has millisecond resolution so not exactly aligned on intervals
       Result = _DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
       If CurrentAttribute.Name.Equals(ATTNAMEFACTOR) Then Value = Result.Factor
       If CurrentAttribute.Name.Equals(ATTNAMEMEASUREDVALUE) Then Value = Result.PredictionData.MeasuredValue
