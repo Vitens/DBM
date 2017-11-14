@@ -109,7 +109,7 @@ Namespace DBMDataRef
 
 
     Private Function AlignTime(Timestamp As DateTime, Interval As Integer) As DateTime
-      Return Timestamp.AddSeconds(-(Timestamp.Minute*60+Timestamp.Second+Timestamp.Millisecond/1000))
+      Return Timestamp.AddSeconds(-((Timestamp.Minute*60+Timestamp.Second) Mod Interval+Timestamp.Millisecond/1000))
     End Function
 
 
