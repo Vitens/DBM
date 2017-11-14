@@ -27,7 +27,8 @@ cd %~dp0
 set vbc="%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\Vbc.exe" /win32icon:res\dbm.ico /optimize+ /nologo /novbruntimeref
 if not defined PIHOME set PIHOME=%CD%\3rdParty\PILibraries
 set PIRefs="%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDK.dll","%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDKCommon.dll"
-set PIAFRefs="%PIHOME%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll"
+set PIAFDir=%PIHOME%\AF
+set PIAFRefs="%PIAFDir%\PublicAssemblies\4.0\OSIsoft.AFSDK.dll"
 set PIACERefs="%PIHOME%\ACE\OSISoft.PIACENet.dll","%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PITimeServer.dll"
 
 if not exist build mkdir build
@@ -49,16 +50,15 @@ if "%CI%" == "True" powershell -Command "(Get-Content src\dbm\DBM.vb) -replace '
 %vbc% /reference:%PIRefs%,%PIACERefs%,build\DBM.dll,build\DBMPointDriverOSIsoftPI.dll /target:library /out:build\DBMRt.dll src\shared\*.vb src\PIACENet\*.vb
 %vbc% /reference:%PIAFRefs%,build\DBM.dll,build\DBMPointDriverOSIsoftPIAF.dll /target:library /out:build\DBMDataRef.dll src\shared\*.vb src\PIAFDataRef\*.vb
 
-set PIAFDRDir=%PIHOME%\AF
-if exist "%PIAFDRDir%" (
- if exist "%PIAFDRDir%\DBMDataRef.dll" "%PIAFDRDir%\regplugin.exe" /Unregister "%PIAFDRDir%\DBMDataRef.dll"
- copy build\DBMDataRef.dll "%PIAFDRDir%"
- copy build\DBM.dll "%PIAFDRDir%"
- copy build\DBMPointDriverOSIsoftPIAF.dll "%PIAFDRDir%"
- cd "%PIAFDRDir%\"
- "%PIAFDRDir%\regplugin.exe" DBMDataRef.dll
- "%PIAFDRDir%\regplugin.exe" /Owner:DBMDataRef.dll DBM.dll
- "%PIAFDRDir%\regplugin.exe" /Owner:DBMDataRef.dll DBMPointDriverOSIsoftPIAF.dll
+if exist "%PIAFDir%\regplugin.exe" (
+ if exist "%PIAFDir%\DBMDataRef.dll" "%PIAFDir%\regplugin.exe" /Unregister "%PIAFDir%\DBMDataRef.dll"
+ copy build\DBMDataRef.dll "%PIAFDir%"
+ copy build\DBM.dll "%PIAFDir%"
+ copy build\DBMPointDriverOSIsoftPIAF.dll "%PIAFDir%"
+ cd "%PIAFDir%\"
+ "%PIAFDir%\regplugin.exe" DBMDataRef.dll
+ "%PIAFDir%\regplugin.exe" /Owner:DBMDataRef.dll DBM.dll
+ "%PIAFDir%\regplugin.exe" /Owner:DBMDataRef.dll DBMPointDriverOSIsoftPIAF.dll
 )
 
 build\DBMTester.exe
