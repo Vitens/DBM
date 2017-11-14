@@ -49,6 +49,18 @@ if "%CI%" == "True" powershell -Command "(Get-Content src\dbm\DBM.vb) -replace '
 %vbc% /reference:%PIRefs%,%PIACERefs%,build\DBM.dll,build\DBMPointDriverOSIsoftPI.dll /target:library /out:build\DBMRt.dll src\shared\*.vb src\PIACENet\*.vb
 %vbc% /reference:%PIAFRefs%,build\DBM.dll,build\DBMPointDriverOSIsoftPIAF.dll /target:library /out:build\DBMDataRef.dll src\shared\*.vb src\PIAFDataRef\*.vb
 
+set PIAFDRDir=%PIHOME%\AF
+if exist "%PIAFDRDir%" (
+ if exist "%PIAFDRDir%\DBMDataRef.dll" "%PIAFDRDir%\regplugin.exe" /Unregister "%PIAFDRDir%\DBMDataRef.dll"
+ copy build\DBMDataRef.dll "%PIAFDRDir%"
+ copy build\DBM.dll "%PIAFDRDir%"
+ copy build\DBMPointDriverOSIsoftPIAF.dll "%PIAFDRDir%"
+ cd "%PIAFDRDir%\"
+ "%PIAFDRDir%\regplugin.exe" DBMDataRef.dll
+ "%PIAFDRDir%\regplugin.exe" /Owner:DBMDataRef.dll DBM.dll
+ "%PIAFDRDir%\regplugin.exe" /Owner:DBMDataRef.dll DBMPointDriverOSIsoftPIAF.dll
+)
+
 build\DBMTester.exe
 
 :ExitBuild
