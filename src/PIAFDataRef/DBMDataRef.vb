@@ -98,9 +98,9 @@ Namespace DBMDataRef ' TODO Name?
 
     Public Overrides Property ConfigString As String
       Get
-        Return CurrentAttribute.Name & vbCrLf & _
-          CurrentAttribute.Parent.Name & ": \\" & DirectCast(InputPointDriver.Point, PIPoint).Server.Name & "\" & DirectCast(InputPointDriver.Point, PIPoint).Name & vbCrLf & _
-          vbCrLf & vbCrLf & DBM.Version
+        Return CurrentAttribute.Name & NewLine & _
+          CurrentAttribute.Parent.Name & ": \\" & DirectCast(InputPointDriver.Point, PIPoint).Server.Name & "\" & DirectCast(InputPointDriver.Point, PIPoint).Name & NewLine & _
+          NewLine & NewLine & DBM.Version
       End Get
       Set
       End Set
