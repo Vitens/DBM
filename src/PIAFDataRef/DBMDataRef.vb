@@ -63,6 +63,15 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private CorrelationPoints As List(Of DBMCorrelationPoint)
 
 
+    Private Function AlignTime(Timestamp As DateTime, Interval As Integer) _
+      As DateTime
+
+      Return Timestamp.AddSeconds(-((Timestamp.Minute*60+Timestamp.Second) Mod _
+        Interval+Timestamp.Millisecond/1000))
+
+    End Function
+
+
     Public Overrides Property Attribute As AFAttribute
 
       Get
@@ -154,15 +163,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       End Set
 
     End Property
-
-
-    Private Function AlignTime(Timestamp As DateTime, Interval As Integer) _
-      As DateTime
-
-      Return Timestamp.AddSeconds(-((Timestamp.Minute*60+Timestamp.Second) Mod _
-        Interval+Timestamp.Millisecond/1000))
-
-    End Function
 
 
     Public Overrides Function GetValue(context As Object, _
