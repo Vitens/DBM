@@ -55,7 +55,7 @@ if exist "%PIAFDir%\regplugin.exe" (
  copy build\DBMDataRef.dll "%PIAFDir%"
  copy build\DBM.dll "%PIAFDir%"
  copy build\DBMPointDriverOSIsoftPIAF.dll "%PIAFDir%"
- cd "%PIAFDir%\"
+ cd "%PIAFDir%"
  "%PIAFDir%\regplugin.exe" DBMDataRef.dll
  "%PIAFDir%\regplugin.exe" /Owner:DBMDataRef.dll DBM.dll
  "%PIAFDir%\regplugin.exe" /Owner:DBMDataRef.dll DBMPointDriverOSIsoftPIAF.dll
