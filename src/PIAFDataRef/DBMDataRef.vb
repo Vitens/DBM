@@ -90,7 +90,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           (CurrentAttribute.Parent.ConfigString))
         CorrelationPoints = New List(Of DBMCorrelationPoint)
         For Each SiblingElement in Element.Parent.Elements
-          If Not SiblingElement.Name.Equals(Element.Name) Then
+          If Not SiblingElement.UniqueID.Equals(Element.UniqueID) Then
             CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver _
               (StringToPIPoint(SiblingElement.Attributes  _
               (CurrentAttribute.Parent.Name).ConfigString)), False))
