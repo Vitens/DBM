@@ -120,11 +120,11 @@ Namespace DBMDataRef ' TODO Name?
       End If
       ' TODO Timestamp has millisecond resolution so not exactly aligned on intervals
       Result = _DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
-      If CurrentAttribute.Name = ATTNAMEFACTOR Then Value = Result.Factor
-      If CurrentAttribute.Name = ATTNAMEMEASUREDVALUE Then Value = Result.PredictionData.MeasuredValue
-      If CurrentAttribute.Name = ATTNAMEPREDICTEDVALUE Then Value = Result.PredictionData.PredictedValue
-      If CurrentAttribute.Name = ATTNAMELOWERCONTROLLIMIT Then Value = Result.PredictionData.LowerControlLimit
-      If CurrentAttribute.Name = ATTNAMEUPPERCONTROLLIMIT Then Value = Result.PredictionData.UpperControlLimit
+      If CurrentAttribute.Name.Equals(ATTNAMEFACTOR) Then Value = Result.Factor
+      If CurrentAttribute.Name.Equals(ATTNAMEMEASUREDVALUE) Then Value = Result.PredictionData.MeasuredValue
+      If CurrentAttribute.Name.Equals(ATTNAMEPREDICTEDVALUE) Then Value = Result.PredictionData.PredictedValue
+      If CurrentAttribute.Name.Equals(ATTNAMELOWERCONTROLLIMIT) Then Value = Result.PredictionData.LowerControlLimit
+      If CurrentAttribute.Name.Equals(ATTNAMEUPPERCONTROLLIMIT) Then Value = Result.PredictionData.UpperControlLimit
       Return New AFValue(Value, New AFTime(Timestamp))
     End Function
 
