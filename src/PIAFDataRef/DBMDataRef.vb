@@ -60,17 +60,40 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private CurrentAttribute As AFAttribute
     Private _DBM As New DBM
     Private InputPointDriver As DBMPointDriver
-    Private CorrelationPoints As New List(Of DBMCorrelationPoint)
+    Private CorrelationPoints As List(Of DBMCorrelationPoint)
 
 
     Public Overrides Property Attribute As AFAttribute
 
       Get
+        Dim Element, SiblingElement As AFElement
+        Element = DirectCast(CurrentAttribute.Element, AFElement)
         InputPointDriver = New DBMPointDriver(PIPoint.FindPIPoints _
           (PIServer.FindPIServer(CurrentAttribute.Parent.ConfigString.Split _
           (New Char() {"\"c})(2).Split(New Char() {"?"c})(0)), _
           CurrentAttribute.Parent.ConfigString.Split(New Char() {"\"c})(3). _
           Split(New Char() {"?"c})(0))(0))
+        CorrelationPoints = New List(Of DBMCorrelationPoint)
+        For Each SiblingElement in Element.Parent.Elements
+          If Not SiblingElement.Name.Equals(Element.Name) Then
+            CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver _
+              (PIPoint.FindPIPoints(PIServer.FindPIServer(SiblingElement. _
+              Attributes(CurrentAttribute.Parent.Name).ConfigString.Split _
+              (New Char() {"\"c})(2).Split(New Char() {"?"c})(0)), _
+              SiblingElement.Attributes(CurrentAttribute.Parent.Name). _
+              ConfigString.Split(New Char() {"\"c})(3).Split _
+              (New Char() {"?"c})(0))(0)), False))
+          End If
+        Next
+        Do While Element.Parent IsNot Nothing
+          Element = Element.Parent
+          CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver _
+            (PIPoint.FindPIPoints(PIServer.FindPIServer(Element.Attributes _
+            (CurrentAttribute.Parent.Name).ConfigString.Split _
+            (New Char() {"\"c})(2).Split(New Char() {"?"c})(0)), _
+            Element.Attributes(CurrentAttribute.Parent.Name).ConfigString. _
+            Split(New Char() {"\"c})(3).Split(New Char() {"?"c})(0))(0)), True))
+        Loop
         Return CurrentAttribute
       End Get
 
@@ -112,11 +135,19 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Property ConfigString As String
 
       Get
-        Return CurrentAttribute.Name & NewLine & _
+        Dim CorrelationPoint As DBMCorrelationPoint
+        ConfigString = CurrentAttribute.Name & NewLine & _
           CurrentAttribute.Parent.Name & ": \\" & _
           DirectCast(InputPointDriver.Point, PIPoint).Server.Name & "\" & _
-          DirectCast(InputPointDriver.Point, PIPoint).Name & NewLine & _
-          NewLine & NewLine & DBM.Version
+          DirectCast(InputPointDriver.Point, PIPoint).Name & NewLine
+        For Each CorrelationPoint In CorrelationPoints
+          ConfigString &= "\\" & DirectCast _
+            (CorrelationPoint.PointDriver.Point, PIPoint).Server.Name & "\" _
+            & DirectCast(CorrelationPoint.PointDriver.Point, PIPoint).Name & _
+            " (" & If(CorrelationPoint.SubtractSelf, "P", "S") & ")" & NewLine
+        Next
+        ConfigString &= NewLine & NewLine & DBM.Version
+        Return ConfigString
       End Get
 
       Set
