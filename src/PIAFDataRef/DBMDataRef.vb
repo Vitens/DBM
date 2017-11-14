@@ -86,31 +86,21 @@ Namespace Vitens.DynamicBandwidthMonitor
       Get
         Dim Element, SiblingElement As AFElement
         Element = DirectCast(CurrentAttribute.Element, AFElement)
-        InputPointDriver = New DBMPointDriver(PIPoint.FindPIPoints _
-          (PIServer.FindPIServer(CurrentAttribute.Parent.ConfigString.Split _
-          (New Char() {"\"c})(2).Split(New Char() {"?"c})(0)), _
-          CurrentAttribute.Parent.ConfigString.Split(New Char() {"\"c})(3). _
-          Split(New Char() {"?"c})(0))(0))
+        InputPointDriver = New DBMPointDriver(StringToPIPoint _
+          (CurrentAttribute.Parent.ConfigString))
         CorrelationPoints = New List(Of DBMCorrelationPoint)
         For Each SiblingElement in Element.Parent.Elements
           If Not SiblingElement.Name.Equals(Element.Name) Then
             CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver _
-              (PIPoint.FindPIPoints(PIServer.FindPIServer(SiblingElement. _
-              Attributes(CurrentAttribute.Parent.Name).ConfigString.Split _
-              (New Char() {"\"c})(2).Split(New Char() {"?"c})(0)), _
-              SiblingElement.Attributes(CurrentAttribute.Parent.Name). _
-              ConfigString.Split(New Char() {"\"c})(3).Split _
-              (New Char() {"?"c})(0))(0)), False))
+              (StringToPIPoint(SiblingElement.Attributes  _
+              (CurrentAttribute.Parent.Name).ConfigString)), False))
           End If
         Next
         Do While Element.Parent IsNot Nothing
           Element = Element.Parent
           CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver _
-            (PIPoint.FindPIPoints(PIServer.FindPIServer(Element.Attributes _
-            (CurrentAttribute.Parent.Name).ConfigString.Split _
-            (New Char() {"\"c})(2).Split(New Char() {"?"c})(0)), _
-            Element.Attributes(CurrentAttribute.Parent.Name).ConfigString. _
-            Split(New Char() {"\"c})(3).Split(New Char() {"?"c})(0))(0)), True))
+            (StringToPIPoint(Element.Attributes(CurrentAttribute.Parent.Name) _
+            .ConfigString)), True))
         Loop
         Return CurrentAttribute
       End Get
