@@ -180,16 +180,17 @@ Namespace Vitens.DynamicBandwidthMonitor
         Timestamp = DirectCast(timeContext, AFTime).LocalTime
       End If
       Result = _DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
-      If CurrentAttribute.Name.Equals(AttributeNameFactor) Then _
+      If CurrentAttribute.Name.Equals(AttributeNameFactor) Then
         Value = Result.Factor
-      If CurrentAttribute.Name.Equals(AttributeNameMeasuredValue) Then _
+      ElseIf CurrentAttribute.Name.Equals(AttributeNameMeasuredValue) Then
         Value = Result.PredictionData.MeasuredValue
-      If CurrentAttribute.Name.Equals(AttributeNamePredictedValue) Then _
+      ElseIf CurrentAttribute.Name.Equals(AttributeNamePredictedValue) Then
         Value = Result.PredictionData.PredictedValue
-      If CurrentAttribute.Name.Equals(AttributeNameLowerControlLimit) Then _
+      ElseIf CurrentAttribute.Name.Equals(AttributeNameLowerControlLimit) Then
         Value = Result.PredictionData.LowerControlLimit
-      If CurrentAttribute.Name.Equals(AttributeNameUpperControlLimit) Then _
+      ElseIf CurrentAttribute.Name.Equals(AttributeNameUpperControlLimit) Then
         Value = Result.PredictionData.UpperControlLimit
+      End If
 
       Return New AFValue(Value, New AFTime(Timestamp))
 
