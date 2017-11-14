@@ -41,122 +41,178 @@ Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 <assembly:System.Reflection.AssemblyTitle("DBMDataRef")>
 
 
-Namespace DBMDataRef
+Namespace Vitens.DynamicBandwidthMonitor
 
 
   <Description("DBMDataRef;Dynamic Bandwidth Monitor")> _
-  <Guid("e092c5ed-888b-4dbd-89eb-45206d77db9a")> _
-  Public Class DBMDataRef
+    <Guid("e092c5ed-888b-4dbd-89eb-45206d77db9a")> _
+    Public Class DBMDataRef
+    Inherits AFDataReference
 
 
-  Inherits AFDataReference
-
-
-    Const ATTNAMEFACTOR As String = "Factor"
-    Const ATTNAMEMEASUREDVALUE As String = "Meetwaarde"
-    Const ATTNAMEPREDICTEDVALUE As String = "Voorspelling"
-    Const ATTNAMELOWERCONTROLLIMIT As String = "Ondergrens"
-    Const ATTNAMEUPPERCONTROLLIMIT As String = "Bovengrens"
+    Const AttributeNameFactor As String = "Factor"
+    Const AttributeNameMeasuredValue As String = "Meetwaarde"
+    Const AttributeNamePredictedValue As String = "Voorspelling"
+    Const AttributeNameLowerControlLimit As String = "Ondergrens"
+    Const AttributeNameUpperControlLimit As String = "Bovengrens"
 
 
     Private CurrentAttribute As AFAttribute
-    Private InputPointDriver As DBMPointDriver
-    Private CorrelationPoints As New List(Of DBMCorrelationPoint) ' TODO This has to be filled with parents (containing) and siblings (surrounding)
     Private _DBM As New DBM
+    Private InputPointDriver As DBMPointDriver
+    Private CorrelationPoints As New List(Of DBMCorrelationPoint)
 
 
     Public Overrides Property Attribute As AFAttribute
+
       Get
-        InputPointDriver = New DBMPointDriver(PIPoint.FindPIPoints(PIServer.FindPIServer(CurrentAttribute.Parent.ConfigString.Split(New Char() {"\"c})(2).Split(New Char() {"?"c})(0)), CurrentAttribute.Parent.ConfigString.Split(New Char() {"\"c})(3).Split(New Char() {"?"c})(0))(0))
+        InputPointDriver = New DBMPointDriver(PIPoint.FindPIPoints _
+          (PIServer.FindPIServer(CurrentAttribute.Parent.ConfigString.Split _
+          (New Char() {"\"c})(2).Split(New Char() {"?"c})(0)), _
+          CurrentAttribute.Parent.ConfigString.Split(New Char() {"\"c})(3). _
+          Split(New Char() {"?"c})(0))(0))
         Return CurrentAttribute
       End Get
+
       Set(SetAttribute As AFAttribute)
         CurrentAttribute = SetAttribute
       End Set
+
     End Property
 
 
     Public Overrides Readonly Property SupportedMethods As AFDataReferenceMethod
+
       Get
         Return AFDataReferenceMethod.GetValue Or AFDataReferenceMethod.GetValues
       End Get
+
     End Property
 
 
     Public Overrides Readonly Property SupportedDataMethods As AFDataMethods
+
       Get
         Return AFDataMethods.RecordedValues Or AFDataMethods.PlotValues
       End Get
+
     End Property
 
 
-    Public Overrides Readonly Property SupportedContexts As AFDataReferenceContext
+    Public Overrides Readonly Property SupportedContexts _
+      As AFDataReferenceContext
+
       Get
         Return AFDataReferenceContext.Time
       End Get
+
     End Property
 
 
     Public Overrides Property ConfigString As String
+
       Get
         Return CurrentAttribute.Name & NewLine & _
-          CurrentAttribute.Parent.Name & ": \\" & DirectCast(InputPointDriver.Point, PIPoint).Server.Name & "\" & DirectCast(InputPointDriver.Point, PIPoint).Name & NewLine & _
+          CurrentAttribute.Parent.Name & ": \\" & _
+          DirectCast(InputPointDriver.Point, PIPoint).Server.Name & "\" & _
+          DirectCast(InputPointDriver.Point, PIPoint).Name & NewLine & _
           NewLine & NewLine & DBM.Version
       End Get
+
       Set
       End Set
+
     End Property
 
 
-    Private Function AlignTime(Timestamp As DateTime, Interval As Integer) As DateTime
-      Return Timestamp.AddSeconds(-((Timestamp.Minute*60+Timestamp.Second) Mod Interval+Timestamp.Millisecond/1000))
+    Private Function AlignTime(Timestamp As DateTime, Interval As Integer) _
+      As DateTime
+
+      Return Timestamp.AddSeconds(-((Timestamp.Minute*60+Timestamp.Second) Mod _
+        Interval+Timestamp.Millisecond/1000))
+
     End Function
 
 
-    Public Overrides Function GetValue(context As Object, timeContext As Object, inputAttributes As AFAttributeList, inputValues As AFValues) As AFValue
+    Public Overrides Function GetValue(context As Object, _
+      timeContext As Object, inputAttributes As AFAttributeList, _
+      inputValues As AFValues) As AFValue
+
       Dim Timestamp As DateTime
       Dim Result As DBMResult
       Dim Value As Double
+
       If timeContext Is Nothing Then
-        Timestamp = AlignTime(DirectCast(InputPointDriver.Point, PIPoint).CurrentValue.Timestamp.LocalTime, CalculationInterval).AddSeconds(-CalculationInterval)
+        Timestamp = AlignTime(DirectCast(InputPointDriver.Point, PIPoint). _
+          CurrentValue.Timestamp.LocalTime, CalculationInterval). _
+          AddSeconds(-CalculationInterval)
       Else
         Timestamp = DirectCast(timeContext, AFTime).LocalTime
       End If
       Result = _DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
-      If CurrentAttribute.Name.Equals(ATTNAMEFACTOR) Then Value = Result.Factor
-      If CurrentAttribute.Name.Equals(ATTNAMEMEASUREDVALUE) Then Value = Result.PredictionData.MeasuredValue
-      If CurrentAttribute.Name.Equals(ATTNAMEPREDICTEDVALUE) Then Value = Result.PredictionData.PredictedValue
-      If CurrentAttribute.Name.Equals(ATTNAMELOWERCONTROLLIMIT) Then Value = Result.PredictionData.LowerControlLimit
-      If CurrentAttribute.Name.Equals(ATTNAMEUPPERCONTROLLIMIT) Then Value = Result.PredictionData.UpperControlLimit
+      If CurrentAttribute.Name.Equals(AttributeNameFactor) Then _
+        Value = Result.Factor
+      If CurrentAttribute.Name.Equals(AttributeNameMeasuredValue) Then _
+        Value = Result.PredictionData.MeasuredValue
+      If CurrentAttribute.Name.Equals(AttributeNamePredictedValue) Then _
+        Value = Result.PredictionData.PredictedValue
+      If CurrentAttribute.Name.Equals(AttributeNameLowerControlLimit) Then _
+        Value = Result.PredictionData.LowerControlLimit
+      If CurrentAttribute.Name.Equals(AttributeNameUpperControlLimit) Then _
+        Value = Result.PredictionData.UpperControlLimit
+
       Return New AFValue(Value, New AFTime(Timestamp))
+
     End Function
 
 
-    Public Overrides Function GetValues(context As Object, timeContext As AFTimeRange, numberOfValues As Integer, inputAttributes As AFAttributeList, inputValues As AFValues()) As AFValues
+    Public Overrides Function GetValues(context As Object, _
+      timeContext As AFTimeRange, numberOfValues As Integer, _
+      inputAttributes As AFAttributeList, inputValues As AFValues()) As AFValues
+
       Dim Intervals As Integer
       Dim IntervalStep, Interval As Double
       Dim Values As New AFValues
-      timeContext.StartTime = New AFTime(AlignTime(timeContext.StartTime.LocalTime, CalculationInterval))
-      timeContext.EndTime = New AFTime(AlignTime(timeContext.EndTime.LocalTime, CalculationInterval).AddSeconds(CalculationInterval))
-      Intervals = CInt(timeContext.EndTime.LocalTime.Subtract(timeContext.StartTime.LocalTime).TotalSeconds/CalculationInterval)
+
+      timeContext.StartTime = New AFTime(AlignTime _
+        (timeContext.StartTime.LocalTime, CalculationInterval))
+      timeContext.EndTime = New AFTime(AlignTime _
+        (timeContext.EndTime.LocalTime, CalculationInterval). _
+        AddSeconds(CalculationInterval))
+      Intervals = CInt(timeContext.EndTime.LocalTime.Subtract _
+        (timeContext.StartTime.LocalTime).TotalSeconds/CalculationInterval)
       If numberOfValues = 0 Then numberOfValues = Intervals
       numberOfValues = Min(numberOfValues, Intervals)
       IntervalStep = Intervals/numberOfValues
       Do While Interval < Intervals
-        Values.Add(GetValue(Nothing, New AFTime(timeContext.StartTime.LocalTime.AddSeconds(Floor(Interval)*CalculationInterval)), Nothing, Nothing))
+        Values.Add(GetValue(Nothing, New AFTime _
+          (timeContext.StartTime.LocalTime.AddSeconds _
+          (Floor(Interval)*CalculationInterval)), Nothing, Nothing))
         Interval += IntervalStep
       Loop
+
       Return Values
+
     End Function
 
 
-    Public Overrides Function RecordedValues(timeRange As AFTimeRange, boundaryType As AFBoundaryType, filterExpression As String, includeFilteredValues As Boolean, inputAttributes As AFAttributeList, inputValues As AFValues(), inputTimes As List(Of AFTime), Optional maxCount As Integer = 0) As AFValues
+    Public Overrides Function RecordedValues(timeRange As AFTimeRange, _
+      boundaryType As AFBoundaryType, filterExpression As String, _
+      includeFilteredValues As Boolean, inputAttributes As AFAttributeList, _
+      inputValues As AFValues(), inputTimes As List(Of AFTime), _
+      Optional maxCount As Integer = 0) As AFValues
+
       Return GetValues(Nothing, timeRange, maxCount, Nothing, Nothing)
+
     End Function
 
 
-    Public Overrides Function PlotValues(timeRange As AFTimeRange, intervals As Integer, inputAttributes As AFAttributeList, inputValues As AFValues(), inputTimes As List(Of AFTime)) As AFValues
+    Public Overrides Function PlotValues(timeRange As AFTimeRange, _
+      intervals As Integer, inputAttributes As AFAttributeList, _
+      inputValues As AFValues(), inputTimes As List(Of AFTime)) As AFValues
+
       Return GetValues(Nothing, timeRange, intervals, Nothing, Nothing)
+
     End Function
 
 
