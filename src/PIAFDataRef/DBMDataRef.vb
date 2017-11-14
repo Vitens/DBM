@@ -63,6 +63,15 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private CorrelationPoints As List(Of DBMCorrelationPoint)
 
 
+    Private Function StringToPIPoint(Point As String) As PIPoint
+
+      Return PIPoint.FindPIPoints(PIServer.FindPIServer(Point.Split _
+        (New Char() {"\"c})(2).Split(New Char() {"?"c})(0)), Point.Split _
+        (New Char() {"\"c})(3).Split(New Char() {"?"c})(0))(0)
+
+    End Function
+
+
     Private Function AlignTime(Timestamp As DateTime, Interval As Integer) _
       As DateTime
 
