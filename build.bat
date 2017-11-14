@@ -59,6 +59,7 @@ if exist "%PIAFDir%\regplugin.exe" (
  "%PIAFDir%\regplugin.exe" DBMDataRef.dll
  "%PIAFDir%\regplugin.exe" /Owner:DBMDataRef.dll DBM.dll
  "%PIAFDir%\regplugin.exe" /Owner:DBMDataRef.dll DBMPointDriverOSIsoftPIAF.dll
+ cd %~dp0
 )
 
 build\DBMTester.exe
