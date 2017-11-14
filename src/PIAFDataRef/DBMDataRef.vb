@@ -41,7 +41,7 @@ Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 <assembly:System.Reflection.AssemblyTitle("DBMDataRef")>
 
 
-Namespace DBMDataRef ' TODO Name?
+Namespace DBMDataRef
 
 
   <Description("DBMDataRef;Dynamic Bandwidth Monitor")> _
@@ -108,13 +108,17 @@ Namespace DBMDataRef ' TODO Name?
     End Property
 
 
+    Private Function AlignTime(Timestamp As DateTime, Interval As Integer) As DateTime
+      Return Timestamp.Subtract(New TimeSpan(0, 0, CInt((Timestamp-DateTime.MinValue).TotalSeconds Mod Interval)))
+    End Function
+
+
     Public Overrides Function GetValue(context As Object, timeContext As Object, inputAttributes As AFAttributeList, inputValues As AFValues) As AFValue
       Dim Timestamp As DateTime
       Dim Result As DBMResult
       Dim Value As Double
       If timeContext Is Nothing Then
-        Timestamp = DirectCast(InputPointDriver.Point, PIPoint).CurrentValue.Timestamp.LocalTime
-        Timestamp = Timestamp.Subtract(New TimeSpan(0, 0, CInt((Timestamp-DateTime.MinValue).TotalSeconds Mod CalculationInterval+CalculationInterval)))
+        Timestamp = AlignTime(DirectCast(InputPointDriver.Point, PIPoint).CurrentValue.Timestamp.LocalTime, CalculationInterval).AddSeconds(-CalculationInterval)
       Else
         Timestamp = DirectCast(timeContext, AFTime).LocalTime
       End If
@@ -133,9 +137,8 @@ Namespace DBMDataRef ' TODO Name?
       Dim Intervals As Integer
       Dim IntervalStep, Interval As Double
       Dim Values As New AFValues
-      timeContext.StartTime = New AFTime(timeContext.StartTime.LocalTime.Subtract(New TimeSpan(0, 0, CInt((timeContext.StartTime.LocalTime-DateTime.MinValue).TotalSeconds Mod CalculationInterval))))
-      timeContext.EndTime = New AFTime(timeContext.EndTime.LocalTime.Subtract(New TimeSpan(0, 0, CInt((timeContext.EndTime.LocalTime-DateTime.MinValue).TotalSeconds Mod CalculationInterval-CalculationInterval))))
-      ' TODO Create function for aligning timestamps
+      timeContext.StartTime = New AFTime(AlignTime(timeContext.StartTime.LocalTime, CalculationInterval))
+      timeContext.EndTime = New AFTime(AlignTime(timeContext.EndTime.LocalTime, CalculationInterval).AddSeconds(CalculationInterval))
       Intervals = CInt(timeContext.EndTime.LocalTime.Subtract(timeContext.StartTime.LocalTime).TotalSeconds/CalculationInterval)
       If numberOfValues = 0 Then numberOfValues = Intervals
       numberOfValues = Min(numberOfValues, Intervals)
