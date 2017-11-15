@@ -100,7 +100,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Property Attribute As AFAttribute
 
       Get
-        Dim Element, SiblingElement As AFElement
+        Dim Element, SiblingElement, ParentElement As AFElement
         Element = DirectCast(CurrentAttribute.Element, AFElement)
         InputPointDriver = New DBMPointDriver(StringToPIPoint _
           (CurrentAttribute.Parent.ConfigString))
@@ -112,11 +112,12 @@ Namespace Vitens.DynamicBandwidthMonitor
               (CurrentAttribute.Parent.Name).ConfigString)), False))
           End If
         Next
-        Do While Element.Parent IsNot Nothing
-          Element = Element.Parent
+        ParentElement = Element
+        Do While ParentElement.Parent IsNot Nothing
+          ParentElement = ParentElement.Parent
           CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver _
-            (StringToPIPoint(Element.Attributes(CurrentAttribute.Parent.Name) _
-            .ConfigString)), True))
+            (StringToPIPoint(ParentElement.Attributes _
+            (CurrentAttribute.Parent.Name).ConfigString)), True))
         Loop
         Return CurrentAttribute
       End Get
