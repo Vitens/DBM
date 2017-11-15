@@ -200,12 +200,17 @@ Namespace Vitens.DynamicBandwidthMonitor
       inputValues As AFValues) As AFValue
 
       Dim Timestamp As DateTime
+      Dim CorrelationPoint As DBMCorrelationPoint
       Dim Result As DBMResult
       Dim Value As Double
 
       If timeContext Is Nothing Then
-        Timestamp = AlignTime(DirectCast(InputPointDriver.Point, PIPoint). _
-          CurrentValue.Timestamp.LocalTime, CalculationInterval). _
+        Timestamp = DirectCast(InputPointDriver.Point, PIPoint). _
+          CurrentValue.Timestamp.LocalTime
+        For Each CorrelationPoint In CorrelationPoints
+          ' TODO If current timestamp of correlation point is earlier, use that
+        Next
+        Timestamp = AlignTime(Timestamp, CalculationInterval). _
           AddSeconds(-CalculationInterval)
       Else
         Timestamp = DirectCast(timeContext, AFTime).LocalTime
