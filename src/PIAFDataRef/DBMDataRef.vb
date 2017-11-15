@@ -92,11 +92,13 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Private Function GetIntervals(TimeRange As AFTimeRange, _
+    Private Function GetAlignedIntervals(TimeRange As AFTimeRange, _
       Interval As Integer) As Integer
 
-      Return CInt(TimeRange.EndTime.LocalTime.Subtract _
-        (TimeRange.StartTime.LocalTime).TotalSeconds/Interval)
+      Return CInt(AlignTime(timeContext.EndTime.LocalTime, _
+        CalculationInterval).AddSeconds(CalculationInterval).Subtract _
+        (AlignTime(timeContext.StartTime.LocalTime, CalculationInterval)). _
+        TotalSeconds/Interval)
 
     End Function
 
@@ -248,11 +250,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Align start timestamp on previous interval.
       timeContext.StartTime = New AFTime(AlignTime _
         (timeContext.StartTime.LocalTime, CalculationInterval))
-      ' Align end timestamp on next interval.
-      timeContext.EndTime = New AFTime(AlignTime _
-        (timeContext.EndTime.LocalTime, CalculationInterval). _
-        AddSeconds(CalculationInterval))
-      Intervals = GetIntervals(timeContext, CalculationInterval)
+      Intervals = GetAlignedIntervals(timeContext, CalculationInterval)
       If numberOfValues = 0 Then numberOfValues = Intervals
       numberOfValues = Min(numberOfValues, Intervals)
       IntervalStep = Intervals/numberOfValues
@@ -295,7 +293,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim returnValue As New Dictionary(Of AFSummaryTypes, AFValue)
 
-      returnValue.Add(AFSummaryTypes.Count, New AFValue(GetIntervals _
+      returnValue.Add(AFSummaryTypes.Count, New AFValue(GetAlignedIntervals _
         (timeRange, CalculationInterval), New AFTime(Now)))
 
       Return returnValue
