@@ -83,22 +83,19 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Private Function AlignTime(Timestamp As DateTime, Interval As Integer) _
-      As DateTime
+    Private Function AlignTime(Timestamp As DateTime) As DateTime
 
       Return Timestamp.AddSeconds(-((Timestamp.Minute*60+Timestamp.Second) Mod _
-        Interval+Timestamp.Millisecond/1000))
+        CalculationInterval+Timestamp.Millisecond/1000))
 
     End Function
 
 
-    Private Function GetAlignedIntervals(TimeRange As AFTimeRange, _
-      Interval As Integer) As Integer
+    Private Function GetAlignedIntervals(TimeRange As AFTimeRange) As Integer
 
-      Return CInt(AlignTime(timeContext.EndTime.LocalTime, _
-        CalculationInterval).AddSeconds(CalculationInterval).Subtract _
-        (AlignTime(timeContext.StartTime.LocalTime, CalculationInterval)). _
-        TotalSeconds/Interval)
+      Return CInt(AlignTime(timeContext.EndTime.LocalTime).AddSeconds _
+        (CalculationInterval).Subtract(AlignTime _
+        (timeContext.StartTime.LocalTime)).TotalSeconds/CalculationInterval)
 
     End Function
 
@@ -216,8 +213,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' TODO If current timestamp of correlation point is earlier, use that
         Next
         ' Align timestamp to previous interval and subtract one interval.
-        Timestamp = AlignTime(Timestamp, CalculationInterval). _
-          AddSeconds(-CalculationInterval)
+        Timestamp = AlignTime(Timestamp).AddSeconds(-CalculationInterval)
       Else
         Timestamp = DirectCast(timeContext, AFTime).LocalTime
       End If
@@ -249,8 +245,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Align start timestamp on previous interval.
       timeContext.StartTime = New AFTime(AlignTime _
-        (timeContext.StartTime.LocalTime, CalculationInterval))
-      Intervals = GetAlignedIntervals(timeContext, CalculationInterval)
+        (timeContext.StartTime.LocalTime))
+      Intervals = GetAlignedIntervals(timeContext)
       If numberOfValues = 0 Then numberOfValues = Intervals
       numberOfValues = Min(numberOfValues, Intervals)
       IntervalStep = Intervals/numberOfValues
@@ -294,7 +290,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim returnValue As New Dictionary(Of AFSummaryTypes, AFValue)
 
       returnValue.Add(AFSummaryTypes.Count, New AFValue(GetAlignedIntervals _
-        (timeRange, CalculationInterval), New AFTime(Now)))
+        (timeRange), New AFTime(Now)))
 
       Return returnValue
 
