@@ -140,7 +140,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Readonly Property SupportedDataMethods As AFDataMethods
 
       Get
-        Return AFDataMethods.RecordedValues Or AFDataMethods.PlotValues
+        Return AFDataMethods.RecordedValues Or AFDataMethods.PlotValues Or _
+          AFDataMethods.Summary Or AFDataMethods.Summaries
       End Get
 
     End Property
@@ -256,6 +257,38 @@ Namespace Vitens.DynamicBandwidthMonitor
       inputValues As AFValues(), inputTimes As List(Of AFTime)) As AFValues
 
       Return GetValues(Nothing, timeRange, intervals, Nothing, Nothing)
+
+    End Function
+
+
+    Public Overrides Function Summary(timeRange As AFTimeRange, _
+      summaryType As AFSummaryTypes, calcBasis As AFCalculationBasis, _
+      timeType As AFTimestampCalculation) As _
+      IDictionary(Of AFSummaryTypes, AFValue)
+
+      Dim returnValue As New Dictionary(Of AFSummaryTypes, AFValue)
+
+      returnValue.Add(AFSummaryTypes.Count, New AFValue(GetIntervals _
+        (timeRange, CalculationInterval), New AFTime(DateTime.Now)))
+
+      Return returnValue
+
+    End Function
+
+
+    Public Overrides Function Summaries(timeRange As AFTimeRange, _
+      summaryDuration As AFTimeSpan, summaryType As AFSummaryTypes, _
+      calcBasis As AFCalculationBasis, timeType As AFTimestampCalculation) _
+      As IDictionary(Of AFSummaryTypes, AFValues)
+
+      Dim Values As New AFValues
+      Dim returnValues As New Dictionary(Of AFSummaryTypes, AFValues)
+
+      Values.Add(Summary(timeRange, summaryType, calcBasis, timeType) _
+        (AFSummaryTypes.Count))
+      returnValues.Add(AFSummaryTypes.Count, Values)
+
+      Return returnValues
 
     End Function
 
