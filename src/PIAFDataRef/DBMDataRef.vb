@@ -105,17 +105,18 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Get
         Dim Element, ParentElement, PUElement, SCElement As AFElement
+        ' Use the PI point of the parent attribute as input.
         InputPointDriver = New DBMPointDriver(StringToPIPoint _
           (CurrentAttribute.Parent.ConfigString))
         CorrelationPoints = New List(Of DBMCorrelationPoint)
         Element = DirectCast(CurrentAttribute.Element, AFElement)
         ParentElement = Element.Parent
-        ' Find siblings and cousins
+        ' Find siblings and cousins.
         If ParentElement IsNot Nothing AndAlso _
           ParentElement.Parent IsNot Nothing Then
-          For Each PUElement In ParentElement.Parent.Elements ' Parents, uncles
+          For Each PUElement In ParentElement.Parent.Elements ' Parent, uncles
             For Each SCElement In PUElement.Elements ' Siblings, cousins
-              If Not SCElement.UniqueID.Equals(Element.UniqueID) Then ' Not Self
+              If Not SCElement.UniqueID.Equals(Element.UniqueID) Then ' Not self
                 If SCElement.Attributes(CurrentAttribute.Parent.Name) _
                   IsNot Nothing Then
                   CorrelationPoints.Add(New DBMCorrelationPoint _
@@ -126,7 +127,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             Next
           Next
         End If
-        ' Find parents recursively
+        ' Find parents recursively.
         Do While ParentElement IsNot Nothing
           If ParentElement.Attributes(CurrentAttribute.Parent.Name) _
             IsNot Nothing Then
@@ -205,11 +206,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Value As Double
 
       If timeContext Is Nothing Then
+        ' No time was specified. Use the latest possible timestamp based on the
+        ' current timestamp of the input and correlation points.
         Timestamp = DirectCast(InputPointDriver.Point, PIPoint). _
           CurrentValue.Timestamp.LocalTime
         For Each CorrelationPoint In CorrelationPoints
           ' TODO If current timestamp of correlation point is earlier, use that
         Next
+        ' Align timestamp to previous interval and subtract one interval.
         Timestamp = AlignTime(Timestamp, CalculationInterval). _
           AddSeconds(-CalculationInterval)
       Else
@@ -241,8 +245,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim IntervalStep, Interval As Double
       Dim Values As New AFValues
 
+      ' Align start timestamp on previous interval.
       timeContext.StartTime = New AFTime(AlignTime _
         (timeContext.StartTime.LocalTime, CalculationInterval))
+      ' Align end timestamp on next interval.
       timeContext.EndTime = New AFTime(AlignTime _
         (timeContext.EndTime.LocalTime, CalculationInterval). _
         AddSeconds(CalculationInterval))
@@ -250,7 +256,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       If numberOfValues = 0 Then numberOfValues = Intervals
       numberOfValues = Min(numberOfValues, Intervals)
       IntervalStep = Intervals/numberOfValues
-      Do While Interval < Intervals
+      Do While Interval < Intervals ' Loop through intervals.
         Values.Add(GetValue(Nothing, New AFTime _
           (timeContext.StartTime.LocalTime.AddSeconds _
           (CInt(Interval)*CalculationInterval)), Nothing, Nothing))
