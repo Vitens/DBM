@@ -93,9 +93,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Function GetAlignedIntervals(TimeRange As AFTimeRange) As Integer
 
-      Return CInt(AlignTime(timeContext.EndTime.LocalTime).AddSeconds _
+      Return CInt(AlignTime(TimeRange.EndTime.LocalTime).AddSeconds _
         (CalculationInterval).Subtract(AlignTime _
-        (timeContext.StartTime.LocalTime)).TotalSeconds/CalculationInterval)
+        (TimeRange.StartTime.LocalTime)).TotalSeconds/CalculationInterval)
 
     End Function
 
