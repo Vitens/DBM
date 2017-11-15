@@ -26,6 +26,7 @@ Option Strict
 
 Imports System.Collections.Generic
 Imports System.ComponentModel
+Imports System.DateTime
 Imports System.Environment
 Imports System.Math
 Imports System.Runtime.InteropServices
@@ -65,9 +66,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Function StringToPIPoint(Point As String) As PIPoint
 
-      Return PIPoint.FindPIPoints(PIServer.FindPIServer(Point.Split _
-        (New Char() {"\"c})(2).Split(New Char() {"?"c})(0)), Point.Split _
-        (New Char() {"\"c})(3).Split(New Char() {"?"c})(0))(0)
+      Dim SplitItems As Char() = {"\"c}
+      Dim SplitGUID As Char() = {"?"c}
+
+      Return PIPoint.FindPIPoints(PIServer.FindPIServer( _
+        Point.Split(SplitItems)(2).Split(SplitGUID)(0)), _
+        Point.Split(SplitItems)(3).Split(SplitGUID)(0))(0)
 
     End Function
 
@@ -182,7 +186,6 @@ Namespace Vitens.DynamicBandwidthMonitor
             PIPointToString(DirectCast(CorrelationPoint.PointDriver.Point, _
             PIPoint)) & NewLine
         Next
-        ConfigString &= NewLine & NewLine & DBM.Version
         Return ConfigString
       End Get
 
@@ -245,7 +248,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Do While Interval < Intervals
         Values.Add(GetValue(Nothing, New AFTime _
           (timeContext.StartTime.LocalTime.AddSeconds _
-          (Floor(Interval)*CalculationInterval)), Nothing, Nothing))
+          (CInt(Interval)*CalculationInterval)), Nothing, Nothing))
         Interval += IntervalStep
       Loop
 
@@ -282,7 +285,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim returnValue As New Dictionary(Of AFSummaryTypes, AFValue)
 
       returnValue.Add(AFSummaryTypes.Count, New AFValue(GetIntervals _
-        (timeRange, CalculationInterval), New AFTime(DateTime.Now)))
+        (timeRange, CalculationInterval), New AFTime(Now)))
 
       Return returnValue
 
