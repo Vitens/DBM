@@ -100,24 +100,37 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Property Attribute As AFAttribute
 
       Get
-        Dim Element, SiblingElement, ParentElement As AFElement
-        Element = DirectCast(CurrentAttribute.Element, AFElement)
+        Dim Element, ParentElement, PUElement, SCElement As AFElement
         InputPointDriver = New DBMPointDriver(StringToPIPoint _
           (CurrentAttribute.Parent.ConfigString))
         CorrelationPoints = New List(Of DBMCorrelationPoint)
-        For Each SiblingElement in Element.Parent.Elements
-          If Not SiblingElement.UniqueID.Equals(Element.UniqueID) Then
+        Element = DirectCast(CurrentAttribute.Element, AFElement)
+        ParentElement = Element.Parent
+        ' Find siblings and cousins
+        If ParentElement IsNot Nothing AndAlso _
+          ParentElement.Parent IsNot Nothing Then
+          For Each PUElement In ParentElement.Parent.Elements ' Parents, uncles
+            For Each SCElement In PUElement.Elements ' Siblings, cousins
+              If Not SCElement.UniqueID.Equals(Element.UniqueID) Then ' Not Self
+                If SCElement.Attributes(CurrentAttribute.Parent.Name) _
+                  IsNot Nothing Then
+                  CorrelationPoints.Add(New DBMCorrelationPoint _
+                    (New DBMPointDriver(StringToPIPoint(SCElement.Attributes _
+                    (CurrentAttribute.Parent.Name).ConfigString)), False))
+                End If
+              End If
+            Next
+          Next
+        End If
+        ' Find parents recursively
+        Do While ParentElement IsNot Nothing
+          If ParentElement.Attributes(CurrentAttribute.Parent.Name) _
+            IsNot Nothing Then
             CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver _
-              (StringToPIPoint(SiblingElement.Attributes  _
-              (CurrentAttribute.Parent.Name).ConfigString)), False))
+              (StringToPIPoint(ParentElement.Attributes _
+              (CurrentAttribute.Parent.Name).ConfigString)), True))
           End If
-        Next
-        ParentElement = Element
-        Do While ParentElement.Parent IsNot Nothing
           ParentElement = ParentElement.Parent
-          CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver _
-            (StringToPIPoint(ParentElement.Attributes _
-            (CurrentAttribute.Parent.Name).ConfigString)), True))
         Loop
         Return CurrentAttribute
       End Get
@@ -162,11 +175,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Get
         Dim CorrelationPoint As DBMCorrelationPoint
-        ConfigString = CurrentAttribute.Name & NewLine & _
-          CurrentAttribute.Parent.Name & ": " & PIPointToString(DirectCast _
-            (InputPointDriver.Point, PIPoint)) & NewLine
+        ConfigString = "○ " & PIPointToString(DirectCast _
+          (InputPointDriver.Point, PIPoint)) & NewLine
         For Each CorrelationPoint In CorrelationPoints
-          ConfigString &= If(CorrelationPoint.SubtractSelf, "P", "S") & ": " & _
+          ConfigString &= If(CorrelationPoint.SubtractSelf, "↑", "→") & " " & _
             PIPointToString(DirectCast(CorrelationPoint.PointDriver.Point, _
             PIPoint)) & NewLine
         Next
