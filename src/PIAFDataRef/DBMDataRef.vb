@@ -88,6 +88,15 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Private Function GetIntervals(TimeRange As AFTimeRange, _
+      Interval As Integer) As Integer
+
+      Return CInt(TimeRange.EndTime.LocalTime.Subtract _
+        (TimeRange.StartTime.LocalTime).TotalSeconds/Interval)
+
+    End Function
+
+
     Public Overrides Property Attribute As AFAttribute
 
       Get
@@ -215,8 +224,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       timeContext.EndTime = New AFTime(AlignTime _
         (timeContext.EndTime.LocalTime, CalculationInterval). _
         AddSeconds(CalculationInterval))
-      Intervals = CInt(timeContext.EndTime.LocalTime.Subtract _
-        (timeContext.StartTime.LocalTime).TotalSeconds/CalculationInterval)
+      Intervals = GetIntervals(timeContext, CalculationInterval)
       If numberOfValues = 0 Then numberOfValues = Intervals
       numberOfValues = Min(numberOfValues, Intervals)
       IntervalStep = Intervals/numberOfValues
