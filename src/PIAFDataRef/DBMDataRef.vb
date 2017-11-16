@@ -88,6 +88,15 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Private Function CurrentTimestamp(PointDriver As DBMPointDriverAbstract) _
+      As DateTime
+
+      Return DirectCast(PointDriver.Point, PIPoint).CurrentValue. _
+        Timestamp.LocalTime
+
+    End Function
+
+
     Private Function AlignTime(Timestamp As DateTime) As DateTime
 
       Return Timestamp.AddSeconds(-Timestamp.Ticks/TicksPerSecond _
@@ -105,13 +114,40 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Private Function CurrentTimestamp(PointDriver As DBMPointDriverAbstract) _
-      As DateTime
+    Public Overrides Readonly Property SupportedMethods As AFDataReferenceMethod
 
-      Return DirectCast(PointDriver.Point, PIPoint).CurrentValue. _
-        Timestamp.LocalTime
+      Get
 
-    End Function
+        Return AFDataReferenceMethod.GetValue Or AFDataReferenceMethod.GetValues
+
+      End Get
+
+    End Property
+
+
+    Public Overrides Readonly Property SupportedDataMethods As AFDataMethods
+
+      Get
+
+        Return AFDataMethods.RecordedValue Or AFDataMethods.RecordedValues Or _
+          AFDataMethods.PlotValues Or AFDataMethods.Summary Or _
+          AFDataMethods.Summaries
+
+      End Get
+
+    End Property
+
+
+    Public Overrides Readonly Property SupportedContexts _
+      As AFDataReferenceContext
+
+      Get
+
+        Return AFDataReferenceContext.Time
+
+      End Get
+
+    End Property
 
 
     Public Overrides Property Attribute As AFAttribute
@@ -161,42 +197,6 @@ Namespace Vitens.DynamicBandwidthMonitor
         CurrentAttribute = SetAttribute
 
       End Set
-
-    End Property
-
-
-    Public Overrides Readonly Property SupportedMethods As AFDataReferenceMethod
-
-      Get
-
-        Return AFDataReferenceMethod.GetValue Or AFDataReferenceMethod.GetValues
-
-      End Get
-
-    End Property
-
-
-    Public Overrides Readonly Property SupportedDataMethods As AFDataMethods
-
-      Get
-
-        Return AFDataMethods.RecordedValue Or AFDataMethods.RecordedValues Or _
-          AFDataMethods.PlotValues Or AFDataMethods.Summary Or _
-          AFDataMethods.Summaries
-
-      End Get
-
-    End Property
-
-
-    Public Overrides Readonly Property SupportedContexts _
-      As AFDataReferenceContext
-
-      Get
-
-        Return AFDataReferenceContext.Time
-
-      End Get
 
     End Property
 
