@@ -158,59 +158,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
-    Public Overrides Property Attribute As AFAttribute
-
-      ' This property returns the attribute that owns this object.
-
-      Get
-
-        Dim Element, ParentElement, PUElement, SCElement As AFElement
-
-        ' Use the PI point of the parent attribute as input.
-        InputPointDriver = New DBMPointDriver(StringToPIPoint _
-          (CurrentAttribute.Parent.ConfigString))
-        CorrelationPoints = New List(Of DBMCorrelationPoint)
-        Element = DirectCast(CurrentAttribute.Element, AFElement)
-        ParentElement = Element.Parent
-        ' Find siblings and cousins.
-        If ParentElement IsNot Nothing AndAlso _
-          ParentElement.Parent IsNot Nothing Then
-          For Each PUElement In ParentElement.Parent.Elements ' Parent, uncles
-            For Each SCElement In PUElement.Elements ' Siblings, cousins
-              If Not SCElement.UniqueID.Equals(Element.UniqueID) And _
-                SCElement.Attributes(CurrentAttribute.Parent.Name) _
-                IsNot Nothing Then ' Skip self and elements without attribute.
-                CorrelationPoints.Add(New DBMCorrelationPoint _
-                  (New DBMPointDriver(StringToPIPoint(SCElement.Attributes _
-                  (CurrentAttribute.Parent.Name).ConfigString)), False))
-              End If
-            Next
-          Next
-        End If
-        ' Find parents recursively.
-        Do While ParentElement IsNot Nothing
-          If ParentElement.Attributes(CurrentAttribute.Parent.Name) _
-            IsNot Nothing Then
-            CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver _
-              (StringToPIPoint(ParentElement.Attributes _
-              (CurrentAttribute.Parent.Name).ConfigString)), True))
-          End If
-          ParentElement = ParentElement.Parent
-        Loop
-
-        Return CurrentAttribute
-
-      End Get
-
-      Set(SetAttribute As AFAttribute)
-
-        CurrentAttribute = SetAttribute
-
-      End Set
-
-    End Property
-
-
     Public Overrides Property ConfigString As String
 
       ' This property returns the current configuration of the attribute's
@@ -220,22 +167,80 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         Dim CorrelationPoint As DBMCorrelationPoint
 
-        ConfigString = "○ " & PointDriverToString(InputPointDriver) & _
-          " (" & CurrentTimestamp(InputPointDriver).ToString & ")" & NewLine
-        For Each CorrelationPoint In CorrelationPoints
-          With CorrelationPoint
-            ConfigString &= If(.SubtractSelf, "↑", "→") & " " & _
-              PointDriverToString(.PointDriver) & " (" & CurrentTimestamp _
-              (.PointDriver).ToString & ")" & NewLine
-          End With
-        Next
-        ConfigString &= NewLine & NewLine & DBM.Version
+        If InputPointDriver IsNot Nothing Then
+          ConfigString = "○ " & PointDriverToString(InputPointDriver) & _
+            " (" & CurrentTimestamp(InputPointDriver).ToString & ")" & NewLine
+          For Each CorrelationPoint In CorrelationPoints
+            With CorrelationPoint
+              ConfigString &= If(.SubtractSelf, "↑", "→") & " " & _
+                PointDriverToString(.PointDriver) & " (" & CurrentTimestamp _
+                (.PointDriver).ToString & ")" & NewLine
+            End With
+          Next
+        Else
+          ConfigString = DBM.Version ' Show version information in template.
+        End If
 
         Return ConfigString
 
       End Get
 
       Set
+      End Set
+
+    End Property
+
+
+    Public Overrides Property Attribute As AFAttribute
+
+      ' This property returns the attribute that owns this object.
+
+      Get
+
+        Dim Element, ParentElement, PUElement, SCElement As AFElement
+
+        If CurrentAttribute IsNot Nothing Then ' If owned by an attribute.
+          ' Use the PI point of the parent attribute as input.
+          InputPointDriver = New DBMPointDriver(StringToPIPoint _
+            (CurrentAttribute.Parent.ConfigString))
+          CorrelationPoints = New List(Of DBMCorrelationPoint)
+          Element = DirectCast(CurrentAttribute.Element, AFElement)
+          ParentElement = Element.Parent
+          ' Find siblings and cousins.
+          If ParentElement IsNot Nothing AndAlso _
+            ParentElement.Parent IsNot Nothing Then
+            For Each PUElement In ParentElement.Parent.Elements ' Parent, uncles
+              For Each SCElement In PUElement.Elements ' Siblings, cousins
+                If Not SCElement.UniqueID.Equals(Element.UniqueID) And _
+                  SCElement.Attributes(CurrentAttribute.Parent.Name) _
+                  IsNot Nothing Then ' Skip self and elements without attribute.
+                  CorrelationPoints.Add(New DBMCorrelationPoint _
+                    (New DBMPointDriver(StringToPIPoint(SCElement.Attributes _
+                    (CurrentAttribute.Parent.Name).ConfigString)), False))
+                End If
+              Next
+            Next
+          End If
+          ' Find parents recursively.
+          Do While ParentElement IsNot Nothing
+            If ParentElement.Attributes(CurrentAttribute.Parent.Name) _
+              IsNot Nothing Then
+              CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver _
+                (StringToPIPoint(ParentElement.Attributes _
+                (CurrentAttribute.Parent.Name).ConfigString)), True))
+            End If
+            ParentElement = ParentElement.Parent
+          Loop
+        End If
+
+        Return CurrentAttribute
+
+      End Get
+
+      Set(SetAttribute As AFAttribute)
+
+        CurrentAttribute = SetAttribute
+
       End Set
 
     End Property
