@@ -36,6 +36,7 @@ Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.PI
 Imports OSIsoft.AF.Time
+Imports OSIsoft.AF.UnitsOfMeasure
 Imports Vitens.DynamicBandwidthMonitor
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
@@ -171,8 +172,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Readonly Property SupportedDataMethods As AFDataMethods
 
       Get
-        Return AFDataMethods.RecordedValues Or AFDataMethods.PlotValues Or _
-          AFDataMethods.Summary Or AFDataMethods.Summaries
+        Return AFDataMethods.RecordedValue Or AFDataMethods.RecordedValues Or _
+          AFDataMethods.PlotValues Or AFDataMethods.Summary Or _
+          AFDataMethods.Summaries
       End Get
 
     End Property
@@ -272,6 +274,15 @@ Namespace Vitens.DynamicBandwidthMonitor
       Loop
 
       Return Values
+
+    End Function
+
+
+    Public Overrides Function RecordedValue(time As AFTime, mode As _
+      AFRetrievalMode, inputAttributes As AFAttributeList, inputValues As _
+      AFValues) As AFValue
+
+      Return GetValue(Nothing, time, Nothing, Nothing)
 
     End Function
 
