@@ -30,6 +30,7 @@ Imports System.DateTime
 Imports System.Environment
 Imports System.Math
 Imports System.Runtime.InteropServices
+Imports System.TimeSpan
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.PI
@@ -85,8 +86,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Function AlignTime(Timestamp As DateTime) As DateTime
 
-      Return Timestamp.AddSeconds(-(Timestamp.Minute*60+Timestamp.Second) Mod _
-        CalculationInterval-Timestamp.Millisecond/1000)
+      Return Timestamp.AddSeconds(-Timestamp.Ticks/TicksPerSecond _
+        Mod CalculationInterval)
 
     End Function
 
