@@ -54,11 +54,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Const AttributeNameFactor As String = "Factor"
-    Const AttributeNameMeasuredValue As String = "Meetwaarde"
-    Const AttributeNamePredictedValue As String = "Voorspelling"
-    Const AttributeNameLowerControlLimit As String = "Ondergrens"
-    Const AttributeNameUpperControlLimit As String = "Bovengrens"
-
+    Const AttributeNameMeasuredValue As String = "MeasuredValue"
+    Const AttributeNamePredictedValue As String = "PredictedValue"
+    Const AttributeNameLowerControlLimit As String = "LowerControlLimit"
+    Const AttributeNameUpperControlLimit As String = "UpperControlLimit"
 
     Private CurrentAttribute As AFAttribute
     Private _DBM As New DBM
