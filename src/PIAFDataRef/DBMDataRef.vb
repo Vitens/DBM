@@ -116,6 +116,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Overrides Readonly Property SupportedMethods As AFDataReferenceMethod
 
+      ' This read-only property specifies which of the data reference
+      ' methods are supported.
+
       Get
 
         Return AFDataReferenceMethod.GetValue Or AFDataReferenceMethod.GetValues
@@ -126,6 +129,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Overrides Readonly Property SupportedDataMethods As AFDataMethods
+
+      ' This read-only property specifies which of the data methods are
+      ' supported by the data reference.
 
       Get
 
@@ -141,6 +147,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Readonly Property SupportedContexts _
       As AFDataReferenceContext
 
+      ' This read-only property specifies which of the data reference
+      ' contexts are supported when getting and/or setting values.
+
       Get
 
         Return AFDataReferenceContext.Time
@@ -151,6 +160,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Overrides Property Attribute As AFAttribute
+
+      ' This property returns the attribute that owns this object.
 
       Get
 
@@ -203,6 +214,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Overrides Property ConfigString As String
 
+      ' This property returns the current configuration of the attribute's
+      ' data reference as a string suitable for displaying to an end-user.
+
       Get
 
         Dim CorrelationPoint As DBMCorrelationPoint
@@ -231,6 +245,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Function GetValue(context As Object, _
       timeContext As Object, inputAttributes As AFAttributeList, _
       inputValues As AFValues) As AFValue
+
+      ' This method gets the value based upon the data reference
+      ' configuration within the specified context.
 
       Dim Timestamp As DateTime
       Dim CorrelationPoint As DBMCorrelationPoint
@@ -272,6 +289,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       timeContext As AFTimeRange, numberOfValues As Integer, _
       inputAttributes As AFAttributeList, inputValues As AFValues()) As AFValues
 
+      ' This method gets a collection of AFValue objects for an attribute
+      ' based upon the data reference configuration within the specified
+      ' AFTimeRange context.
+
       Dim Intervals As Integer
       Dim IntervalStep, Interval As Double
       Dim Values As New AFValues
@@ -299,6 +320,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       AFRetrievalMode, inputAttributes As AFAttributeList, inputValues As _
       AFValues) As AFValue
 
+      ' Returns a single recorded AFValue based on the passed time and mode.
+
       Return GetValue(Nothing, time, Nothing, Nothing)
 
     End Function
@@ -310,6 +333,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       inputValues As AFValues(), inputTimes As List(Of AFTime), _
       Optional maxCount As Integer = 0) As AFValues
 
+      ' Returns a list of compressed values for the requested time range from
+      ' the source provider.
+
       Return GetValues(Nothing, timeRange, maxCount, Nothing, Nothing)
 
     End Function
@@ -318,6 +344,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Function PlotValues(timeRange As AFTimeRange, _
       intervals As Integer, inputAttributes As AFAttributeList, _
       inputValues As AFValues(), inputTimes As List(Of AFTime)) As AFValues
+
+      ' Retrieves values over the specified time range suitable for plotting
+      ' over the number of intervals (typically represents pixels).
 
       Return GetValues(Nothing, timeRange, intervals, Nothing, Nothing)
 
@@ -328,6 +357,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       summaryType As AFSummaryTypes, calcBasis As AFCalculationBasis, _
       timeType As AFTimestampCalculation) As _
       IDictionary(Of AFSummaryTypes, AFValue)
+
+      ' Returns several summaries for a single attribute over a single
+      ' time range.
 
       Dim returnValue As New Dictionary(Of AFSummaryTypes, AFValue)
 
@@ -343,6 +375,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       summaryDuration As AFTimeSpan, summaryType As AFSummaryTypes, _
       calcBasis As AFCalculationBasis, timeType As AFTimestampCalculation) _
       As IDictionary(Of AFSummaryTypes, AFValues)
+
+      ' Returns several summaries for a single attribute over a time range
+      ' for each interval within the range.
 
       Dim Values As New AFValues
       Dim returnValues As New Dictionary(Of AFSummaryTypes, AFValues)
