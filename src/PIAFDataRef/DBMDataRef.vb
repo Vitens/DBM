@@ -27,6 +27,7 @@ Option Strict
 Imports System.Collections.Generic
 Imports System.ComponentModel
 Imports System.DateTime
+Imports System.DateTimeKind
 Imports System.Environment
 Imports System.Math
 Imports System.Runtime.InteropServices
@@ -209,13 +210,15 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' current timestamp of the input and correlation points.
         Timestamp = DirectCast(InputPointDriver.Point, PIPoint). _
           CurrentValue.Timestamp.LocalTime
-        For Each CorrelationPoint In CorrelationPoints
-          ' TODO If current timestamp of correlation point is earlier, use that
+        For Each CorrelationPoint In CorrelationPoints ' Find earliest.
+          Timestamp = SpecifyKind(New DateTime(Min(Timestamp.Ticks, _
+            DirectCast(CorrelationPoint.PointDriver.Point, PIPoint). _
+            CurrentValue.Timestamp.LocalTime.Ticks)), Local)
         Next
         ' Align timestamp to previous interval and subtract one interval.
         Timestamp = AlignTime(Timestamp).AddSeconds(-CalculationInterval)
       Else
-        Timestamp = DirectCast(timeContext, AFTime).LocalTime
+        Timestamp = AlignTime(DirectCast(timeContext, AFTime).LocalTime)
       End If
       Result = _DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
       If CurrentAttribute.Name.Equals(AttributeNameFactor) Then
