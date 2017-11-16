@@ -115,9 +115,9 @@ Namespace Vitens.DynamicBandwidthMonitor
           ParentElement.Parent IsNot Nothing Then
           For Each PUElement In ParentElement.Parent.Elements ' Parent, uncles
             For Each SCElement In PUElement.Elements ' Siblings, cousins
-              If Not SCElement.UniqueID.Equals(Element.UniqueID) _ ' Skip self
-                AndAlso SCElement.Attributes(CurrentAttribute.Parent.Name) _
-                IsNot Nothing Then
+              If Not SCElement.UniqueID.Equals(Element.UniqueID) And _
+                SCElement.Attributes(CurrentAttribute.Parent.Name) _
+                IsNot Nothing Then ' Skip self and elements without attribute.
                 CorrelationPoints.Add(New DBMCorrelationPoint _
                   (New DBMPointDriver(StringToPIPoint(SCElement.Attributes _
                   (CurrentAttribute.Parent.Name).ConfigString)), False))
