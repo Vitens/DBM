@@ -63,7 +63,7 @@ DBM uses drivers to read information from a source of data. The following driver
 | ------------------------------ | --------------------------------------- | -------------------------------- | ---------------------------------------------------------------------- |
 | `DBMPointDriverCSV.vb`         | Driver for CSV files (timestamp,value). | `String` (CSV filename)          | Data interval must be the same as the `CalculationInterval` parameter. |
 | `DBMPointDriverOSIsoftPI.vb`   | Driver for OSIsoft PI.                  | `PISDK.PIPoint` (PI tag)         | Used by PI ACE module `DBMRt`.                                         |
-| `DBMPointDriverOSIsoftPIAF.vb` | Driver for OSIsoft PI Asset Framework.  | `OSIsoft.AF.PI.PIPoint` (PI tag) |                                                                        |
+| `DBMPointDriverOSIsoftPIAF.vb` | Driver for OSIsoft PI Asset Framework.  | `OSIsoft.AF.PI.PIPoint` (PI tag) | Used by PI AF Data Reference `DBMDataRef`.                             |
 
 ### Parameters
 DBM can be configured using several parameters. The values for these parameters can be changed at runtime in the `Vitens.DynamicBandwidthMonitor.DBMParameters` class.
