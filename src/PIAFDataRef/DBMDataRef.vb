@@ -78,9 +78,12 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Private Function PIPointToString(Point As PIPoint) As String
+    Private Function PointDriverToString(PointDriver As _
+      DBMPointDriverAbstract) As String
 
-      Return "\\" & Point.Server.Name & "\" & Point.Name
+      With DirectCast(PointDriver.Point, PIPoint)
+        Return "\\" & .Server.Name & "\" & .Name
+      End With
 
     End Function
 
@@ -189,12 +192,13 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Get
         Dim CorrelationPoint As DBMCorrelationPoint
-        ConfigString = "○ " & PIPointToString(DirectCast _
-          (InputPointDriver.Point, PIPoint)) & NewLine
+        ConfigString = "○ " & PointDriverToString(InputPointDriver) & _
+          " (" & CurrentTimestamp(InputPointDriver).ToString & ")" & NewLine
         For Each CorrelationPoint In CorrelationPoints
           ConfigString &= If(CorrelationPoint.SubtractSelf, "↑", "→") & " " & _
-            PIPointToString(DirectCast(CorrelationPoint.PointDriver.Point, _
-            PIPoint)) & NewLine
+            PointDriverToString(CorrelationPoint.PointDriver) & _
+            " (" & CurrentTimestamp(CorrelationPoint.PointDriver).ToString & _
+            ")" & NewLine
         Next
         Return ConfigString & NewLine & NewLine & DBM.Version
       End Get
