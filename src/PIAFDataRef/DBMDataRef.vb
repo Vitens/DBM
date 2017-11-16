@@ -85,8 +85,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Function AlignTime(Timestamp As DateTime) As DateTime
 
-      Return Timestamp.AddSeconds(-((Timestamp.Minute*60+Timestamp.Second) Mod _
-        CalculationInterval+Timestamp.Millisecond/1000))
+      Return Timestamp.AddSeconds(-(Timestamp.Minute*60+Timestamp.Second) Mod _
+        CalculationInterval-Timestamp.Millisecond/1000)
 
     End Function
 
@@ -115,13 +115,12 @@ Namespace Vitens.DynamicBandwidthMonitor
           ParentElement.Parent IsNot Nothing Then
           For Each PUElement In ParentElement.Parent.Elements ' Parent, uncles
             For Each SCElement In PUElement.Elements ' Siblings, cousins
-              If Not SCElement.UniqueID.Equals(Element.UniqueID) Then ' Not self
-                If SCElement.Attributes(CurrentAttribute.Parent.Name) _
-                  IsNot Nothing Then
-                  CorrelationPoints.Add(New DBMCorrelationPoint _
-                    (New DBMPointDriver(StringToPIPoint(SCElement.Attributes _
-                    (CurrentAttribute.Parent.Name).ConfigString)), False))
-                End If
+              If Not SCElement.UniqueID.Equals(Element.UniqueID) _ ' Skip self
+                AndAlso SCElement.Attributes(CurrentAttribute.Parent.Name) _
+                IsNot Nothing Then
+                CorrelationPoints.Add(New DBMCorrelationPoint _
+                  (New DBMPointDriver(StringToPIPoint(SCElement.Attributes _
+                  (CurrentAttribute.Parent.Name).ConfigString)), False))
               End If
             Next
           Next
