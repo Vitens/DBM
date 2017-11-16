@@ -36,7 +36,6 @@ Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.PI
 Imports OSIsoft.AF.Time
-Imports OSIsoft.AF.UnitsOfMeasure
 Imports Vitens.DynamicBandwidthMonitor
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
