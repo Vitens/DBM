@@ -102,6 +102,15 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Private Function CurrentTimestamp(PointDriver As DBMPointDriverAbstract) _
+      As DateTime
+
+      Return DirectCast(PointDriver.Point, PIPoint).CurrentValue. _
+        Timestamp.LocalTime
+
+    End Function
+
+
     Public Overrides Property Attribute As AFAttribute
 
       Get
@@ -208,12 +217,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       If timeContext Is Nothing Then
         ' No time was specified. Use the latest possible timestamp based on the
         ' current timestamp of the input and correlation points.
-        Timestamp = DirectCast(InputPointDriver.Point, PIPoint). _
-          CurrentValue.Timestamp.LocalTime
+        Timestamp = CurrentTimestamp(InputPointDriver)
         For Each CorrelationPoint In CorrelationPoints ' Find earliest.
           Timestamp = SpecifyKind(New DateTime(Min(Timestamp.Ticks, _
-            DirectCast(CorrelationPoint.PointDriver.Point, PIPoint). _
-            CurrentValue.Timestamp.LocalTime.Ticks)), Local)
+            CurrentTimestamp(CorrelationPoint.PointDriver).Ticks)), Local)
         Next
         ' Align timestamp to previous interval and subtract one interval.
         Timestamp = AlignTime(Timestamp).AddSeconds(-CalculationInterval)
