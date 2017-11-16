@@ -186,7 +186,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             PIPointToString(DirectCast(CorrelationPoint.PointDriver.Point, _
             PIPoint)) & NewLine
         Next
-        Return ConfigString
+        Return ConfigString & NewLine & NewLine & DBM.Version
       End Get
 
       Set
