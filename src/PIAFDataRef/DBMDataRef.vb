@@ -117,7 +117,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Property Attribute As AFAttribute
 
       Get
+
         Dim Element, ParentElement, PUElement, SCElement As AFElement
+
         ' Use the PI point of the parent attribute as input.
         InputPointDriver = New DBMPointDriver(StringToPIPoint _
           (CurrentAttribute.Parent.ConfigString))
@@ -149,11 +151,15 @@ Namespace Vitens.DynamicBandwidthMonitor
           End If
           ParentElement = ParentElement.Parent
         Loop
+
         Return CurrentAttribute
+
       End Get
 
       Set(SetAttribute As AFAttribute)
+
         CurrentAttribute = SetAttribute
+
       End Set
 
     End Property
@@ -162,7 +168,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Readonly Property SupportedMethods As AFDataReferenceMethod
 
       Get
+
         Return AFDataReferenceMethod.GetValue Or AFDataReferenceMethod.GetValues
+
       End Get
 
     End Property
@@ -171,9 +179,11 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Readonly Property SupportedDataMethods As AFDataMethods
 
       Get
+
         Return AFDataMethods.RecordedValue Or AFDataMethods.RecordedValues Or _
           AFDataMethods.PlotValues Or AFDataMethods.Summary Or _
           AFDataMethods.Summaries
+
       End Get
 
     End Property
@@ -183,7 +193,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       As AFDataReferenceContext
 
       Get
+
         Return AFDataReferenceContext.Time
+
       End Get
 
     End Property
@@ -192,16 +204,22 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Property ConfigString As String
 
       Get
+
         Dim CorrelationPoint As DBMCorrelationPoint
+
         ConfigString = "○ " & PointDriverToString(InputPointDriver) & _
           " (" & CurrentTimestamp(InputPointDriver).ToString & ")" & NewLine
         For Each CorrelationPoint In CorrelationPoints
-          ConfigString &= If(CorrelationPoint.SubtractSelf, "↑", "→") & " " & _
-            PointDriverToString(CorrelationPoint.PointDriver) & _
-            " (" & CurrentTimestamp(CorrelationPoint.PointDriver).ToString & _
-            ")" & NewLine
+          With CorrelationPoint
+            ConfigString &= If(.SubtractSelf, "↑", "→") & " " & _
+              PointDriverToString(.PointDriver) & " (" & CurrentTimestamp _
+              (.PointDriver).ToString & ")" & NewLine
+          End With
         Next
-        Return ConfigString & NewLine & NewLine & DBM.Version
+        ConfigString &= NewLine & NewLine & DBM.Version
+
+        Return ConfigString
+
       End Get
 
       Set
