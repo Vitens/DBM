@@ -375,26 +375,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Overrides Function Summaries(timeRange As AFTimeRange, _
-      summaryDuration As AFTimeSpan, summaryType As AFSummaryTypes, _
-      calcBasis As AFCalculationBasis, timeType As AFTimestampCalculation) _
-      As IDictionary(Of AFSummaryTypes, AFValues)
-
-      ' Returns several summaries for a single attribute over a time range
-      ' for each interval within the range.
-
-      Dim Values As New AFValues
-      Dim returnValues As New Dictionary(Of AFSummaryTypes, AFValues)
-
-      Values.Add(Summary(timeRange, summaryType, calcBasis, timeType) _
-        (AFSummaryTypes.Count))
-      returnValues.Add(AFSummaryTypes.Count, Values)
-
-      Return returnValues
-
-    End Function
-
-
   End Class
 
 
