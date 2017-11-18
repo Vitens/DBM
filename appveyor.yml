@@ -3,9 +3,9 @@ skip_tags: true
 before_build:
   -
     cmd: |-
-        if not exist "%temp%\AF\PublicAssemblies\4.0" mkdir "%temp%\AF\PublicAssemblies\4.0"
-        if not exist "%temp%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll" curl -s -L -o "%temp%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll" "https://drive.google.com/uc?export=download&id=1KCnqzwyv3K2sShy-qSfm-21IZbJ97Kw1"
-        set PIHOME=%temp%
+        if not exist %TEMP%\AF\PublicAssemblies\4.0 mkdir %TEMP%\AF\PublicAssemblies\4.0
+        if not exist %TEMP%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll curl -s -L -o %TEMP%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll "https://drive.google.com/uc?export=download&id=1KCnqzwyv3K2sShy-qSfm-21IZbJ97Kw1"
+        set PIHOME=%TEMP%
 build_script:
   -
     cmd: |-
