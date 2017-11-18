@@ -1,6 +1,5 @@
 version: "1.12.6.{build}"
 skip_tags: true
-cache: %temp%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll
 before_build:
   -
     cmd: |-
