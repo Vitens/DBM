@@ -43,7 +43,6 @@ if "%CI%" == "True" powershell -Command "(Get-Content src\dbm\DBM.vb) -replace '
 rem Build
 %vbc% /target:library /out:build\DBM.dll src\shared\*.vb src\dbm\*.vb
 %vbc% /reference:build\DBM.dll /target:library /out:build\DBMPointDriverCSV.dll src\shared\*.vb src\dbm\driver\DBMPointDriverCSV.vb
-%vbc% /reference:%PIRefs%,build\DBM.dll /target:library /out:build\DBMPointDriverOSIsoftPI.dll src\shared\*.vb src\dbm\driver\DBMPointDriverOSIsoftPI.vb
 %vbc% /reference:%PIAFRefs%,build\DBM.dll /target:library /out:build\DBMPointDriverOSIsoftPIAF.dll src\shared\*.vb src\dbm\driver\DBMPointDriverOSIsoftPIAF.vb
 %vbc% /reference:build\DBM.dll,build\DBMPointDriverCSV.dll /out:build\DBMTester.exe src\shared\*.vb src\dbmtester\*.vb
 %vbc% /reference:%PIAFRefs%,build\DBM.dll,build\DBMPointDriverOSIsoftPIAF.dll /target:library /out:build\DBMDataRef.dll src\shared\*.vb src\PIAFDataRef\*.vb
