@@ -1,9 +1,12 @@
 version: "1.12.6.{build}"
 skip_tags: true
+cache: "%temp%\OSIsoft.AFSDK.dll"
 before_build:
   -
     cmd: |-
-        git submodule update --init --remote --recursive
+        if not exist "%temp%\AF\PublicAssemblies\4.0" mkdir "%temp%\AF\PublicAssemblies\4.0"
+        if not exist "%temp%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll" curl -s -L -o "%temp%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll" "https://drive.google.com/uc?export=download&id=1KCnqzwyv3K2sShy-qSfm-21IZbJ97Kw1"
+        set PIHOME=%temp%
 build_script:
   -
     cmd: |-

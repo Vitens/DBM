@@ -1,4 +1,0 @@
-[submodule "3rdParty/PILibraries"]
-	path = 3rdParty/PILibraries
-	url = https://github.com/Vitens/PILibraries.git
-	branch = master
