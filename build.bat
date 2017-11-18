@@ -27,7 +27,7 @@ rem Variables
 set vbc="%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\Vbc.exe" /win32icon:res\dbm.ico /optimize+ /nologo /novbruntimeref
 if not defined PIHOME set PIHOME=%CD%\3rdParty\PILibraries
 set PIAFDir=%PIHOME%\AF
-set PIAFRefs="%PIAFDir%\PublicAssemblies\4.0\OSIsoft.AFSDK.dll"
+set PIAFRef=%PIAFDir%\PublicAssemblies\4.0\OSIsoft.AFSDK.dll
 
 rem Set up build directory
 if not exist build mkdir build
@@ -42,21 +42,22 @@ if "%CI%" == "True" powershell -Command "(Get-Content src\dbm\DBM.vb) -replace '
 rem Build
 %vbc% /target:library /out:build\DBM.dll src\shared\*.vb src\dbm\*.vb
 %vbc% /reference:build\DBM.dll /target:library /out:build\DBMPointDriverCSV.dll src\shared\*.vb src\dbm\driver\DBMPointDriverCSV.vb
-%vbc% /reference:%PIAFRefs%,build\DBM.dll /target:library /out:build\DBMPointDriverOSIsoftPIAF.dll src\shared\*.vb src\dbm\driver\DBMPointDriverOSIsoftPIAF.vb
 %vbc% /reference:build\DBM.dll,build\DBMPointDriverCSV.dll /out:build\DBMTester.exe src\shared\*.vb src\dbmtester\*.vb
-%vbc% /reference:%PIAFRefs%,build\DBM.dll,build\DBMPointDriverOSIsoftPIAF.dll /target:library /out:build\DBMDataRef.dll src\shared\*.vb src\PIAFDataRef\*.vb
-
-rem Register PI AF Data Reference
-if exist "%PIAFDir%\regplugin.exe" (
- if exist "%PIAFDir%\DBMDataRef.dll" "%PIAFDir%\regplugin.exe" /Unregister "%PIAFDir%\DBMDataRef.dll"
- copy build\DBMDataRef.dll "%PIAFDir%"
- copy build\DBM.dll "%PIAFDir%"
- copy build\DBMPointDriverOSIsoftPIAF.dll "%PIAFDir%"
- cd /d "%PIAFDir%"
- regplugin.exe DBMDataRef.dll
- regplugin.exe /Owner:DBMDataRef.dll DBM.dll
- regplugin.exe /Owner:DBMDataRef.dll DBMPointDriverOSIsoftPIAF.dll
- cd /d %~dp0
+if exist "%PIAFRef%" (
+ %vbc% /reference:"%PIAFRef%",build\DBM.dll /target:library /out:build\DBMPointDriverOSIsoftPIAF.dll src\shared\*.vb src\dbm\driver\DBMPointDriverOSIsoftPIAF.vb
+ %vbc% /reference:"%PIAFRef%",build\DBM.dll,build\DBMPointDriverOSIsoftPIAF.dll /target:library /out:build\DBMDataRef.dll src\shared\*.vb src\PIAFDataRef\*.vb
+ rem Register PI AF Data Reference
+ if exist "%PIAFDir%\regplugin.exe" (
+  if exist "%PIAFDir%\DBMDataRef.dll" "%PIAFDir%\regplugin.exe" /Unregister "%PIAFDir%\DBMDataRef.dll"
+  copy build\DBMDataRef.dll "%PIAFDir%"
+  copy build\DBM.dll "%PIAFDir%"
+  copy build\DBMPointDriverOSIsoftPIAF.dll "%PIAFDir%"
+  cd /d "%PIAFDir%"
+  regplugin.exe DBMDataRef.dll
+  regplugin.exe /Owner:DBMDataRef.dll DBM.dll
+  regplugin.exe /Owner:DBMDataRef.dll DBMPointDriverOSIsoftPIAF.dll
+  cd /d %~dp0
+ )
 )
 
 rem Output version, copyright and license information and unit and integration test results
