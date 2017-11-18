@@ -1,9 +1,12 @@
-version: "1.12.6.{build}"
+version: "1.12.7.{build}"
 skip_tags: true
+cache: '%TEMP%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll'
 before_build:
   -
     cmd: |-
-        git submodule update --init --remote --recursive
+        if not exist "%TEMP%\AF\PublicAssemblies\4.0" mkdir "%TEMP%\AF\PublicAssemblies\4.0"
+        if not exist "%TEMP%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll" curl -s -L -o "%TEMP%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll" "https://drive.google.com/uc?export=download&id=1KCnqzwyv3K2sShy-qSfm-21IZbJ97Kw1"
+        set PIHOME=%TEMP%
 build_script:
   -
     cmd: |-
@@ -13,10 +16,10 @@ after_build:
     cmd: |-
         for /f "delims=" %%i in ('powershell -Command "(Get-Item build\DBM.dll).VersionInfo.ProductVersion"') do set binversion=%%i
         for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
-        7z a %TEMP%\DBM_v%binversion%+%commit%_bin.zip .\build\*>NUL
-        appveyor PushArtifact %TEMP%\DBM_v%binversion%+%commit%_bin.zip
-        7z a %TEMP%\DBM_v%binversion%+%commit%_src.zip * -x!.git -xr!OSIsoft.*.dll>NUL
-        appveyor PushArtifact %TEMP%\DBM_v%binversion%+%commit%_src.zip
+        7z a "%TEMP%\DBM_v%binversion%+%commit%_bin.zip" .\build\*>NUL
+        appveyor PushArtifact "%TEMP%\DBM_v%binversion%+%commit%_bin.zip"
+        7z a "%TEMP%\DBM_v%binversion%+%commit%_src.zip" * -x!.git>NUL
+        appveyor PushArtifact "%TEMP%\DBM_v%binversion%+%commit%_src.zip"
 test_script:
   -
     cmd: |-
@@ -26,25 +29,6 @@ test_script:
         for /f "delims=" %%i in ('build\DBMTester.exe^|find "Integration tests"') do set message=%%i
         echo %message%|find "PASSED">NUL&&set result=Passed||set result=Failed
         appveyor AddTest "%message:~3%" -Framework "" -FileName "" -Outcome %result%
-        powershell -Command "Set-Culture -CultureInfo nl-NL"
-        build\DBMTester.exe -i=res\data\sample1input_nl-NL.csv -st=24-11-2016 -et=29-11-2016>%TEMP%\sample1output_nl-NL.csv
-        powershell -Command "Get-FileHash %TEMP%\sample1output_nl-NL.csv -Algorithm MD5"|find "6BF34EB84A52A73973A9C95F5C268628">NUL&&set result=Passed||set result=Failed
-        appveyor AddTest "Sample 1" -Framework "" -FileName "" -Outcome %result%
-        build\DBMTester.exe -i=res\data\sample2input_nl-NL.csv -st=12-03-2013 -et=13-03-2013>%TEMP%\sample2output_nl-NL.csv
-        powershell -Command "Get-FileHash %TEMP%\sample2output_nl-NL.csv -Algorithm MD5"|find "D79A09E0DA382AFB8710AAD5B546AA3D">NUL&&set result=Passed||set result=Failed
-        appveyor AddTest "Sample 2" -Framework "" -FileName "" -Outcome %result%
-        build\DBMTester.exe -i=res\data\sample3input_nl-NL.csv -c=res\data\sample3correlation_nl-NL.csv -st=01-01-2016 -et=02-01-2016 -oc=true>%TEMP%\sample3output_nl-NL.csv
-        powershell -Command "Get-FileHash %TEMP%\sample3output_nl-NL.csv -Algorithm MD5"|find "B3621997936FD468B03E7683B633792F">NUL&&set result=Passed||set result=Failed
-        appveyor AddTest "Sample 3" -Framework "" -FileName "" -Outcome %result%
-        build\DBMTester.exe -i=res\data\sample4input_nl-NL.csv -c=res\data\sample4correlation_nl-NL.csv -st=13-11-2014 -et=14-11-2014 -oc=true>%TEMP%\sample4output_nl-NL.csv
-        powershell -Command "Get-FileHash %TEMP%\sample4output_nl-NL.csv -Algorithm MD5"|find "3CE551E40B500CD02404DFA1A82F9BDC">NUL&&set result=Passed||set result=Failed
-        appveyor AddTest "Sample 4" -Framework "" -FileName "" -Outcome %result%
-        build\DBMTester.exe -i=res\data\ACE-FR-Deelbalansgebied-Leeuwarden-levering_nl-NL.csv -c=res\data\ACE-FR-Deelbalansgebied-Burgum-levering_nl-NL.csv -c=res\data\ACE-FR-Deelbalansgebied-Dokkum-levering_nl-NL.csv -c=res\data\ACE-FR-Deelbalansgebied-Dronrijp-levering_nl-NL.csv -c=res\data\ACE-FR-Deelbalansgebied-Franeker-levering_nl-NL.csv -c=res\data\ACE-FR-Deelbalansgebied-Grou-levering_nl-NL.csv -cs=res\data\ACE-FR-Balansgebied-Leeuwarden_Franeker-levering_nl-NL.csv -st=01-01-2015 -et=01-02-2015 -oc=true>%TEMP%\sample5aoutput_nl-NL.csv
-        powershell -Command "Get-FileHash %TEMP%\sample5aoutput_nl-NL.csv -Algorithm MD5"|find "2BB35542542B7A077E41739CF80669D4">NUL&&set result=Passed||set result=Failed
-        appveyor AddTest "Sample 5a" -Framework "" -FileName "" -Outcome %result%
-        build\DBMTester.exe -i=res\data\ACE-FR-Deelbalansgebied-Leeuwarden-levering_nl-NL.csv -c=res\data\ACE-FR-Deelbalansgebied-Burgum-levering_nl-NL.csv -c=res\data\ACE-FR-Deelbalansgebied-Dokkum-levering_nl-NL.csv -c=res\data\ACE-FR-Deelbalansgebied-Dronrijp-levering_nl-NL.csv -c=res\data\ACE-FR-Deelbalansgebied-Franeker-levering_nl-NL.csv -c=res\data\ACE-FR-Deelbalansgebied-Grou-levering_nl-NL.csv -cs=res\data\ACE-FR-Balansgebied-Leeuwarden_Franeker-levering_nl-NL.csv -st=01-01-2016 -et=01-02-2016 -oc=true>%TEMP%\sample5boutput_nl-NL.csv
-        powershell -Command "Get-FileHash %TEMP%\sample5boutput_nl-NL.csv -Algorithm MD5"|find "7B16A683A66EBA61ED0F3105466D4F1B">NUL&&set result=Passed||set result=Failed
-        appveyor AddTest "Sample 5b" -Framework "" -FileName "" -Outcome %result%
 deploy:
   tag: 'v$(binversion)+$(commit)'
   release: 'DBM v$(binversion)+$(commit)'
