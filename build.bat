@@ -29,7 +29,6 @@ if not defined PIHOME set PIHOME=%CD%\3rdParty\PILibraries
 set PIRefs="%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDK.dll","%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PISDKCommon.dll"
 set PIAFDir=%PIHOME%\AF
 set PIAFRefs="%PIAFDir%\PublicAssemblies\4.0\OSIsoft.AFSDK.dll"
-set PIACERefs="%PIHOME%\ACE\OSISoft.PIACENet.dll","%PIHOME%\pisdk\PublicAssemblies\OSIsoft.PITimeServer.dll"
 
 rem Set up build directory
 if not exist build mkdir build
@@ -47,7 +46,6 @@ rem Build
 %vbc% /reference:%PIRefs%,build\DBM.dll /target:library /out:build\DBMPointDriverOSIsoftPI.dll src\shared\*.vb src\dbm\driver\DBMPointDriverOSIsoftPI.vb
 %vbc% /reference:%PIAFRefs%,build\DBM.dll /target:library /out:build\DBMPointDriverOSIsoftPIAF.dll src\shared\*.vb src\dbm\driver\DBMPointDriverOSIsoftPIAF.vb
 %vbc% /reference:build\DBM.dll,build\DBMPointDriverCSV.dll /out:build\DBMTester.exe src\shared\*.vb src\dbmtester\*.vb
-%vbc% /reference:%PIRefs%,%PIACERefs%,build\DBM.dll,build\DBMPointDriverOSIsoftPI.dll /target:library /out:build\DBMRt.dll src\shared\*.vb src\PIACENet\*.vb
 %vbc% /reference:%PIAFRefs%,build\DBM.dll,build\DBMPointDriverOSIsoftPIAF.dll /target:library /out:build\DBMDataRef.dll src\shared\*.vb src\PIAFDataRef\*.vb
 
 rem Register PI AF Data Reference
