@@ -197,7 +197,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Get
 
-        Dim Element, ParentElement, PUElement, SCElement As AFElement
+        Dim Element, ParentElement, SiblingElement As AFElement
 
         If CurrentAttribute IsNot Nothing Then ' If owned by an attribute.
           ' Use the PI point of the parent attribute as input.
@@ -207,18 +207,16 @@ Namespace Vitens.DynamicBandwidthMonitor
           Element = DirectCast(CurrentAttribute.Element, AFElement)
           ParentElement = Element.Parent
           ' Find siblings and cousins.
-          If ParentElement IsNot Nothing AndAlso _
-            ParentElement.Parent IsNot Nothing Then
-            For Each PUElement In ParentElement.Parent.Elements ' Parent, uncles
-              For Each SCElement In PUElement.Elements ' Siblings, cousins
-                If Not SCElement.UniqueID.Equals(Element.UniqueID) And _
-                  SCElement.Attributes(CurrentAttribute.Parent.Name) _
-                  IsNot Nothing Then ' Skip self and elements without attribute.
-                  CorrelationPoints.Add(New DBMCorrelationPoint _
-                    (New DBMPointDriver(StringToPIPoint(SCElement.Attributes _
-                    (CurrentAttribute.Parent.Name).ConfigString)), False))
-                End If
-              Next
+          If ParentElement IsNot Nothing Then
+            For Each SiblingElement In ParentElement.Elements ' Siblings
+              If Not SiblingElement.UniqueID.Equals(Element.UniqueID) And _
+                SiblingElement.Attributes(CurrentAttribute.Parent.Name) _
+                IsNot Nothing Then ' Skip self and elements without attribute.
+                CorrelationPoints.Add(New DBMCorrelationPoint _
+                  (New DBMPointDriver(StringToPIPoint(SiblingElement.
+                  Attributes(CurrentAttribute.Parent.Name).ConfigString)), _
+                  False))
+              End If
             Next
           End If
           ' Find parents recursively.
