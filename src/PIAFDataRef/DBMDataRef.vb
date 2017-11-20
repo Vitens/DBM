@@ -178,7 +178,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             End With
           Next
         Else
-          ConfigString = DBM.Version ' Show version information in template.
+          ConfigString = DBM.Version ' Show version information in template
         End If
 
         Return ConfigString
@@ -199,19 +199,20 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         Dim Element, ParentElement, SiblingElement As AFElement
 
-        If CurrentAttribute IsNot Nothing Then ' If owned by an attribute.
-          ' Use the PI point of the parent attribute as input.
+        If CurrentAttribute IsNot Nothing Then ' If owned by an attribute
+
           InputPointDriver = New DBMPointDriver(StringToPIPoint _
-            (CurrentAttribute.Parent.ConfigString))
-          CorrelationPoints = New List(Of DBMCorrelationPoint)
+            (CurrentAttribute.Parent.ConfigString)) ' Parent attribute
           Element = DirectCast(CurrentAttribute.Element, AFElement)
           ParentElement = Element.Parent
-          ' Find siblings and cousins.
+          CorrelationPoints = New List(Of DBMCorrelationPoint)
+
+          ' Find siblings
           If ParentElement IsNot Nothing Then
-            For Each SiblingElement In ParentElement.Elements ' Siblings
+            For Each SiblingElement In ParentElement.Elements
               If Not SiblingElement.UniqueID.Equals(Element.UniqueID) And _
                 SiblingElement.Attributes(CurrentAttribute.Parent.Name) _
-                IsNot Nothing Then ' Skip self and elements without attribute.
+                IsNot Nothing Then ' Skip self and elements without attribute
                 CorrelationPoints.Add(New DBMCorrelationPoint _
                   (New DBMPointDriver(StringToPIPoint(SiblingElement.
                   Attributes(CurrentAttribute.Parent.Name).ConfigString)), _
@@ -219,7 +220,8 @@ Namespace Vitens.DynamicBandwidthMonitor
               End If
             Next
           End If
-          ' Find parents recursively.
+
+          ' Find parents recursively
           Do While ParentElement IsNot Nothing
             If ParentElement.Attributes(CurrentAttribute.Parent.Name) _
               IsNot Nothing Then
@@ -229,6 +231,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             End If
             ParentElement = ParentElement.Parent
           Loop
+
         End If
 
         Return CurrentAttribute
@@ -260,16 +263,18 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' No time was specified. Use the latest possible timestamp based on the
         ' current timestamp of the input and correlation points.
         Timestamp = CurrentTimestamp(InputPointDriver)
-        For Each CorrelationPoint In CorrelationPoints ' Find earliest.
+        For Each CorrelationPoint In CorrelationPoints ' Find earliest
           Timestamp = SpecifyKind(New DateTime(Min(Timestamp.Ticks, _
             CurrentTimestamp(CorrelationPoint.PointDriver).Ticks)), Local)
         Next
-        ' Align timestamp to previous interval and subtract one interval.
+        ' Align timestamp to previous interval and subtract one interval
         Timestamp = AlignTime(Timestamp).AddSeconds(-CalculationInterval)
       Else
         Timestamp = AlignTime(DirectCast(timeContext, AFTime).LocalTime)
       End If
+
       Result = _DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
+
       If CurrentAttribute.Name.Equals(AttributeNameFactor) Then
         Value = Result.Factor
       ElseIf CurrentAttribute.Name.Equals(AttributeNameMeasuredValue) Then
@@ -299,14 +304,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim IntervalStep, Interval As Double
       Dim Values As New AFValues
 
-      ' Align start timestamp on previous interval.
       timeContext.StartTime = New AFTime(AlignTime _
-        (timeContext.StartTime.LocalTime))
+        (timeContext.StartTime.LocalTime)) ' Align timestamp
       Intervals = AlignedIntervals(timeContext)
       If numberOfValues = 0 Then numberOfValues = Intervals
       numberOfValues = Min(numberOfValues, Intervals)
       IntervalStep = Intervals/numberOfValues
-      Do While Interval < Intervals ' Loop through intervals.
+
+      Do While Interval < Intervals ' Loop through intervals
         Values.Add(GetValue(Nothing, New AFTime _
           (timeContext.StartTime.LocalTime.AddSeconds _
           (CInt(Interval)*CalculationInterval)), Nothing, Nothing))
