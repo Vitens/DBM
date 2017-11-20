@@ -109,9 +109,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' This function returns the number of intervals between the aligned
       ' timestamps of the passed time range. The minimum return value is 1.
 
-      Return Max(1, CInt(AlignTime(TimeRange.EndTime.LocalTime). _
-        Subtract(AlignTime(TimeRange.StartTime.LocalTime)).TotalSeconds/ _
-        CalculationInterval))
+      Return Max(1, CInt(AlignTime(TimeRange.EndTime.LocalTime).AddSeconds _
+        (CalculationInterval).Subtract(AlignTime(TimeRange.StartTime. _
+        LocalTime)).TotalSeconds/CalculationInterval))
 
     End Function
 
