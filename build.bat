@@ -45,8 +45,8 @@ rem Build
 if exist "%PIAFRef%" (
  %vbc% /reference:"%PIAFRef%",build\DBM.dll /target:library /out:build\DBMPointDriverOSIsoftPIAF.dll src\shared\*.vb src\dbm\driver\DBMPointDriverOSIsoftPIAF.vb
  %vbc% /reference:"%PIAFRef%",build\DBM.dll,build\DBMPointDriverOSIsoftPIAF.dll /target:library /out:build\DBMDataRef.dll src\shared\*.vb src\PIAFDataRef\*.vb
- rem Register PI AF Data Reference
- if exist "%PIAFDir%\regplugin.exe" (
+ rem Register PI AF Data Reference on AF server
+ tasklist | find "AFService.exe" && (
   if exist "%PIAFDir%\DBMDataRef.dll" "%PIAFDir%\regplugin.exe" /Unregister "%PIAFDir%\DBMDataRef.dll"
   copy build\DBMDataRef.dll "%PIAFDir%"
   copy build\DBM.dll "%PIAFDir%"
