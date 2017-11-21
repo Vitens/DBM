@@ -151,7 +151,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
-    Public Overrides Property ConfigString As String
+    Public Overrides Readonly Property ConfigString As String
 
       ' This property returns the current configuration of the attribute's
       ' data reference as a string suitable for displaying to an end-user.
