@@ -59,7 +59,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const AttributeNameLowerControlLimit As String = "LowerControlLimit"
     Const AttributeNameUpperControlLimit As String = "UpperControlLimit"
 
-    Private CurrentAttribute As AFAttribute
     Private _DBM As New DBM
     Private InputPointDriver As DBMPointDriver
     Private CorrelationPoints As List(Of DBMCorrelationPoint)
@@ -167,60 +166,44 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
-    Public Overrides Property Attribute As AFAttribute
+    Private Sub GetInputAndCorrelationPoints
 
-      ' This property returns the attribute that owns this object.
+      Dim Element, ParentElement, SiblingElement As AFElement
 
-      Get
+      If Attribute IsNot Nothing Then ' If owned by an attribute
 
-        Dim Element, ParentElement, SiblingElement As AFElement
+        InputPointDriver = New DBMPointDriver(StringToPIPoint _
+          (Attribute.Parent.ConfigString)) ' Parent attribute
+        Element = DirectCast(Attribute.Element, AFElement)
+        ParentElement = Element.Parent
+        CorrelationPoints = New List(Of DBMCorrelationPoint)
 
-        If CurrentAttribute IsNot Nothing Then ' If owned by an attribute
-
-          InputPointDriver = New DBMPointDriver(StringToPIPoint _
-            (CurrentAttribute.Parent.ConfigString)) ' Parent attribute
-          Element = DirectCast(CurrentAttribute.Element, AFElement)
-          ParentElement = Element.Parent
-          CorrelationPoints = New List(Of DBMCorrelationPoint)
-
-          ' Find siblings
-          If ParentElement IsNot Nothing Then
-            For Each SiblingElement In ParentElement.Elements
-              If Not SiblingElement.UniqueID.Equals(Element.UniqueID) And _
-                SiblingElement.Attributes(CurrentAttribute.Parent.Name) _
-                IsNot Nothing Then ' Skip self and elements without attribute
-                CorrelationPoints.Add(New DBMCorrelationPoint _
-                  (New DBMPointDriver(StringToPIPoint(SiblingElement.
-                  Attributes(CurrentAttribute.Parent.Name).ConfigString)), _
-                  False))
-              End If
-            Next
-          End If
-
-          ' Find parents recursively
-          Do While ParentElement IsNot Nothing
-            If ParentElement.Attributes(CurrentAttribute.Parent.Name) _
-              IsNot Nothing Then
-              CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver _
-                (StringToPIPoint(ParentElement.Attributes _
-                (CurrentAttribute.Parent.Name).ConfigString)), True))
+        ' Find siblings
+        If ParentElement IsNot Nothing Then
+          For Each SiblingElement In ParentElement.Elements
+            If Not SiblingElement.UniqueID.Equals(Element.UniqueID) And _
+              SiblingElement.Attributes(Attribute.Parent.Name) _
+              IsNot Nothing Then ' Skip self and elements without attribute
+              CorrelationPoints.Add(New DBMCorrelationPoint _
+                (New DBMPointDriver(StringToPIPoint(SiblingElement.
+                Attributes(Attribute.Parent.Name).ConfigString)), False))
             End If
-            ParentElement = ParentElement.Parent
-          Loop
-
+          Next
         End If
 
-        Return CurrentAttribute
+        ' Find parents recursively
+        Do While ParentElement IsNot Nothing
+          If ParentElement.Attributes(Attribute.Parent.Name) IsNot Nothing Then
+            CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver _
+              (StringToPIPoint(ParentElement.Attributes _
+              (Attribute.Parent.Name).ConfigString)), True))
+          End If
+          ParentElement = ParentElement.Parent
+        Loop
 
-      End Get
+      End If
 
-      Set(SetAttribute As AFAttribute)
-
-        CurrentAttribute = SetAttribute
-
-      End Set
-
-    End Property
+    End Sub
 
 
     Public Overrides Function GetValue(context As Object, _
@@ -234,6 +217,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim CorrelationPoint As DBMCorrelationPoint
       Dim Result As DBMResult
       Dim Value As Double
+
+      If InputPointDriver Is Nothing Then GetInputAndCorrelationPoints
 
       If timeContext Is Nothing Then
         ' No time was specified. Use the latest possible timestamp based on the
@@ -251,15 +236,15 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Result = _DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
 
-      If CurrentAttribute.Name.Equals(AttributeNameFactor) Then
+      If Attribute.Name.Equals(AttributeNameFactor) Then
         Value = Result.Factor
-      ElseIf CurrentAttribute.Name.Equals(AttributeNameMeasuredValue) Then
+      ElseIf Attribute.Name.Equals(AttributeNameMeasuredValue) Then
         Value = Result.PredictionData.MeasuredValue
-      ElseIf CurrentAttribute.Name.Equals(AttributeNamePredictedValue) Then
+      ElseIf Attribute.Name.Equals(AttributeNamePredictedValue) Then
         Value = Result.PredictionData.PredictedValue
-      ElseIf CurrentAttribute.Name.Equals(AttributeNameLowerControlLimit) Then
+      ElseIf Attribute.Name.Equals(AttributeNameLowerControlLimit) Then
         Value = Result.PredictionData.LowerControlLimit
-      ElseIf CurrentAttribute.Name.Equals(AttributeNameUpperControlLimit) Then
+      ElseIf Attribute.Name.Equals(AttributeNameUpperControlLimit) Then
         Value = Result.PredictionData.UpperControlLimit
       End If
 
