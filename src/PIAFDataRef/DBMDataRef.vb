@@ -331,8 +331,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim returnValue As New Dictionary(Of AFSummaryTypes, AFValue)
 
-      returnValue.Add(AFSummaryTypes.Count, New AFValue(AlignedIntervals _
-        (timeRange), New AFTime(Now)))
+      If summaryType.HasFlag(AFSummaryTypes.Count) Then returnValue.Add _
+        (AFSummaryTypes.Count, New AFValue(AlignedIntervals(timeRange), _
+        New AFTime(Now)))
 
       Return returnValue
 
