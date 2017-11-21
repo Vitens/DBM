@@ -64,47 +64,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private CorrelationPoints As List(Of DBMCorrelationPoint)
 
 
-    Private Function StringToPIPoint(Point As String) As PIPoint
-
-      Dim SplitItems As Char() = {"\"c}
-      Dim SplitGUID As Char() = {"?"c}
-
-      Return PIPoint.FindPIPoints(PIServer.FindPIServer( _
-        Point.Split(SplitItems)(2).Split(SplitGUID)(0)), _
-        Point.Split(SplitItems)(3).Split(SplitGUID)(0))(0)
-
-    End Function
-
-
-    Private Function CurrentTimestamp(PointDriver As DBMPointDriverAbstract) _
-      As DateTime
-
-      Return DirectCast(PointDriver.Point, PIPoint).CurrentValue. _
-        Timestamp.LocalTime
-
-    End Function
-
-
-    Private Function AlignTime(Timestamp As DateTime) As DateTime
-
-      Return Timestamp.AddSeconds(-Timestamp.Ticks/TicksPerSecond _
-        Mod CalculationInterval)
-
-    End Function
-
-
-    Private Function AlignedIntervals(TimeRange As AFTimeRange) As Integer
-
-      ' This function returns the number of intervals between the aligned
-      ' timestamps of the passed time range. The minimum return value is 1.
-
-      Return Max(1, CInt(AlignTime(TimeRange.EndTime.LocalTime).AddSeconds _
-        (CalculationInterval).Subtract(AlignTime(TimeRange.StartTime. _
-        LocalTime)).TotalSeconds/CalculationInterval))
-
-    End Function
-
-
     Public Overrides Readonly Property SupportedMethods As AFDataReferenceMethod
 
       ' This read-only property specifies which of the data reference
@@ -166,16 +125,28 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
+    Private Function StringToPIPoint(Point As String) As PIPoint
+
+      Dim SplitItems As Char() = {"\"c}
+      Dim SplitGUID As Char() = {"?"c}
+
+      Return PIPoint.FindPIPoints(PIServer.FindPIServer( _
+        Point.Split(SplitItems)(2).Split(SplitGUID)(0)), _
+        Point.Split(SplitItems)(3).Split(SplitGUID)(0))(0)
+
+    End Function
+
+
     Private Sub GetInputAndCorrelationPoints
 
       Dim Element, ParentElement, SiblingElement As AFElement
 
       If Attribute IsNot Nothing Then ' If owned by an attribute
 
-        InputPointDriver = New DBMPointDriver(StringToPIPoint _
-          (Attribute.Parent.ConfigString)) ' Parent attribute
         Element = DirectCast(Attribute.Element, AFElement)
         ParentElement = Element.Parent
+        InputPointDriver = New DBMPointDriver(StringToPIPoint _
+          (Attribute.Parent.ConfigString)) ' Parent attribute
         CorrelationPoints = New List(Of DBMCorrelationPoint)
 
         ' Find siblings
@@ -204,6 +175,23 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
 
     End Sub
+
+
+    Private Function CurrentTimestamp(PointDriver As DBMPointDriverAbstract) _
+      As DateTime
+
+      Return DirectCast(PointDriver.Point, PIPoint).CurrentValue. _
+        Timestamp.LocalTime
+
+    End Function
+
+
+    Private Function AlignTime(Timestamp As DateTime) As DateTime
+
+      Return Timestamp.AddSeconds(-Timestamp.Ticks/TicksPerSecond _
+        Mod CalculationInterval)
+
+    End Function
 
 
     Public Overrides Function GetValue(context As Object, _
@@ -249,6 +237,18 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
 
       Return New AFValue(Value, New AFTime(Timestamp))
+
+    End Function
+
+
+    Private Function AlignedIntervals(TimeRange As AFTimeRange) As Integer
+
+      ' This function returns the number of intervals between the aligned
+      ' timestamps of the passed time range. The minimum return value is 1.
+
+      Return Max(1, CInt(AlignTime(TimeRange.EndTime.LocalTime).AddSeconds _
+        (CalculationInterval).Subtract(AlignTime(TimeRange.StartTime. _
+        LocalTime)).TotalSeconds/CalculationInterval))
 
     End Function
 
