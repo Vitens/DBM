@@ -27,8 +27,6 @@ Option Strict
 Imports System.Collections.Generic
 Imports System.ComponentModel
 Imports System.DateTime
-Imports System.DateTimeKind
-Imports System.Environment
 Imports System.Math
 Imports System.Runtime.InteropServices
 Imports System.TimeSpan
@@ -36,7 +34,6 @@ Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.PI
 Imports OSIsoft.AF.Time
-Imports Vitens.DynamicBandwidthMonitor
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
@@ -179,15 +176,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Private Function CurrentTimestamp(PointDriver As DBMPointDriverAbstract) _
-      As DateTime
-
-      Return DirectCast(PointDriver.Point, PIPoint).CurrentValue. _
-        Timestamp.LocalTime
-
-    End Function
-
-
     Private Function AlignTime(Timestamp As DateTime) As DateTime
 
       Return Timestamp.AddSeconds(-Timestamp.Ticks/TicksPerSecond _
@@ -204,21 +192,13 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' configuration within the specified context.
 
       Dim Timestamp As DateTime
-      Dim CorrelationPoint As DBMCorrelationPoint
       Dim Result As DBMResult
       Dim Value As Double
 
       If InputPointDriver Is Nothing Then GetInputAndCorrelationPoints
 
       If timeContext Is Nothing Then
-        ' No time was specified. Use the latest possible timestamp based on the
-        ' current timestamp of the input and correlation points.
-        Timestamp = CurrentTimestamp(InputPointDriver)
-        For Each CorrelationPoint In CorrelationPoints ' Find earliest
-          Timestamp = SpecifyKind(New DateTime(Min(Timestamp.Ticks, _
-            CurrentTimestamp(CorrelationPoint.PointDriver).Ticks)), Local)
-        Next
-        Timestamp = Timestamp.AddSeconds(-CalculationInterval) ' Prev. interval
+        Timestamp = Now
       Else
         Timestamp = DirectCast(timeContext, AFTime).LocalTime
       End If
