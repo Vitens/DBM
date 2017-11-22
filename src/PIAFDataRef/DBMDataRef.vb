@@ -154,8 +154,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         If ParentElement IsNot Nothing Then
           For Each SiblingElement In ParentElement.Elements
             If Not SiblingElement.UniqueID.Equals(Element.UniqueID) And _
-              SiblingElement.Attributes(Attribute.Parent.Name) _
-              IsNot Nothing Then ' Skip self and elements without attribute
+              SiblingElement.Template.UniqueID.Equals _
+              (Element.Template.UniqueID) Then ' Same template, skip self
               CorrelationPoints.Add(New DBMCorrelationPoint _
                 (New DBMPointDriver(StringToPIPoint(SiblingElement.
                 Attributes(Attribute.Parent.Name).ConfigString)), False))
@@ -165,7 +165,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         ' Find parents recursively
         Do While ParentElement IsNot Nothing
-          If ParentElement.Attributes(Attribute.Parent.Name) IsNot Nothing Then
+          If ParentElement.Template.UniqueID.Equals _
+            (Element.Template.UniqueID) Then ' Same template
             CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver _
               (StringToPIPoint(ParentElement.Attributes _
               (Attribute.Parent.Name).ConfigString)), True))
