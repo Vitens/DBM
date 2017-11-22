@@ -113,7 +113,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Get
 
-        Return DBM.Version
+        Return DBM.Version(True)
 
       End Get
 
