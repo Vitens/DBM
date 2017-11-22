@@ -218,11 +218,11 @@ Namespace Vitens.DynamicBandwidthMonitor
           Timestamp = SpecifyKind(New DateTime(Min(Timestamp.Ticks, _
             CurrentTimestamp(CorrelationPoint.PointDriver).Ticks)), Local)
         Next
-        ' Align timestamp to previous interval and subtract one interval
-        Timestamp = AlignTime(Timestamp).AddSeconds(-CalculationInterval)
+        Timestamp = Timestamp.AddSeconds(-CalculationInterval) ' Prev. interval
       Else
-        Timestamp = AlignTime(DirectCast(timeContext, AFTime).LocalTime)
+        Timestamp = DirectCast(timeContext, AFTime).LocalTime
       End If
+      Timestamp = AlignTime(Timestamp) ' Align timestamp to previous interval
 
       Result = _DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
 
@@ -255,8 +255,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim IntervalStep, Interval As Double
       Dim Values As New AFValues
 
-      timeContext.StartTime = New AFTime(AlignTime _
-        (timeContext.StartTime.LocalTime)) ' Align timestamp
       Intervals = Max(1, CInt(AlignTime(timeContext.EndTime.LocalTime). _
         AddSeconds(CalculationInterval).Subtract(AlignTime _
         (timeContext.StartTime.LocalTime)).TotalSeconds/CalculationInterval-1))
