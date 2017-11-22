@@ -86,7 +86,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Get
 
         Return AFDataMethods.RecordedValue Or AFDataMethods.RecordedValues Or _
-          AFDataMethods.PlotValues Or AFDataMethods.Summary
+          AFDataMethods.PlotValues Or AFDataMethods.Summary Or _
+          AFDataMethods.Summaries
 
       End Get
 
