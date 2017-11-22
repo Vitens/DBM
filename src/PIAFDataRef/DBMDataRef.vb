@@ -243,18 +243,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Private Function AlignedIntervals(TimeRange As AFTimeRange) As Integer
-
-      ' This function returns the number of intervals between the aligned
-      ' timestamps of the passed time range. The minimum return value is 1.
-
-      Return Max(1, CInt(AlignTime(TimeRange.EndTime.LocalTime).AddSeconds _
-        (CalculationInterval).Subtract(AlignTime(TimeRange.StartTime. _
-        LocalTime)).TotalSeconds/CalculationInterval-1))
-
-    End Function
-
-
     Public Overrides Function GetValues(context As Object, _
       timeContext As AFTimeRange, numberOfValues As Integer, _
       inputAttributes As AFAttributeList, inputValues As AFValues()) As AFValues
@@ -269,7 +257,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       timeContext.StartTime = New AFTime(AlignTime _
         (timeContext.StartTime.LocalTime)) ' Align timestamp
-      Intervals = AlignedIntervals(timeContext)
+      Intervals = Max(1, CInt(AlignTime(timeContext.EndTime.LocalTime). _
+        AddSeconds(CalculationInterval).Subtract(AlignTime _
+        (timeContext.StartTime.LocalTime)).TotalSeconds/CalculationInterval-1))
       If numberOfValues = 0 Then numberOfValues = Intervals
       numberOfValues = Min(numberOfValues, Intervals)
       IntervalStep = Intervals/numberOfValues
@@ -286,17 +276,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Overrides Function RecordedValue(time As AFTime, mode As _
-      AFRetrievalMode, inputAttributes As AFAttributeList, inputValues As _
-      AFValues) As AFValue
-
-      ' Returns a single recorded AFValue based on the passed time and mode.
-
-      Return GetValue(Nothing, time, Nothing, Nothing)
-
-    End Function
-
-
     Public Overrides Function RecordedValues(timeRange As AFTimeRange, _
       boundaryType As AFBoundaryType, filterExpression As String, _
       includeFilteredValues As Boolean, inputAttributes As AFAttributeList, _
@@ -307,37 +286,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' the source provider.
 
       Return GetValues(Nothing, timeRange, maxCount, Nothing, Nothing)
-
-    End Function
-
-
-    Public Overrides Function PlotValues(timeRange As AFTimeRange, _
-      intervals As Integer, inputAttributes As AFAttributeList, _
-      inputValues As AFValues(), inputTimes As List(Of AFTime)) As AFValues
-
-      ' Retrieves values over the specified time range suitable for plotting
-      ' over the number of intervals (typically represents pixels).
-
-      Return GetValues(Nothing, timeRange, intervals, Nothing, Nothing)
-
-    End Function
-
-
-    Public Overrides Function Summary(timeRange As AFTimeRange, _
-      summaryType As AFSummaryTypes, calcBasis As AFCalculationBasis, _
-      timeType As AFTimestampCalculation) As _
-      IDictionary(Of AFSummaryTypes, AFValue)
-
-      ' Returns several summaries for a single attribute over a single
-      ' time range.
-
-      Dim returnValue As New Dictionary(Of AFSummaryTypes, AFValue)
-
-      If summaryType.HasFlag(AFSummaryTypes.Count) Then returnValue.Add _
-        (AFSummaryTypes.Count, New AFValue(AlignedIntervals(timeRange), _
-        New AFTime(Now)))
-
-      Return returnValue
 
     End Function
 
