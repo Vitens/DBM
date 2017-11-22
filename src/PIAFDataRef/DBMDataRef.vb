@@ -250,7 +250,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Return Max(1, CInt(AlignTime(TimeRange.EndTime.LocalTime).AddSeconds _
         (CalculationInterval).Subtract(AlignTime(TimeRange.StartTime. _
-        LocalTime)).TotalSeconds/CalculationInterval))
+        LocalTime)).TotalSeconds/CalculationInterval-1))
 
     End Function
 
