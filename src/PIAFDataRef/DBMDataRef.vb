@@ -26,10 +26,8 @@ Option Strict
 
 Imports System.Collections.Generic
 Imports System.ComponentModel
-Imports System.DateTime
 Imports System.Math
 Imports System.Runtime.InteropServices
-Imports System.TimeSpan
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.PI
@@ -170,10 +168,11 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Private Function AlignTime(Timestamp As DateTime) As DateTime
+    Private Function AlignTime(Timestamp As AFTime) As AFTime
 
-      Return Timestamp.AddSeconds(-Timestamp.Ticks/TicksPerSecond _
-        Mod CalculationInterval)
+      Timestamp.UtcSeconds -= Timestamp.UtcSeconds Mod CalculationInterval
+
+      Return Timestamp
 
     End Function
 
@@ -185,20 +184,22 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' This method gets the value based upon the data reference
       ' configuration within the specified context.
 
-      Dim Timestamp As DateTime
+      Dim Timestamp As AFTime
       Dim Result As DBMResult
       Dim Value As Double
 
       If InputPointDriver Is Nothing Then GetInputAndCorrelationPoints
 
       If timeContext Is Nothing Then
-        Timestamp = Now
+        Timestamp = AFTime.Now
       Else
-        Timestamp = DirectCast(timeContext, AFTime).LocalTime
+        Timestamp = DirectCast(timeContext, AFTime)
       End If
+
       Timestamp = AlignTime(Timestamp) ' Align timestamp to previous interval
 
-      Result = _DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
+      Result = _DBM.Result(InputPointDriver, CorrelationPoints, _
+        Timestamp.LocalTime)
 
       If Attribute.Name.Equals("Factor") Then
         Value = Result.Factor
@@ -212,7 +213,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Value = Result.PredictionData.UpperControlLimit
       End If
 
-      Return New AFValue(Value, New AFTime(Timestamp))
+      Return New AFValue(Value, Timestamp)
 
     End Function
 
@@ -229,18 +230,16 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim IntervalStep, Interval As Double
       Dim Values As New AFValues
 
-      Intervals = Max(1, CInt(AlignTime(timeContext.EndTime.LocalTime). _
-        AddSeconds(CalculationInterval).Subtract(AlignTime _
-        (timeContext.StartTime.LocalTime)).TotalSeconds/CalculationInterval-1))
+      Intervals = Max(1, CInt((AlignTime(timeContext.EndTime).UtcSeconds- _
+        AlignTime(timeContext.StartTime).UtcSeconds)/CalculationInterval))
       If numberOfValues = 0 Then numberOfValues = Intervals
       numberOfValues = Min(numberOfValues, Intervals)
       IntervalStep = Intervals/numberOfValues
 
       Do While Interval < Intervals ' Loop through intervals
-        Values.Add(GetValue(Nothing, New AFTime _
-          (timeContext.StartTime.LocalTime.AddSeconds _
-          (CInt(Interval)*CalculationInterval)), Nothing, Nothing))
+        Values.Add(GetValue(Nothing, timeContext.StartTime, Nothing, Nothing))
         Interval += IntervalStep
+        timeContext.StartTime.UtcSeconds += CalculationInterval
       Loop
 
       Return Values
