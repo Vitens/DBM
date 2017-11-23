@@ -194,7 +194,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       Else
         Timestamp = DirectCast(timeContext, AFTime)
       End If
-
       Timestamp = AlignTime(Timestamp) ' Align timestamp to previous interval
 
       Result = _DBM.Result(InputPointDriver, CorrelationPoints, _
@@ -227,7 +226,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim Intervals As Integer
       Dim IntervalStep, Interval As Double
-      Dim Values As New AFValues
 
       Intervals = Max(1, CInt((AlignTime(timeContext.EndTime).UtcSeconds- _
         AlignTime(timeContext.StartTime).UtcSeconds)/CalculationInterval))
@@ -235,13 +233,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       numberOfValues = Min(numberOfValues, Intervals)
       IntervalStep = Intervals/numberOfValues
 
+      GetValues = New AFValues
       Do While Interval < Intervals ' Loop through intervals
-        Values.Add(GetValue(Nothing, New AFTime(timeContext.StartTime. _
+        GetValues.Add(GetValue(Nothing, New AFTime(timeContext.StartTime. _
           UtcSeconds+CInt(Interval)*CalculationInterval), Nothing, Nothing))
         Interval += IntervalStep
       Loop
 
-      Return Values
+      Return GetValues
 
     End Function
 
