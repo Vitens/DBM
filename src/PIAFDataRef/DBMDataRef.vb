@@ -170,9 +170,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Function AlignTime(Timestamp As AFTime) As AFTime
 
-      Timestamp.UtcSeconds -= Timestamp.UtcSeconds Mod CalculationInterval
-
-      Return Timestamp
+      Return New AFTime(Timestamp.UtcSeconds- _
+        Timestamp.UtcSeconds Mod CalculationInterval)
 
     End Function
 
@@ -237,9 +236,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       IntervalStep = Intervals/numberOfValues
 
       Do While Interval < Intervals ' Loop through intervals
-        Values.Add(GetValue(Nothing, timeContext.StartTime, Nothing, Nothing))
+        Values.Add(GetValue(Nothing, New AFTime(timeContext.StartTime. _
+          UtcSeconds+CInt(Interval)*CalculationInterval), Nothing, Nothing))
         Interval += IntervalStep
-        timeContext.StartTime.UtcSeconds += CalculationInterval
       Loop
 
       Return Values
