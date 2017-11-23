@@ -137,8 +137,8 @@ Namespace Vitens.DynamicBandwidthMonitor
           If ParentElement.Template.UniqueID.Equals _
             (Element.Template.UniqueID) Then ' Same template
             CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver _
-            (StringToPIPoint(ParentElement.Attributes(Attribute.Parent.Name). _
-            ConfigString)), True))
+              (StringToPIPoint(ParentElement.Attributes(Attribute.Parent. _
+              Name).ConfigString)), True))
           End If
           ParentElement = ParentElement.Parent
         Loop
