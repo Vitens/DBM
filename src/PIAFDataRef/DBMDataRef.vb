@@ -55,13 +55,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Overrides Readonly Property SupportedMethods As AFDataReferenceMethod
 
-      ' This read-only property specifies which of the data reference
-      ' methods are supported.
-
       Get
-
         Return AFDataReferenceMethod.GetValue Or AFDataReferenceMethod.GetValues
-
       End Get
 
     End Property
@@ -69,15 +64,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Overrides Readonly Property SupportedDataMethods As AFDataMethods
 
-      ' This read-only property specifies which of the data methods are
-      ' supported by the data reference.
-
       Get
-
         Return AFDataMethods.RecordedValue Or AFDataMethods.RecordedValues Or _
           AFDataMethods.PlotValues Or AFDataMethods.Summary Or _
           AFDataMethods.Summaries
-
       End Get
 
     End Property
@@ -86,13 +76,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Readonly Property SupportedContexts _
       As AFDataReferenceContext
 
-      ' This read-only property specifies which of the data reference
-      ' contexts are supported when getting and/or setting values.
-
       Get
-
         Return AFDataReferenceContext.Time
-
       End Get
 
     End Property
@@ -100,13 +85,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Overrides Property ConfigString As String
 
-      ' This property returns the current configuration of the attribute's
-      ' data reference as a string suitable for displaying to an end-user.
-
       Get
-
         Return DBM.Version(True)
-
       End Get
 
       Set
@@ -157,8 +137,8 @@ Namespace Vitens.DynamicBandwidthMonitor
           If ParentElement.Template.UniqueID.Equals _
             (Element.Template.UniqueID) Then ' Same template
             CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver _
-              (StringToPIPoint(ParentElement.Attributes _
-              (Attribute.Parent.Name).ConfigString)), True))
+            (StringToPIPoint(ParentElement.Attributes(Attribute.Parent.Name). _
+            ConfigString)), True))
           End If
           ParentElement = ParentElement.Parent
         Loop
@@ -179,9 +159,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Function GetValue(context As Object, _
       timeContext As Object, inputAttributes As AFAttributeList, _
       inputValues As AFValues) As AFValue
-
-      ' This method gets the value based upon the data reference
-      ' configuration within the specified context.
 
       Dim Timestamp As AFTime
       Dim Result As DBMResult
@@ -220,18 +197,16 @@ Namespace Vitens.DynamicBandwidthMonitor
       timeContext As AFTimeRange, numberOfValues As Integer, _
       inputAttributes As AFAttributeList, inputValues As AFValues()) As AFValues
 
-      ' This method gets a collection of AFValue objects for an attribute
-      ' based upon the data reference configuration within the specified
-      ' AFTimeRange context.
-
       Dim Intervals As Integer
       Dim IntervalStep, Interval As Double
 
       Intervals = Max(1, CInt((AlignTime(timeContext.EndTime).UtcSeconds- _
         AlignTime(timeContext.StartTime).UtcSeconds)/CalculationInterval))
-      If numberOfValues = 0 Then numberOfValues = Intervals
-      numberOfValues = Min(numberOfValues, Intervals)
-      IntervalStep = Intervals/numberOfValues
+      If numberOfValues = 0 Then
+        IntervalStep = 1
+      Else
+        IntervalStep = Intervals/Min(numberOfValues, Intervals)
+      End If
 
       GetValues = New AFValues
       Do While Interval < Intervals ' Loop through intervals
@@ -250,9 +225,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       includeFilteredValues As Boolean, inputAttributes As AFAttributeList, _
       inputValues As AFValues(), inputTimes As List(Of AFTime), _
       Optional maxCount As Integer = 0) As AFValues
-
-      ' Returns a list of compressed values for the requested time range from
-      ' the source provider.
 
       Return GetValues(Nothing, timeRange, maxCount, Nothing, Nothing)
 
