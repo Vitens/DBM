@@ -129,11 +129,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Sub GetInputAndCorrelationPoints
 
-      Dim ParentElement, SiblingElement As AFElement
+      Dim Element, ParentElement, SiblingElement As AFElement
 
       If Attribute IsNot Nothing Then ' If owned by an attribute
 
-        ParentElement = Attribute.Element.Parent
+        Element = DirectCast(Attribute.Element, AFElement)
+        ParentElement = Element.Parent
         InputPointDriver = New DBMPointDriver(StringToPIPoint _
           (Attribute.Parent.ConfigString)) ' Parent attribute
         CorrelationPoints = New List(Of DBMCorrelationPoint)
@@ -141,9 +142,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Find siblings
         If ParentElement IsNot Nothing Then
           For Each SiblingElement In ParentElement.Elements
-            If Not SiblingElement.UniqueID.Equals(Attribute.Element.UniqueID) _
-              And SiblingElement.Template.UniqueID.Equals(Attribute.Element. _
-              Template.UniqueID) Then ' Same template, skip self
+            If Not SiblingElement.UniqueID.Equals(Element.UniqueID) And _
+              SiblingElement.Template.UniqueID.Equals _
+              (Element.Template.UniqueID) Then ' Same template, skip self
               CorrelationPoints.Add(New DBMCorrelationPoint _
                 (New DBMPointDriver(StringToPIPoint(SiblingElement.
                 Attributes(Attribute.Parent.Name).ConfigString)), False))
@@ -154,7 +155,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Find parents recursively
         Do While ParentElement IsNot Nothing
           If ParentElement.Template.UniqueID.Equals _
-            (Attribute.Element.Template.UniqueID) Then ' Same template
+            (Element.Template.UniqueID) Then ' Same template
             CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver _
               (StringToPIPoint(ParentElement.Attributes _
               (Attribute.Parent.Name).ConfigString)), True))
