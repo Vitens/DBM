@@ -50,12 +50,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     Inherits AFDataReference
 
 
-    Const AttributeNameFactor As String = "Factor"
-    Const AttributeNameMeasuredValue As String = "MeasuredValue"
-    Const AttributeNamePredictedValue As String = "PredictedValue"
-    Const AttributeNameLowerControlLimit As String = "LowerControlLimit"
-    Const AttributeNameUpperControlLimit As String = "UpperControlLimit"
-
     Private _DBM As New DBM
     Private InputPointDriver As DBMPointDriver
     Private CorrelationPoints As List(Of DBMCorrelationPoint)
@@ -206,15 +200,15 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Result = _DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
 
-      If Attribute.Name.Equals(AttributeNameFactor) Then
+      If Attribute.Name.Equals("Factor") Then
         Value = Result.Factor
-      ElseIf Attribute.Name.Equals(AttributeNameMeasuredValue) Then
+      ElseIf Attribute.Name.Equals("MeasuredValue") Then
         Value = Result.PredictionData.MeasuredValue
-      ElseIf Attribute.Name.Equals(AttributeNamePredictedValue) Then
+      ElseIf Attribute.Name.Equals("PredictedValue") Then
         Value = Result.PredictionData.PredictedValue
-      ElseIf Attribute.Name.Equals(AttributeNameLowerControlLimit) Then
+      ElseIf Attribute.Name.Equals("LowerControlLimit") Then
         Value = Result.PredictionData.LowerControlLimit
-      ElseIf Attribute.Name.Equals(AttributeNameUpperControlLimit) Then
+      ElseIf Attribute.Name.Equals("UpperControlLimit") Then
         Value = Result.PredictionData.UpperControlLimit
       End If
 
