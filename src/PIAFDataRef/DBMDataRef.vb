@@ -187,7 +187,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       inputAttributes As AFAttributeList, inputValues As AFValues()) As AFValues
 
       GetValues = New AFValues
-      Do While timeContext.EndTime.GreaterThan(timeContext.StartTime)
+      Do While timeContext.EndTime > timeContext.StartTime
         GetValues.Add(GetValue(Nothing, timeContext.StartTime, _
           Nothing, Nothing))
         timeContext.StartTime = New AFTime _
