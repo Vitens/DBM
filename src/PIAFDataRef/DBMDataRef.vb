@@ -197,8 +197,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       timeContext As AFTimeRange, numberOfValues As Integer, _
       inputAttributes As AFAttributeList, inputValues As AFValues()) As AFValues
 
-      Dim Intervals As Integer
-      Dim Interval As Double
+      Dim Intervals, Interval As Integer
 
       Intervals = Max(1, CInt((AlignTime(timeContext.EndTime).UtcSeconds- _
         AlignTime(timeContext.StartTime).UtcSeconds)/CalculationInterval))
@@ -206,7 +205,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       GetValues = New AFValues
       Do While Interval < Intervals ' Loop through intervals
         GetValues.Add(GetValue(Nothing, New AFTime(timeContext.StartTime. _
-          UtcSeconds+CInt(Interval)*CalculationInterval), Nothing, Nothing))
+          UtcSeconds+Interval*CalculationInterval), Nothing, Nothing))
         Interval += 1
       Loop
 
