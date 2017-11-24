@@ -53,10 +53,11 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private CorrelationPoints As List(Of DBMCorrelationPoint)
 
 
-    Public Overrides Readonly Property SupportedMethods As AFDataReferenceMethod
+    Public Overrides Readonly Property SupportedContexts _
+      As AFDataReferenceContext
 
       Get
-        Return AFDataReferenceMethod.GetValue Or AFDataReferenceMethod.GetValues
+        Return AFDataReferenceContext.Time
       End Get
 
     End Property
@@ -73,11 +74,10 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
-    Public Overrides Readonly Property SupportedContexts _
-      As AFDataReferenceContext
+    Public Overrides Readonly Property SupportedMethods As AFDataReferenceMethod
 
       Get
-        Return AFDataReferenceContext.Time
+        Return AFDataReferenceMethod.GetValue Or AFDataReferenceMethod.GetValues
       End Get
 
     End Property
@@ -97,12 +97,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Function StringToPIPoint(Point As String) As PIPoint
 
-      Dim SplitItems As Char() = {"\"c}
-      Dim SplitGUID As Char() = {"?"c}
-
-      Return PIPoint.FindPIPoints(PIServer.FindPIServer( _
-        Point.Split(SplitItems)(2).Split(SplitGUID)(0)), _
-        Point.Split(SplitItems)(3).Split(SplitGUID)(0))(0)
+      Return PIPoint.FindPIPoints(PIServer.FindPIServer(Point.Split("\"c)(2). _
+        Split("?"c)(0)), Point.Split("\"c)(3).Split("?"c)(0))(0)
 
     End Function
 
