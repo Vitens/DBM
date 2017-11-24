@@ -152,12 +152,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Result As DBMResult
       Dim Value As Double
 
-      If InputPointDriver Is Nothing Then
-        GetInputAndCorrelationPoints
-        MaxPointPredictions = CInt(EMAPreviousPeriods+ _
-          CorrelationPreviousPeriods+1) ' Minimal cache for real-time analysis
-        MaxDataManagerValues = 0 ' Do not use DBMDataManager cache
-      End If
+      If InputPointDriver Is Nothing Then GetInputAndCorrelationPoints
 
       If timeContext Is Nothing Then
         Timestamp = AFTime.Now
