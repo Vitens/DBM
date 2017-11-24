@@ -62,8 +62,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' preference over using the PointDriver object.
       ' Returns value at timestamp, either from cache or using driver
 
-      If PointDriver.HasInternalCache Then Return PointDriver.GetData _
-        (Timestamp, Timestamp.AddSeconds(CalculationInterval))
+      If PointDriver.HasInternalCache Or MaxDataManagerValues = 0 Then _
+        Return PointDriver.GetData(Timestamp, Timestamp.
+        AddSeconds(CalculationInterval))
 
       Value = Nothing
       If Not Values.TryGetValue(Timestamp, Value) Then ' Not in cache
