@@ -144,14 +144,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Private Function AlignTime(Timestamp As AFTime) As AFTime
-
-      Return New AFTime(Timestamp.UtcSeconds- _
-        Timestamp.UtcSeconds Mod CalculationInterval)
-
-    End Function
-
-
     Public Overrides Function GetValue(context As Object, _
       timeContext As Object, inputAttributes As AFAttributeList, _
       inputValues As AFValues) As AFValue
@@ -167,7 +159,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Else
         Timestamp = DirectCast(timeContext, AFTime)
       End If
-      Timestamp = AlignTime(Timestamp) ' Align timestamp to previous interval
+      Timestamp = New AFTime(Timestamp.UtcSeconds-Timestamp.UtcSeconds Mod _
+        CalculationInterval) ' Align timestamp to previous interval
 
       Result = _DBM.Result(InputPointDriver, CorrelationPoints, _
         Timestamp.LocalTime)
@@ -193,16 +186,12 @@ Namespace Vitens.DynamicBandwidthMonitor
       timeContext As AFTimeRange, numberOfValues As Integer, _
       inputAttributes As AFAttributeList, inputValues As AFValues()) As AFValues
 
-      Dim Intervals, Interval As Integer
-
-      Intervals = Max(1, CInt((AlignTime(timeContext.EndTime).UtcSeconds- _
-        AlignTime(timeContext.StartTime).UtcSeconds)/CalculationInterval))
-
       GetValues = New AFValues
-      Do While Interval < Intervals ' Loop through intervals
-        GetValues.Add(GetValue(Nothing, New AFTime(timeContext.StartTime. _
-          UtcSeconds+Interval*CalculationInterval), Nothing, Nothing))
-        Interval += 1
+      Do While timeContext.EndTime.GreaterThan(timeContext.StartTime)
+        GetValues.Add(GetValue(Nothing, timeContext.StartTime, _
+          Nothing, Nothing))
+        timeContext.StartTime = New AFTime _
+          (timeContext.StartTime.UtcSeconds+CalculationInterval)
       Loop
 
       Return GetValues
