@@ -86,7 +86,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Property ConfigString As String
 
       Get
-        Return DBM.Version(True)
+        Return DBM.Version
       End Get
 
       Set

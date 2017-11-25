@@ -24,9 +24,6 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 
-Imports System
-
-
 Namespace Vitens.DynamicBandwidthMonitor
 
 
@@ -34,7 +31,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Property Point As Object
-    Public Property HasInternalCache As Boolean = False
 
 
     Public Sub New(Point As Object)
