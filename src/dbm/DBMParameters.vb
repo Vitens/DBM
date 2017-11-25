@@ -77,11 +77,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared MaxPointPredictions As Integer = _
       EMAPreviousPeriods+2*CorrelationPreviousPeriods+1
 
-    ' Maximum number of cached values per point.
-    ' Default: large enough for one day.
-    Public Shared MaxDataManagerValues As Integer = _
-      MaxPointPredictions*(ComparePatterns+1)
-
 
   End Class
 
