@@ -73,10 +73,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       SlopeToAngle(2)-SlopeToAngle(1)
 
     ' Maximum number of cached prediction results per point.
-    ' Default: large enough for one day.
+    ' Default: Optimized for real-time continuous calculations.
     Public Shared MaxPointPredictions As Integer = _
-      CInt(24*3600/CalculationInterval+ _
-      EMAPreviousPeriods+CorrelationPreviousPeriods)
+      EMAPreviousPeriods+2*CorrelationPreviousPeriods+1
 
     ' Maximum number of cached values per point.
     ' Default: large enough for one day.
