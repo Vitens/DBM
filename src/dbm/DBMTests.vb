@@ -58,7 +58,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Private Shared Function UnitTestResults As Boolean
+    Public Shared Function UnitTestResults As Boolean
 
       ' Unit tests, returns True if all tests pass.
 
@@ -669,23 +669,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       Next i
 
       Return UnitTestResults
-
-    End Function
-
-
-    Public Shared Function TestResults As String
-
-      ' Returns a string containing test results (PASSED or FAILED) and
-      ' execution time.
-
-      Dim Ticks As Int64
-
-      Ticks = Now.Ticks
-      TestResults = " - Unit tests " & _
-        If(UnitTestResults, "PASSED", "FAILED") & " in " & _
-        Round((Now.Ticks-Ticks)/10000).ToString & "ms." & NewLine
-
-      Return TestResults
 
     End Function
 
