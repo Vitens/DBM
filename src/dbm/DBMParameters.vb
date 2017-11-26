@@ -72,11 +72,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared RegressionAngleRange As Double = _
       SlopeToAngle(2)-SlopeToAngle(1)
 
-    ' Maximum number of cached prediction results per point.
-    ' Default: Optimized for real-time continuous calculations.
-    Public Shared MaxPointPredictions As Integer = _
-      EMAPreviousPeriods+2*CorrelationPreviousPeriods+1
-
 
   End Class
 
