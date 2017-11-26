@@ -51,7 +51,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Sub New
 
-      If Not UnitTestResults Then _
+      If Not UnitTestsPassed Then _
         Throw New Exception("Unit tests FAILED.")
 
     End Sub
