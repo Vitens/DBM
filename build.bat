@@ -26,7 +26,6 @@ cd /d %~dp0
 rem Variables
 set vbc="%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\Vbc.exe" /win32icon:res\dbm.ico /optimize+ /nologo /novbruntimeref
 if exist OSIsoft.AFSDK.dll (
- set PIAFDir=.
  set PIAFRef=OSIsoft.AFSDK.dll
 ) else (
  set PIAFDir=%PIHOME%\AF
