@@ -32,6 +32,7 @@ Imports OSIsoft.AF.Data.AFSummaryTypes
 Imports OSIsoft.AF.Data.AFTimestampCalculation
 Imports OSIsoft.AF.PI
 Imports OSIsoft.AF.Time
+Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
 ' Assembly title
@@ -56,13 +57,12 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Overrides Function GetData(StartTimestamp As DateTime, _
-      EndTimestamp As DateTime) As Double
+    Public Overrides Function GetData(Timestamp As DateTime) As Double
 
       Return DirectCast(DirectCast(Point, PIPoint).Summary(New AFTimeRange _
-        (New AFTime(SpecifyKind(StartTimestamp, Local)), New AFTime _
-        (SpecifyKind(EndTimestamp, Local))), Average, TimeWeighted, _
-        EarliestTime).Item(Average).Value, Double)
+        (New AFTime(SpecifyKind(Timestamp, Local)), New AFTime(SpecifyKind _
+        (Timestamp.AddSeconds(CalculationInterval), Local))), Average, _
+        TimeWeighted, EarliestTime).Item(Average).Value, Double)
 
     End Function
 

@@ -24,12 +24,10 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 
-Imports System
 Imports System.Collections.Generic
 Imports System.Double
 Imports System.IO
 Imports System.Runtime.Serialization.Formatters.Binary
-Imports Vitens.DynamicBandwidthMonitor.DBMTests
 
 
 ' Assembly title
@@ -135,62 +133,67 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Overrides Function GetData(StartTimestamp As DateTime, _
-      EndTimestamp As DateTime) As Double
-
-      ' Calling GetData for the first time retrieves information from a CSV
-      ' file and stores this in the Values dictionary. Subsequent calls to
-      ' GetData retrieves data from the dictionary directly. Non existing
-      ' timestamps return NaN.
+    Private Sub LoadCSVData
 
       Dim CSVFileName, SerializedCSVFileName, Substrings() As String
       Dim TimestampList As List(Of DateTime)
       Dim Timestamp As DateTime
       Dim Value As Double
 
-      If Values Is Nothing Then ' No data in memory yet
-        Values = New Dictionary(Of DateTime, Double)
-        CSVFileName = DirectCast(Point, String)
-        If File.Exists(CSVFileName) Then
-          SerializedCSVFileName = CSVFileName & ".bin"
-          If File.Exists(SerializedCSVFileName) And _
-            File.GetLastWriteTime(CSVFileName) < _
-            File.GetLastWriteTime(SerializedCSVFileName) Then
-            LoadBinaryData(SerializedCSVFileName)
-          Else
-            TimestampList = New List(Of DateTime)
-            Using StreamReader As New StreamReader(DirectCast(Point, String))
-              Do While Not StreamReader.EndOfStream
-                ' Comma and tab delimiters; split timestamp and value
-                Substrings = StreamReader.ReadLine.Split(SplitChars, 2)
-                If Substrings.Length = 2 Then
-                  If DateTime.TryParse(Substrings(0), Timestamp) Then
-                    If Double.TryParse(Substrings(1), Value) Then
-                      TimestampList.Add(Timestamp)
-                      If Not Values.ContainsKey(Timestamp) Then
-                        Values.Add(Timestamp, Value) ' Add data to dictionary
-                      End If
+      Values = New Dictionary(Of DateTime, Double)
+      CSVFileName = DirectCast(Point, String)
+      If File.Exists(CSVFileName) Then
+        SerializedCSVFileName = CSVFileName & ".bin"
+        If File.Exists(SerializedCSVFileName) And _
+          File.GetLastWriteTime(CSVFileName) < _
+          File.GetLastWriteTime(SerializedCSVFileName) Then
+          LoadBinaryData(SerializedCSVFileName)
+        Else
+          TimestampList = New List(Of DateTime)
+          Using StreamReader As New StreamReader(DirectCast(Point, String))
+            Do While Not StreamReader.EndOfStream
+              ' Comma and tab delimiters; split timestamp and value
+              Substrings = StreamReader.ReadLine.Split(SplitChars, 2)
+              If Substrings.Length = 2 Then
+                If DateTime.TryParse(Substrings(0), Timestamp) Then
+                  If Double.TryParse(Substrings(1), Value) Then
+                    TimestampList.Add(Timestamp)
+                    If Not Values.ContainsKey(Timestamp) Then
+                      Values.Add(Timestamp, Value) ' Add data to dictionary
                     End If
                   End If
                 End If
-              Loop
-            End Using ' Close CSV file
-            If IsEquidistantList(TimestampList) Then
-              ' In case of equidistant timestamps: serialize the Values
-              ' dictionary to speed up the next run on the same data.
-              SaveBinaryData(SerializedCSVFileName, TimestampList)
-            End If
+              End If
+            Loop
+          End Using ' Close CSV file
+          If IsEquidistantList(TimestampList) Then
+            ' In case of equidistant timestamps: serialize the Values
+            ' dictionary to speed up the next run on the same data.
+            SaveBinaryData(SerializedCSVFileName, TimestampList)
           End If
-        Else
-          ' If Point does not represent a valid, existing file then throw a
-          ' File Not Found Exception.
-          Throw New FileNotFoundException(DirectCast(Point, String))
         End If
+      Else
+        ' If Point does not represent a valid, existing file then throw a
+        ' File Not Found Exception.
+        Throw New FileNotFoundException(DirectCast(Point, String))
       End If
 
+    End Sub
+
+
+    Public Overrides Function GetData(Timestamp As DateTime) As Double
+
+      ' Calling GetData for the first time retrieves information from a CSV
+      ' file and stores this in the Values dictionary. Subsequent calls to
+      ' GetData retrieves data from the dictionary directly. Non existing
+      ' timestamps return NaN.
+
+      If Values Is Nothing Then LoadCSVData
+
+      GetData = Nothing
       ' Look up data from memory
-      If Values.TryGetValue(StartTimestamp, Value) Then ' In cache
-        Return Value ' Return value from cache
+      If Values.TryGetValue(Timestamp, GetData) Then ' In cache
+        Return GetData ' Return value from cache
       Else
         Return NaN ' No data in memory for timestamp, return Not a Number.
       End If
