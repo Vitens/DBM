@@ -58,21 +58,21 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Private Shared Function UnitTestResults As Boolean
+    Public Shared Function UnitTestsPassed As Boolean
 
       ' Unit tests, returns True if all tests pass.
 
       Dim StatisticsData As New DBMStatisticsData
       Dim i As Integer
 
-      UnitTestResults = True
+      UnitTestsPassed = True
 
-      UnitTestResults = UnitTestResults And _
+      UnitTestsPassed = UnitTestsPassed And _
         Round(Hash({6, 4, 7, 1, 1, 4, 2, 4}), 4) = 2.2326 And _
         Round(Hash({8, 4, 7, 3, 2, 6, 5, 7}), 4) = 3.6609 And _
         Round(Hash({1, 5, 4, 7, 7, 8, 5, 1}), 4) = 1.8084
 
-      UnitTestResults = UnitTestResults And _
+      UnitTestsPassed = UnitTestsPassed And _
         Suppress(5, 0, 0, 0, 0, False) = 5 And _
         Suppress(5, -0.8, 0, 0, 0, False) = 5 And _
         Suppress(5, -0.9, -45, 0, 0, False) = -0.9 And _
@@ -94,7 +94,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Suppress(-0.98, -0.99, -1, 0, 0, False) = -0.98 And _
         Suppress(-0.98, -0.99, -45, 0, 0, False) = -0.99
 
-      UnitTestResults = UnitTestResults And _
+      UnitTestsPassed = UnitTestsPassed And _
         Round(NormSInv(0.7451), 4) = 0.6591 And _
         Round(NormSInv(0.4188), 4) = -0.205 And _
         Round(NormSInv(0.1385), 4) = -1.0871 And _
@@ -116,7 +116,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Round(NormSInv(0.0353), 4) = -1.808 And _
         Round(NormSInv(0.9767), 4) = 1.9899
 
-      UnitTestResults = UnitTestResults And _
+      UnitTestsPassed = UnitTestsPassed And _
         Round(TInv2T(0.3353, 16), 4) = 0.9934 And _
         Round(TInv2T(0.4792, 12), 4) = 0.7303 And _
         Round(TInv2T(0.4384, 9), 4) = 0.8108 And _
@@ -138,7 +138,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Round(TInv2T(0.0862, 6), 4) = 2.0504 And _
         Round(TInv2T(0.6041, 10), 4) = 0.5354
 
-      UnitTestResults = UnitTestResults And _
+      UnitTestsPassed = UnitTestsPassed And _
         Round(TInv(0.4097, 8), 4) = -0.2359 And _
         Round(TInv(0.174, 19), 4) = -0.9623 And _
         Round(TInv(0.6545, 15), 4) = 0.4053 And _
@@ -160,10 +160,10 @@ Namespace Vitens.DynamicBandwidthMonitor
         Round(TInv(0.3776, 11), 4) = -0.3197 And _
         Round(TInv(0.5267, 15), 4) = 0.0681
 
-      UnitTestResults = UnitTestResults And _
+      UnitTestsPassed = UnitTestsPassed And _
         Round(MeanAbsoluteDeviationScaleFactor, 4) = 1.2533
 
-      UnitTestResults = UnitTestResults And _
+      UnitTestsPassed = UnitTestsPassed And _
         Round(MedianAbsoluteDeviationScaleFactor(1), 4) = 1 And _
         Round(MedianAbsoluteDeviationScaleFactor(2), 4) = 1.2247 And _
         Round(MedianAbsoluteDeviationScaleFactor(4), 4) = 1.3501 And _
@@ -185,7 +185,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Round(MedianAbsoluteDeviationScaleFactor(36), 4) = 1.4826 And _
         Round(MedianAbsoluteDeviationScaleFactor(38), 4) = 1.4826
 
-      UnitTestResults = UnitTestResults And _
+      UnitTestsPassed = UnitTestsPassed And _
         Round(ControlLimitRejectionCriterion(0.99, 1), 4) = 63.6567 And _
         Round(ControlLimitRejectionCriterion(0.99, 2), 4) = 9.9248 And _
         Round(ControlLimitRejectionCriterion(0.99, 4), 4) = 4.6041 And _
@@ -207,7 +207,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Round(ControlLimitRejectionCriterion(0.95, 25), 4) = 2.0595 And _
         Round(ControlLimitRejectionCriterion(0.90, 20), 4) = 1.7247
 
-      UnitTestResults = UnitTestResults And _
+      UnitTestsPassed = UnitTestsPassed And _
         NonNaNCount({60}) = 1 And _
         NonNaNCount({60, 70}) = 2 And _
         NonNaNCount({60, 70, NaN}) = 2 And _
@@ -229,7 +229,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         NonNaNCount({NaN}) = 0 And _
         NonNaNCount({NaN, NaN}) = 0
 
-      UnitTestResults = UnitTestResults And _
+      UnitTestsPassed = UnitTestsPassed And _
         Round(Mean({60}), 4) = 60 And _
         Round(Mean({72}), 4) = 72 And _
         Round(Mean({32, 95}), 4) = 63.5 And _
@@ -251,7 +251,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Round(Mean({18, 14, 54, 40, 73, 77, 4, 91, 53, 10}), 4) = 43.4 And _
         Round(Mean({80, 30, 1, 92, 44, 61, 18, 72, 63, 41}), 4) = 50.2
 
-      UnitTestResults = UnitTestResults And _
+      UnitTestsPassed = UnitTestsPassed And _
         Median({57}) = 57 And _
         Median({46}) = 46 And _
         Median({79, 86}) = 82.5 And _
@@ -273,7 +273,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Median({33, 82, 42, 33, 81, 56, 13, 13, 54, 6}) = 37.5 And _
         Median({55, 40, 75, 23, 53, 85, 59, 9, 72, 44}) = 54
 
-      UnitTestResults = UnitTestResults And _
+      UnitTestsPassed = UnitTestsPassed And _
         Hash(AbsoluteDeviation({100, 44, 43, 45}, 44)) = _
         Hash({56, 0, 1, 1}) And _
         Hash(AbsoluteDeviation({76, 70, 84, 39}, 77)) = _
@@ -315,7 +315,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Hash(AbsoluteDeviation({15, 94, 58, 67}, 78)) = _
         Hash({63, 16, 20, 11})
 
-      UnitTestResults = UnitTestResults And _
+      UnitTestsPassed = UnitTestsPassed And _
         Round(MeanAbsoluteDeviation _
         ({19}), 4) = 0 And _
         Round(MeanAbsoluteDeviation _
@@ -357,7 +357,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Round(MeanAbsoluteDeviation _
         ({7, 12, 84, 29, 41, 8, 18, 15, 16, 84}), 4) = 22.96
 
-      UnitTestResults = UnitTestResults And _
+      UnitTestsPassed = UnitTestsPassed And _
         MedianAbsoluteDeviation _
         ({2}) = 0 And _
         MedianAbsoluteDeviation _
@@ -399,7 +399,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         MedianAbsoluteDeviation _
         ({6, 96, 82, 26, 47, 84, 34, 39, 60, 99}) = 28
 
-      UnitTestResults = UnitTestResults And _
+      UnitTestsPassed = UnitTestsPassed And _
         Hash(RemoveOutliers({100, 100, 100, 100, 100, 100, 100, 100, 999})) = _
         Hash({100, 100, 100, 100, 100, 100, 100, 100, NaN}) And _
         Hash(RemoveOutliers({100, 101, 102, 103, 104, 105, 106, 107, 999})) = _
@@ -492,7 +492,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Hash(RemoveOutliers({NaN, 10, NaN, 10, NaN, 10, NaN, 30, 20, NaN, _
         999})) = Hash({NaN, 10, NaN, 10, NaN, 10, NaN, 30, 20, NaN, NaN})
 
-      UnitTestResults = UnitTestResults And _
+      UnitTestsPassed = UnitTestsPassed And _
         Round(ExponentialMovingAverage _
         ({70.5547}), 4) = 70.5547 And _
         Round(ExponentialMovingAverage _
@@ -534,7 +534,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Round(ExponentialMovingAverage _
         ({26.1368, 78.5212, 37.8903, 28.9665, 91.9377, 63.1742}), 4) = 60.2045
 
-      UnitTestResults = UnitTestResults And _
+      UnitTestsPassed = UnitTestsPassed And _
         Round(SlopeToAngle(-4.5806), 4) = -77.6849 And _
         Round(SlopeToAngle(-4.2541), 4) = -76.7718 And _
         Round(SlopeToAngle(1.7964), 4) = 60.8967 And _
@@ -629,7 +629,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             43, 46, 53, 55, 63})
         End If
         With StatisticsData
-          UnitTestResults = UnitTestResults And _
+          UnitTestsPassed = UnitTestsPassed And _
             Round(.Slope, 4) = {-24.1399, -67.5699, 51.3427, -56.9825, _
             27.3182, -2.6573, 32.1923, -46.8462, -11.1224, -61.5455, 9.4424, _
             -0.1602, 10.7659, 4.8889, -4.6572, -0.4548, -6.6652, 2.2442, _
@@ -668,24 +668,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         End With
       Next i
 
-      Return UnitTestResults
-
-    End Function
-
-
-    Public Shared Function TestResults As String
-
-      ' Returns a string containing test results (PASSED or FAILED) and
-      ' execution time.
-
-      Dim Ticks As Int64
-
-      Ticks = Now.Ticks
-      TestResults = " - Unit tests " & _
-        If(UnitTestResults, "PASSED", "FAILED") & " in " & _
-        Round((Now.Ticks-Ticks)/10000).ToString & "ms." & NewLine
-
-      Return TestResults
+      Return UnitTestsPassed
 
     End Function
 

@@ -49,6 +49,14 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Points As New Dictionary(Of Object, DBMPoint)
 
 
+    Public Sub New
+
+      If Not UnitTestsPassed Then _
+        Throw New Exception("Unit tests FAILED.")
+
+    End Sub
+
+
     Public Shared Function Version As String
 
       ' Returns a string containing version, copyright and license information.
@@ -95,9 +103,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           NewLine & _
           "Je hoort een kopie van de GNU Algemene Publieke Licentie te " & _
           "hebben ontvangen samen met dit programma.  Als dat niet het " & _
-          "geval is, zie <http://www.gnu.org/licenses/>." & NewLine & _
-          NewLine & _
-          TestResults
+          "geval is, zie <http://www.gnu.org/licenses/>." & NewLine
       End With
 
     End Function
