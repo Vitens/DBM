@@ -30,7 +30,7 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public MustInherit Class DBMPointDriverAbstract
 
 
-    Public Property Point As Object
+    Public Point As Object
 
 
     Public Sub New(Point As Object)
