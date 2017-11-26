@@ -32,6 +32,7 @@ Imports OSIsoft.AF.Data.AFSummaryTypes
 Imports OSIsoft.AF.Data.AFTimestampCalculation
 Imports OSIsoft.AF.PI
 Imports OSIsoft.AF.Time
+Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
 ' Assembly title
