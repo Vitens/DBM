@@ -73,7 +73,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Round(Hash({1, 5, 4, 7, 7, 8, 5, 1}), 4) = 1.8084
 
       UnitTestResults = UnitTestResults And _
-        Suppress(5, 0, 0, 0, 0, False) = 5 And _
+        Suppress(5, 0, 0, 0, 0, False) = 9995 And _
         Suppress(5, -0.8, 0, 0, 0, False) = 5 And _
         Suppress(5, -0.9, -45, 0, 0, False) = -0.9 And _
         Suppress(5, -0.9, 0, 0, 0, True) = 5 And _
