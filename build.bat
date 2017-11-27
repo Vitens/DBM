@@ -26,11 +26,7 @@ cd /d %~dp0
 rem Variables
 set vbc="%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\Vbc.exe" /win32icon:res\dbm.ico /optimize+ /nologo /novbruntimeref
 set PIAFDir=%PIHOME%\AF
-if exist OSIsoft.AFSDK.dll (
- set PIAFRef=OSIsoft.AFSDK.dll
-) else (
- set PIAFRef=%PIAFDir%\PublicAssemblies\4.0\OSIsoft.AFSDK.dll
-)
+set PIAFRef=%PIAFDir%\PublicAssemblies\4.0\OSIsoft.AFSDK.dll
 
 rem Set up build directory
 if not exist build mkdir build
