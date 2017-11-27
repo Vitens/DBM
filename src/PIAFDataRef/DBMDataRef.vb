@@ -154,7 +154,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       If InputPointDriver Is Nothing Then GetInputAndCorrelationPoints
 
       If timeContext Is Nothing Then
-        Timestamp = AFTime.Now
+        Timestamp = DirectCast(InputPointDriver.Point, PIPoint). _
+          CurrentValue.Timestamp
       Else
         Timestamp = DirectCast(timeContext, AFTime)
       End If
