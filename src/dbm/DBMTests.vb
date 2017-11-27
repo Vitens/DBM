@@ -24,7 +24,9 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 
+Imports System.DateTime
 Imports System.Double
+Imports System.Environment
 Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBM
 Imports Vitens.DynamicBandwidthMonitor.DBMMath

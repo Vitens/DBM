@@ -26,6 +26,7 @@ Option Strict
 
 Imports System.Collections.Generic
 Imports System.ComponentModel
+Imports System.Math
 Imports System.Runtime.InteropServices
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Data

@@ -24,9 +24,6 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 
-Imports System
-
-
 Namespace Vitens.DynamicBandwidthMonitor
 
 
