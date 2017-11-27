@@ -24,20 +24,46 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 
-' This information is shared between all DBM binaries. A summary can be
-' returned using the DBM.Version function.
+Imports System.Double
+Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
-<assembly:System.Reflection.AssemblyVersion("1.12.9.*")> ' Major.Minor.Revision.*
-' Note: when updating the version number, also modify version in appveyor.yml
-'       for AppVeyor continuous integration to use the same version numbering.
+Namespace Vitens.DynamicBandwidthMonitor
 
-<assembly:System.Reflection.AssemblyProduct("Dynamic Bandwidth Monitor")>
 
-<assembly:System.Reflection.AssemblyDescription _
-  ("Leak detection method implemented in a real-time data historian")>
+  Public Class DBMDataManager
 
-<assembly:System.Reflection.AssemblyCopyright _
-  ("Copyright (C) 2014, 2015, 2016, 2017  J.H. Fitié, Vitens N.V.")>
 
-<assembly:System.Reflection.AssemblyCompany("Vitens N.V.")>
+    ' The DBMDataManager is responsible for retrieving input data.
+    ' It stores and uses a DBMPointDriverAbstract object, which has a GetData
+    ' method used for retrieving data.
+
+
+    Public PointDriver As DBMPointDriverAbstract
+
+
+    Public Sub New(PointDriver As DBMPointDriverAbstract)
+
+      Me.PointDriver = PointDriver
+
+    End Sub
+
+
+    Public Function Value(Timestamp As DateTime) As Double
+
+      Try
+        Value = PointDriver.GetData _
+          (Timestamp, Timestamp.AddSeconds(CalculationInterval))
+      Catch
+        Value = NaN ' Error getting data, return Not a Number
+      End Try
+
+      Return Value
+
+    End Function
+
+
+  End Class
+
+
+End Namespace

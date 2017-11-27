@@ -40,7 +40,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public MustOverride Function GetData(Timestamp As DateTime) As Double
+    Public MustOverride Function GetData(StartTimestamp As DateTime, _
+      EndTimestamp As DateTime) As Double
 
 
   End Class
