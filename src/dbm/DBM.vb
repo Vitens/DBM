@@ -54,9 +54,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Const GITHASH As String = ""
 
-      If Not UnitTestsPassed Then _
-        Throw New Exception("Unit tests FAILED.")
-
       With FileVersionInfo.GetVersionInfo(System.Reflection.Assembly. _
         GetExecutingAssembly.Location)
         Return .FileDescription & " " & _
@@ -97,7 +94,9 @@ Namespace Vitens.DynamicBandwidthMonitor
           NewLine & _
           "Je hoort een kopie van de GNU Algemene Publieke Licentie te " & _
           "hebben ontvangen samen met dit programma.  Als dat niet het " & _
-          "geval is, zie <http://www.gnu.org/licenses/>." & NewLine
+          "geval is, zie <http://www.gnu.org/licenses/>." & NewLine & _
+          NewLine & _
+          "Unit tests " & If(UnitTestsPassed, "PASSED", "FAILED") & NewLine
       End With
 
     End Function
