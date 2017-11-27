@@ -1,4 +1,4 @@
-version: "1.12.8.{build}"
+version: "1.12.7.{build}"
 skip_tags: true
 cache: '%TEMP%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll'
 before_build:
@@ -20,6 +20,15 @@ after_build:
         appveyor PushArtifact "%TEMP%\DBM_v%binversion%+%commit%_bin.zip"
         7z a "%TEMP%\DBM_v%binversion%+%commit%_src.zip" * -x!.git>NUL
         appveyor PushArtifact "%TEMP%\DBM_v%binversion%+%commit%_src.zip"
+test_script:
+  -
+    cmd: |-
+        for /f "delims=" %%i in ('build\DBMTester.exe^|find "Unit tests"') do set message=%%i
+        echo %message%|find "PASSED">NUL&&set result=Passed||set result=Failed
+        appveyor AddTest "%message:~3%" -Framework "" -FileName "" -Outcome %result%
+        for /f "delims=" %%i in ('build\DBMTester.exe^|find "Integration tests"') do set message=%%i
+        echo %message%|find "PASSED">NUL&&set result=Passed||set result=Failed
+        appveyor AddTest "%message:~3%" -Framework "" -FileName "" -Outcome %result%
 deploy:
   tag: 'v$(binversion)+$(commit)'
   release: 'DBM v$(binversion)+$(commit)'

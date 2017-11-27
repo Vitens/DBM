@@ -24,13 +24,17 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 
+Imports System
+
+
 Namespace Vitens.DynamicBandwidthMonitor
 
 
   Public MustInherit Class DBMPointDriverAbstract
 
 
-    Public Point As Object
+    Public Property Point As Object
+    Public Property HasInternalCache As Boolean = False
 
 
     Public Sub New(Point As Object)
@@ -40,7 +44,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public MustOverride Function GetData(Timestamp As DateTime) As Double
+    Public MustOverride Function GetData(StartTimestamp As DateTime, _
+      EndTimestamp As DateTime) As Double
 
 
   End Class

@@ -24,6 +24,7 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 
+Imports System
 Imports System.Collections.Generic
 Imports System.Diagnostics
 Imports System.Environment
@@ -48,17 +49,11 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Points As New Dictionary(Of Object, DBMPoint)
 
 
-    Public Sub New
-
-      If Not UnitTestsPassed Then _
-        Throw New Exception("Unit tests FAILED.")
-
-    End Sub
-
-
-    Public Shared Function Version As String
+    Public Shared Function Version _
+      (Optional SkipTests As Boolean = False) As String
 
       ' Returns a string containing version, copyright and license information.
+      ' Also outputs results of unit and integration tests (unless skipped).
 
       Const GITHASH As String = ""
 
@@ -102,7 +97,8 @@ Namespace Vitens.DynamicBandwidthMonitor
           NewLine & _
           "Je hoort een kopie van de GNU Algemene Publieke Licentie te " & _
           "hebben ontvangen samen met dit programma.  Als dat niet het " & _
-          "geval is, zie <http://www.gnu.org/licenses/>." & NewLine
+          "geval is, zie <http://www.gnu.org/licenses/>." & NewLine & _
+          If(SkipTests, "", NewLine & TestResults)
       End With
 
     End Function
