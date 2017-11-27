@@ -105,8 +105,10 @@ Namespace Vitens.DynamicBandwidthMonitor
                 End If
               Next PatternCounter
               PredictionData = Prediction(Patterns)
-              ' Limit cache size
-              Do While PredictionsData.Count >= MaxPointPredictions
+              ' Limit number of cached prediction results per point.
+              ' Optimized for real-time continuous calculations.
+              Do While PredictionsData.Count > _
+                EMAPreviousPeriods+2*CorrelationPreviousPeriods
                 ' Use the queue to remove the least recently inserted timestamp.
                 PredictionsData.Remove(PredictionsQueue.Dequeue)
               Loop
