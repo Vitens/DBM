@@ -48,19 +48,14 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Points As New Dictionary(Of Object, DBMPoint)
 
 
-    Public Sub New
-
-      If Not UnitTestsPassed Then _
-        Throw New Exception("Unit tests FAILED.")
-
-    End Sub
-
-
     Public Shared Function Version As String
 
       ' Returns a string containing version, copyright and license information.
 
       Const GITHASH As String = ""
+
+      If Not UnitTestsPassed Then _
+        Throw New Exception("Unit tests FAILED.")
 
       With FileVersionInfo.GetVersionInfo(System.Reflection.Assembly. _
         GetExecutingAssembly.Location)
