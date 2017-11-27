@@ -24,9 +24,7 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 
-Imports System
 Imports System.Collections.Generic
-Imports System.Linq
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMPrediction
@@ -47,9 +45,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Sub New(PointDriver As DBMPointDriverAbstract)
 
       ' Each DBMPoint has a DBMDataManager which is responsible for retrieving
-      ' and caching input data. The Data Manager stores and uses a
-      ' DBMPointDriverAbstract object, which has a GetData method used for
-      ' retrieving data.
+      ' input data. The Data Manager stores and uses a DBMPointDriverAbstract
+      ' object, which has a GetData method used for retrieving data.
 
       DataManager = New DBMDataManager(PointDriver)
 
