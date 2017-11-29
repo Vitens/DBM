@@ -26,6 +26,7 @@ Option Strict
 
 Imports System.Double
 Imports System.Math
+Imports System.TimeSpan
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
@@ -339,6 +340,18 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns angle in degrees for Slope.
 
       Return Atan(Slope)/(2*PI)*360
+
+    End Function
+
+
+    Public Shared Function AlignTimestamp(Timestamp As DateTime, _
+      Seconds As Integer) As DateTime
+
+       ' Returns a DateTime for the passed timestamp aligned on the
+       ' previous interval (in seconds).
+
+       Return New DateTime(Timestamp.Ticks-Timestamp.Ticks Mod _
+         Seconds*TicksPerSecond, Timestamp.Kind)
 
     End Function
 
