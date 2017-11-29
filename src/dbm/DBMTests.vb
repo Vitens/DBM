@@ -24,6 +24,7 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 
+Imports System.Collections.Generic
 Imports System.Double
 Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBM
@@ -731,6 +732,10 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Calculated using polynomial regressions based on hourly (quintic),
         ' daily (cubic) and monthly (quartic) periodicity.
 
+        If TypeOf Point Is Integer Then ' Point contains offset in hours
+          StartTimestamp = StartTimestamp.AddHours(DirectCast(Point, Integer))
+        End If
+
         With StartTimestamp
           Return 790*(-0.00012*.Month^4+0.0035*.Month^3-0.032*.Month^2+0.1* _
             .Month+0.93)*(0.000917*.DayOfWeek^3-0.0155*.DayOfWeek^2+0.0628* _
@@ -750,6 +755,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Integration tests, returns True if all tests pass.
 
       Dim InputPointDriver As DBMPointDriverWaterUsageModel
+      Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim Timestamp As DateTime
       Dim i As Integer
       Dim Result As DBMResult
@@ -758,14 +764,19 @@ Namespace Vitens.DynamicBandwidthMonitor
       IntegrationTestsPassed = True
 
       InputPointDriver = New DBMPointDriverWaterUsageModel(0)
+      CorrelationPoints.Add _
+        (New DBMCorrelationPoint(New DBMPointDriverWaterUsageModel(775), False))
       Timestamp = New DateTime(2017, 1, 1, 0, 0, 0)
 
       For i = 0 to 19
-        Result = _DBM.Result(InputPointDriver, Nothing, Timestamp)
+        Result = _DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
         With Result
           IntegrationTestsPassed = IntegrationTestsPassed And _
-            Round(.Factor, 4) = {-1.6024, 0, 0, 0, 0, -11.7317, -11.8493, _
-            -22.9119, 0, 0, 0, 0, 0, 0, 1.8921, 1.5036, 0, 0, 0, 0}(i) And _
+            Round(.Factor, 4) = {-0.9512, 0, 0, 0, 0, -11.7317, -11.8493, _
+            -22.9119, 0, 0, 0, 0, 0, 0, 1.8921, 0.9999, 0, 0, 0, 0}(i) And _
+            Round(.OriginalFactor, 4) = {-1.6024, 0, 0, 0, 0, -11.7317, _
+            -11.8493, -22.9119, 0, 0, 0, 0, 0, 0, 1.8921, 1.5036, 0, 0, 0, _
+            0}(i) And _
             Round(.PredictionData.MeasuredValue, 4) = {509.3772, 676.2127, _
             1133.0706, 921.2192, 526.0816, 641.3775, 1129.7281, 895.6628, _
             489.483, 668.3897, 1022.3245, 891.2814, 495.4018, 634.1089, _
