@@ -749,7 +749,45 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Integration tests, returns True if all tests pass.
 
+      Dim InputPointDriver As DBMPointDriverWaterUsageModel
+      Dim Timestamp As DateTime
+      Dim i As Integer
+      Dim Result As DBMResult
+      Dim _DBM As New DBM
+
       IntegrationTestsPassed = True
+
+      InputPointDriver = New DBMPointDriverWaterUsageModel(0)
+      Timestamp = New DateTime(2017, 1, 1, 0, 0, 0)
+
+      For i = 0 to 19
+        Result = _DBM.Result(InputPointDriver, Nothing, Timestamp)
+        With Result
+          IntegrationTestsPassed = IntegrationTestsPassed And _
+            Round(.Factor, 4) = {-1.6024, 0, 0, 0, 0, -11.7317, -11.8493, _
+            -22.9119, 0, 0, 0, 0, 0, 0, 1.8921, 1.5036, 0, 0, 0, 0}(i) And _
+            Round(.PredictionData.MeasuredValue, 4) = {509.3772, 676.2127, _
+            1133.0706, 921.2192, 526.0816, 641.3775, 1129.7281, 895.6628, _
+            489.483, 668.3897, 1022.3245, 891.2814, 495.4018, 634.1089, _
+            1132.509, 884.8743, 519.2135, 721.8742, 1131.3369, _
+            1000.8724}(i) And _
+            Round(.PredictionData.PredictedValue, 4) = {527.9311, 705.7345, _
+            1093.7282, 890.7017, 517.9885, 650.9135, 1145.9947, 924.8384, _
+            487.8138, 667.6445, 1017.9725, 887.379, 488.7521, 632.3535, _
+            1112.1805, 864.7412, 517.9323, 710.6227, 1138.2816, _
+            1003.3589}(i) And _
+            Round(.PredictionData.LowerControlLimit, 4) = {516.3519, 640.9659, _
+            1003.8057, 814.908, 472.3465, 650.1006, 1144.6219, 923.5651, _
+            479.6561, 656.3514, 1001.9818, 876.9197, 481.8869, 625.6258, _
+            1101.4364, 851.3511, 505.7493, 695.1069, 1108.7767, _
+            977.8116}(i) And _
+            Round(.PredictionData.UpperControlLimit, 4) = {539.5103, 770.5032, _
+            1183.6507, 966.4954, 563.6305, 651.7263, 1147.3675, 926.1118, _
+            495.9715, 678.9377, 1033.9632, 897.8383, 495.6173, 639.0813, _
+            1122.9245, 878.1312, 530.1152, 726.1385, 1167.7866, 1028.9061}(i)
+        End With
+        Timestamp = Timestamp.AddSeconds(365*24*60*60/20)
+      Next i
 
       Return IntegrationTestsPassed
 
