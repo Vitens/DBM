@@ -96,7 +96,10 @@ Namespace Vitens.DynamicBandwidthMonitor
           "hebben ontvangen samen met dit programma.  Als dat niet het " & _
           "geval is, zie <http://www.gnu.org/licenses/>." & NewLine & _
           NewLine & _
-          "Unit tests " & If(UnitTestsPassed, "PASSED", "FAILED") & NewLine
+          " * Unit tests " & _
+          If(UnitTestsPassed, "PASSED", "FAILED") & "." & NewLine & _
+          " * Integration tests " & _
+          If(IntegrationTestsPassed, "PASSED", "FAILED") & "." & NewLine
       End With
 
     End Function
