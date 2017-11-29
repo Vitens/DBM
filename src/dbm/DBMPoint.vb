@@ -73,6 +73,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         UpperControlLimits(EMAPreviousPeriods) As Double
 
       Result = New DBMResult
+      Result.Timestamp = AlignTimestamp(Timestamp, CalculationInterval)
 
       ' Can we reuse stored results?
       If SubtractPoint IsNot PredictionsSubtractPoint Then
@@ -86,7 +87,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           Result.Factor <> 0 And HasCorrelationDBMPoint) Or _
           Not IsInputDBMPoint Then ' Calculate history for event or correlation.
           For EMACounter = 0 To EMAPreviousPeriods ' For filtering HF variation.
-            PredictionTimestamp = Timestamp.AddSeconds _
+            PredictionTimestamp = Result.Timestamp.AddSeconds _
               (-(EMAPreviousPeriods-EMACounter+CorrelationCounter)* _
               CalculationInterval) ' Timestamp for prediction results
             If Not PredictionsData.TryGetValue(PredictionTimestamp, _
