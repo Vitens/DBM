@@ -713,6 +713,38 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Class DBMPointDriverWaterUsageModel
+      Inherits DBMPointDriverAbstract
+
+
+      Public Sub New(Point As Object)
+
+        MyBase.New(Point)
+
+      End Sub
+
+
+      Public Overrides Function GetData(StartTimestamp As DateTime, _
+        EndTimestamp As DateTime) As Double
+
+        ' Model based on hourly water usage in Leeuwarden 2016.
+        ' Calculated using polynomial regressions based on hourly (quintic),
+        ' daily (cubic) and monthly (quartic) periodicity.
+
+        With StartTimestamp
+          Return 790*(-0.00012*.Month^4+0.0035*.Month^3-0.032*.Month^2+0.1* _
+            .Month+0.93)*(0.000917*.DayOfWeek^3-0.0155*.DayOfWeek^2+0.0628* _
+            .DayOfWeek+0.956)*(-0.00001221*(.Hour+.Minute/60)^5+0.0007805* _
+            (.Hour+.Minute/60)^4-0.01796*(.Hour+.Minute/60)^3+0.1709*(.Hour+ _
+            .Minute/60)^2-0.5032*(.Hour+.Minute/60)+0.7023)
+        End With
+
+      End Function
+
+
+    End Class
+
+
   End Class
 
 
