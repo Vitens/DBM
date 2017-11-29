@@ -38,6 +38,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' results of (correlation) calculation results from a DBMPoint object.
 
 
+    Public Timestamp As DateTime
     Public PredictionData As DBMPredictionData
     Public Factor, OriginalFactor, AbsoluteErrors(), RelativeErrors(), _
       CorrelationAbsoluteErrors(), CorrelationRelativeErrors() As Double

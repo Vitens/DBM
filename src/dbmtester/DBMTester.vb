@@ -159,10 +159,10 @@ Namespace Vitens.DynamicBandwidthMonitor
         End If
         Do While StartTimestamp <= EndTimestamp
           Line = New StringBuilder
-          Line.Append(FormatDateTime(StartTimestamp))
           Result = _DBM.Result _
             (InputPointDriver, CorrelationPoints, StartTimestamp)
           With Result
+            Line.Append(FormatDateTime(.Timestamp))
             Line.Append(Separator).Append(FormatNumber(.Factor))
             Line.Append(Separator). _
               Append(FormatNumber(.PredictionData.MeasuredValue))

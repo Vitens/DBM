@@ -52,8 +52,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Function Value(Timestamp As DateTime) As Double
 
       Try
-        Value = PointDriver.GetData _
-          (Timestamp, Timestamp.AddSeconds(CalculationInterval))
+        Value = PointDriver.GetData(Timestamp, _
+          Timestamp.AddSeconds(CalculationInterval))
       Catch
         Value = NaN ' Error getting data, return Not a Number
       End Try

@@ -159,8 +159,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       Else
         Timestamp = DirectCast(timeContext, AFTime)
       End If
-      Timestamp = New AFTime(Timestamp.UtcSeconds-Timestamp.UtcSeconds Mod _
-        CalculationInterval) ' Align timestamp to previous interval
 
       Result = _DBM.Result(InputPointDriver, CorrelationPoints, _
         Timestamp.LocalTime)
@@ -177,7 +175,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Value = Result.PredictionData.UpperControlLimit
       End If
 
-      Return New AFValue(Value, Timestamp)
+      Return New AFValue(Value, Result.Timestamp)
 
     End Function
 
