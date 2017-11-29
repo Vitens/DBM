@@ -60,8 +60,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Unit tests, returns True if all tests pass.
 
-      Dim StatisticsData As New DBMStatisticsData
       Dim i As Integer
+      Dim StatisticsData As New DBMStatisticsData
 
       UnitTestsPassed = True
 
@@ -743,6 +743,17 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     End Class
+
+
+    Public Shared Function IntegrationTestsPassed As Boolean
+
+      ' Integration tests, returns True if all tests pass.
+
+      IntegrationTestsPassed = True
+
+      Return IntegrationTestsPassed
+
+    End Function
 
 
   End Class
