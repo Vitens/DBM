@@ -24,5 +24,5 @@
 cd "`dirname "$0"`"
 
 export WINEDEBUG=fixme-all,err-ole
-export WINEDLLOVERRIDES="mscoree=n"
+export WINEDLLOVERRIDES=mscoree=n
 wine cmd /c build.bat
