@@ -554,6 +554,48 @@ Namespace Vitens.DynamicBandwidthMonitor
         Round(SlopeToAngle(-1.6831), 4) = -59.2837 And _
         Round(SlopeToAngle(-2.0031), 4) = -63.4704
 
+      UnitTestsPassed = UnitTestsPassed And _
+        AlignTimestamp(New DateTime(2016, 4, 4, 16, 33, 2), 60) = _
+        New DateTime(2016, 4, 4, 16, 33, 0) And _
+        AlignTimestamp(New DateTime(2015, 7, 15, 2, 29, 58), 60) =  _
+        New DateTime(2015, 7, 15, 2, 29, 0) And _
+        AlignTimestamp(New DateTime(2016, 4, 1, 22, 5, 17), 60) =  _
+        New DateTime(2016, 4, 1, 22, 5, 0) And _
+        AlignTimestamp(New DateTime(2013, 12, 1, 21, 47, 35), 60) =  _
+        New DateTime(2013, 12, 1, 21, 47, 0) And _
+        AlignTimestamp(New DateTime(2016, 11, 22, 0, 22, 17), 60) =  _
+        New DateTime(2016, 11, 22, 0, 22, 0) And _
+        AlignTimestamp(New DateTime(2016, 10, 11, 19, 11, 41), 300) =  _
+        New DateTime(2016, 10, 11, 19, 10, 0) And _
+        AlignTimestamp(New DateTime(2013, 10, 26, 4, 24, 53), 300) =  _
+        New DateTime(2013, 10, 26, 4, 20, 0) And _
+        AlignTimestamp(New DateTime(2014, 5, 2, 2, 52, 41), 300) =  _
+        New DateTime(2014, 5, 2, 2, 50, 0) And _
+        AlignTimestamp(New DateTime(2014, 8, 16, 13, 11, 10), 300) =  _
+        New DateTime(2014, 8, 16, 13, 10, 0) And _
+        AlignTimestamp(New DateTime(2014, 10, 25, 8, 26, 4), 300) =  _
+        New DateTime(2014, 10, 25, 8, 25, 0) And _
+        AlignTimestamp(New DateTime(2015, 6, 2, 18, 36, 24), 3600) =  _
+        New DateTime(2015, 6, 2, 18, 0, 0) And _
+        AlignTimestamp(New DateTime(2016, 11, 21, 16, 24, 27), 3600) =  _
+        New DateTime(2016, 11, 21, 16, 0, 0) And _
+        AlignTimestamp(New DateTime(2014, 4, 4, 8, 42, 10), 3600) =  _
+        New DateTime(2014, 4, 4, 8, 0, 0) And _
+        AlignTimestamp(New DateTime(2016, 2, 22, 19, 8, 41), 3600) =  _
+        New DateTime(2016, 2, 22, 19, 0, 0) And _
+        AlignTimestamp(New DateTime(2015, 9, 13, 22, 48, 17), 3600) =  _
+        New DateTime(2015, 9, 13, 22, 0, 0) And _
+        AlignTimestamp(New DateTime(2016, 10, 20, 2, 47, 48), 86400) =  _
+        New DateTime(2016, 10, 20, 0, 0, 0) And _
+        AlignTimestamp(New DateTime(2014, 2, 8, 23, 12, 34), 86400) =  _
+        New DateTime(2014, 2, 8, 0, 0, 0) And _
+        AlignTimestamp(New DateTime(2016, 2, 27, 23, 40, 39), 86400) =  _
+        New DateTime(2016, 2, 27, 0, 0, 0) And _
+        AlignTimestamp(New DateTime(2015, 8, 26, 9, 35, 55), 86400) =  _
+        New DateTime(2015, 8, 26, 0, 0, 0) And _
+        AlignTimestamp(New DateTime(2016, 2, 11, 0, 44, 7), 86400) =  _
+        New DateTime(2016, 2, 11, 0, 0, 0)
+
       For i = 0 To 19
         If i = 0 Then
           StatisticsData = Statistics({3411, 3067, 3159, 2579, 2604, 3549, _
