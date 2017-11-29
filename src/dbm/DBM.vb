@@ -164,6 +164,33 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Sub PrepareData(InputPointDriver As DBMPointDriverAbstract, _
+      CorrelationPoints As List(Of DBMCorrelationPoint), _
+      StartTimestamp As DateTime, EndTimestamp As DateTime)
+
+      ' Will pass start and end timestamps to PrepareDataIfNeeded method in
+      ' PointDrivers for input and correlation points. The driver can then
+      ' prepare the dataset for which calculations are required in the next
+      ' step, if needed. Useful for retrieving in bulk and caching in memory.
+
+      Dim CorrelationPoint As DBMCorrelationPoint
+
+      StartTimestamp = AlignTimestamp(StartTimestamp, CalculationInterval). _
+        AddSeconds(-(EMAPreviousPeriods+CorrelationPreviousPeriods)* _
+        CalculationInterval).AddDays(-ComparePatterns*7) 'TO DO, CHECK ???!!
+      EndTimestamp = AlignTimestamp(EndTimestamp, CalculationInterval)
+
+      InputPointDriver.PrepareDataIfNeeded(StartTimestamp, EndTimestamp)
+      If CorrelationPoints IsNot Nothing Then
+        For Each CorrelationPoint In CorrelationPoints
+          CorrelationPoint.PointDriver.PrepareDataIfNeeded _
+            (StartTimestamp, EndTimestamp)
+        Next
+      End If
+
+    End Sub
+
+
     Public Function Result(InputPointDriver As DBMPointDriverAbstract, _
       CorrelationPoints As List(Of DBMCorrelationPoint), _
       Timestamp As DateTime) As DBMResult
