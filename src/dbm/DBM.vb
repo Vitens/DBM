@@ -170,8 +170,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Will pass start and end timestamps to PrepareData method for input and
       ' correlation points. The driver can then prepare the dataset for which
-      ' calculations are required in the next step. Useful for retrieving in
-      ' bulk and caching in memory.
+      ' calculations are required in the next step. The (aligned) end time
+      ' itself is excluded. Useful for retrieving in bulk and caching in memory.
 
       Dim CorrelationPoint As DBMCorrelationPoint
 
