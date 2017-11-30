@@ -69,6 +69,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Sub PrepareData(StartTimestamp As DateTime, _
       EndTimestamp As DateTime)
 
+      ' Retrieves an average value for each interval in the time range from
+      ' OSIsoft PI AF and stores this in the Values dictionary.
+
       EndTimestamp = New DateTime(Min(EndTimestamp.Ticks, AlignTimestamp _
         (DirectCast(Point, PIPoint).CurrentValue.Timestamp.LocalTime, _
         CalculationInterval).AddSeconds(CalculationInterval).Ticks), _
@@ -88,6 +91,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Overrides Function GetData(Timestamp As DateTime) As Double
+
+      ' GetData retrieves data from the Values dictionary. Non existing
+      ' timestamps are retrieved from OSIsoft PI AF directly.
 
       Dim Value As Object = Nothing
 
