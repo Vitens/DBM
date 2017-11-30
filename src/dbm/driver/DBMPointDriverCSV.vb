@@ -186,6 +186,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
 
       ' Look up data from memory
+      GetData = Nothing
       If Values.TryGetValue(Timestamp, GetData) Then ' In cache
         Return GetData ' Return value from cache
       Else
