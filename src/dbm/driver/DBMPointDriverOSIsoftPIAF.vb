@@ -79,7 +79,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         EndTimestamp.Kind) ' There is no data beyond snapshot timestamp
 
       If Not Values.ContainsKey(New AFTime(StartTimestamp)) Or _
-        Not Values.ContainsKey(New AFTime(EndTimestamp)) Then ' If no data yet
+        Not Values.ContainsKey(New AFTime(EndTimestamp.AddSeconds _
+        (-CalculationInterval))) Then ' No data yet (test first and last interv)
         Values = DirectCast(Point, PIPoint).Summaries(New AFTimeRange(New _
           AFTime(SpecifyKind(StartTimestamp, Local)), New AFTime(SpecifyKind _
           (EndTimestamp.AddSeconds(CalculationInterval), Local))), New _
