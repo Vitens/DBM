@@ -28,7 +28,7 @@ Option Strict
 ' returned using the DBM.Version function.
 
 
-<assembly:System.Reflection.AssemblyVersion("1.12.10.*")> ' Major.Minor.Rev.*
+<assembly:System.Reflection.AssemblyVersion("1.12.10.*")>
 ' Note: when updating the version number, also modify version in appveyor.yml
 '       for AppVeyor continuous integration to use the same version numbering.
 
