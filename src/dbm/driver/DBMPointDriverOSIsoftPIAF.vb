@@ -67,14 +67,14 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Sub PrepareData(StartTimestamp As DateTime, _
       EndTimestamp As DateTime)
 
-      EndTimestamp = EndTimestamp.AddSeconds(CalculationInterval)
       If Not Values.ContainsKey(New AFTime(StartTimestamp)) Or _
         Not Values.ContainsKey(New AFTime(EndTimestamp)) Then
         Values = DirectCast(Point, PIPoint).Summaries(New AFTimeRange(New _
           AFTime(SpecifyKind(StartTimestamp, Local)), New AFTime(SpecifyKind _
-          (EndTimestamp, Local))), New AFTimeSpan(0, 0, 0, 0, 0, _
-          CalculationInterval, 0), Average, TimeWeighted, EarliestTime).Item _
-          (Average).ToDictionary(Function(k) k.Timestamp, Function(v) v.Value)
+          (EndTimestamp.AddSeconds(CalculationInterval), Local))), New _
+          AFTimeSpan(0, 0, 0, 0, 0, CalculationInterval, 0), Average, _
+          TimeWeighted, EarliestTime).Item(Average).ToDictionary _
+          (Function(k) k.Timestamp, Function(v) v.Value)
       End If
 
     End Sub
