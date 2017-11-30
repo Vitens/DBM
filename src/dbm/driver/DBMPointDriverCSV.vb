@@ -47,7 +47,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     '          parameter.
 
 
-    Private Values As Dictionary(Of DateTime, Double)
+    Private Values As New Dictionary(Of DateTime, Double)
     Private Shared SplitChars As Char() = {","c, "	"c} ' Comma and tab
 
 
@@ -133,20 +133,16 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Overrides Function GetData(Timestamp As DateTime) As Double
-
-      ' Calling GetData for the first time retrieves information from a CSV
-      ' file and stores this in the Values dictionary. Subsequent calls to
-      ' GetData retrieves data from the dictionary directly. Non existing
-      ' timestamps return NaN.
+    Public Overrides Sub PrepareData(StartTimestamp As DateTime, _
+      EndTimestamp As DateTime)
 
       Dim CSVFileName, SerializedCSVFileName, Substrings() As String
       Dim TimestampList As List(Of DateTime)
-      Dim InTimestamp As DateTime
-      Dim InValue As Double
+      Dim Timestamp As DateTime
+      Dim Value As Double
 
-      If Values Is Nothing Then ' No data in memory yet
-        Values = New Dictionary(Of DateTime, Double)
+      Values.Clear
+
         CSVFileName = DirectCast(Point, String)
         If File.Exists(CSVFileName) Then
           SerializedCSVFileName = CSVFileName & ".bin"
@@ -161,11 +157,11 @@ Namespace Vitens.DynamicBandwidthMonitor
                 ' Comma and tab delimiters; split timestamp and value
                 Substrings = StreamReader.ReadLine.Split(SplitChars, 2)
                 If Substrings.Length = 2 Then
-                  If DateTime.TryParse(Substrings(0), InTimestamp) Then
-                    If Double.TryParse(Substrings(1), InValue) Then
-                      TimestampList.Add(InTimestamp)
-                      If Not Values.ContainsKey(InTimestamp) Then
-                        Values.Add(InTimestamp, InValue) ' Add data to dict.
+                  If DateTime.TryParse(Substrings(0), Timestamp) Then
+                    If Double.TryParse(Substrings(1), Value) Then
+                      TimestampList.Add(Timestamp)
+                      If Not Values.ContainsKey(Timestamp) Then
+                        Values.Add(Timestamp, Value) ' Add data to dict.
                       End If
                     End If
                   End If
@@ -183,7 +179,13 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' File Not Found Exception.
           Throw New FileNotFoundException(DirectCast(Point, String))
         End If
-      End If
+
+    End Sub
+
+
+    Public Overrides Function GetData(Timestamp As DateTime) As Double
+
+      If Values.Count = 0 Then PrepareData(Nothing, Nothing)
 
       ' Look up data from memory
       GetData = Nothing

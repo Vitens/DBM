@@ -92,7 +92,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Value As Object = Nothing
 
       ' Look up data from memory
-      If Values.TryGetValue(New AFTime(Timestamp), Value) Then
+      If Values.TryGetValue(New AFTime(Timestamp), Value) Then ' In cache
         Return DirectCast(Value, Double) ' Return value from cache
       Else
         Return DirectCast(DirectCast(Point, PIPoint).Summary(New AFTimeRange _
