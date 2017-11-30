@@ -176,8 +176,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim CorrelationPoint As DBMCorrelationPoint
 
       StartTimestamp = AlignTimestamp(StartTimestamp, CalculationInterval). _
-        AddSeconds(-(EMAPreviousPeriods+CorrelationPreviousPeriods)* _
-        CalculationInterval).AddDays(-ComparePatterns*7) 'TO DO, CHECK ???!!
+        AddSeconds((EMAPreviousPeriods+CorrelationPreviousPeriods)* _
+        -CalculationInterval).AddDays(ComparePatterns*-7)
       EndTimestamp = AlignTimestamp(EndTimestamp, CalculationInterval)
 
       InputPointDriver.PrepareDataIfNeeded(StartTimestamp, EndTimestamp)
