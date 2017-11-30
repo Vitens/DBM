@@ -184,7 +184,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Overrides Function GetData(Timestamp As DateTime) As Double
 
-      If Values.Count = 0 Then PrepareData(Nothing, Nothing)
+      If Values.Count = 0 Then PrepareData(DateTime.MinValue, DateTime.MaxValue)
 
       ' Look up data from memory
       GetData = Nothing
