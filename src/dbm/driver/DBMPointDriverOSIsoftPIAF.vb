@@ -29,6 +29,7 @@ Imports System.Collections.Generic
 Imports System.DateTime
 Imports System.DateTimeKind
 Imports System.Double
+Imports System.Math
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Data.AFCalculationBasis
@@ -36,6 +37,7 @@ Imports OSIsoft.AF.Data.AFSummaryTypes
 Imports OSIsoft.AF.Data.AFTimestampCalculation
 Imports OSIsoft.AF.PI
 Imports OSIsoft.AF.Time
+Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
@@ -66,6 +68,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Overrides Sub PrepareData(StartTimestamp As DateTime, _
       EndTimestamp As DateTime)
+
+      EndTimestamp = New DateTime(Min(EndTimestamp.Ticks, AlignTimestamp _
+        (DirectCast(Point, PIPoint).CurrentValue.Timestamp.LocalTime, _
+        CalculationInterval).AddSeconds(CalculationInterval).Ticks), _
+        EndTimestamp.Kind) ' No data beyond snapshot
+        ' TODO should endtime be extended by one interval as above or not?
 
       If Not Values.ContainsKey(New AFTime(StartTimestamp)) Or _
         Not Values.ContainsKey(New AFTime(EndTimestamp)) Then
