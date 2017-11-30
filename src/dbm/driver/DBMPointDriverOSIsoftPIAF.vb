@@ -75,10 +75,11 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim SnapshotLimitedEndTimestamp As DateTime
 
-      SnapshotLimitedEndTimestamp = New DateTime(Min(EndTimestamp.Ticks, _
-        AlignTimestamp(DirectCast(Point, PIPoint).CurrentValue.Timestamp.
-        LocalTime, CalculationInterval).AddSeconds(CalculationInterval). _
-        Ticks), EndTimestamp.Kind) ' There is no data beyond snapshot timestamp
+      SnapshotLimitedEndTimestamp = New DateTime(Max(StartTimestamp.AddSeconds _
+        (CalculationInterval).Ticks, Min(EndTimestamp.Ticks, AlignTimestamp _
+        (DirectCast(Point, PIPoint).CurrentValue.Timestamp.LocalTime, _
+        CalculationInterval).AddSeconds(CalculationInterval). Ticks)), _
+        EndTimestamp.Kind) ' There is no data beyond snapshot timestamp
 
       If Not Values.ContainsKey(New AFTime(StartTimestamp)) Or _
         Not Values.ContainsKey(New AFTime(SnapshotLimitedEndTimestamp. _
