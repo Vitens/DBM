@@ -142,43 +142,42 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Value As Double
 
       Values.Clear
-
-        CSVFileName = DirectCast(Point, String)
-        If File.Exists(CSVFileName) Then
-          SerializedCSVFileName = CSVFileName & ".bin"
-          If File.Exists(SerializedCSVFileName) And _
-            File.GetLastWriteTime(CSVFileName) < _
-            File.GetLastWriteTime(SerializedCSVFileName) Then
-            LoadBinaryData(SerializedCSVFileName)
-          Else
-            TimestampList = New List(Of DateTime)
-            Using StreamReader As New StreamReader(DirectCast(Point, String))
-              Do While Not StreamReader.EndOfStream
-                ' Comma and tab delimiters; split timestamp and value
-                Substrings = StreamReader.ReadLine.Split(SplitChars, 2)
-                If Substrings.Length = 2 Then
-                  If DateTime.TryParse(Substrings(0), Timestamp) Then
-                    If Double.TryParse(Substrings(1), Value) Then
-                      TimestampList.Add(Timestamp)
-                      If Not Values.ContainsKey(Timestamp) Then
-                        Values.Add(Timestamp, Value) ' Add data to dict.
-                      End If
+      CSVFileName = DirectCast(Point, String)
+      If File.Exists(CSVFileName) Then
+        SerializedCSVFileName = CSVFileName & ".bin"
+        If File.Exists(SerializedCSVFileName) And _
+          File.GetLastWriteTime(CSVFileName) < _
+          File.GetLastWriteTime(SerializedCSVFileName) Then
+          LoadBinaryData(SerializedCSVFileName)
+        Else
+          TimestampList = New List(Of DateTime)
+          Using StreamReader As New StreamReader(DirectCast(Point, String))
+            Do While Not StreamReader.EndOfStream
+              ' Comma and tab delimiters; split timestamp and value
+              Substrings = StreamReader.ReadLine.Split(SplitChars, 2)
+              If Substrings.Length = 2 Then
+                If DateTime.TryParse(Substrings(0), Timestamp) Then
+                  If Double.TryParse(Substrings(1), Value) Then
+                    TimestampList.Add(Timestamp)
+                    If Not Values.ContainsKey(Timestamp) Then
+                      Values.Add(Timestamp, Value) ' Add data to dictionary
                     End If
                   End If
                 End If
-              Loop
-            End Using ' Close CSV file
-            If IsEquidistantList(TimestampList) Then
-              ' In case of equidistant timestamps: serialize the Values
-              ' dictionary to speed up the next run on the same data.
-              SaveBinaryData(SerializedCSVFileName, TimestampList)
-            End If
+              End If
+            Loop
+          End Using ' Close CSV file
+          If IsEquidistantList(TimestampList) Then
+            ' In case of equidistant timestamps: serialize the Values
+            ' dictionary to speed up the next run on the same data.
+            SaveBinaryData(SerializedCSVFileName, TimestampList)
           End If
-        Else
-          ' If Point does not represent a valid, existing file then throw a
-          ' File Not Found Exception.
-          Throw New FileNotFoundException(DirectCast(Point, String))
         End If
+      Else
+        ' If Point does not represent a valid, existing file then throw a
+        ' File Not Found Exception.
+        Throw New FileNotFoundException(DirectCast(Point, String))
+      End If
 
     End Sub
 
