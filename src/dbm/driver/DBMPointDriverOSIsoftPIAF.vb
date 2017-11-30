@@ -70,7 +70,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       EndTimestamp As DateTime)
 
       ' Retrieves an average value for each interval in the time range from
-      ' OSIsoft PI AF and stores this in the Values dictionary.
+      ' OSIsoft PI AF and stores this in the Values dictionary. The (aligned)
+      ' end time itself is excluded.
 
       EndTimestamp = New DateTime(Min(EndTimestamp.Ticks, AlignTimestamp _
         (DirectCast(Point, PIPoint).CurrentValue.Timestamp.LocalTime, _

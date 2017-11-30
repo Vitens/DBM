@@ -184,6 +184,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       timeContext As AFTimeRange, numberOfValues As Integer, _
       inputAttributes As AFAttributeList, inputValues As AFValues()) As AFValues
 
+      ' Returns values for each interval in a time range. The (aligned) end time
+      ' itself is excluded.
+
       If InputPointDriver Is Nothing Then GetInputAndCorrelationPoints
 
       _DBM.PrepareData(InputPointDriver, CorrelationPoints, _

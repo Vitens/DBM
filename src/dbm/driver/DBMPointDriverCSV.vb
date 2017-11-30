@@ -137,8 +137,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       EndTimestamp As DateTime)
 
       ' Retrieves information from a CSV file and stores this in the Values
-      ' dictionary. Timestamps are ignored and all data in the (serialized)
-      ' CSV is loaded into memory.
+      ' dictionary. Passed timestamps are ignored and all data in the
+      ' (serialized) CSV is loaded into memory.
 
       Dim CSVFileName, SerializedCSVFileName, Substrings() As String
       Dim TimestampList As List(Of DateTime)
