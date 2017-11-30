@@ -69,9 +69,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Values = DirectCast(Point, PIPoint).Summaries(New AFTimeRange(New _
         AFTime(SpecifyKind(StartTimestamp, Local)), New AFTime( _
-        SpecifyKind(EndTimestamp, Local))), New AFTimeSpan(0, 0, 0, 0, 0, _
-        CalculationInterval, 0), Average, TimeWeighted, EarliestTime). _
-        Item(Average).ToDictionary(Function(k) k.Timestamp, Function(v) v.Value)
+        SpecifyKind(EndTimestamp.AddSeconds(CalculationInterval), Local))), _
+        New AFTimeSpan(0, 0, 0, 0, 0, CalculationInterval, 0), Average, _
+        TimeWeighted, EarliestTime).Item(Average).ToDictionary _
+        (Function(k) k.Timestamp, Function(v) v.Value)
 
     End Sub
 

@@ -47,8 +47,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Sub PrepareDataIfNeeded(StartTimestamp As DateTime, _
       EndTimestamp As DateTime)
 
-      If PrepDataStartTimestamp = MinValue Or _
-        StartTimestamp < PrepDataStartTimestamp Or _
+      If StartTimestamp < PrepDataStartTimestamp Or _
         PrepDataEndTimestamp = MinValue Or _
         EndTimestamp > PrepDataEndTimestamp Then
         PrepDataStartTimestamp = StartTimestamp
