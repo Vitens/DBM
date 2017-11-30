@@ -25,13 +25,20 @@ Option Strict
 
 
 Imports System
+Imports System.Collections.Generic
 Imports System.DateTime
 Imports System.DateTimeKind
+Imports System.Double
+Imports System.Math
+Imports OSIsoft.AF.Asset
+Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Data.AFCalculationBasis
 Imports OSIsoft.AF.Data.AFSummaryTypes
 Imports OSIsoft.AF.Data.AFTimestampCalculation
 Imports OSIsoft.AF.PI
 Imports OSIsoft.AF.Time
+Imports Vitens.DynamicBandwidthMonitor.DBMMath
+Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
 ' Assembly title
@@ -49,6 +56,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Identifier (Point): OSIsoft.AF.PI.PIPoint (PI tag)
 
 
+    Private Values As New Dictionary(Of AFTime, Object)
+
+
     Public Sub New(Point As Object)
 
       MyBase.New(Point)
@@ -56,13 +66,55 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Overrides Function GetData(StartTimestamp As DateTime, _
-      EndTimestamp As DateTime) As Double
+    Public Overrides Sub PrepareData(StartTimestamp As DateTime, _
+      EndTimestamp As DateTime)
 
-      Return DirectCast(DirectCast(Point, PIPoint).Summary(New AFTimeRange _
-        (New AFTime(SpecifyKind(StartTimestamp, Local)), New AFTime _
-        (SpecifyKind(EndTimestamp, Local))), Average, TimeWeighted, _
-        EarliestTime).Item(Average).Value, Double)
+      ' Retrieves an average value for each interval in the time range from
+      ' OSIsoft PI AF and stores this in the Values dictionary. The (aligned)
+      ' end time itself is excluded.
+
+      Dim SnapshotLimitedEndTimestamp As DateTime
+
+      SnapshotLimitedEndTimestamp = New DateTime(Max(StartTimestamp.Ticks, _
+        Min(EndTimestamp.Ticks, AlignTimestamp(DirectCast(Point, PIPoint). _
+        CurrentValue.Timestamp.LocalTime, CalculationInterval).AddSeconds _
+        (CalculationInterval). Ticks)), EndTimestamp.Kind) ' Not beyond snapshot
+
+      If Not Values.ContainsKey(New AFTime(StartTimestamp)) Or _
+        Not Values.ContainsKey(New AFTime(EndTimestamp.AddSeconds _
+        (-CalculationInterval))) Then ' No data yet
+        Values = DirectCast(Point, PIPoint).Summaries(New AFTimeRange(New _
+          AFTime(SpecifyKind(StartTimestamp, Local)), New AFTime(SpecifyKind _
+          (SnapshotLimitedEndTimestamp, Local))), New AFTimeSpan(0, 0, 0, 0, _
+          0, CalculationInterval, 0), Average, TimeWeighted, EarliestTime). _
+          Item(Average).ToDictionary(Function(k) k.Timestamp, _
+          Function(v) v.Value) ' Store avgs in dict
+        Do While SnapshotLimitedEndTimestamp < EndTimestamp ' Fill with NaNs
+          Values.Add(SnapshotLimitedEndTimestamp, NaN)
+          SnapshotLimitedEndTimestamp = SnapshotLimitedEndTimestamp. _
+            AddSeconds(CalculationInterval)
+        Loop
+      End If
+
+    End Sub
+
+
+    Public Overrides Function GetData(Timestamp As DateTime) As Double
+
+      ' GetData retrieves data from the Values dictionary. Non existing
+      ' timestamps are retrieved from OSIsoft PI AF directly.
+
+      Dim Value As Object = Nothing
+
+      ' Look up data from memory
+      If Values.TryGetValue(New AFTime(Timestamp), Value) Then ' In cache
+        Return DirectCast(Value, Double) ' Return value from cache
+      Else
+        Return DirectCast(DirectCast(Point, PIPoint).Summary(New AFTimeRange _
+          (New AFTime(SpecifyKind(Timestamp, Local)), New AFTime(SpecifyKind _
+          (Timestamp.AddSeconds(CalculationInterval), Local))), Average, _
+          TimeWeighted, EarliestTime).Item(Average).Value, Double) ' Get average
+      End If
 
     End Function
 
