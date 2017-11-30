@@ -158,7 +158,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           EndTimestamp = EndTimestamp.AddSeconds(-CalculationInterval)
         End If
         _DBM.PrepareData(InputPointDriver, CorrelationPoints, _
-          StartTimestamp, EndTimestamp)
+          StartTimestamp, EndTimestamp.AddSeconds(CalculationInterval))
         Do While StartTimestamp <= EndTimestamp
           Line = New StringBuilder
           Result = _DBM.Result _
