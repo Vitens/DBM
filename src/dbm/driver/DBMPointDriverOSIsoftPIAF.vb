@@ -73,20 +73,27 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' OSIsoft PI AF and stores this in the Values dictionary. The (aligned)
       ' end time itself is excluded.
 
-      EndTimestamp = New DateTime(Min(EndTimestamp.Ticks, AlignTimestamp _
-        (DirectCast(Point, PIPoint).CurrentValue.Timestamp.LocalTime, _
-        CalculationInterval).AddSeconds(CalculationInterval).Ticks), _
-        EndTimestamp.Kind) ' There is no data beyond snapshot timestamp
+      Dim SnapshotLimitedEndTimestamp As DateTime
+
+      SnapshotLimitedEndTimestamp = New DateTime(Min(EndTimestamp.Ticks, _
+        AlignTimestamp(DirectCast(Point, PIPoint).CurrentValue.Timestamp.
+        LocalTime, CalculationInterval).AddSeconds(CalculationInterval). _
+        Ticks), EndTimestamp.Kind) ' There is no data beyond snapshot timestamp
 
       If Not Values.ContainsKey(New AFTime(StartTimestamp)) Or _
-        Not Values.ContainsKey(New AFTime(EndTimestamp.AddSeconds _
-        (-CalculationInterval))) Then ' No data yet (test first and last interv)
+        Not Values.ContainsKey(New AFTime(SnapshotLimitedEndTimestamp. _
+        AddSeconds(-CalculationInterval))) Then ' No data yet
         Values = DirectCast(Point, PIPoint).Summaries(New AFTimeRange(New _
           AFTime(SpecifyKind(StartTimestamp, Local)), New AFTime(SpecifyKind _
-          (EndTimestamp.AddSeconds(CalculationInterval), Local))), New _
-          AFTimeSpan(0, 0, 0, 0, 0, CalculationInterval, 0), Average, _
-          TimeWeighted, EarliestTime).Item(Average).ToDictionary _
-          (Function(k) k.Timestamp, Function(v) v.Value) ' Store avgs in dict
+          (SnapshotLimitedEndTimestamp, Local))), New AFTimeSpan(0, 0, 0, 0, _
+          0, CalculationInterval, 0), Average, TimeWeighted, EarliestTime). _
+          Item(Average).ToDictionary(Function(k) k.Timestamp, _
+          Function(v) v.Value) ' Store avgs in dict
+        Do While SnapshotLimitedEndTimestamp < EndTimestamp ' Fill with NaNs
+          Values.Add(SnapshotLimitedEndTimestamp, NaN)
+          SnapshotLimitedEndTimestamp = SnapshotLimitedEndTimestamp. _
+            AddSeconds(CalculationInterval)
+        Loop
       End If
 
     End Sub
