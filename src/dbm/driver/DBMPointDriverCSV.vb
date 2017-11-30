@@ -136,6 +136,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Sub PrepareData(StartTimestamp As DateTime, _
       EndTimestamp As DateTime)
 
+      ' Retrieves information from a CSV file and stores this in the
+      ' Values dictionary.
+
       Dim CSVFileName, SerializedCSVFileName, Substrings() As String
       Dim TimestampList As List(Of DateTime)
       Dim Timestamp As DateTime
@@ -183,6 +186,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Overrides Function GetData(Timestamp As DateTime) As Double
+
+      ' GetData retrieves data from the Values dictionary. Non existing
+      ' timestamps return NaN.
 
       If Values.Count = 0 Then PrepareData(DateTime.MinValue, DateTime.MaxValue)
 
