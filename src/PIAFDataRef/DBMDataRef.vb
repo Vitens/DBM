@@ -188,6 +188,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       _DBM.PrepareData(InputPointDriver, CorrelationPoints, _
         timeContext.StartTime.LocalTime, timeContext.EndTime.LocalTime)
+
       GetValues = New AFValues
       Do While timeContext.EndTime > timeContext.StartTime
         GetValues.Add(GetValue(Nothing, timeContext.StartTime, _
