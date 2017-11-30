@@ -24,9 +24,6 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 
-Imports System.DateTime
-
-
 Namespace Vitens.DynamicBandwidthMonitor
 
 
@@ -34,26 +31,11 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Point As Object
-    Public PrepDataStartTimestamp, PrepDataEndTimestamp As DateTime
 
 
     Public Sub New(Point As Object)
 
       Me.Point = Point
-
-    End Sub
-
-
-    Public Sub PrepareDataIfNeeded(StartTimestamp As DateTime, _
-      EndTimestamp As DateTime)
-
-      If StartTimestamp < PrepDataStartTimestamp Or _
-        PrepDataEndTimestamp = MinValue Or _
-        EndTimestamp > PrepDataEndTimestamp Then
-        PrepDataStartTimestamp = StartTimestamp
-        PrepDataEndTimestamp = EndTimestamp
-        PrepareData(StartTimestamp, EndTimestamp)
-      End If
 
     End Sub
 
