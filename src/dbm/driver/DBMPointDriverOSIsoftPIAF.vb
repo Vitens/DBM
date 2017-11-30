@@ -72,26 +72,22 @@ Namespace Vitens.DynamicBandwidthMonitor
       EndTimestamp = New DateTime(Min(EndTimestamp.Ticks, AlignTimestamp _
         (DirectCast(Point, PIPoint).CurrentValue.Timestamp.LocalTime, _
         CalculationInterval).AddSeconds(CalculationInterval).Ticks), _
-        EndTimestamp.Kind) ' No data beyond snapshot
-        ' TODO should endtime be extended by one interval as above or not?
+        EndTimestamp.Kind) ' There is no data beyond snapshot timestamp
 
       If Not Values.ContainsKey(New AFTime(StartTimestamp)) Or _
-        Not Values.ContainsKey(New AFTime(EndTimestamp)) Then
+        Not Values.ContainsKey(New AFTime(EndTimestamp)) Then ' If no data yet
         Values = DirectCast(Point, PIPoint).Summaries(New AFTimeRange(New _
           AFTime(SpecifyKind(StartTimestamp, Local)), New AFTime(SpecifyKind _
           (EndTimestamp.AddSeconds(CalculationInterval), Local))), New _
           AFTimeSpan(0, 0, 0, 0, 0, CalculationInterval, 0), Average, _
           TimeWeighted, EarliestTime).Item(Average).ToDictionary _
-          (Function(k) k.Timestamp, Function(v) v.Value)
+          (Function(k) k.Timestamp, Function(v) v.Value) ' Store avgs in dict
       End If
 
     End Sub
 
 
     Public Overrides Function GetData(Timestamp As DateTime) As Double
-
-      ' GetData retrieves data from the Values dictionary. Non existing
-      ' timestamps return NaN.
 
       Dim Value As Object = Nothing
 
@@ -102,7 +98,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Return DirectCast(DirectCast(Point, PIPoint).Summary(New AFTimeRange _
           (New AFTime(SpecifyKind(Timestamp, Local)), New AFTime(SpecifyKind _
           (Timestamp.AddSeconds(CalculationInterval), Local))), Average, _
-          TimeWeighted, EarliestTime).Item(Average).Value, Double)
+          TimeWeighted, EarliestTime).Item(Average).Value, Double) ' Get average
       End If
 
     End Function
