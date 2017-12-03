@@ -26,8 +26,6 @@ Option Strict
 
 Imports System
 Imports System.Collections.Generic
-Imports System.DateTime
-Imports System.DateTimeKind
 Imports System.Double
 Imports System.Math
 Imports OSIsoft.AF.Asset
@@ -78,17 +76,16 @@ Namespace Vitens.DynamicBandwidthMonitor
       SnapshotLimitedEndTimestamp = New DateTime(Max(StartTimestamp.Ticks, _
         Min(EndTimestamp.Ticks, AlignTimestamp(DirectCast(Point, PIPoint). _
         CurrentValue.Timestamp.LocalTime, CalculationInterval).AddSeconds _
-        (CalculationInterval). Ticks)), EndTimestamp.Kind) ' Not beyond snapshot
+        (CalculationInterval). Ticks))) ' No data beyond snapshot
 
       If Not Values.ContainsKey(New AFTime(StartTimestamp)) Or _
         Not Values.ContainsKey(New AFTime(EndTimestamp.AddSeconds _
         (-CalculationInterval))) Then ' No data yet
         Values = DirectCast(Point, PIPoint).Summaries(New AFTimeRange(New _
-          AFTime(SpecifyKind(StartTimestamp, Local)), New AFTime(SpecifyKind _
-          (SnapshotLimitedEndTimestamp, Local))), New AFTimeSpan(0, 0, 0, 0, _
-          0, CalculationInterval, 0), Average, TimeWeighted, EarliestTime). _
-          Item(Average).ToDictionary(Function(k) k.Timestamp, _
-          Function(v) v.Value) ' Store avgs in dict
+          AFTime(StartTimestamp), New AFTime(SnapshotLimitedEndTimestamp)), _
+          New AFTimeSpan(0, 0, 0, 0, 0, CalculationInterval, 0), Average, _
+          TimeWeighted, EarliestTime).Item(Average).ToDictionary(Function(k) _
+          k.Timestamp, Function(v) v.Value) ' Store averages in dictionary
         Do While SnapshotLimitedEndTimestamp < EndTimestamp ' Fill with NaNs
           Values.Add(SnapshotLimitedEndTimestamp, NaN)
           SnapshotLimitedEndTimestamp = SnapshotLimitedEndTimestamp. _
@@ -111,9 +108,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         Return DirectCast(Value, Double) ' Return value from cache
       Else
         Return DirectCast(DirectCast(Point, PIPoint).Summary(New AFTimeRange _
-          (New AFTime(SpecifyKind(Timestamp, Local)), New AFTime(SpecifyKind _
-          (Timestamp.AddSeconds(CalculationInterval), Local))), Average, _
-          TimeWeighted, EarliestTime).Item(Average).Value, Double) ' Get average
+          (New AFTime(Timestamp), New AFTime(Timestamp.AddSeconds _
+          (CalculationInterval))), Average, TimeWeighted, EarliestTime). _
+          Item(Average).Value, Double) ' Get average
       End If
 
     End Function
