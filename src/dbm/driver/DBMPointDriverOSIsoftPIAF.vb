@@ -71,26 +71,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' OSIsoft PI AF and stores this in the Values dictionary. The (aligned)
       ' end time itself is excluded.
 
-      Dim SnapshotLimitedEndTimestamp As DateTime
-
-      SnapshotLimitedEndTimestamp = New DateTime(Max(StartTimestamp.Ticks, _
-        Min(EndTimestamp.Ticks, AlignTimestamp(DirectCast(Point, PIPoint). _
-        CurrentValue.Timestamp.LocalTime, CalculationInterval).AddSeconds _
-        (CalculationInterval). Ticks))) ' No data beyond snapshot
-
       If Not Values.ContainsKey(New AFTime(StartTimestamp)) Or _
         Not Values.ContainsKey(New AFTime(EndTimestamp.AddSeconds _
         (-CalculationInterval))) Then ' No data yet
         Values = DirectCast(Point, PIPoint).Summaries(New AFTimeRange(New _
-          AFTime(StartTimestamp), New AFTime(SnapshotLimitedEndTimestamp)), _
-          New AFTimeSpan(0, 0, 0, 0, 0, CalculationInterval, 0), Average, _
-          TimeWeighted, EarliestTime).Item(Average).ToDictionary(Function(k) _
-          k.Timestamp, Function(v) v.Value) ' Store averages in dictionary
-        Do While SnapshotLimitedEndTimestamp < EndTimestamp ' Fill with NaNs
-          Values.Add(SnapshotLimitedEndTimestamp, NaN)
-          SnapshotLimitedEndTimestamp = SnapshotLimitedEndTimestamp. _
-            AddSeconds(CalculationInterval)
-        Loop
+          AFTime(StartTimestamp), New AFTime(EndTimestamp)), New AFTimeSpan(0, _
+          0, 0, 0, 0, CalculationInterval, 0), Average, TimeWeighted, _
+          EarliestTime).Item(Average).ToDictionary(Function(k) k.Timestamp, _
+          Function(v) v.Value) ' Store averages in dictionary
       End If
 
     End Sub
