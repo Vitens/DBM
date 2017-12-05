@@ -94,14 +94,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
-    Private Function StringToPIPoint(Point As String) As PIPoint
-
-      Return PIPoint.FindPIPoints(PIServer.FindPIServer(Point.Split("\"c)(2). _
-        Split("?"c)(0)), Point.Split("\"c)(3).Split("?"c)(0))(0)
-
-    End Function
-
-
     Private Sub GetInputAndCorrelationPoints
 
       Dim Element, ParentElement, SiblingElement As AFElement
@@ -110,8 +102,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         Element = DirectCast(Attribute.Element, AFElement)
         ParentElement = Element.Parent
-        InputPointDriver = New DBMPointDriver(StringToPIPoint _
-          (Attribute.Parent.ConfigString)) ' Parent attribute
+        InputPointDriver = New DBMPointDriver(Attribute.Parent.PIPoint) ' Parent
         CorrelationPoints = New List(Of DBMCorrelationPoint)
 
         ' Find siblings
@@ -120,9 +111,9 @@ Namespace Vitens.DynamicBandwidthMonitor
             If Not SiblingElement.UniqueID.Equals(Element.UniqueID) And _
               SiblingElement.Template.UniqueID.Equals _
               (Element.Template.UniqueID) Then ' Same template, skip self
-              CorrelationPoints.Add(New DBMCorrelationPoint _
-                (New DBMPointDriver(StringToPIPoint(SiblingElement.
-                Attributes(Attribute.Parent.Name).ConfigString)), False))
+              CorrelationPoints.Add(New DBMCorrelationPoint(New _
+                DBMPointDriver(SiblingElement.Attributes(Attribute.Parent. _
+                Name).PIPoint), False))
             End If
           Next
         End If
@@ -132,8 +123,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           If ParentElement.Template.UniqueID.Equals _
             (Element.Template.UniqueID) Then ' Same template
             CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver _
-              (StringToPIPoint(ParentElement.Attributes(Attribute.Parent. _
-              Name).ConfigString)), True))
+              (ParentElement.Attributes(Attribute.Parent.Name).PIPoint), True))
           End If
           ParentElement = ParentElement.Parent
         Loop
