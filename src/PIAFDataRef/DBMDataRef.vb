@@ -139,7 +139,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim Timestamp As AFTime
       Dim Result As DBMResult
-      Dim Value As Double
+      Dim Value As New AFValue
 
       If InputPointDriver Is Nothing Then GetInputAndCorrelationPoints
 
@@ -153,19 +153,23 @@ Namespace Vitens.DynamicBandwidthMonitor
       Result = _DBM.Result(InputPointDriver, CorrelationPoints, _
         Timestamp.LocalTime)
 
-      If Attribute.Name.Equals("Factor") Then
-        Value = Result.Factor
-      ElseIf Attribute.Name.Equals("MeasuredValue") Then
-        Value = Result.PredictionData.MeasuredValue
-      ElseIf Attribute.Name.Equals("PredictedValue") Then
-        Value = Result.PredictionData.PredictedValue
-      ElseIf Attribute.Name.Equals("LowerControlLimit") Then
-        Value = Result.PredictionData.LowerControlLimit
-      ElseIf Attribute.Name.Equals("UpperControlLimit") Then
-        Value = Result.PredictionData.UpperControlLimit
-      End If
+      With Result.PredictionData
+        If Attribute.Name.Equals("Factor") Then
+          Value = New AFValue(Result.Factor, Result.Timestamp)
+        ElseIf Attribute.Name.Equals("MeasuredValue") Then
+          Value = New AFValue(.MeasuredValue, Result.Timestamp)
+          Value.Questionable = Result.Factor <> 0 And _
+            Result.Factor = Result.OriginalFactor ' Unsuppressed exception
+        ElseIf Attribute.Name.Equals("PredictedValue") Then
+          Value = New AFValue(.PredictedValue, Result.Timestamp)
+        ElseIf Attribute.Name.Equals("LowerControlLimit") Then
+          Value = New AFValue(.LowerControlLimit, Result.Timestamp)
+        ElseIf Attribute.Name.Equals("UpperControlLimit") Then
+          Value = New AFValue(.UpperControlLimit, Result.Timestamp)
+        End If
+      End With
 
-      Return New AFValue(Value, Result.Timestamp)
+      Return Value
 
     End Function
 
