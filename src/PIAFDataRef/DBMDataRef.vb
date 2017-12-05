@@ -82,18 +82,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
-    Public Overrides Property ConfigString As String
-
-      Get
-        Return DBM.Version
-      End Get
-
-      Set
-      End Set
-
-    End Property
-
-
     Private Sub GetInputAndCorrelationPoints
 
       Dim Element, ParentElement, SiblingElement As AFElement
