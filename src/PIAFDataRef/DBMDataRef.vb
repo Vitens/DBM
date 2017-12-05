@@ -99,9 +99,12 @@ Namespace Vitens.DynamicBandwidthMonitor
             If Not SiblingElement.UniqueID.Equals(Element.UniqueID) And _
               SiblingElement.Template.UniqueID.Equals _
               (Element.Template.UniqueID) Then ' Same template, skip self
-              CorrelationPoints.Add(New DBMCorrelationPoint(New _
-                DBMPointDriver(SiblingElement.Attributes(Attribute.Parent. _
-                Name).PIPoint), False))
+              Try ' Catch exception if PIPoint does not exist
+                CorrelationPoints.Add(New DBMCorrelationPoint(New _
+                  DBMPointDriver(SiblingElement.Attributes(Attribute.Parent. _
+                  Name).PIPoint), False))
+              Catch
+              End Try
             End If
           Next
         End If
@@ -110,8 +113,12 @@ Namespace Vitens.DynamicBandwidthMonitor
         Do While ParentElement IsNot Nothing
           If ParentElement.Template.UniqueID.Equals _
             (Element.Template.UniqueID) Then ' Same template
-            CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver _
-              (ParentElement.Attributes(Attribute.Parent.Name).PIPoint), True))
+            Try ' Catch exception if PIPoint does not exist
+              CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver _
+                (ParentElement.Attributes(Attribute.Parent.Name).PIPoint), _
+                True))
+            Catch
+            End Try
           End If
           ParentElement = ParentElement.Parent
         Loop
