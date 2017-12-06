@@ -24,6 +24,7 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 
+Imports System.Double
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
@@ -91,6 +92,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           Factor = (MeasuredValueEMA-PredictedValueEMA)/ _
             (UpperControlLimitEMA-PredictedValueEMA)
         End If
+        If IsNaN(MeasuredValueEMA) Then Factor = NaN ' No factor if no data
         ' Store original factor before possible suppression.
         OriginalFactor = Factor
       End If
