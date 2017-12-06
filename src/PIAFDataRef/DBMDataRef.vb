@@ -47,7 +47,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Inherits AFDataReference
 
 
-    Private Shared _DBM As New DBM
+    Private _DBM As New DBM
     Private InputPointDriver As DBMPointDriver
     Private CorrelationPoints As List(Of DBMCorrelationPoint)
 
