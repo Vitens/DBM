@@ -24,6 +24,9 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 
+Imports System.Double
+
+
 Namespace Vitens.DynamicBandwidthMonitor
 
 
@@ -43,6 +46,19 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overridable Sub PrepareData(StartTimestamp As DateTime, _
       EndTimestamp As DateTime)
     End Sub
+
+
+    Public Function TryGetData(Timestamp As DateTime) As Double
+
+      Try
+        TryGetData = GetData(Timestamp)
+      Catch
+        TryGetData = NaN ' Error getting data, return Not a Number
+      End Try
+
+      Return TryGetData
+
+    End Function
 
 
     Public MustOverride Function GetData(Timestamp As DateTime) As Double

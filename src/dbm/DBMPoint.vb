@@ -36,7 +36,7 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMPoint
 
 
-    Public DataManager As DBMDataManager
+    Public PointDriver As DBMPointDriverAbstract
     Private PredictionsSubtractPoint As DBMPoint
     Private PredictionsData As New Dictionary(Of DateTime, DBMPredictionData)
     Private PredictionsQueue As New Queue(Of DateTime) ' Insertion order queue
@@ -44,11 +44,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Sub New(PointDriver As DBMPointDriverAbstract)
 
-      ' Each DBMPoint has a DBMDataManager which is responsible for retrieving
-      ' input data. The Data Manager stores and uses a DBMPointDriverAbstract
-      ' object, which has a GetData method used for retrieving data.
-
-      DataManager = New DBMDataManager(PointDriver)
+      Me.PointDriver = PointDriver
 
     End Sub
 
@@ -96,10 +92,11 @@ Namespace Vitens.DynamicBandwidthMonitor
               For PatternCounter = 0 To ComparePatterns ' Data for regression.
                 PatternTimestamp = PredictionTimestamp. _
                   AddDays(-(ComparePatterns-PatternCounter)*7)
-                Patterns(PatternCounter) = DataManager.Value(PatternTimestamp)
+                Patterns(PatternCounter) = _
+                  PointDriver.TryGetData(PatternTimestamp)
                 If SubtractPoint IsNot Nothing Then ' Subtract input if needed.
                   Patterns(PatternCounter) -= _
-                    SubtractPoint.DataManager.Value(PatternTimestamp)
+                    SubtractPoint.PointDriver.TryGetData(PatternTimestamp)
                 End If
               Next PatternCounter
               PredictionData = Prediction(Patterns)
