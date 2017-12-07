@@ -37,9 +37,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' This class contains default values for several parameters which DBM uses
     ' for its calculations. The values for these parameters can be changed
     ' at runtime.
-    ' The default parameter values where determined by analysing the results
+    ' The default parameter values were determined by analysing the results
     ' of a particle swarm optimization method using real production data from
-    ' Vitens, and then manually tweaking these for optimal results and
+    ' Vitens, and then manually tweaking these values for optimal results and
     ' performance.
 
 
