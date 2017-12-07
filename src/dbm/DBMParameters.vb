@@ -53,8 +53,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared ComparePatterns As Integer = 18
 
     ' Number of previous intervals used to smooth the data.
-    ' Default: 11 (Avg:22.5 SD:1.658 Delta:-51.1%), one hour (reduced to
-    '  minimize lag)
+    ' Default: 11 intervals (Avg:22.5 SD:1.658 Delta:-51.1%), one hour (reduced
+    '  to minimize lag)
     Public Shared EMAPreviousPeriods As Integer = _
       CInt(1*3600/CalculationInterval-1)
 
@@ -65,7 +65,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     ' Number of previous intervals used to calculate prediction error
     ' correlation when an exception is found.
-    ' Default: 53 (Avg:55.3 SD:1.785 Delta:-4.1%), 4.5 hours
+    ' Default: 53 interval (Avg:55.3 SD:1.785 Delta:-4.1%), 4.5 hours
     Public Shared CorrelationPreviousPeriods As Integer = _
       CInt(4.5*3600/CalculationInterval-1)
 
@@ -76,8 +76,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     ' Regression angle range (around -45/+45 degrees) required when suppressing
     ' based on (anti)correlation (degrees).
-    ' Default: 21.03751 (Avg:20.77809 SD:1.368 Delta:1.2%), allow factor 2.25
-    '  difference between values
+    ' Default: 21.03751 degrees (Avg:20.77809 SD:1.368 Delta:1.2%), allow factor
+    '  2.25 difference between values
     Public Shared RegressionAngleRange As Double = _
       SlopeToAngle(2.25)-SlopeToAngle(1)
 
