@@ -42,6 +42,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Vitens, and then manually tweaking these for optimal results and
     ' performance.
 
+
     ' Time interval at which the calculation is run (seconds).
     ' Default: 5 minutes.
     Public Shared CalculationInterval As Integer = 300
@@ -53,7 +54,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     ' Number of previous intervals used to smooth the data.
     ' Default: 11 (Avg:22.5 SD:1.658 Delta:-51.1%), one hour (reduced to
-    '  reduce lag)
+    '  minimize lag)
     Public Shared EMAPreviousPeriods As Integer = _
       CInt(1*3600/CalculationInterval-1)
 
