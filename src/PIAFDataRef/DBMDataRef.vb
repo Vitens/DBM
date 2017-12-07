@@ -26,6 +26,7 @@ Option Strict
 
 Imports System.Collections.Generic
 Imports System.ComponentModel
+Imports System.Math
 Imports System.Runtime.InteropServices
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Data
@@ -188,17 +189,22 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns values for each interval in a time range. The (aligned) end time
       ' itself is excluded.
 
+      Dim IntervalSeconds As Double
+
       If InputPointDriver Is Nothing Then GetInputAndCorrelationPoints
 
       _DBM.PrepareData(InputPointDriver, CorrelationPoints, _
         timeContext.StartTime.LocalTime, timeContext.EndTime.LocalTime)
 
       GetValues = New AFValues
+      IntervalSeconds = Max(1, ((timeContext.EndTime.UtcSeconds-timeContext. _
+        StartTime.UtcSeconds)/CalculationInterval-1)/(numberOfValues-1))* _
+        CalculationInterval ' Required interval, first and last interv inclusive
       Do While timeContext.EndTime > timeContext.StartTime
         GetValues.Add(GetValue(Nothing, timeContext.StartTime, _
           Nothing, Nothing))
         timeContext.StartTime = New AFTime _
-          (timeContext.StartTime.UtcSeconds+CalculationInterval)
+          (timeContext.StartTime.UtcSeconds+IntervalSeconds)
       Loop
 
       Return GetValues
@@ -212,7 +218,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       inputValues As AFValues(), inputTimes As List(Of AFTime), _
       Optional maxCount As Integer = 0) As AFValues
 
-      Return GetValues(Nothing, timeRange, Nothing, Nothing, Nothing)
+      Return GetValues(Nothing, timeRange, maxCount, Nothing, Nothing)
 
     End Function
 
