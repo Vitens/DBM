@@ -65,9 +65,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     ' Number of previous intervals used to calculate prediction error
     ' correlation when an exception is found.
-    ' Default: 53 interval (Avg:55.3 SD:1.785 Delta:-4.1%), 4.5 hours
+    ' Default: 47 intervals (Avg:55.3 SD:1.785 Delta:-15.0%), 4 hours
     Public Shared CorrelationPreviousPeriods As Integer = _
-      CInt(4.5*3600/CalculationInterval-1)
+      CInt(4*3600/CalculationInterval-1)
 
     ' Absolute correlation lower limit for detecting (anti)correlation.
     ' Default: 0.77460 (Avg:0.77990 SD:0.017 Delta:-0.7%) for a
