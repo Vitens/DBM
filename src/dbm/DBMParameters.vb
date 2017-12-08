@@ -60,8 +60,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     ' Confidence interval used for removing outliers and determining
     ' control limits (ratio).
-    ' Default: 0.93 (PSO Avg:0.92834 SD:0.003 Delta:0.2%)
-    Public Shared ConfidenceInterval As Double = 0.93
+    ' Default: 0.95 (PSO Avg:0.92834 SD:0.003 Delta:-2.3%)
+    Public Shared ConfidenceInterval As Double = 0.95
 
     ' Number of previous intervals used to calculate prediction error
     ' correlation when an exception is found.
