@@ -200,7 +200,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim CorrelationPoint As DBMCorrelationPoint
       Dim CorrelationResult As DBMResult
-      Dim AbsoluteErrorStatsData, RelativeErrorStatsData As DBMStatisticsData
+      Dim AbsoluteErrorStatsData, _
+        RelativeErrorStatsData As New DBMStatisticsData
       Dim Factor As Double
 
       If CorrelationPoints Is Nothing Then ' Empty list if Nothing was passed.
