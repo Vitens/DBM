@@ -68,12 +68,12 @@ DBM can be configured using several parameters. The values for these parameters 
 | Parameter                    | Default value | Units         | Description                                                                                             |
 | ---------------------------- | ------------- | ------------- | ------------------------------------------------------------------------------------------------------- |
 | `CalculationInterval`        | 300           | seconds       | Time interval at which the calculation is run.                                                          |
-| `ComparePatterns`            | 12            | weeks         | Number of weeks to look back to predict the current value and control limits.                           |
-| `EMAPreviousPeriods`         | 6             | intervals     | Number of previous intervals used to smooth the data.                                                   |
+| `ComparePatterns`            | 17            | weeks         | Number of weeks to look back to predict the current value and control limits.                           |
+| `EMAPreviousPeriods`         | 5             | intervals     | Number of previous intervals used to smooth the data.                                                   |
 | `ConfidenceInterval`         | 0.99          | ratio         | Confidence interval used for removing outliers and determining control limits.                          |
-| `CorrelationPreviousPeriods` | 23            | intervals     | Number of previous intervals used to calculate prediction error correlation when an exception is found. |
-| `CorrelationThreshold`       | 0.83666       | dimensionless | Absolute correlation lower limit for detecting (anti)correlation.                                       |
-| `RegressionAngleRange`       | 18.435        | degrees       | Regression angle range (around -45/+45 degrees) required when suppressing based on (anti)correlation.   |
+| `CorrelationPreviousPeriods` | 47            | intervals     | Number of previous intervals used to calculate prediction error correlation when an exception is found. |
+| `CorrelationThreshold`       | 0.77460       | dimensionless | Absolute correlation lower limit for detecting (anti)correlation.                                       |
+| `RegressionAngleRange`       | 21.03751      | degrees       | Regression angle range (around -45/+45 degrees) required when suppressing based on (anti)correlation.   |
 
 ### DBMTester
 DBMTester is a command line utility that can be used to quickly calculate DBM results using the CSV driver. The following arguments are available:
