@@ -53,10 +53,10 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared ComparePatterns As Integer = CInt(52/12*4)
 
     ' Number of previous intervals used to smooth the data.
-    ' Default: 11 intervals (PSO Avg:22.5 SD:1.658 Delta:-51.1%), one hour
+    ' Default: 5 intervals (PSO Avg:22.5 SD:1.658 Delta:-77.8%), 30 minutes
     '  (reduced to minimize lag)
     Public Shared EMAPreviousPeriods As Integer = _
-      CInt(1*3600/CalculationInterval-1)
+      CInt(0.5*3600/CalculationInterval-1)
 
     ' Confidence interval used for removing outliers and determining
     ' control limits (ratio).
