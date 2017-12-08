@@ -50,7 +50,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       With Prediction
 
-        .MeasuredValue = Values(ComparePatterns)
+        .MeasuredValue = Values(Values.Length-1)
 
         ' Calculate statistics for data after removing outliers. Exclude the
         ' last item in the array as this is the current measured value for
