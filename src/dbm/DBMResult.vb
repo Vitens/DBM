@@ -42,7 +42,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public PredictionData As DBMPredictionData
     Public Factor, OriginalFactor, AbsoluteErrors(), RelativeErrors(), _
       CorrelationAbsoluteErrors(), CorrelationRelativeErrors() As Double
-    Public AbsoluteErrorStatsData, RelativeErrorStatsData As DBMStatisticsData
+    Public AbsoluteErrorStatsData, _
+      RelativeErrorStatsData As New DBMStatisticsData
     Public SuppressedBy As DBMPointDriverAbstract ' Can be set from DBM.Result
 
 
