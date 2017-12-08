@@ -60,8 +60,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     ' Confidence interval used for removing outliers and determining
     ' control limits (ratio).
-    ' Default: 0.95 (PSO Avg:0.92834 SD:0.003 Delta:-2.3%)
-    Public Shared ConfidenceInterval As Double = 0.95
+    ' Default: 0.99 (PSO Avg:0.92834 SD:0.003 Delta:+6.6%)
+    Public Shared ConfidenceInterval As Double = 0.99
 
     ' Number of previous intervals used to calculate prediction error
     ' correlation when an exception is found.
@@ -76,7 +76,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     ' Regression angle range (around -45/+45 degrees) required when suppressing
     ' based on (anti)correlation (degrees).
-    ' Default: 21.03751 degrees (PSO Avg:20.77809 SD:1.368 Delta:1.2%), allow
+    ' Default: 21.03751 degrees (PSO Avg:20.77809 SD:1.368 Delta:+1.2%), allow
     '  factor 2.25 difference between values
     Public Shared RegressionAngleRange As Double = _
       SlopeToAngle(2.25)-SlopeToAngle(1)
