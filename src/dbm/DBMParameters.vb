@@ -49,8 +49,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     ' Number of weeks to look back to predict the current value
     ' and control limits.
-    ' Default: 18 weeks (Avg:20.8 SD:2.278 Delta:-13.3%)
-    Public Shared ComparePatterns As Integer = 18
+    ' Default: 17 weeks (Avg:20.8 SD:2.278 Delta:-18.3%), 4 months
+    Public Shared ComparePatterns As Integer = CInt(52/12*4)
 
     ' Number of previous intervals used to smooth the data.
     ' Default: 11 intervals (Avg:22.5 SD:1.658 Delta:-51.1%), one hour (reduced
