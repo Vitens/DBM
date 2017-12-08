@@ -147,7 +147,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim Timestamp As AFTime
       Dim Result As DBMResult
-      Dim Value As AFValue
+      Dim Value As New AFValue
 
       If InputPointDriver Is Nothing Then GetInputAndCorrelationPoints
 
