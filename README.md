@@ -49,10 +49,10 @@ In this example, an exception causes the measured value (black) to cross the low
 ## Program information
 
 ### Requirements
-| Priority  | Requirement                                                     | Version |
-| --------- | --------------------------------------------------------------- | ------- |
-| Mandatory | Microsoft .NET Framework                                        | 4.5     |
-| Optional  | OSIsoft PI Asset Framework Software Development Kit (PI AF SDK) |         |
+| Priority  | Requirement                                                     |
+| --------- | --------------------------------------------------------------- |
+| Mandatory | Microsoft .NET Framework                                        |
+| Optional  | OSIsoft PI Asset Framework Software Development Kit (PI AF SDK) |
 
 ### Drivers
 DBM uses drivers to read information from a source of data. The following drivers are included:

@@ -24,6 +24,7 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 
+Imports System
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
@@ -47,15 +48,15 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Prediction = New DBMPredictionData
 
-      ' Calculate statistics for data after removing outliers. Exclude the
-      ' last sample in the array as this is the current measured value for
-      ' which we need to calculate a prediction and control limits.
-      StatisticsData = _
-        Statistics(RemoveOutliers(Values.Take(Values.Length-1).ToArray))
-
       With Prediction
 
         .MeasuredValue = Values(ComparePatterns)
+
+        ' Calculate statistics for data after removing outliers. Exclude the
+        ' last item in the array as this is the current measured value for
+        ' which we need to calculate a prediction and control limits.
+        Array.Resize(Values, Values.Length-1)
+        StatisticsData = Statistics(RemoveOutliers(Values))
 
         ' Extrapolate regression by one interval and use this result as a
         ' prediction.

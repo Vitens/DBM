@@ -24,6 +24,7 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 
+Imports System
 Imports System.Double
 Imports System.Math
 Imports System.TimeSpan
@@ -181,7 +182,16 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Returns number of values in the array excluding NaNs.
 
-      Return Values.Count(Function(Value) Not IsNaN(Value))
+      Dim Value As Double
+      Dim Count As Integer
+
+      For Each Value In Values
+        If Not IsNaN(Value) Then
+          Count += 1
+        End If
+      Next
+
+      Return Count
 
     End Function
 
