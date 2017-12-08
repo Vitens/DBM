@@ -1,4 +1,4 @@
-version: "1.12.10.{build}"
+version: "1.12.11.{build}"
 skip_tags: true
 cache: '%TEMP%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll'
 before_build:
