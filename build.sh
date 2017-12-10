@@ -21,8 +21,6 @@
 # You should have received a copy of the GNU General Public License
 # along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
-cd "`dirname "$0"`"
-
 export WINEDEBUG=fixme-all,err-ole
 export WINEDLLOVERRIDES=mscoree=n
 wine cmd /c build.bat
