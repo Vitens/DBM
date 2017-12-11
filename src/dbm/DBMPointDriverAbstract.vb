@@ -34,10 +34,20 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public MustInherit Class DBMPointDriverAbstract
 
 
+    ' DBM drivers should inherit from this base class. In Sub New,
+    ' MyBase.New(Point) should be called. At a minimum, the GetData function
+    ' must be overridden and should return a value for the Timestamp passed.
+    ' If required, PrepareData can be used to retrieve and store values in bulk
+    ' from a source of data, to be used in the GetData function.
+
+
     Public Point As Object
 
 
     Public Sub New(Point As Object)
+
+      ' When inheriting from this base class, call MyBase.New(Point) from Sub
+      ' New to store the unique identifier in the Point object.
 
       Me.Point = Point
 
@@ -46,10 +56,18 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Overridable Sub PrepareData(StartTimestamp As DateTime, _
       EndTimestamp As DateTime)
+
+      ' Retrieve and store values in bulk from the passed time range from a
+      ' source of data, to be used in the GetData function.
+
     End Sub
 
 
     Public Function TryGetData(Timestamp As DateTime) As Double
+
+      ' The TryGetData function is called from the DBMPoint class to retrieve
+      ' data using the overridden GetData function. If there is an exception
+      ' when calling this function, NaN is returned instead.
 
       Try
         TryGetData = GetData(Timestamp)
@@ -63,6 +81,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public MustOverride Function GetData(Timestamp As DateTime) As Double
+    ' GetData must be overridden and should return a value for the passed
+    ' timestamp.
 
 
   End Class

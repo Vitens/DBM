@@ -30,6 +30,9 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMPredictionData
 
 
+    ' Stores prediction data for the DBMPrediction class.
+
+
     Public MeasuredValue, PredictedValue, LowerControlLimit, _
       UpperControlLimit As Double
 
