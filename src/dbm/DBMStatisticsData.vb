@@ -30,6 +30,9 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMStatisticsData
 
 
+    ' Stores statistics data for the DBMStatistics class.
+
+
     Public Count As Integer
     Public Slope, OriginSlope, Angle, OriginAngle, Intercept, StandardError, _
       Correlation, ModifiedCorrelation, Determination As Double
