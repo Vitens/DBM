@@ -810,12 +810,11 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function PerformanceIndex As Double
 
-      ' Returns the performance of the DBM calculation as a performance index,
-      ' the returned value indicates how many days per second can be calculated
-      ' on this system. Because of the short performance calculation duration,
-      ' this should be seen as a minimum value.
+      ' Returns the performance of the DBM calculation as a performance index.
+      ' The returned value indicates how many full days per second this system
+      ' can calculate when performing real-time continuous calculations.
 
-      Const DurationTicks As Double = 0.1*TicksPerSecond ' 100ms
+      Const DurationTicks As Double = 2*TicksPerSecond ' 2 seconds
 
       Dim InputPointDriver As DBMPointDriverWaterUsageModel
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)

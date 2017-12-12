@@ -77,15 +77,23 @@ Namespace Vitens.DynamicBandwidthMonitor
           NewLine & _
           "You should have received a copy of the GNU General Public " & _
           "License along with this program.  " & _
-          "If not, see <http://www.gnu.org/licenses/>." & NewLine & _
-          NewLine & _
-          " * Unit tests " & _
-          If(UnitTestsPassed, "PASSED", "FAILED") & "." & NewLine & _
-          " * Integration tests " & _
-          If(IntegrationTestsPassed, "PASSED", "FAILED") & "." & NewLine & _
-          " * Performance index " & _
-          Round(PerformanceIndex, 1).ToString & "." & NewLine
+          "If not, see <http://www.gnu.org/licenses/>." & NewLine
       End With
+
+    End Function
+
+
+    Public Shared Function TestResults As String
+
+      ' Returns a string containing test results and performance index.
+
+      Return _
+        " * Unit tests " & _
+        If(UnitTestsPassed, "PASSED", "FAILED") & "." & NewLine & _
+        " * Integration tests " & _
+        If(IntegrationTestsPassed, "PASSED", "FAILED") & "." & NewLine & _
+        " * Performance index " & _
+        Round(PerformanceIndex, 1).ToString & "." & NewLine
 
     End Function
 
