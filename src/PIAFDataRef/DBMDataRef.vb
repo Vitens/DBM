@@ -166,8 +166,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           Value = New AFValue(Result.Factor, Result.Timestamp)
         ElseIf Attribute.Name.Equals("MeasuredValue") Then
           Value = New AFValue(.MeasuredValue, Result.Timestamp)
-          Value.Questionable = Result.Factor <> 0 And _
-            Result.Factor = Result.OriginalFactor ' Unsuppressed exception
+          Value.Questionable = Abs(Result.Factor) > 1 ' Unsuppressed exception
         ElseIf Attribute.Name.Equals("PredictedValue") Then
           Value = New AFValue(.PredictedValue, Result.Timestamp)
         ElseIf Attribute.Name.Equals("LowerControlLimit") Then
