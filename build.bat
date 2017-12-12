@@ -39,6 +39,7 @@ if "%CI%" == "True" powershell -Command "(Get-Content src\dbm\DBM.vb) -replace '
 
 rem Build
 %vbc% /target:library /out:build\DBM.dll src\shared\*.vb src\dbm\*.vb
+%vbc% /reference:build\DBM.dll /out:build\DBMAbout.exe src\shared\*.vb src\dbmabout\*.vb
 %vbc% /reference:build\DBM.dll /target:library /out:build\DBMPointDriverCSV.dll src\shared\*.vb src\dbm\driver\DBMPointDriverCSV.vb
 %vbc% /reference:build\DBM.dll,build\DBMPointDriverCSV.dll /out:build\DBMTester.exe src\shared\*.vb src\dbmtester\*.vb
 if exist "%PIAFRef%" (
@@ -59,6 +60,6 @@ if exist "%PIAFRef%" (
 )
 
 rem Output version, copyright and license information and unit and integration test results
-build\DBMTester.exe
+build\DBMAbout.exe
 
 :ExitBuild
