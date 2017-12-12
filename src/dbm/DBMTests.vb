@@ -810,7 +810,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function PerformanceIndex As Double
 
-      ' Returns the performance of the DBM calculation as a Performance Index,
+      ' Returns the performance of the DBM calculation as a performance index,
       ' the returned value indicates how many days per second can be calculated
       ' on this system. Because of the short performance calculation duration,
       ' this should be seen as a minimum value.
