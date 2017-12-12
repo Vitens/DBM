@@ -769,36 +769,36 @@ Namespace Vitens.DynamicBandwidthMonitor
       InputPointDriver = New DBMPointDriverWaterUsageModel(0)
       CorrelationPoints.Add _
         (New DBMCorrelationPoint(New DBMPointDriverWaterUsageModel(775), False))
-      Timestamp = New DateTime(2017, 1, 1, 0, 0, 0)
+      Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
 
       For i = 0 to 19
         Result = _DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
         With Result
           IntegrationTestsPassed = IntegrationTestsPassed And _
-            Round(.Factor, 4) = {-1.8604, 0, 0, 0, 0, 0, 1, 0, -1.9587, 0, 0, _
-            0, 1, 0, 1, 0.9838, 1.2522, 1.023, 0, 0}(i) And _
-            Round(.OriginalFactor, 4) = {-1.8604, 0, 0, 0, 0, 0, -11.8493, 0, _
-            -1.9587, 0, 0, 0, 1.0559, 0, 1.4524, 4.7492, 1.2522, 1.023, 0, _
+            Round(.Factor, 4) = {-1.8578, 0, 0, 0, 0, 0, 1, 0, -26.2503, 0, 0, _
+            0, 1, 0, 1, 1, 1.32, 1.0063, 0, 0}(i) And _
+            Round(.OriginalFactor, 4) = {-1.8578, 0, 0, 0, 0, 0, -11.8493, 0, _
+            -26.2503, 0, 0, 0, 1.233, 0, 1.4524, 1.9685, 1.32, 1.0063, 0, _
             0}(i) And _
-            Round(.PredictionData.MeasuredValue, 4) = {504.7916, 680.9522, _
-            1132.4995, 920.9274, 523.714, 645.8729, 1129.1586, 895.3791, _
-            486.6541, 673.0745, 1021.8092, 890.999, 493.6342, 638.5533, _
-            1131.9381, 884.594, 516.3102, 726.9338, 1130.7667, _
-            1000.5553}(i) And _
-            Round(.PredictionData.PredictedValue, 4) = {525.0667, 725.4049, _
-            1125.8875, 909.4831, 512.672, 643.0984, 1145.417, 916.7196, _
-            497.6818, 675.3723, 1018.2085, 881.2477, 486.2691, 632.8537, _
-            1102.7188, 843.7871, 505.1171, 711.7644, 1133.5969, _
-            1001.633}(i) And _
-            Round(.PredictionData.LowerControlLimit, 4) = {514.1683, 665.4348, _
-            1025.563, 836.0881, 474.1245, 591.6148, 1144.0449, 882.4506, _
-            492.0516, 663.9205, 1003.5804, 866.0763, 479.2941, 621.4697, _
-            1082.6004, 835.1948, 496.1783, 696.9366, 1107.5266, _
-            980.4077}(i) And _
-            Round(.PredictionData.UpperControlLimit, 4) = {535.9651, 785.3751, _
-            1226.212, 982.878, 551.2195, 694.5821, 1146.7891, 950.9885, _
-            503.312, 686.824, 1032.8366, 896.4192, 493.2442, 644.2377, _
-            1122.8372, 852.3795, 514.056, 726.5921, 1159.6672, 1022.8584}(i)
+            Round(.PredictionData.MeasuredValue, 4) = {527.5796, 687.0052, _
+            1097.1504, 950.9752, 496.1124, 673.6569, 1139.1957, 867.4313, _
+            504.9407, 656.4434, 1065.7651, 898.9191, 471.2433, 668.1, _
+            1103.9689, 897.7268, 525.3563, 676.7206, 1183.0887, _
+            975.8324}(i) And _
+            Round(.PredictionData.PredictedValue, 4) = {548.7398, 731.8531, _
+            1090.7448, 939.1575, 485.7193, 670.7631, 1155.5986, 891.9677, _
+            521.3521, 658.6203, 1062.0096, 890.4126, 464.5086, 662.3457, _
+            1075.4716, 880.085, 513.3322, 662.8652, 1186.0498, _
+            973.5478}(i) And _
+            Round(.PredictionData.LowerControlLimit, 4) = {537.35, 671.3498, _
+            993.5517, 863.3678, 449.1944, 617.0647, 1154.2143, 863.0252, _
+            520.7269, 647.5129, 1046.7522, 876.4041, 459.0467, 650.9082, _
+            1055.8503, 871.123, 504.2228, 649.0968, 1158.7733, _
+            953.1797}(i) And _
+            Round(.PredictionData.UpperControlLimit, 4) = {560.1296, 792.3563, _
+            1187.9378, 1014.9472, 522.2443, 724.4615, 1156.9829, 920.9101, _
+            521.9772, 669.7277, 1077.2669, 904.4211, 469.9705, 673.7832, _
+            1095.0929, 889.047, 522.4415, 676.6336, 1213.3264, 993.916}(i)
         End With
         Timestamp = Timestamp.AddSeconds(365*24*60*60/20)
       Next i
@@ -828,7 +828,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         (New DBMCorrelationPoint(New DBMPointDriverWaterUsageModel(168), False))
       CorrelationPoints.Add _
         (New DBMCorrelationPoint(New DBMPointDriverWaterUsageModel(336), True))
-      Timestamp = New DateTime(2017, 1, 1, 0, 0, 0)
+      Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
 
       Timer = Now
       Do While Now.Ticks-Timer.Ticks < DurationTicks
