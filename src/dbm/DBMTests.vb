@@ -815,7 +815,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' on this system. Because of the short performance calculation duration,
       ' this should be seen as a minimum value.
 
-      Const Duration As Double = 0.1*TicksPerSecond ' ticks
+      Const DurationTicks As Double = 0.1*TicksPerSecond ' 100ms
 
       Dim InputPointDriver As DBMPointDriverWaterUsageModel
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
@@ -832,13 +832,13 @@ Namespace Vitens.DynamicBandwidthMonitor
       Timestamp = New DateTime(2017, 1, 1, 0, 0, 0)
 
       Timer = Now
-      Do While Now.Ticks-Timer.Ticks < Duration
+      Do While Now.Ticks-Timer.Ticks < DurationTicks
         Result = _DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
         Count += 1
         Timestamp = Timestamp.AddSeconds(CalculationInterval)
       Loop
 
-      Return Count/Duration*TicksPerSecond/24/60/60*CalculationInterval
+      Return Count/(DurationTicks/TicksPerSecond)/(24*60*60/CalculationInterval)
 
     End Function
 
