@@ -147,12 +147,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         End If
       Next
 
-      If InputPointDriver Is Nothing Or StartTimestamp = DateTime.MinValue Then
-        ' Output version, copyright, license information, test results
-        ' and performance index.
-        Console.Write(DBM.Version)
-        Console.Write(NewLine & DBM.TestResults)
-      Else
+      If Not(InputPointDriver Is Nothing Or _
+        StartTimestamp = DateTime.MinValue) Then
         If EndTimestamp = DateTime.MinValue Then
           ' No end timestamp, set to start timestamp
           EndTimestamp = StartTimestamp
