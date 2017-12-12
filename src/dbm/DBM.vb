@@ -82,7 +82,9 @@ Namespace Vitens.DynamicBandwidthMonitor
           " * Unit tests " & _
           If(UnitTestsPassed, "PASSED", "FAILED") & "." & NewLine & _
           " * Integration tests " & _
-          If(IntegrationTestsPassed, "PASSED", "FAILED") & "." & NewLine
+          If(IntegrationTestsPassed, "PASSED", "FAILED") & "." & NewLine & _
+          " * Performance Index " & _
+          Round(PerformanceIndex, 1).ToString & "." & NewLine
       End With
 
     End Function

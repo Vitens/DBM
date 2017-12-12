@@ -26,10 +26,13 @@ Option Strict
 
 Imports System
 Imports System.Collections.Generic
+Imports System.DateTime
 Imports System.Double
 Imports System.Math
+Imports System.TimeSpan
 Imports Vitens.DynamicBandwidthMonitor.DBM
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
+Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
 
 
@@ -801,6 +804,41 @@ Namespace Vitens.DynamicBandwidthMonitor
       Next i
 
       Return IntegrationTestsPassed
+
+    End Function
+
+
+    Public Shared Function PerformanceIndex As Double
+
+      ' Returns the performance of the DBM calculation as a Performance Index,
+      ' the returned value indicates how many days per second can be calculated
+      ' on this system. Because of the short performance calculation duration,
+      ' this should be seen as a minimum value.
+
+      Const Duration As Double = 0.1*TicksPerSecond ' ticks
+
+      Dim InputPointDriver As DBMPointDriverWaterUsageModel
+      Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
+      Dim Timestamp, Timer As DateTime
+      Dim Result As DBMResult
+      Dim _DBM As New DBM
+      Dim Count As Integer
+
+      InputPointDriver = New DBMPointDriverWaterUsageModel(0)
+      CorrelationPoints.Add _
+        (New DBMCorrelationPoint(New DBMPointDriverWaterUsageModel(168), False))
+      CorrelationPoints.Add _
+        (New DBMCorrelationPoint(New DBMPointDriverWaterUsageModel(336), True))
+      Timestamp = New DateTime(2017, 1, 1, 0, 0, 0)
+
+      Timer = Now
+      Do While Now.Ticks-Timer.Ticks < Duration
+        Result = _DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
+        Count += 1
+        Timestamp = Timestamp.AddSeconds(CalculationInterval)
+      Loop
+
+      Return Count/Duration*TicksPerSecond/24/60/60*CalculationInterval
 
     End Function
 
