@@ -147,8 +147,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         End If
       Next
 
-      If Not(InputPointDriver Is Nothing Or _
-        StartTimestamp = DateTime.MinValue) Then
+      If InputPointDriver IsNot Nothing And _
+        StartTimestamp > DateTime.MinValue Then
         If EndTimestamp = DateTime.MinValue Then
           ' No end timestamp, set to start timestamp
           EndTimestamp = StartTimestamp
