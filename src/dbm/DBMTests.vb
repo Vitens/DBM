@@ -825,10 +825,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Count As Integer
 
       InputPointDriver = New DBMPointDriverWaterUsageModel(0)
-      CorrelationPoints.Add _
-        (New DBMCorrelationPoint(New DBMPointDriverWaterUsageModel(168), False))
-      CorrelationPoints.Add _
-        (New DBMCorrelationPoint(New DBMPointDriverWaterUsageModel(336), True))
+      CorrelationPoints.Add(New DBMCorrelationPoint( _
+        New DBMPointDriverWaterUsageModel(5394), False))
+      CorrelationPoints.Add(New DBMCorrelationPoint( _
+        New DBMPointDriverWaterUsageModel(227), True))
       Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
 
       Timer = Now
