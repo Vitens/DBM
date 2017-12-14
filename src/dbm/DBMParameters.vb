@@ -50,37 +50,37 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Number of weeks to look back to predict the current value and
     ' control limits.
     '  Default: 17 weeks, 4 months.
-    '  PSO; Avg: 20.8, SD: 2.278, Delta: -18.3%
+    '  PSO; Avg: 20.8, SD: 2.278, Delta: -18.3% -1.67SD (increase performance)
     Public Shared ComparePatterns As Integer = CInt(52/12*4)
 
     ' Number of previous intervals used to smooth the data.
     '  Default: 5 intervals, 30 minutes.
-    '  PSO; Avg: 22.5, SD: 1.658, Delta: -77.8% (to minimize lag)
+    '  PSO; Avg: 22.5, SD: 1.658, Delta: -77.8% -10.55SD (minimize lag)
     Public Shared EMAPreviousPeriods As Integer = _
       CInt(0.5*3600/CalculationInterval-1)
 
     ' Confidence interval used for removing outliers and determining
     ' control limits.
     '  Default: 0.99.
-    '  PSO; Avg: 0.92834, SD: 0.003, Delta: +6.6% (to reduce false positives)
+    '  PSO; Avg: 0.92834, SD: 0.003, Delta: +6.6% +20.55SD (reduce false positv)
     Public Shared ConfidenceInterval As Double = 0.99
 
     ' Number of previous intervals used to calculate prediction error
     ' correlation when an exception is found.
     '  Default: 47 intervals, 4 hours.
-    '  PSO; Avg: 55.3, SD: 1.785, Delta: -15.0%
+    '  PSO; Avg: 55.3, SD: 1.785, Delta: -15.0% -4.65SD (increase performance)
     Public Shared CorrelationPreviousPeriods As Integer = _
       CInt(4*3600/CalculationInterval-1)
 
     ' Absolute correlation lower limit for detecting (anti)correlation.
     '  Default: 0.77460.
-    '  PSO; Avg: 0.77990, SD: 0.017, Delta: -0.7%
+    '  PSO; Avg: 0.77990, SD: 0.017, Delta: -0.7% -0.31SD
     Public Shared CorrelationThreshold As Double = Sqrt(0.6)
 
     ' Regression angle range (around -45/+45 degrees) required when suppressing
     ' based on (anti)correlation.
     '  Default: 21.03751 degrees, allow factor 2.25 difference between values.
-    '  PSO; Avg: 20.77809, SD: 1.368, Delta: +1.2%
+    '  PSO; Avg: 20.77809, SD: 1.368, Delta: +1.2% +0.19SD
     Public Shared RegressionAngleRange As Double = _
       SlopeToAngle(2.25)-SlopeToAngle(1)
 
