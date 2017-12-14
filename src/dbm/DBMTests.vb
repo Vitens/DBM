@@ -768,7 +768,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       InputPointDriver = New DBMPointDriverWaterUsageModel(0)
       CorrelationPoints.Add _
-        (New DBMCorrelationPoint(New DBMPointDriverWaterUsageModel(775), False))
+        (New DBMCorrelationPoint(New DBMPointDriverWaterUsageModel(490), False))
       Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
 
       For i = 0 to 19
@@ -776,7 +776,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         With Result
           IntegrationTestsPassed = IntegrationTestsPassed And _
             Round(.Factor, 4) = {-1.8578, 0, 0, 0, 0, 0, 1, 0, -26.2503, 0, 0, _
-            0, 1, 0, 1, 1, 1.32, 1.0063, 0, 0}(i) And _
+            0, 1, 0, 1, 0.9999, 0.9998, -0.8657, 0, 0}(i) And _
             Round(.OriginalFactor, 4) = {-1.8578, 0, 0, 0, 0, 0, -11.8493, 0, _
             -26.2503, 0, 0, 0, 1.233, 0, 1.4524, 1.9685, 1.32, 1.0063, 0, _
             0}(i) And _
@@ -824,10 +824,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Count As Integer
 
       InputPointDriver = New DBMPointDriverWaterUsageModel(0)
-      CorrelationPoints.Add _
-        (New DBMCorrelationPoint(New DBMPointDriverWaterUsageModel(168), False))
-      CorrelationPoints.Add _
-        (New DBMCorrelationPoint(New DBMPointDriverWaterUsageModel(336), True))
+      CorrelationPoints.Add(New DBMCorrelationPoint( _
+        New DBMPointDriverWaterUsageModel(5394), False))
+      CorrelationPoints.Add(New DBMCorrelationPoint( _
+        New DBMPointDriverWaterUsageModel(227), True))
       Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
 
       Timer = Now
