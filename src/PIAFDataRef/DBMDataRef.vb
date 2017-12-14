@@ -110,6 +110,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         If ParentElement IsNot Nothing Then
           For Each SiblingElement In ParentElement.Elements
             If Not SiblingElement.UniqueID.Equals(Element.UniqueID) And _
+              SiblingElement.Template IsNot Nothing AndAlso _
               SiblingElement.Template.UniqueID.Equals _
               (Element.Template.UniqueID) Then ' Same template, skip self
               Try ' Catch exception if PIPoint does not exist
@@ -124,7 +125,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         ' Find parents recursively
         Do While ParentElement IsNot Nothing
-          If ParentElement.Template.UniqueID.Equals _
+          If ParentElement.Template IsNot Nothing AndAlso _
+            ParentElement.Template.UniqueID.Equals _
             (Element.Template.UniqueID) Then ' Same template
             Try ' Catch exception if PIPoint does not exist
               CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver _
