@@ -65,21 +65,20 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     ' Number of previous intervals used to calculate prediction error
     ' correlation when an exception is found.
-    ' Default: 47 intervals (PSO Avg:55.3 SD:1.785 Delta:-15.0%), 4 hours
+    ' Default: 119 intervals (PSO Avg:133.6 SD:1.356 Delta:-10.9%), 10 hours
     Public Shared CorrelationPreviousPeriods As Integer = _
-      CInt(4*3600/CalculationInterval-1)
+      CInt(10*3600/CalculationInterval-1)
 
     ' Absolute correlation lower limit for detecting (anti)correlation.
-    ' Default: 0.77460 (PSO Avg:0.77990 SD:0.017 Delta:-0.7%) for a
-    '  determination of 0.6
-    Public Shared CorrelationThreshold As Double = Sqrt(0.6)
+    ' Default: 0.7 (PSO Avg:0.70116 SD:0.002 Delta:-0.2%)
+    Public Shared CorrelationThreshold As Double = 0.7
 
     ' Regression angle range (around -45/+45 degrees) required when suppressing
     ' based on (anti)correlation (degrees).
-    ' Default: 21.03751 degrees (PSO Avg:20.77809 SD:1.368 Delta:+1.2%), allow
-    '  factor 2.25 difference between values
+    ' Default: 26.56505 degrees (PSO Avg:26.94275 SD:3.473 Delta:-1.4%), allow
+    '  factor 3 difference between values
     Public Shared RegressionAngleRange As Double = _
-      SlopeToAngle(2.25)-SlopeToAngle(1)
+      SlopeToAngle(3)-SlopeToAngle(1)
 
 
   End Class
