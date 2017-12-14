@@ -774,7 +774,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       For i = 0 to 19
         Result = _DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
         With Result
-
           IntegrationTestsPassed = IntegrationTestsPassed And _
             Round(.Factor, 4) = {-1.8578, 0, 0, 0, 0, 0, 1, 0, -26.2503, 0, 0, _
             0, 1, 0, 1, 0.9999, 0.9998, -0.8657, 0, 0}(i) And _
