@@ -39,6 +39,17 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' calling the Statistics method.
 
 
+    Public Class DBMStatisticsData
+
+
+      Public Count As Integer
+      Public Slope, OriginSlope, Angle, OriginAngle, Intercept, StandardError, _
+        Correlation, ModifiedCorrelation, Determination As Double
+
+
+    End Class
+
+
     Public Shared Function Statistics(ValuesY() As Double, _
       Optional ValuesX() As Double = Nothing) As DBMStatisticsData
 

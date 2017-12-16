@@ -36,6 +36,16 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMPrediction
 
 
+    Public Class DBMPredictionData
+
+
+      Public MeasuredValue, PredictedValue, LowerControlLimit, _
+        UpperControlLimit As Double
+
+
+    End Class
+
+
     Public Shared Function Prediction(Values() As Double) As DBMPredictionData
 
       ' Calculates and stores prediction and control limits by removing

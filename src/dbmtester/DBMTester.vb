@@ -31,6 +31,7 @@ Imports System.Globalization.CultureInfo
 Imports System.Text
 Imports System.Text.RegularExpressions
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
+Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
 
 
 ' Assembly title
