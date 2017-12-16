@@ -26,6 +26,8 @@ Option Strict
 
 Imports System
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
+Imports Vitens.DynamicBandwidthMonitor.DBMPrediction
+Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -81,8 +83,13 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' correlation calculations) results.
       If PredictionData Is Nothing Then
         ' Store EMA results in new DBMPredictionData object.
-        PredictionData = New DBMPredictionData(MeasuredValueEMA, _
-          PredictedValueEMA, LowerControlLimitEMA, UpperControlLimitEMA)
+        PredictionData = New DBMPredictionData
+        With PredictionData
+          .MeasuredValue = MeasuredValueEMA
+          .PredictedValue = PredictedValueEMA
+          .LowerControlLimit = LowerControlLimitEMA
+          .UpperControlLimit = UpperControlLimitEMA
+        End With
         ' Lower control limit exceeded, calculate factor.
         If MeasuredValueEMA < LowerControlLimitEMA Then
           Factor = (PredictedValueEMA-MeasuredValueEMA)/ _
