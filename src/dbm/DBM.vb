@@ -29,7 +29,6 @@ Imports System.Collections.Generic
 Imports System.Diagnostics
 Imports System.Environment
 Imports System.Math
-Imports System.Text.RegularExpressions
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
@@ -53,12 +52,11 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Returns a string containing version, copyright and license information.
 
-      Const GITHASH As String = ""
+      Const GITHASH As String = "" ' Updated automatically by the build script.
 
       With FileVersionInfo.GetVersionInfo(System.Reflection.Assembly. _
         GetExecutingAssembly.Location)
-        Return .FileDescription & " " & _
-          "v" & RegEx.Split(.FileVersion, "^(.+\..+\..+)\..+$")(1) & _
+        Return .FileDescription & " " & "v" & .FileVersion & _
           If(GITHASH = "", "", "+" & GITHASH) & NewLine & _
           .ProductName & NewLine & _
           .Comments & NewLine & _
