@@ -28,11 +28,11 @@ Option Strict
 ' returned using the DBM.Version function.
 
 
-<assembly:System.Reflection.AssemblyVersion("1.12.24.*")>
-' Note: when updating the version number, also modify version in appveyor.yml
-'       for AppVeyor continuous integration to use the same version numbering.
+<assembly:System.Reflection.AssemblyVersion _
+  ("1.14.*")>
 
-<assembly:System.Reflection.AssemblyProduct("Dynamic Bandwidth Monitor")>
+<assembly:System.Reflection.AssemblyProduct _
+  ("Dynamic Bandwidth Monitor")>
 
 <assembly:System.Reflection.AssemblyDescription _
   ("Leak detection method implemented in a real-time data historian")>
@@ -40,4 +40,5 @@ Option Strict
 <assembly:System.Reflection.AssemblyCopyright _
   ("Copyright (C) 2014, 2015, 2016, 2017  J.H. Fitié, Vitens N.V.")>
 
-<assembly:System.Reflection.AssemblyCompany("Vitens N.V.")>
+<assembly:System.Reflection.AssemblyCompany _
+  ("Vitens N.V.")>
