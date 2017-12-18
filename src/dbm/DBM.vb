@@ -56,11 +56,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       With FileVersionInfo.GetVersionInfo(System.Reflection.Assembly. _
         GetExecutingAssembly.Location)
-        Return .FileDescription & " " & "v" & .FileVersion & _
+        Return .ProductName & " v" & .FileVersion & _
           If(GITHASH = "", "", "+" & GITHASH) & NewLine & _
-          .ProductName & NewLine & _
           .Comments & NewLine & _
-          NewLine & _
           .LegalCopyright & NewLine & _
           NewLine & _
           "This program is free software: you can redistribute it and/or " & _
