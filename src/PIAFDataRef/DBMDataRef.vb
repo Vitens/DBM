@@ -48,6 +48,25 @@ Namespace Vitens.DynamicBandwidthMonitor
     Inherits AFDataReference
 
 
+    ' DBMDataRef is a custom OSIsoft PI Asset Framework data reference which
+    ' integrates DBM with PI AF. The build script automatically registers the
+    ' data reference and support assemblies when run on the PI AF server.
+    ' The data reference uses the PI tag from the parent attribute as input and
+    ' automatically uses PI tags from sibling and parent elements based on the
+    ' same template for correlation calculations, unless the NoCorrelation
+    ' category is applied to the attribute. The value returned from the DBM
+    ' calculation is determined by the applied category (Factor, MeasuredValue,
+    ' PredictedValue, LowerControlLimit or UpperControlLimit).
+
+
+    Const CategoryNoCorrelation As String = "NoCorrelation"
+    Const CategoryReturnFactor As String = "Factor"
+    Const CategoryReturnMeasuredValue As String = "MeasuredValue"
+    Const CategoryReturnPredictedValue As String = "PredictedValue"
+    Const CategoryReturnLowerControlLimit As String = "LowerControlLimit"
+    Const CategoryReturnUpperControlLimit As String = "UpperControlLimit"
+
+
     Private _DBM As New DBM
     Private InputPointDriver As DBMPointDriver
     Private CorrelationPoints As List(Of DBMCorrelationPoint)
@@ -99,44 +118,50 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim Element, ParentElement, SiblingElement As AFElement
 
-      If Attribute IsNot Nothing Then ' If owned by an attribute
+      ' If owned by an attribute and attribute has a parent attribute.
+      If Attribute IsNot Nothing And Attribute.Parent IsNot Nothing Then
 
         Element = DirectCast(Attribute.Element, AFElement)
         ParentElement = Element.Parent
         InputPointDriver = New DBMPointDriver(Attribute.Parent.PIPoint) ' Parent
         CorrelationPoints = New List(Of DBMCorrelationPoint)
 
-        ' Find siblings
-        If ParentElement IsNot Nothing Then
-          For Each SiblingElement In ParentElement.Elements
-            If Not SiblingElement.UniqueID.Equals(Element.UniqueID) And _
-              SiblingElement.Template IsNot Nothing AndAlso _
-              SiblingElement.Template.UniqueID.Equals _
-              (Element.Template.UniqueID) Then ' Same template, skip self
+        ' If correlation calculations are not disabled using categories.
+        If Not Attribute.CategoriesString.Contains(CategoryNoCorrelation) Then
+
+          ' Find siblings
+          If ParentElement IsNot Nothing Then
+            For Each SiblingElement In ParentElement.Elements
+              If Not SiblingElement.UniqueID.Equals(Element.UniqueID) And _
+                SiblingElement.Template IsNot Nothing AndAlso _
+                SiblingElement.Template.UniqueID.Equals _
+                (Element.Template.UniqueID) Then ' Same template, skip self
+                Try ' Catch exception if PIPoint does not exist
+                  CorrelationPoints.Add(New DBMCorrelationPoint(New _
+                    DBMPointDriver(SiblingElement.Attributes(Attribute.Parent. _
+                    Name).PIPoint), False))
+                Catch
+                End Try
+              End If
+            Next
+          End If
+
+          ' Find parents recursively
+          Do While ParentElement IsNot Nothing
+            If ParentElement.Template IsNot Nothing AndAlso _
+              ParentElement.Template.UniqueID.Equals _
+              (Element.Template.UniqueID) Then ' Same template
               Try ' Catch exception if PIPoint does not exist
-                CorrelationPoints.Add(New DBMCorrelationPoint(New _
-                  DBMPointDriver(SiblingElement.Attributes(Attribute.Parent. _
-                  Name).PIPoint), False))
+                CorrelationPoints.Add(New DBMCorrelationPoint _
+                  (New DBMPointDriver(ParentElement.Attributes _
+                  (Attribute.Parent.Name).PIPoint), True))
               Catch
               End Try
             End If
-          Next
-        End If
+            ParentElement = ParentElement.Parent
+          Loop
 
-        ' Find parents recursively
-        Do While ParentElement IsNot Nothing
-          If ParentElement.Template IsNot Nothing AndAlso _
-            ParentElement.Template.UniqueID.Equals _
-            (Element.Template.UniqueID) Then ' Same template
-            Try ' Catch exception if PIPoint does not exist
-              CorrelationPoints.Add(New DBMCorrelationPoint(New DBMPointDriver _
-                (ParentElement.Attributes(Attribute.Parent.Name).PIPoint), _
-                True))
-            Catch
-            End Try
-          End If
-          ParentElement = ParentElement.Parent
-        Loop
+        End If
 
       End If
 
@@ -163,17 +188,23 @@ Namespace Vitens.DynamicBandwidthMonitor
       Result = _DBM.Result(InputPointDriver, CorrelationPoints, _
         Timestamp.LocalTime)
 
+      ' Return value based on applied category.
       With Result.PredictionData
-        If Attribute.Name.Equals("Factor") Then
+        If Attribute.CategoriesString. _
+          Contains(CategoryReturnFactor) Then
           Value = New AFValue(Result.Factor, Result.Timestamp)
-        ElseIf Attribute.Name.Equals("MeasuredValue") Then
+        ElseIf Attribute.CategoriesString. _
+          Contains(CategoryReturnMeasuredValue) Then
           Value = New AFValue(.MeasuredValue, Result.Timestamp)
           Value.Questionable = Abs(Result.Factor) > 1 ' Unsuppressed exception
-        ElseIf Attribute.Name.Equals("PredictedValue") Then
+        ElseIf Attribute.CategoriesString. _
+          Contains(CategoryReturnPredictedValue) Then
           Value = New AFValue(.PredictedValue, Result.Timestamp)
-        ElseIf Attribute.Name.Equals("LowerControlLimit") Then
+        ElseIf Attribute.CategoriesString. _
+          Contains(CategoryReturnLowerControlLimit) Then
           Value = New AFValue(.LowerControlLimit, Result.Timestamp)
-        ElseIf Attribute.Name.Equals("UpperControlLimit") Then
+        ElseIf Attribute.CategoriesString. _
+          Contains(CategoryReturnUpperControlLimit) Then
           Value = New AFValue(.UpperControlLimit, Result.Timestamp)
         End If
       End With
