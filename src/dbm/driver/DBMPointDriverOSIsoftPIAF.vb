@@ -24,8 +24,11 @@ Option Strict
 
 Imports System
 Imports System.Collections.Generic
+Imports System.DateTime
 Imports System.Double
 Imports System.Math
+Imports System.Threading
+Imports System.Threading.Thread
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Data.AFCalculationBasis
@@ -53,11 +56,29 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private Values As New Dictionary(Of AFTime, Object)
+    Private CacheInvalidationThread As New Thread(AddressOf InvalidateCache)
+    Private LastCacheAccess As DateTime
 
 
     Public Sub New(Point As Object)
 
       MyBase.New(Point)
+
+    End Sub
+
+
+    Private Sub InvalidateCache
+
+      ' Invalidates the cache after it has not been accessed for at least the
+      ' duration of one calculation interval (5 minutes by default). This is
+      ' needed to prevent all available memory from filling up f.ex. when using
+      ' a PI client application like ProcessBook to visualise large amounts of
+      ' DBM results for many PI points.
+
+      Do While Now < LastCacheAccess.AddSeconds(CalculationInterval)
+        Sleep(CalculationInterval*1000)
+      Loop
+      Values = New Dictionary(Of AFTime, Object)
 
     End Sub
 
@@ -77,6 +98,9 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, CalculationInterval, 0), Average, TimeWeighted, _
           EarliestTime).Item(Average).ToDictionary(Function(k) k.Timestamp, _
           Function(v) v.Value) ' Store averages in dictionary
+        LastCacheAccess = Now ' Cache accessed
+        If Not CacheInvalidationThread.IsAlive Then _
+          CacheInvalidationThread.Start() ' Start cache invalidation thread
       End If
 
     End Sub
@@ -91,6 +115,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Look up data from memory
       If Values.TryGetValue(New AFTime(Timestamp), Value) Then ' In cache
+        LastCacheAccess = Now ' Cache accessed
         Return DirectCast(Value, Double) ' Return value from cache
       Else
         Return DirectCast(DirectCast(Point, PIPoint).Summary(New AFTimeRange _
