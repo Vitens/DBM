@@ -191,6 +191,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         If Attribute.CategoriesString. _
           Contains(CategoryReturnFactor) Then
           Value = New AFValue(Result.Factor, Result.Timestamp)
+          Value.Substituted = Abs(Result.Factor) > 0 And Abs(Result.Factor) <= 1
         ElseIf Attribute.CategoriesString. _
           Contains(CategoryReturnMeasuredValue) Then
           Value = New AFValue(.MeasuredValue, Result.Timestamp)
