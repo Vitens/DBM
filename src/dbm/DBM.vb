@@ -55,10 +55,10 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' absolute deviation, linear regression, sample variance, and exponential
     ' moving averages - real-time values can be compared to a predicted demand
     ' pattern and checked to be within calculated bandwidths. The method was
-    ' implemented in Vitens’ realtime data historian, continuously comparing
+    ' implemented in Vitens' realtime data historian, continuously comparing
     ' measured demand values to be within operational bounds.
 
-    ' One of the advantages of this method is that it doesn’t require manual
+    ' One of the advantages of this method is that it doesn't require manual
     ' configuration or training sets. Next to leak detection, unmeasured supply
     ' between areas and unscheduled plant shutdowns were also detected. The
     ' method was found to be such a success within the company, that it was

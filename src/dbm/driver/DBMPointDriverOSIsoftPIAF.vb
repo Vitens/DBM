@@ -73,7 +73,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' duration of one calculation interval (5 minutes by default). This is
       ' needed to prevent all available memory from filling up f.ex. when using
       ' a PI client application like ProcessBook to visualise large amounts of
-      ' DBM results for many PI points.
+      ' DBM results for many PI points using the PI AF data reference.
 
       Do While Now < LastCacheAccess.AddSeconds(CalculationInterval)
         Sleep(CalculationInterval*1000)
