@@ -76,9 +76,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' DBM results for many PI points using the PI AF data reference.
 
       Do While Now < LastCacheAccess.AddSeconds(CalculationInterval)
-        Sleep(60*1000) ' Sleep for one minute
+        Sleep(CalculationInterval*1000)
       Loop
-      Values.Clear
+      Values = New Dictionary(Of AFTime, Object)
 
     End Sub
 
@@ -93,14 +93,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       If Not Values.ContainsKey(New AFTime(StartTimestamp)) Or _
         Not Values.ContainsKey(New AFTime(EndTimestamp.AddSeconds _
         (-CalculationInterval))) Then ' No data yet
-        LastCacheAccess = Now ' Cache accessed
-        If Not CacheInvalidationThread.IsAlive Then _
-          CacheInvalidationThread.Start() ' Start cache invalidation thread
         Values = DirectCast(Point, PIPoint).Summaries(New AFTimeRange(New _
           AFTime(StartTimestamp), New AFTime(EndTimestamp)), New AFTimeSpan(0, _
           0, 0, 0, 0, CalculationInterval, 0), Average, TimeWeighted, _
           EarliestTime).Item(Average).ToDictionary(Function(k) k.Timestamp, _
           Function(v) v.Value) ' Store averages in dictionary
+        LastCacheAccess = Now ' Cache accessed
+        If Not CacheInvalidationThread.IsAlive Then _
+          CacheInvalidationThread.Start() ' Start cache invalidation thread
       End If
 
     End Sub
