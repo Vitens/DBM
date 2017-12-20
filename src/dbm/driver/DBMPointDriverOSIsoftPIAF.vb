@@ -78,7 +78,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Do While Now < LastCacheAccess.AddSeconds(CalculationInterval)
         Sleep(60*1000) ' Sleep for one minute
       Loop
-      Values.Clear
+      Values = New Dictionary(Of AFTime, Object)
 
     End Sub
 
