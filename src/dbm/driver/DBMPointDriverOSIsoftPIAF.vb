@@ -98,6 +98,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         If CacheInvalidationThread IsNot Nothing AndAlso _
           CacheInvalidationThread.IsAlive Then
           CacheInvalidationThread.Abort ' Abort running invalidation thread
+          Do While CacheInvalidationThread.IsAlive ' Wait for thread to exit
+          Loop
         End If
         CacheInvalidationThread = New Thread(AddressOf InvalidateCache)
         CacheInvalidationThread.Start ' Start invalidation thread
