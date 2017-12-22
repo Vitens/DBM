@@ -96,8 +96,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         Not Values.ContainsKey(New AFTime(EndTimestamp.AddSeconds _
         (-CalculationInterval))) Then ' No data yet
         Values = DirectCast(Point, PIPoint).Summaries(New AFTimeRange(New _
-          AFTime(StartTimestamp), New AFTime(EndTimestamp)), New AFTimeSpan _
-          (0, 0, 0, 0, 0, CalculationInterval, 0), Average, TimeWeighted, _
+          AFTime(StartTimestamp), New AFTime(EndTimestamp)), New AFTimeSpan(0, _
+          0, 0, 0, 0, CalculationInterval, 0), Average, TimeWeighted, _
           EarliestTime).Item(Average).ToDictionary(Function(k) k.Timestamp, _
           Function(v) v.Value) ' Store averages in dictionary
         LastCacheAccess = Now ' Cache accessed
