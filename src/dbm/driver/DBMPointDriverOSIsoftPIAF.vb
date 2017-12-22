@@ -85,7 +85,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           SleepTicks = Max(0, (LastCacheAccess.AddSeconds _
             (CalculationInterval).Ticks-Now.Ticks)/TicksPerMillisecond)
         End SyncLock
-        Sleep(SleepTicks) ' Sleep until one interval after last cache access
+        Sleep(CInt(SleepTicks)) ' Sleep until one interval after last access
         SyncLock Lock
           WakeUp = Now >= LastCacheAccess.AddSeconds(CalculationInterval)
         End SyncLock
