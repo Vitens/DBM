@@ -29,7 +29,6 @@ Imports System.Double
 Imports System.Math
 Imports System.Threading
 Imports System.Threading.Thread
-Imports System.Threading.ThreadState
 Imports System.TimeSpan
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Data
