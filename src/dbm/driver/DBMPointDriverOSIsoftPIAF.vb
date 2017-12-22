@@ -29,6 +29,7 @@ Imports System.Double
 Imports System.Math
 Imports System.Threading
 Imports System.Threading.Thread
+Imports System.Threading.ThreadState
 Imports System.TimeSpan
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Data
@@ -58,7 +59,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private LastCacheAccess As DateTime
     Private Values As New Dictionary(Of AFTime, Object)
-    Private CacheInvalidationThread As New Thread(AddressOf InvalidateCache)
+    Private CacheInvalidationThread As Thread
 
 
     Public Sub New(Point As Object)
@@ -101,8 +102,11 @@ Namespace Vitens.DynamicBandwidthMonitor
           EarliestTime).Item(Average).ToDictionary(Function(k) k.Timestamp, _
           Function(v) v.Value) ' Store averages in dictionary
         LastCacheAccess = Now ' Cache accessed
-        If Not CacheInvalidationThread.IsAlive Then _
+        If CacheInvalidationThread Is Nothing OrElse _
+          Not CacheInvalidationThread.ThreadState = Running Then
+          CacheInvalidationThread = New Thread(AddressOf InvalidateCache)
           CacheInvalidationThread.Start() ' Start cache invalidation thread
+        End If
       End If
 
     End Sub
