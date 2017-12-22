@@ -27,6 +27,7 @@ Imports System.Collections.Generic
 Imports System.Double
 Imports System.Math
 Imports System.Threading
+Imports System.Threading.Thread
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Data.AFCalculationBasis
