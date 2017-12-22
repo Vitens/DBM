@@ -56,8 +56,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private Values As New Dictionary(Of AFTime, Object)
-    Private CacheInvalidationThread As New Thread(AddressOf InvalidateCache)
-    Private LastCacheAccess As DateTime
 
 
     Public Sub New(Point As Object)
@@ -69,16 +67,13 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Sub InvalidateCache
 
-      ' Invalidates the cache after it has not been accessed for at least the
-      ' duration of one calculation interval (5 minutes by default). This is
-      ' needed to prevent all available memory from filling up f.ex. when using
-      ' a PI client application like ProcessBook to visualise large amounts of
-      ' DBM results for many PI points using the PI AF data reference.
+      ' Invalidates the cache after one minute. This is needed to prevent all
+      ' available memory from filling up f.ex. when using a PI client
+      ' application like ProcessBook to visualise large amounts of DBM results
+      ' for many PI points using the PI AF data reference.
 
-      Do While Now < LastCacheAccess.AddSeconds(CalculationInterval)
-        Sleep(CalculationInterval*1000)
-      Loop
-      Values = New Dictionary(Of AFTime, Object)
+      Sleep(60*1000) ' Sleep for one minute
+      Values.Clear ' Clear cache after unused for at least one interval
 
     End Sub
 
@@ -98,9 +93,9 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, CalculationInterval, 0), Average, TimeWeighted, _
           EarliestTime).Item(Average).ToDictionary(Function(k) k.Timestamp, _
           Function(v) v.Value) ' Store averages in dictionary
-        LastCacheAccess = Now ' Cache accessed
-        If Not CacheInvalidationThread.IsAlive Then _
-          CacheInvalidationThread.Start() ' Start cache invalidation thread
+        Dim CacheInvalidationThread As New Thread(AddressOf InvalidateCache)
+        CacheInvalidationThread.IsBackground = True
+        CacheInvalidationThread.Start ' Start cache invalidation thread
       End If
 
     End Sub
@@ -115,7 +110,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Look up data from memory
       If Values.TryGetValue(New AFTime(Timestamp), Value) Then ' In cache
-        LastCacheAccess = Now ' Cache accessed
         Return DirectCast(Value, Double) ' Return value from cache
       Else
         Return DirectCast(DirectCast(Point, PIPoint).Summary(New AFTimeRange _
