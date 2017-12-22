@@ -29,6 +29,7 @@ Imports System.Double
 Imports System.Math
 Imports System.Threading
 Imports System.Threading.Thread
+Imports System.TimeSpan
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Data.AFCalculationBasis
@@ -55,9 +56,10 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Identifier (Point): OSIsoft.AF.PI.PIPoint (PI tag)
 
 
+    Private Lock As Object
+    Private LastCacheAccess As DateTime
     Private Values As New Dictionary(Of AFTime, Object)
     Private CacheInvalidationThread As New Thread(AddressOf InvalidateCache)
-    Private LastCacheAccess As DateTime
 
 
     Public Sub New(Point As Object)
@@ -75,10 +77,22 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' a PI client application like ProcessBook to visualise large amounts of
       ' DBM results for many PI points using the PI AF data reference.
 
-      Do While Now < LastCacheAccess.AddSeconds(CalculationInterval)
-        Sleep(CalculationInterval*1000)
+      Dim WakeUp As Boolean = False
+      Dim SleepTicks As Double
+
+      Do While Not WakeUp
+        SyncLock Lock
+          SleepTicks = Max(0, (LastCacheAccess.AddSeconds _
+            (CalculationInterval).Ticks-Now.Ticks)/TicksPerMillisecond)
+        End SyncLock
+        Sleep(SleepTicks) ' Sleep until one interval after last cache access
+        SyncLock Lock
+          WakeUp = Now >= LastCacheAccess.AddSeconds(CalculationInterval)
+        End SyncLock
       Loop
-      Values = New Dictionary(Of AFTime, Object)
+      SyncLock Lock
+        Values.Clear ' Clear cache after unused for at least one interval
+      End SyncLock
 
     End Sub
 
@@ -90,18 +104,20 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' OSIsoft PI AF and stores this in the Values dictionary. The (aligned)
       ' end time itself is excluded.
 
-      If Not Values.ContainsKey(New AFTime(StartTimestamp)) Or _
-        Not Values.ContainsKey(New AFTime(EndTimestamp.AddSeconds _
-        (-CalculationInterval))) Then ' No data yet
-        Values = DirectCast(Point, PIPoint).Summaries(New AFTimeRange(New _
-          AFTime(StartTimestamp), New AFTime(EndTimestamp)), New AFTimeSpan(0, _
-          0, 0, 0, 0, CalculationInterval, 0), Average, TimeWeighted, _
-          EarliestTime).Item(Average).ToDictionary(Function(k) k.Timestamp, _
-          Function(v) v.Value) ' Store averages in dictionary
-        LastCacheAccess = Now ' Cache accessed
-        If Not CacheInvalidationThread.IsAlive Then _
-          CacheInvalidationThread.Start() ' Start cache invalidation thread
-      End If
+      SyncLock Lock
+        If Not Values.ContainsKey(New AFTime(StartTimestamp)) Or _
+          Not Values.ContainsKey(New AFTime(EndTimestamp.AddSeconds _
+          (-CalculationInterval))) Then ' No data yet
+          Values = DirectCast(Point, PIPoint).Summaries(New AFTimeRange(New _
+            AFTime(StartTimestamp), New AFTime(EndTimestamp)), New AFTimeSpan _
+            (0, 0, 0, 0, 0, CalculationInterval, 0), Average, TimeWeighted, _
+            EarliestTime).Item(Average).ToDictionary(Function(k) k.Timestamp, _
+            Function(v) v.Value) ' Store averages in dictionary
+          LastCacheAccess = Now ' Cache accessed
+          If Not CacheInvalidationThread.IsAlive Then _
+            CacheInvalidationThread.Start() ' Start cache invalidation thread
+        End If
+      End SyncLock
 
     End Sub
 
@@ -114,15 +130,18 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Value As Object = Nothing
 
       ' Look up data from memory
-      If Values.TryGetValue(New AFTime(Timestamp), Value) Then ' In cache
-        LastCacheAccess = Now ' Cache accessed
-        Return DirectCast(Value, Double) ' Return value from cache
-      Else
-        Return DirectCast(DirectCast(Point, PIPoint).Summary(New AFTimeRange _
-          (New AFTime(Timestamp), New AFTime(Timestamp.AddSeconds _
-          (CalculationInterval))), Average, TimeWeighted, EarliestTime). _
-          Item(Average).Value, Double) ' Get average
-      End If
+      SyncLock Lock
+        If Values.TryGetValue(New AFTime(Timestamp), Value) Then ' In cache
+          LastCacheAccess = Now ' Cache accessed
+          Return DirectCast(Value, Double) ' Return value from cache
+        End If
+      End SyncLock
+
+      ' Value not in memory, retrieve from PI
+      Return DirectCast(DirectCast(Point, PIPoint).Summary(New AFTimeRange _
+        (New AFTime(Timestamp), New AFTime(Timestamp.AddSeconds _
+        (CalculationInterval))), Average, TimeWeighted, EarliestTime). _
+        Item(Average).Value, Double) ' Get average
 
     End Function
 
