@@ -24,7 +24,6 @@ Option Strict
 
 Imports System
 Imports System.Collections.Generic
-Imports System.DateTime
 Imports System.Double
 Imports System.Math
 Imports System.Threading
@@ -72,8 +71,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' application like ProcessBook to visualise large amounts of DBM results
       ' for many PI points using the PI AF data reference.
 
-      Sleep(60*1000) ' Sleep for one minute
-      Values.Clear ' Clear cache after unused for at least one interval
+      Sleep(60*1000)
+      Values.Clear
 
     End Sub
 
