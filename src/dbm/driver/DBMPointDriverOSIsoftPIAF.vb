@@ -56,7 +56,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private Values As New Dictionary(Of AFTime, Object)
-    Private CacheInvalidationThread As Thread
 
 
     Public Sub New(Point As Object)
@@ -68,13 +67,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Sub InvalidateCache
 
-      ' Invalidates the cache after it has not been accessed for the duration of
-      ' one calculation interval (5 minutes by default). This is needed to
-      ' prevent all available memory from filling up f.ex. when using a PI
-      ' client application like ProcessBook to visualise large amounts of DBM
-      ' results for many PI points using the PI AF data reference.
+      ' Invalidates the cache after one minute. This is needed to prevent all
+      ' available memory from filling up f.ex. when using a PI client
+      ' application like ProcessBook to visualise large amounts of DBM results
+      ' for many PI points using the PI AF data reference.
 
-      Sleep(CalculationInterval*1000)
+      Sleep(60*1000) ' Sleep for one minute
       Values.Clear ' Clear cache after unused for at least one interval
 
     End Sub
@@ -95,12 +93,8 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, CalculationInterval, 0), Average, TimeWeighted, _
           EarliestTime).Item(Average).ToDictionary(Function(k) k.Timestamp, _
           Function(v) v.Value) ' Store averages in dictionary
-        If CacheInvalidationThread IsNot Nothing AndAlso _
-          CacheInvalidationThread.IsAlive Then
-          CacheInvalidationThread.Abort ' Abort running invalidation thread
-        End If
-        CacheInvalidationThread = New Thread(AddressOf InvalidateCache)
-        CacheInvalidationThread.Start ' Start invalidation thread
+        Dim CacheInvalidationThread As New Thread(AddressOf InvalidateCache)
+        CacheInvalidationThread.Start ' Start cache invalidation thread
       End If
 
     End Sub
