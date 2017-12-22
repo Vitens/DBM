@@ -58,7 +58,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private LastCacheAccess As DateTime
     Private Values As New Dictionary(Of AFTime, Object)
-    Private CacheInvalidationThread As New Thread(AddressOf InvalidateCache)
+    Private CacheInvalidationThread As Thread
 
 
     Public Sub New(Point As Object)
@@ -101,7 +101,8 @@ Namespace Vitens.DynamicBandwidthMonitor
           EarliestTime).Item(Average).ToDictionary(Function(k) k.Timestamp, _
           Function(v) v.Value) ' Store averages in dictionary
         LastCacheAccess = Now ' Cache accessed
-        If Not CacheInvalidationThread.IsAlive Then
+        If CacheInvalidationThread Is Nothing OrElse _
+          Not CacheInvalidationThread.IsAlive Then
           CacheInvalidationThread = New Thread(AddressOf InvalidateCache)
           CacheInvalidationThread.Start ' Start cache invalidation thread
         End If
