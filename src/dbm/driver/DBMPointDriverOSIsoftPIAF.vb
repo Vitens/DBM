@@ -94,6 +94,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           EarliestTime).Item(Average).ToDictionary(Function(k) k.Timestamp, _
           Function(v) v.Value) ' Store averages in dictionary
         Dim CacheInvalidationThread As New Thread(AddressOf InvalidateCache)
+        CacheInvalidationThread.IsBackground = True
         CacheInvalidationThread.Start ' Start cache invalidation thread
       End If
 
