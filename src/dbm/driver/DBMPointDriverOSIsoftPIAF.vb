@@ -24,6 +24,7 @@ Option Strict
 
 Imports System
 Imports System.Collections.Generic
+Imports System.Double
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Data.AFCalculationBasis
@@ -49,7 +50,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Identifier (Point): OSIsoft.AF.PI.PIPoint (PI tag)
 
 
-    Private Values As New Dictionary(Of AFTime, Object)
+    Private Values As New Dictionary(Of DateTime, Double)
 
 
     Public Sub New(Point As Object)
@@ -66,14 +67,30 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' OSIsoft PI AF and stores this in the Values dictionary. The (aligned)
       ' end time itself is excluded.
 
-      If Not Values.ContainsKey(New AFTime(StartTimestamp)) Or _
-        Not Values.ContainsKey(New AFTime(EndTimestamp.AddSeconds _
-        (-CalculationInterval))) Then ' No data yet
-        Values = DirectCast(Point, PIPoint).Summaries(New AFTimeRange(New _
+      Dim PIValues As AFValues
+      Dim Value As AFValue
+
+      If Not Values.ContainsKey(StartTimestamp) Or _
+        Not Values.ContainsKey(EndTimestamp.AddSeconds(-CalculationInterval)) _
+        Then ' No data yet
+
+        PIValues = DirectCast(Point, PIPoint).Summaries(New AFTimeRange(New _
           AFTime(StartTimestamp), New AFTime(EndTimestamp)), New AFTimeSpan(0, _
           0, 0, 0, 0, CalculationInterval, 0), Average, TimeWeighted, _
-          EarliestTime).Item(Average).ToDictionary(Function(k) k.Timestamp, _
-          Function(v) v.Value) ' Store averages in dictionary
+          EarliestTime).Item(Average) ' Get averages from PI
+
+        Values.Clear
+        For Each Value In PIValues ' Store averages in Values dictionary
+          If Not Values.ContainsKey(Value.Timestamp.LocalTime) Then ' DST dupes
+            If TypeOf Value.Value Is Double Then
+              Values.Add(Value.Timestamp.LocalTime, _
+                DirectCast(Value.Value, Double))
+            Else
+              Values.Add(Value.Timestamp.LocalTime, NaN)
+            End If
+          End If
+        Next
+
       End If
 
     End Sub
@@ -84,11 +101,11 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' GetData retrieves data from the Values dictionary. Non existing
       ' timestamps are retrieved from OSIsoft PI AF directly.
 
-      Dim Value As Object = Nothing
+      Dim Value As Double
 
       ' Look up data from memory
-      If Values.TryGetValue(New AFTime(Timestamp), Value) Then ' In cache
-        Return DirectCast(Value, Double) ' Return value from cache
+      If Values.TryGetValue(Timestamp, Value) Then ' In cache
+        Return Value ' Return value from cache
       Else
         Return DirectCast(DirectCast(Point, PIPoint).Summary(New AFTimeRange _
           (New AFTime(Timestamp), New AFTime(Timestamp.AddSeconds _
