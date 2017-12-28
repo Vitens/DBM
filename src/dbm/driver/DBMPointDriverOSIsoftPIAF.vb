@@ -24,10 +24,6 @@ Option Strict
 
 Imports System
 Imports System.Collections.Generic
-Imports System.Double
-Imports System.Math
-Imports System.Threading
-Imports System.Threading.Thread
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Data.AFCalculationBasis
@@ -35,7 +31,6 @@ Imports OSIsoft.AF.Data.AFSummaryTypes
 Imports OSIsoft.AF.Data.AFTimestampCalculation
 Imports OSIsoft.AF.PI
 Imports OSIsoft.AF.Time
-Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
@@ -64,19 +59,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Private Sub InvalidateCache
-
-      ' Invalidates the cache after one minute. This is needed to prevent all
-      ' available memory from filling up f.ex. when using a PI client
-      ' application like ProcessBook to visualise large amounts of DBM results
-      ' for many PI points using the PI AF data reference.
-
-      Sleep(60*1000)
-      Values.Clear
-
-    End Sub
-
-
     Public Overrides Sub PrepareData(StartTimestamp As DateTime, _
       EndTimestamp As DateTime)
 
@@ -92,9 +74,6 @@ Namespace Vitens.DynamicBandwidthMonitor
           0, 0, 0, 0, CalculationInterval, 0), Average, TimeWeighted, _
           EarliestTime).Item(Average).ToDictionary(Function(k) k.Timestamp, _
           Function(v) v.Value) ' Store averages in dictionary
-        Dim CacheInvalidationThread As New Thread(AddressOf InvalidateCache)
-        CacheInvalidationThread.IsBackground = True
-        CacheInvalidationThread.Start ' Start cache invalidation thread
       End If
 
     End Sub
