@@ -35,10 +35,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' This class contains default values for several parameters which DBM uses
     ' for its calculations. The values for these parameters can be changed
     ' at runtime.
-    ' The default parameter values were determined by analysing the results
-    ' of a particle swarm optimization method using real production data from
-    ' Vitens, and then manually tweaking these values for optimal results and
-    ' performance.
 
 
     ' Time interval at which the calculation is run.
@@ -46,7 +42,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     ' Number of weeks to look back to predict the current value and
     ' control limits.
-    Public Shared ComparePatterns As Integer = CInt(52/12*4) ' 17 weeks, 4 mos.
+    Public Shared ComparePatterns As Integer = 12 ' weeks
 
     ' Number of previous intervals used to smooth the data.
     Public Shared EMAPreviousPeriods As Integer = _
@@ -59,15 +55,15 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Number of previous intervals used to calculate prediction error
     ' correlation when an exception is found.
     Public Shared CorrelationPreviousPeriods As Integer = _
-      CInt(4*3600/CalculationInterval-1) ' 47 intervals, 4 hours
+      CInt(2*3600/CalculationInterval-1) ' 23 intervals, 2 hours
 
     ' Absolute correlation lower limit for detecting (anti)correlation.
-    Public Shared CorrelationThreshold As Double = Sqrt(0.6) ' 0.77460
+    Public Shared CorrelationThreshold As Double = Sqrt(0.7) ' 0.83666
 
     ' Regression angle range (around -45/+45 degrees) required when suppressing
     ' based on (anti)correlation.
     Public Shared RegressionAngleRange As Double = _
-      SlopeToAngle(2.25)-SlopeToAngle(1) ' 21.03751 degrees, factor 2.25
+      SlopeToAngle(2)-SlopeToAngle(1) ' 18.435 degrees, factor 2
 
 
   End Class
