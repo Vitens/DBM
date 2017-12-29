@@ -24,6 +24,7 @@ Option Strict
 
 Imports System
 Imports System.Collections.Generic
+Imports System.DateTime
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMPrediction
@@ -36,6 +37,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public PointDriver As DBMPointDriverAbstract
+    Private LastAccessTime As DateTime
     Private PredictionsSubtractPoint As DBMPoint
     Private PredictionsData As New Dictionary(Of DateTime, DBMPredictionData)
     Private PredictionsQueue As New Queue(Of DateTime) ' Insertion order queue
@@ -44,8 +46,21 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Sub New(PointDriver As DBMPointDriverAbstract)
 
       Me.PointDriver = PointDriver
+      LastAccessTime = Now
 
     End Sub
+
+
+    Public Function IsStale As Boolean
+
+      ' Returns true if this DBMPoint has not been used for at least one
+      ' calculation interval. Used by the DBM class to clean up unused
+      ' resources.
+
+      Return Now >= AlignTimestamp(LastAccessTime, _
+        CalculationInterval).AddSeconds(2*CalculationInterval)
+
+    End Function
 
 
     Public Function Result(Timestamp As DateTime, IsInputDBMPoint As Boolean, _
@@ -66,6 +81,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         PredictedValues(EMAPreviousPeriods), _
         LowerControlLimits(EMAPreviousPeriods), _
         UpperControlLimits(EMAPreviousPeriods) As Double
+
+      Me.LastAccessTime = Now
 
       Result = New DBMResult
       Result.Timestamp = AlignTimestamp(Timestamp, CalculationInterval)

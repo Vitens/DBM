@@ -65,7 +65,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const CategoryReturnUpperControlLimit As String = "UpperControlLimit"
 
 
-    Private _DBM As New DBM
+    Private Shared _DBM As New DBM
     Private InputPointDriver As DBMPointDriver
     Private CorrelationPoints As List(Of DBMCorrelationPoint)
 
