@@ -27,7 +27,7 @@ Option Strict
 
 
 <assembly:System.Reflection.AssemblyVersion _
-  ("1.14.*")>
+  ("1.15.*")>
 
 <assembly:System.Reflection.AssemblyProduct _
   ("Dynamic Bandwidth Monitor")>
