@@ -126,12 +126,10 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Private Function Point(PointDriver As DBMPointDriverAbstract) As DBMPoint
+    Private Sub RemoveStalePoints
 
-      ' Returns DBMPoint object from Points dictionary. Stale items are removed
-      ' first so that used resources can be freed to prevent all available
-      ' memory from filling up. If dictionary does not yet contain object, it is
-      ' added.
+      ' Stale items are removed so that used resources can be freed to prevent
+      ' all available memory from filling up.
 
       Dim Pair As KeyValuePair(Of Object, DBMPoint)
       Dim StalePoints As New List(Of Object)
@@ -146,6 +144,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       For Each StalePoint In StalePoints
         Points.Remove(StalePoint) ' Remove stale points
       Next
+
+    End Sub
+
+
+    Private Function Point(PointDriver As DBMPointDriverAbstract) As DBMPoint
+
+      ' Returns DBMPoint object from Points dictionary. If dictionary does not
+      ' yet contain object, it is added.
 
       If Not Points.ContainsKey(PointDriver.Point) Then
         Points.Add(PointDriver.Point, New DBMPoint(PointDriver)) ' Add new point
@@ -239,6 +245,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim AbsoluteErrorStatsData, _
         RelativeErrorStatsData As New DBMStatisticsData
       Dim Factor As Double
+
+      RemoveStalePoints
 
       If CorrelationPoints Is Nothing Then ' Empty list if Nothing was passed.
         CorrelationPoints = New List(Of DBMCorrelationPoint)
