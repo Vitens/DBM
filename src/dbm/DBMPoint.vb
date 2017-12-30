@@ -84,7 +84,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         LowerControlLimits(EMAPreviousPeriods), _
         UpperControlLimits(EMAPreviousPeriods) As Double
 
-      Me.LastAccessTime = Now
+      LastAccessTime = Now
 
       Result = New DBMResult
       Result.Timestamp = AlignTimestamp(Timestamp, CalculationInterval)
