@@ -41,6 +41,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private PredictionsSubtractPoint As DBMPoint
     Private PredictionsData As New Dictionary(Of DateTime, DBMPredictionData)
     Private PredictionsQueue As New Queue(Of DateTime) ' Insertion order queue
+    Public Shared PredictionsCacheSize As Integer = _
+      EMAPreviousPeriods+2*CorrelationPreviousPeriods
 
 
     Public Sub New(PointDriver As DBMPointDriverAbstract)
@@ -118,8 +120,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               PredictionData = Prediction(Patterns)
               ' Limit number of cached prediction results per point.
               ' Optimized for real-time continuous calculations.
-              Do While PredictionsData.Count > _
-                EMAPreviousPeriods+2*CorrelationPreviousPeriods
+              Do While PredictionsData.Count > PredictionsCacheSize
                 ' Use the queue to remove the least recently inserted timestamp.
                 PredictionsData.Remove(PredictionsQueue.Dequeue)
               Loop

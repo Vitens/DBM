@@ -31,6 +31,7 @@ Imports System.TimeSpan
 Imports Vitens.DynamicBandwidthMonitor.DBM
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
+Imports Vitens.DynamicBandwidthMonitor.DBMPoint
 Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
 
 
@@ -819,7 +820,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Timestamp, Timer As DateTime
       Dim Result As DBMResult
       Dim _DBM As New DBM
-      Dim Count As Integer
+      Dim i, Count As Integer
 
       InputPointDriver = New DBMPointDriverWaterUsageModel(0)
       CorrelationPoints.Add(New DBMCorrelationPoint( _
@@ -827,6 +828,16 @@ Namespace Vitens.DynamicBandwidthMonitor
       CorrelationPoints.Add(New DBMCorrelationPoint( _
         New DBMPointDriverWaterUsageModel(227), True))
       Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
+
+      ' Pre-fill cache for the DBMPoint to calculate a more realistic value for
+      ' the performance index as this then better simulates a real-time
+      ' continuous calculation.
+      Timestamp = Timestamp. _
+        AddSeconds(PredictionsCacheSize*-CalculationInterval)
+      For i = 1 To PredictionsCacheSize
+        Result = _DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
+        Timestamp = Timestamp.AddSeconds(CalculationInterval)
+      Next i
 
       Timer = Now
       Do While Now.Ticks-Timer.Ticks < DurationTicks
