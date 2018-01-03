@@ -89,59 +89,79 @@ Namespace Vitens.DynamicBandwidthMonitor
       Result = New DBMResult
       Result.Timestamp = AlignTimestamp(Timestamp, CalculationInterval)
 
-      ' Can we reuse stored results?
+      ' Cached results can only be reused if the point that is to be subtracted
+      ' is identical to the one used in the cached results.
       If SubtractPoint IsNot PredictionsSubtractPoint Then
         PredictionsSubtractPoint = SubtractPoint
         PredictionsData.Clear ' No, so clear results
         PredictionsQueue.Clear
       End If
 
-      For CorrelationCounter = 0 To CorrelationPreviousPeriods
+      For CorrelationCounter = 0 To CorrelationPreviousPeriods ' Correl. loop
+
+        ' Retrieve data and calculate prediction. Only do this for the required
+        ' timestamp and only process previous timestamps for calculating
+        ' correlation results if an exception was found.
         If Result.PredictionData Is Nothing Or (IsInputDBMPoint And _
           Result.Factor <> 0 And HasCorrelationDBMPoint) Or _
-          Not IsInputDBMPoint Then ' Calculate history for event or correlation.
-          For EMACounter = 0 To EMAPreviousPeriods ' For filtering HF variation.
+          Not IsInputDBMPoint Then
+
+          For EMACounter = 0 To EMAPreviousPeriods ' Filter high freq. variation
+
             PredictionTimestamp = Result.Timestamp.AddSeconds _
               (-(EMAPreviousPeriods-EMACounter+CorrelationCounter)* _
               CalculationInterval) ' Timestamp for prediction results
+
             If Not PredictionsData.TryGetValue(PredictionTimestamp, _
-              PredictionData) Then
-              ' Calculate prediction data
+              PredictionData) Then ' Calculate prediction data if not cached
+
               For PatternCounter = 0 To ComparePatterns ' Data for regression.
+
                 PatternTimestamp = PredictionTimestamp. _
-                  AddDays(-(ComparePatterns-PatternCounter)*7)
+                  AddDays(-(ComparePatterns-PatternCounter)*7) ' Timestamp
                 Patterns(PatternCounter) = _
-                  PointDriver.TryGetData(PatternTimestamp)
+                  PointDriver.TryGetData(PatternTimestamp) ' Get data
                 If SubtractPoint IsNot Nothing Then ' Subtract input if needed.
                   Patterns(PatternCounter) -= _
                     SubtractPoint.PointDriver.TryGetData(PatternTimestamp)
                 End If
+
               Next PatternCounter
+
               PredictionData = Prediction(Patterns)
-              ' Limit number of cached prediction results per point.
-              ' Optimized for real-time continuous calculations.
+
+              ' Limit number of cached prediction results per point. The size of
+              ' the cache is automatically optimized for real-time continuous
+              ' calculations.
               Do While PredictionsData.Count >= PredictionsCacheSize
                 ' Use the queue to remove the least recently inserted timestamp.
                 PredictionsData.Remove(PredictionsQueue.Dequeue)
               Loop
+
               ' Add calculated prediction to cache and queue.
               PredictionsData.Add(PredictionTimestamp, PredictionData)
               PredictionsQueue.Enqueue(PredictionTimestamp)
+
             End If
+
             With PredictionData ' Store results in arrays for EMA calculation.
               MeasuredValues(EMACounter) = .MeasuredValue
               PredictedValues(EMACounter) = .PredictedValue
               LowerControlLimits(EMACounter) = .LowerControlLimit
               UpperControlLimits(EMACounter) = .UpperControlLimit
             End With
+
           Next EMACounter
+
           ' Calculate final result using filtered calculation results.
           Result.Calculate(CorrelationPreviousPeriods-CorrelationCounter, _
             ExponentialMovingAverage(MeasuredValues), _
             ExponentialMovingAverage(PredictedValues), _
             ExponentialMovingAverage(LowerControlLimits), _
             ExponentialMovingAverage(UpperControlLimits))
+
         End If
+
       Next CorrelationCounter
 
       Return Result
