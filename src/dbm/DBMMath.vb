@@ -283,34 +283,72 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Shared Function UseMeanAbsoluteDeviation(Values() As Double) _
+      As Boolean
+
+      ' Returns true if the Mean Absolute Deviation has to be used instead of
+      ' the Median Absolute Deviation to detect outliers. Median absolute
+      ' deviation has a 50% breakdown point.
+
+      Return MedianAbsoluteDeviation(Values) = 0
+
+    End Function
+
+
+    Public Shared Function CentralTendency(Values() As Double) As Double
+
+      ' Returns the central tendency for the data series, based on either the
+      ' mean or median absolute deviation. In statistics, a central tendency
+      ' (or measure of central tendency) is a central or typical value for a
+      ' probability distribution.
+
+      If UseMeanAbsoluteDeviation(Values) Then
+        Return Mean(Values)
+      Else
+        Return Median(Values)
+      End If
+
+    End Function
+
+
+    Public Shared Function ControlLimit(Values() As Double) As Double
+
+      ' Returns the control limits for the data series, based on either the
+      ' mean or median absolute deviation, scale factor and rejection criterion.
+      ' Control limits are used to detect signals in process data that indicate
+      ' that a process is not in control and, therefore, not operating
+      ' predictably.
+
+      Dim Count As Integer = NonNaNCount(Values)
+
+      If UseMeanAbsoluteDeviation(Values) Then
+        Return MeanAbsoluteDeviation(Values)* _
+          MeanAbsoluteDeviationScaleFactor* _
+          ControlLimitRejectionCriterion(OutlierCI, Count-1)
+      Else
+        Return MedianAbsoluteDeviation(Values)* _
+          MedianAbsoluteDeviationScaleFactor(Count-1)* _
+          ControlLimitRejectionCriterion(OutlierCI, Count-1)
+      End If
+
+    End Function
+
+
     Public Shared Function RemoveOutliers(Values() As Double) As Double()
 
       ' Returns an array which contains the input data from which outliers
       ' are removed (NaN) using either the mean or median absolute deviation
       ' function.
 
-      Dim Count, i As Integer
-      Dim CentralTendency, MAD, ControlLimit As Double
+      Dim ValuesCentralTendency, ValuesControlLimit As Double
+      Dim i As Integer
 
-      Count = NonNaNCount(Values)
-      CentralTendency = Median(Values)
-      MAD = Median(AbsoluteDeviation(Values, CentralTendency))
-      ControlLimit = MAD*MedianAbsoluteDeviationScaleFactor(Count-1)* _
-        ControlLimitRejectionCriterion(OutlierCI, Count-1)
-
-      If ControlLimit = 0 Then ' This only happens when MAD equals 0.
-        ' Use Mean Absolute Deviation instead of Median Absolute Deviation
-        ' to detect outliers. Median absolute deviation has a 50% breakdown
-        ' point.
-        CentralTendency = Mean(Values)
-        MAD = Mean(AbsoluteDeviation(Values, CentralTendency))
-        ControlLimit = MAD*MeanAbsoluteDeviationScaleFactor* _
-          ControlLimitRejectionCriterion(OutlierCI, Count-1)
-      End If
+      ValuesCentralTendency = CentralTendency(Values)
+      ValuesControlLimit = ControlLimit(Values)
 
       For i = 0 to Values.Length-1
-        If Abs(Values(i)-CentralTendency) > ControlLimit Then ' Limit exceeded?
-          Values(i) = NaN ' Exclude outlier by setting to NaN.
+        If Abs(Values(i)-ValuesCentralTendency) > ValuesControlLimit Then
+          Values(i) = NaN ' Exclude outlier exceeding CL by setting to NaN.
         End If
       Next i
 
