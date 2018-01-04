@@ -68,7 +68,7 @@ DBM can be configured using several parameters. The values for these parameters 
 | `CalculationInterval`        | 300           | seconds       | Time interval at which the calculation is run.                                                          |
 | `ComparePatterns`            | 12            | weeks         | Number of weeks to look back to predict the current value and control limits.                           |
 | `EMAPreviousPeriods`         | 5             | intervals     | Number of previous intervals used to smooth the data.                                                   |
-| `OutlierCI`                  | 0.9           | ratio         | Confidence interval used for removing outliers.                                                         |
+| `OutlierCI`                  | 0.99          | ratio         | Confidence interval used for removing outliers.                                                         |
 | `BandwidthCI`                | 0.99          | ratio         | Confidence interval used for determining control limits.                                                |
 | `CorrelationPreviousPeriods` | 23            | intervals     | Number of previous intervals used to calculate prediction error correlation when an exception is found. |
 | `CorrelationThreshold`       | 0.83666       | dimensionless | Absolute correlation lower limit for detecting (anti)correlation.                                       |
