@@ -338,10 +338,11 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function RemoveOutliers(Values() As Double) As Double()
 
       ' Returns an array which contains the input data from which outliers
-      ' are removed (NaN) using either the mean or median absolute deviation
-      ' function.
+      ' are filtered (replaced with NaNs) using either the mean or median
+      ' absolute deviation function.
 
-      Dim ValuesCentralTendency, ValuesControlLimit As Double
+      Dim ValuesCentralTendency, ValuesControlLimit, _
+        FilteredValues(Values.Length-1) As Double
       Dim i As Integer
 
       ValuesCentralTendency = CentralTendency(Values)
@@ -349,11 +350,13 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       For i = 0 to Values.Length-1
         If Abs(Values(i)-ValuesCentralTendency) > ValuesControlLimit Then
-          Values(i) = NaN ' Exclude outlier exceeding CL by setting to NaN.
+          FilteredValues(i) = NaN ' Filter outlier
+        Else
+          FilteredValues(i) = Values(i) ' Keep inlier
         End If
       Next i
 
-      Return Values
+      Return FilteredValues
 
     End Function
 
