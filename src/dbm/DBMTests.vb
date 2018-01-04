@@ -402,6 +402,72 @@ Namespace Vitens.DynamicBandwidthMonitor
         ({6, 96, 82, 26, 47, 84, 34, 39, 60, 99}) = 28
 
       UnitTestsPassed = UnitTestsPassed And _
+        Not UseMeanAbsoluteDeviation({6,5,5,9}) And _
+        Not UseMeanAbsoluteDeviation({2,2,10,9}) And _
+        Not UseMeanAbsoluteDeviation({4,0,10,6}) And _
+        Not UseMeanAbsoluteDeviation({6,10,1,1}) And _
+        UseMeanAbsoluteDeviation({3,0,0,0}) And _
+        Not UseMeanAbsoluteDeviation({10,0,8,5}) And _
+        Not UseMeanAbsoluteDeviation({7,4,5,3}) And _
+        UseMeanAbsoluteDeviation({5,1,5,5}) And _
+        Not UseMeanAbsoluteDeviation({2,7,3,8}) And _
+        Not UseMeanAbsoluteDeviation({2,6,10,1}) And _
+        Not UseMeanAbsoluteDeviation({1,6,3,5}) And _
+        Not UseMeanAbsoluteDeviation({3,9,7,3}) And _
+        UseMeanAbsoluteDeviation({5,5,8,5}) And _
+        Not UseMeanAbsoluteDeviation({5,10,5,4}) And _
+        Not UseMeanAbsoluteDeviation({0,2,4,1}) And _
+        Not UseMeanAbsoluteDeviation({7,3,0,10}) And _
+        UseMeanAbsoluteDeviation({4,4,4,0}) And _
+        Not UseMeanAbsoluteDeviation({5,7,4,5}) And _
+        UseMeanAbsoluteDeviation({2,2,2,2}) And _
+        UseMeanAbsoluteDeviation({9,4,4,4})
+
+      UnitTestsPassed = UnitTestsPassed And _
+        CentralTendency({3,0,0,0}) = 0.75 And _
+        CentralTendency({2,10,0,1}) = 1.5 And _
+        CentralTendency({7,7,7,1}) = 5.5 And _
+        CentralTendency({5,7,2,8}) = 6 And _
+        CentralTendency({9,3,4,5}) = 4.5 And _
+        CentralTendency({3,3,3,3}) = 3 And _
+        CentralTendency({8,4,2,10}) = 6 And _
+        CentralTendency({2,1,10,10}) = 6 And _
+        CentralTendency({3,3,6,2}) = 3 And _
+        CentralTendency({9,9,6,5}) = 7.5 And _
+        CentralTendency({2,8,8,9}) = 8 And _
+        CentralTendency({7,7,4,1}) = 5.5 And _
+        CentralTendency({5,5,5,0}) = 3.75 And _
+        CentralTendency({4,2,3,7}) = 3.5 And _
+        CentralTendency({2,1,5,1}) = 1.5 And _
+        CentralTendency({9,4,5,0}) = 4.5 And _
+        CentralTendency({1,1,7,1}) = 2.5 And _
+        CentralTendency({1,5,9,5}) = 5 And _
+        CentralTendency({3,5,1,9}) = 4 And _
+        CentralTendency({0,0,0,0}) = 0
+
+      UnitTestsPassed = UnitTestsPassed And _
+        Round(ControlLimit({8,2,0,10}), 4) = 30.5449 And _
+        Round(ControlLimit({2,4,8,7}), 4) = 15.2724 And _
+        Round(ControlLimit({5,8,0,2}), 4) = 19.0906 And _
+        Round(ControlLimit({8,1,0,3}), 4) = 11.4543 And _
+        Round(ControlLimit({10,7,1,3}), 4) = 22.9087 And _
+        Round(ControlLimit({6,2,1,9}), 4) = 19.0906 And _
+        Round(ControlLimit({4,9,9,3}), 4) = 19.0906 And _
+        Round(ControlLimit({10,7,2,8}), 4) = 11.4543 And _
+        Round(ControlLimit({6,0,10,1}), 4) = 22.9087 And _
+        Round(ControlLimit({10,3,4,2}), 4) = 7.6362 And _
+        Round(ControlLimit({6,4,9,0}), 4) = 19.0906 And _
+        Round(ControlLimit({1,0,9,9}), 4) = 30.5449 And _
+        Round(ControlLimit({0,3,6,2}), 4) = 11.4543 And _
+        Round(ControlLimit({9,7,4,6}), 4) = 11.4543 And _
+        Round(ControlLimit({6,6,4,1}), 4) = 7.6362 And _
+        Round(ControlLimit({7,3,4,1}), 4) = 11.4543 And _
+        Round(ControlLimit({6,4,4,10}), 4) = 7.6362 And _
+        Round(ControlLimit({10,9,1,4}), 4) = 22.9087 And _
+        Round(ControlLimit({8,10,5,7}), 4) = 11.4543 And _
+        Round(ControlLimit({8,4,0,0}), 4) = 15.2724
+
+      UnitTestsPassed = UnitTestsPassed And _
         Hash(RemoveOutliers({100, 100, 100, 100, 100, 100, 100, 100, 999})) = _
         Hash({100, 100, 100, 100, 100, 100, 100, 100, NaN}) And _
         Hash(RemoveOutliers({100, 101, 102, 103, 104, 105, 106, 107, 999})) = _
