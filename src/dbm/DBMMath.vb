@@ -296,7 +296,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       CentralTendency = Median(Values)
       MAD = Median(AbsoluteDeviation(Values, CentralTendency))
       ControlLimit = MAD*MedianAbsoluteDeviationScaleFactor(Count-1)* _
-        ControlLimitRejectionCriterion(ConfidenceInterval, Count-1)
+        ControlLimitRejectionCriterion(OutlierCI, Count-1)
 
       If ControlLimit = 0 Then ' This only happens when MAD equals 0.
         ' Use Mean Absolute Deviation instead of Median Absolute Deviation
@@ -305,7 +305,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         CentralTendency = Mean(Values)
         MAD = Mean(AbsoluteDeviation(Values, CentralTendency))
         ControlLimit = MAD*MeanAbsoluteDeviationScaleFactor* _
-          ControlLimitRejectionCriterion(ConfidenceInterval, Count-1)
+          ControlLimitRejectionCriterion(OutlierCI, Count-1)
       End If
 
       For i = 0 to Values.Length-1

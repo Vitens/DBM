@@ -48,9 +48,11 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared EMAPreviousPeriods As Integer = _
       CInt(0.5*3600/CalculationInterval-1) ' 5 intervals, 30 minutes
 
-    ' Confidence interval used for removing outliers and determining
-    ' control limits.
-    Public Shared ConfidenceInterval As Double = 0.99
+    ' Confidence interval used for removing outliers.
+    Public Shared OutlierCI As Double = 0.9
+
+    ' Confidence interval used for determining control limits.
+    Public Shared BandwidthCI As Double = 0.99
 
     ' Number of previous intervals used to calculate prediction error
     ' correlation when an exception is found.

@@ -68,7 +68,8 @@ DBM can be configured using several parameters. The values for these parameters 
 | `CalculationInterval`        | 300           | seconds       | Time interval at which the calculation is run.                                                          |
 | `ComparePatterns`            | 12            | weeks         | Number of weeks to look back to predict the current value and control limits.                           |
 | `EMAPreviousPeriods`         | 5             | intervals     | Number of previous intervals used to smooth the data.                                                   |
-| `ConfidenceInterval`         | 0.99          | ratio         | Confidence interval used for removing outliers and determining control limits.                          |
+| `OutlierCI`                  | 0.9           | ratio         | Confidence interval used for removing outliers.                                                         |
+| `BandwidthCI`                | 0.99          | ratio         | Confidence interval used for determining control limits.                                                |
 | `CorrelationPreviousPeriods` | 23            | intervals     | Number of previous intervals used to calculate prediction error correlation when an exception is found. |
 | `CorrelationThreshold`       | 0.83666       | dimensionless | Absolute correlation lower limit for detecting (anti)correlation.                                       |
 | `RegressionAngleRange`       | 18.435        | degrees       | Regression angle range (around -45/+45 degrees) required when suppressing based on (anti)correlation.   |
@@ -84,7 +85,8 @@ DBMTester is a command line utility that can be used to quickly calculate DBM re
 | `-iv=`   | 0..1   | Changes the `CalculationInterval` parameter.                                                                           |
 | `-p=`    | 0..1   | Changes the `ComparePatterns` parameter.                                                                               |
 | `-ep=`   | 0..1   | Changes the `EMAPreviousPeriods` parameter.                                                                            |
-| `-ci=`   | 0..1   | Changes the `ConfidenceInterval` parameter.                                                                            |
+| `-oi=`   | 0..1   | Changes the `OutlierCI` parameter.                                                                                     |
+| `-bi=`   | 0..1   | Changes the `BandwidthCI` parameter.                                                                                   |
 | `-cp=`   | 0..1   | Changes the `CorrelationPreviousPeriods` parameter.                                                                    |
 | `-ct=`   | 0..1   | Changes the `CorrelationThreshold` parameter.                                                                          |
 | `-ra=`   | 0..1   | Changes the `RegressionAngleRange` parameter.                                                                          |

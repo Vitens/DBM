@@ -76,7 +76,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' interval estimation. They are used to detect signals in process data
         ' that indicate that a process is not in control and, therefore, not
         ' operating predictably.
-        ControlLimit = ControlLimitRejectionCriterion(ConfidenceInterval, _
+        ControlLimit = ControlLimitRejectionCriterion(BandwidthCI, _
           StatisticsData.Count-1)*StatisticsData.StandardError
 
         ' Set upper and lower control limits based on prediction, rejection

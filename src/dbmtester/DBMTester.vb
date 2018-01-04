@@ -118,8 +118,10 @@ Namespace Vitens.DynamicBandwidthMonitor
               ComparePatterns = Convert.ToInt32(Value)
             ElseIf Parameter.Equals("ep") Then
               EMAPreviousPeriods = Convert.ToInt32(Value)
-            ElseIf Parameter.Equals("ci") Then
-              ConfidenceInterval = Convert.ToDouble(Value)
+            ElseIf Parameter.Equals("oi") Then
+              OutlierCI = Convert.ToDouble(Value)
+            ElseIf Parameter.Equals("bi") Then
+              BandwidthCI = Convert.ToDouble(Value)
             ElseIf Parameter.Equals("cp") Then
               CorrelationPreviousPeriods = Convert.ToInt32(Value)
             ElseIf Parameter.Equals("ct") Then
