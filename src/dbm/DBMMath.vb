@@ -311,7 +311,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function ControlLimit(Values() As Double) As Double
+    Public Shared Function ControlLimit(Values() As Double, _
+      p As Double) As Double
 
       ' Returns the control limits for the data series, based on either the
       ' mean or median absolute deviation, scale factor and rejection criterion.
@@ -324,11 +325,11 @@ Namespace Vitens.DynamicBandwidthMonitor
       If UseMeanAbsoluteDeviation(Values) Then
         Return MeanAbsoluteDeviation(Values)* _
           MeanAbsoluteDeviationScaleFactor* _
-          ControlLimitRejectionCriterion(OutlierCI, Count-1)
+          ControlLimitRejectionCriterion(p, Count-1)
       Else
         Return MedianAbsoluteDeviation(Values)* _
           MedianAbsoluteDeviationScaleFactor(Count-1)* _
-          ControlLimitRejectionCriterion(OutlierCI, Count-1)
+          ControlLimitRejectionCriterion(p, Count-1)
       End If
 
     End Function
@@ -344,7 +345,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim i As Integer
 
       ValuesCentralTendency = CentralTendency(Values)
-      ValuesControlLimit = ControlLimit(Values)
+      ValuesControlLimit = ControlLimit(Values, OutlierCI)
 
       For i = 0 to Values.Length-1
         If Abs(Values(i)-ValuesCentralTendency) > ValuesControlLimit Then

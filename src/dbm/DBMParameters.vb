@@ -49,7 +49,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       CInt(0.5*3600/CalculationInterval-1) ' 5 intervals, 30 minutes
 
     ' Confidence interval used for removing outliers.
-    Public Shared OutlierCI As Double = 0.9
+    Public Shared OutlierCI As Double = 0.99
 
     ' Confidence interval used for determining control limits.
     Public Shared BandwidthCI As Double = 0.99
