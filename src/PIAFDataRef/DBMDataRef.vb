@@ -22,14 +22,17 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 
+Imports System
 Imports System.Collections.Generic
 Imports System.ComponentModel
+Imports System.DateTime
 Imports System.Math
 Imports System.Runtime.InteropServices
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.PI
 Imports OSIsoft.AF.Time
+Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
@@ -66,6 +69,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private Shared _DBM As New DBM
+    Private LastGetPointsTime As DateTime
     Private InputPointDriver As DBMPointDriver
     Private CorrelationPoints As List(Of DBMCorrelationPoint)
 
@@ -114,18 +118,27 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Sub GetInputAndCorrelationPoints
 
+      ' Retrieve input and correlation PI points from AF hierarchy. Recheck for
+      ' changes after every calculation interval and only if owned by an
+      ' attribute (element is an instance of an element template) and attribute
+      ' has a parent attribute referring to an input PI point.
+
       Dim Element, ParentElement, SiblingElement As AFElement
 
-      ' If owned by an attribute and attribute has a parent attribute.
-      If Attribute IsNot Nothing And Attribute.Parent IsNot Nothing Then
+      If Now >= AlignTimestamp(LastGetPointsTime, CalculationInterval). _
+        AddSeconds(CalculationInterval) And _
+        Attribute IsNot Nothing And Attribute.Parent IsNot Nothing Then
 
+        LastGetPointsTime = Now
         Element = DirectCast(Attribute.Element, AFElement)
         ParentElement = Element.Parent
         InputPointDriver = New DBMPointDriver(Attribute.Parent.PIPoint) ' Parent
         CorrelationPoints = New List(Of DBMCorrelationPoint)
 
-        ' If correlation calculations are not disabled using categories.
-        If Not Attribute.CategoriesString.Contains(CategoryNoCorrelation) Then
+        ' Retrieve correlation points only when calculating the DBM factor value
+        ' and if the correlation calculations are not disabled using categories.
+        If Attribute.CategoriesString.Contains(CategoryReturnFactor) And _
+          Not Attribute.CategoriesString.Contains(CategoryNoCorrelation) Then
 
           ' Find siblings
           If ParentElement IsNot Nothing Then
@@ -174,7 +187,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Result As DBMResult
       Dim Value As New AFValue
 
-      If InputPointDriver Is Nothing Then GetInputAndCorrelationPoints
+      GetInputAndCorrelationPoints
 
       If timeContext Is Nothing Then
         Timestamp = DirectCast(InputPointDriver.Point, PIPoint). _
@@ -191,11 +204,12 @@ Namespace Vitens.DynamicBandwidthMonitor
         If Attribute.CategoriesString. _
           Contains(CategoryReturnFactor) Then
           Value = New AFValue(Result.Factor, Result.Timestamp)
-          Value.Substituted = Abs(Result.Factor) > 0 And Abs(Result.Factor) <= 1
+          Value.Questionable = Abs(Result.Factor) > 1 ' Unsuppressed exception
+          Value.Substituted = Abs(Result.Factor) > 0 And _
+            Abs(Result.Factor) <= 1 ' Suppressed exception
         ElseIf Attribute.CategoriesString. _
           Contains(CategoryReturnMeasuredValue) Then
           Value = New AFValue(.MeasuredValue, Result.Timestamp)
-          Value.Questionable = Abs(Result.Factor) > 1 ' Unsuppressed exception
         ElseIf Attribute.CategoriesString. _
           Contains(CategoryReturnPredictedValue) Then
           Value = New AFValue(.PredictedValue, Result.Timestamp)
@@ -222,7 +236,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim IntervalSeconds As Double
 
-      If InputPointDriver Is Nothing Then GetInputAndCorrelationPoints
+      GetInputAndCorrelationPoints
 
       _DBM.PrepareData(InputPointDriver, CorrelationPoints, _
         timeContext.StartTime.LocalTime, timeContext.EndTime.LocalTime)
