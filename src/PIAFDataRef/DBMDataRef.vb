@@ -107,7 +107,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Property ConfigString As String
 
       Get
-        Return DBM.Version
+        Return DBM.LicenseNotice
       End Get
 
       Set
