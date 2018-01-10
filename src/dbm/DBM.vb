@@ -82,14 +82,26 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function Version As String
 
-      ' Returns a string containing version, copyright and license information.
+      ' Returns a string containing the full version number including, if set,
+      ' Git hash.
 
       Const GITHASH As String = "" ' Updated automatically by the build script.
 
+      Return FileVersionInfo.GetVersionInfo(System.Reflection.Assembly. _
+        GetExecutingAssembly.Location).FileVersion & _
+        If(GITHASH = "", "", "+" & GITHASH)
+
+    End Function
+
+
+    Public Shared Function LicenseNotice As String
+
+      ' Returns a string containing product name, version number, copyright and
+      ' license notice.
+
       With FileVersionInfo.GetVersionInfo(System.Reflection.Assembly. _
         GetExecutingAssembly.Location)
-        Return .ProductName & " v" & .FileVersion & _
-          If(GITHASH = "", "", "+" & GITHASH) & NewLine & _
+        Return .ProductName & " v" & Version & NewLine & _
           .Comments & NewLine & _
           .LegalCopyright & NewLine & _
           NewLine & _
