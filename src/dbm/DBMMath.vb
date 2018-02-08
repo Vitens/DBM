@@ -135,7 +135,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' R.C. Geary. The Ratio of the Mean Deviation to the Standard Deviation
       '  as a Test of Normality. Biometrika, 1935. Cited on page 8.
 
-      Return Sqrt(PI/2)
+      Return 1.2533141373155 ' Precomputed result for Sqrt(PI/2)
 
     End Function
 
@@ -147,6 +147,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' For a symmetric distribution with zero mean, the population MAD is the
       ' 75th percentile of the distribution.
       ' Huber, P. J. (1981). Robust statistics. New York: John Wiley.
+
+      ' Precomputed result
+      If n = 11 Then Return 1.43380414160658
 
       If n < 30 Then
         Return 1/TInv(0.75, n) ' n<30 Student's t-distribution
@@ -166,6 +169,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Student. 1908. Probable error of a correlation
       '  coefficient. Biometrika 6, 2-3, 302–310.
       ' Hogg and Tanis' Probability and Statistical Inference (7e).
+
+      ' Precomputed results
+      If p = 0.99 And n = 6 Then Return 3.70744533800376
+      If p = 0.99 And n = 7 Then Return 3.49948706845407
+      If p = 0.99 And n = 8 Then Return 3.35538805213598
+      If p = 0.99 And n = 9 Then Return 3.2498355357257
+      If p = 0.99 And n = 10 Then Return 3.16927251686568
+      If p = 0.99 And n = 11 Then Return 3.10580635664082
 
       If n < 30 Then
         Return TInv((p+1)/2, n) ' n<30 Student's t-distribution
