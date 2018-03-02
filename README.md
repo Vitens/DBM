@@ -95,6 +95,17 @@ DBMTester is a command line utility that can be used to quickly calculate DBM re
 | `-f=`    | 0..1   | Output format. `local` (default) for local formatting, `intl` for UTC time and international formatting (ISO 8601).    |
 | `-oc=`   | 0..1   | Output correlation data. Default (`false`) is to only output data during an exception; set to `true` to always output. |
 
+### DBMDataRef
+DBMDataRef is a custom OSIsoft PI Asset Framework data reference which integrates DBM with PI AF. The build script automatically registers the data reference and support assemblies when run on the PI AF server. The data reference uses the PI tag from the parent attribute as input and automatically uses PI tags from sibling and parent elements based on the same template for correlation calculations, unless the `NoCorrelation` category is applied to the attribute. The value returned from the DBM calculation is determined by the applied property/trait:
+
+| Property/trait | Return value        |
+| -------------- | ------------------- |
+| None           | Factor              |
+| `Target`       | Measured value      |
+| `Forecast`     | Predicted value     |
+| `LoLo`         | Lower control limit |
+| `HiHi`         | Upper control limit |
+
 ### License
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 

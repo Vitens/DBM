@@ -29,6 +29,7 @@ Imports System.DateTime
 Imports System.Math
 Imports System.Runtime.InteropServices
 Imports OSIsoft.AF.Asset
+Imports OSIsoft.AF.Asset.AFAttributeTrait
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.PI
 Imports OSIsoft.AF.Time
@@ -56,16 +57,15 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' automatically uses PI tags from sibling and parent elements based on the
     ' same template for correlation calculations, unless the NoCorrelation
     ' category is applied to the attribute. The value returned from the DBM
-    ' calculation is determined by the applied category (Factor, MeasuredValue,
-    ' PredictedValue, LowerControlLimit or UpperControlLimit).
+    ' calculation is determined by the applied property/trait:
+    '   None      Factor
+    '   Target    Measured value
+    '   Forecast  Predicted value
+    '   LoLo      Lower control limit
+    '   HiHi      Upper control limit
 
 
     Const CategoryNoCorrelation As String = "NoCorrelation"
-    Const CategoryReturnFactor As String = "Factor"
-    Const CategoryReturnMeasuredValue As String = "MeasuredValue"
-    Const CategoryReturnPredictedValue As String = "PredictedValue"
-    Const CategoryReturnLowerControlLimit As String = "LowerControlLimit"
-    Const CategoryReturnUpperControlLimit As String = "UpperControlLimit"
 
 
     Private Shared _DBM As New DBM
@@ -137,7 +137,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         ' Retrieve correlation points only when calculating the DBM factor value
         ' and if the correlation calculations are not disabled using categories.
-        If Attribute.CategoriesString.Contains(CategoryReturnFactor) And _
+        If Attribute.Trait Is Nothing And _
           Not Attribute.CategoriesString.Contains(CategoryNoCorrelation) Then
 
           ' Find siblings
@@ -199,25 +199,20 @@ Namespace Vitens.DynamicBandwidthMonitor
       Result = _DBM.Result(InputPointDriver, CorrelationPoints, _
         Timestamp.LocalTime)
 
-      ' Return value based on applied category.
+      ' Return value based on applied property/trait.
       With Result.PredictionData
-        If Attribute.CategoriesString. _
-          Contains(CategoryReturnFactor) Then
+        If Attribute.Trait Is Nothing Then
           Value = New AFValue(Result.Factor, Result.Timestamp)
           Value.Questionable = Abs(Result.Factor) > 1 ' Unsuppressed exception
           Value.Substituted = Abs(Result.Factor) > 0 And _
             Abs(Result.Factor) <= 1 ' Suppressed exception
-        ElseIf Attribute.CategoriesString. _
-          Contains(CategoryReturnMeasuredValue) Then
+        ElseIf Attribute.Trait Is LimitTarget Then
           Value = New AFValue(.MeasuredValue, Result.Timestamp)
-        ElseIf Attribute.CategoriesString. _
-          Contains(CategoryReturnPredictedValue) Then
+        ElseIf Attribute.Trait Is Forecast Then
           Value = New AFValue(.PredictedValue, Result.Timestamp)
-        ElseIf Attribute.CategoriesString. _
-          Contains(CategoryReturnLowerControlLimit) Then
+        ElseIf Attribute.Trait Is LimitLoLo Then
           Value = New AFValue(.LowerControlLimit, Result.Timestamp)
-        ElseIf Attribute.CategoriesString. _
-          Contains(CategoryReturnUpperControlLimit) Then
+        ElseIf Attribute.Trait Is LimitHiHi Then
           Value = New AFValue(.UpperControlLimit, Result.Timestamp)
         End If
       End With
