@@ -31,7 +31,6 @@ Imports System.Runtime.InteropServices
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Asset.AFAttributeTrait
 Imports OSIsoft.AF.Data
-Imports OSIsoft.AF.PI
 Imports OSIsoft.AF.Time
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
@@ -53,11 +52,12 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' DBMDataRef is a custom OSIsoft PI Asset Framework data reference which
     ' integrates DBM with PI AF. The build script automatically registers the
     ' data reference and support assemblies when run on the PI AF server.
-    ' The data reference uses the PI tag from the parent attribute as input and
-    ' automatically uses PI tags from sibling and parent elements based on the
-    ' same template for correlation calculations, unless the NoCorrelation
-    ' category is applied to the attribute. The value returned from the DBM
-    ' calculation is determined by the applied property/trait:
+    ' The data reference uses the parent attribute as input and automatically
+    ' uses attributes from sibling and parent elements based on the same
+    ' template containing good data for correlation calculations, unless the
+    ' NoCorrelation category is applied to the output attribute. The value
+    ' returned from the DBM calculation is determined by the applied
+    ' property/trait:
     '   None      Factor
     '   Target    Measured value
     '   Forecast  Predicted value
@@ -132,7 +132,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         LastGetPointsTime = Now
         Element = DirectCast(Attribute.Element, AFElement)
         ParentElement = Element.Parent
-        InputPointDriver = New DBMPointDriver(Attribute.Parent.PIPoint) ' Parent
+        InputPointDriver = New DBMPointDriver(Attribute.Parent) ' Parent attrib.
         CorrelationPoints = New List(Of DBMCorrelationPoint)
 
         ' Retrieve correlation points only when calculating the DBM factor value
@@ -147,12 +147,12 @@ Namespace Vitens.DynamicBandwidthMonitor
                 SiblingElement.Template IsNot Nothing AndAlso _
                 SiblingElement.Template.UniqueID.Equals _
                 (Element.Template.UniqueID) Then ' Same template, skip self
-                Try ' Catch exception if PIPoint does not exist
+                If SiblingElement.Attributes(Attribute.Parent.Name). _
+                  GetValue.IsGood Then ' Add only if has good data
                   CorrelationPoints.Add(New DBMCorrelationPoint(New _
-                    DBMPointDriver(SiblingElement.Attributes(Attribute.Parent. _
-                    Name).PIPoint), False))
-                Catch
-                End Try
+                    DBMPointDriver(SiblingElement.Attributes _
+                    (Attribute.Parent.Name)), False))
+                End If
               End If
             Next
           End If
@@ -162,12 +162,12 @@ Namespace Vitens.DynamicBandwidthMonitor
             If ParentElement.Template IsNot Nothing AndAlso _
               ParentElement.Template.UniqueID.Equals _
               (Element.Template.UniqueID) Then ' Same template
-              Try ' Catch exception if PIPoint does not exist
+              If ParentElement.Attributes(Attribute.Parent.Name). _
+                GetValue.IsGood Then ' Add only if has good data
                 CorrelationPoints.Add(New DBMCorrelationPoint _
                   (New DBMPointDriver(ParentElement.Attributes _
-                  (Attribute.Parent.Name).PIPoint), True))
-              Catch
-              End Try
+                  (Attribute.Parent.Name)), True))
+              End If
             End If
             ParentElement = ParentElement.Parent
           Loop
@@ -190,8 +190,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       GetInputAndCorrelationPoints
 
       If timeContext Is Nothing Then
-        Timestamp = DirectCast(InputPointDriver.Point, PIPoint). _
-          CurrentValue.Timestamp
+        Timestamp = DirectCast(InputPointDriver.Point, AFAttribute). _
+          GetValue.Timestamp
       Else
         Timestamp = DirectCast(timeContext, AFTime)
       End If
