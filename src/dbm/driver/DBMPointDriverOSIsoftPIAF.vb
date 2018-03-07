@@ -26,11 +26,9 @@ Imports System
 Imports System.Collections.Generic
 Imports System.Double
 Imports OSIsoft.AF.Asset
-Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Data.AFCalculationBasis
 Imports OSIsoft.AF.Data.AFSummaryTypes
 Imports OSIsoft.AF.Data.AFTimestampCalculation
-Imports OSIsoft.AF.PI
 Imports OSIsoft.AF.Time
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
@@ -47,7 +45,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     ' Description: Driver for OSIsoft PI Asset Framework.
-    ' Identifier (Point): OSIsoft.AF.PI.PIPoint (PI tag)
+    ' Identifier (Point): OSIsoft.AF.Asset.AFAttribute (PI AF attribute)
 
 
     Private Values As New Dictionary(Of DateTime, Double)
@@ -74,10 +72,11 @@ Namespace Vitens.DynamicBandwidthMonitor
         Not Values.ContainsKey(EndTimestamp.AddSeconds(-CalculationInterval)) _
         Then ' No data yet
 
-        PIValues = DirectCast(Point, PIPoint).Summaries(New AFTimeRange(New _
-          AFTime(StartTimestamp), New AFTime(EndTimestamp)), New AFTimeSpan(0, _
-          0, 0, 0, 0, CalculationInterval, 0), Average, TimeWeighted, _
-          EarliestTime).Item(Average) ' Get averages from PI
+        PIValues = DirectCast(Point, AFAttribute).Data.Summaries _
+          (New AFTimeRange(New AFTime(StartTimestamp), _
+          New AFTime(EndTimestamp)), New AFTimeSpan(0, 0, 0, 0, 0, _
+          CalculationInterval, 0), Average, TimeWeighted, EarliestTime). _
+          Item(Average) ' Get averages from PI AF
 
         Values.Clear
         For Each Value In PIValues ' Store averages in Values dictionary
@@ -107,10 +106,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       If Values.TryGetValue(Timestamp, Value) Then ' In cache
         Return Value ' Return value from cache
       Else
-        Return DirectCast(DirectCast(Point, PIPoint).Summary(New AFTimeRange _
-          (New AFTime(Timestamp), New AFTime(Timestamp.AddSeconds _
-          (CalculationInterval))), Average, TimeWeighted, EarliestTime). _
-          Item(Average).Value, Double) ' Get average
+        Return DirectCast(DirectCast(Point, AFAttribute).Data.Summary _
+          (New AFTimeRange(New AFTime(Timestamp), New AFTime _
+          (Timestamp.AddSeconds(CalculationInterval))), Average, TimeWeighted, _
+          EarliestTime).Item(Average).Value, Double) ' Get average from PI AF
       End If
 
     End Function
