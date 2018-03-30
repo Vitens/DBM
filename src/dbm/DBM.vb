@@ -185,7 +185,19 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Private Shared Function HasCorrelation(AbsErrCorr As Double, _
+    Public Shared Function HasCorrelation(RelErrCorr As Double, _
+      RelErrAngle As Double) As Boolean
+
+      ' If correlation with measurement and (relative) prediction errors are
+      ' about the same size.
+
+      Return RelErrCorr > CorrelationThreshold And _
+        Abs(RelErrAngle-SlopeToAngle(1)) <= RegressionAngleRange
+
+    End Function
+
+
+    Public Shared Function HasAnticorrelation(AbsErrCorr As Double, _
       AbsErrAngle As Double, SubtractSelf As Boolean) As Boolean
 
       ' If anticorrelation with adjacent measurement and (absolute) prediction
@@ -194,18 +206,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       Return AbsErrCorr < -CorrelationThreshold And _
         Abs(AbsErrAngle+SlopeToAngle(1)) <= RegressionAngleRange And _
         Not SubtractSelf
-
-    End Function
-
-
-    Private Shared Function HasAnticorrelation(RelErrCorr As Double, _
-      RelErrAngle As Double) As Boolean
-
-      ' If correlation with measurement and (relative) prediction errors are
-      ' about the same size.
-
-      Return RelErrCorr > CorrelationThreshold And _
-        Abs(RelErrAngle-SlopeToAngle(1)) <= RegressionAngleRange
 
     End Function
 
@@ -222,7 +222,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' of the error point cloud has to be around -45 or +45 degrees to indicate
       ' that both errors are about the same (absolute) size.
 
-      If HasCorrelation(AbsErrCorr, AbsErrAngle, SubtractSelf) Then
+      If HasAnticorrelation(AbsErrCorr, AbsErrAngle, SubtractSelf) Then
         ' If already suppressed due to anticorrelation
         If Factor < -CorrelationThreshold And Factor >= -1 Then
           ' Keep lowest value (strongest anticorrelation)
@@ -230,7 +230,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Else ' Not already suppressed due to anticorrelation
           Return AbsErrCorr ' Suppress
         End If
-      ElseIf HasAnticorrelation(RelErrCorr, RelErrAngle) Then
+      ElseIf HasCorrelation(RelErrCorr, RelErrAngle) Then
         ' If not already suppressed due to anticorrelation
         If Not (Factor < -CorrelationThreshold And Factor >= -1) Then
           ' If already suppressed due to correlation
