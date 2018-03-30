@@ -903,7 +903,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' The returned value indicates how many full days per second this system
       ' can calculate when performing real-time continuous calculations.
 
-      Const DurationTicks As Double = 2*TicksPerSecond ' 2 seconds
+      Const DurationTicks As Double = 0.1*TicksPerSecond ' 0.1 seconds
 
       Dim InputPointDriver As DBMPointDriverWaterUsageModel
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
