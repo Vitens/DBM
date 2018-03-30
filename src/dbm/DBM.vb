@@ -80,6 +80,16 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Points As New Dictionary(Of Object, DBMPoint)
 
 
+    Private Shared Function GetFileVersionInfo As FileVersionInfo
+
+      ' Returns FileVersionInfo for assembly.
+
+      Return FileVersionInfo.GetVersionInfo(System.Reflection.Assembly. _
+        GetExecutingAssembly.Location)
+
+    End Function
+
+
     Public Shared Function Version As String
 
       ' Returns a string containing the full version number including, if set,
@@ -87,9 +97,11 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Const GITHASH As String = "" ' Updated automatically by the build script.
 
-      Return FileVersionInfo.GetVersionInfo(System.Reflection.Assembly. _
-        GetExecutingAssembly.Location).FileVersion & _
-        If(GITHASH = "", "", "+" & GITHASH)
+      With GetFileVersionInfo
+        Return .FileMajorPart.ToString & "." & .FileMinorPart.ToString & "." & _
+          New DateTime(2000, 1, 1).AddDays(.FileBuildPart). _
+          ToString("yyMMdd") & If(GITHASH = "", "", "+" & GITHASH)
+      End With
 
     End Function
 
@@ -99,8 +111,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns a string containing product name, version number, copyright and
       ' license notice.
 
-      With FileVersionInfo.GetVersionInfo(System.Reflection.Assembly. _
-        GetExecutingAssembly.Location)
+      With GetFileVersionInfo
         Return .ProductName & " v" & Version & NewLine & _
           .Comments & NewLine & _
           .LegalCopyright & NewLine & _
