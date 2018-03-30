@@ -97,11 +97,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Const GITHASH As String = "" ' Updated automatically by the build script.
 
-      With GetFileVersionInfo
-        Return .FileMajorPart.ToString & "." & .FileMinorPart.ToString & "." & _
-          New DateTime(2000, 1, 1).AddDays(.FileBuildPart). _
-          ToString("yyMMdd") & If(GITHASH = "", "", "+" & GITHASH)
-      End With
+      Return GetFileVersionInfo.FileVersion & _
+        If(GITHASH = "", "", "+" & GITHASH)
 
     End Function
 
