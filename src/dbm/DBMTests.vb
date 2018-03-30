@@ -75,6 +75,30 @@ Namespace Vitens.DynamicBandwidthMonitor
         Round(Hash({1, 5, 4, 7, 7, 8, 5, 1}), 4) = 1.8084
 
       UnitTestsPassed = UnitTestsPassed And _
+        HasCorrelation(0.9, 45) = True And _
+        HasCorrelation(0.85, 45) = True And _
+        HasCorrelation(0.8, 45) = False And _
+        HasCorrelation(0.9, 0) = False And _
+        HasCorrelation(0.9, 35) = True And _
+        HasCorrelation(0.9, 25) = False And _
+        HasCorrelation(0.8, 35) = False And _
+        HasCorrelation(-0.9, 45) = False And _
+        HasCorrelation(0.9, -45) = False And _
+        HasCorrelation(0, 0) = False
+
+      UnitTestsPassed = UnitTestsPassed And _
+        HasAnticorrelation(-0.9, -45, False) = True And _
+        HasAnticorrelation(-0.85, -45, True) = False And _
+        HasAnticorrelation(-0.8, -45, False) = False And _
+        HasAnticorrelation(-0.9, 0, False) = False And _
+        HasAnticorrelation(-0.9, -35, False) = True And _
+        HasAnticorrelation(-0.9, -25, False) = False And _
+        HasAnticorrelation(-0.8, -35, False) = False And _
+        HasAnticorrelation(0.9, -45, False) = False And _
+        HasAnticorrelation(-0.9, 45, False) = False And _
+        HasAnticorrelation(0, 0, False) = False
+
+      UnitTestsPassed = UnitTestsPassed And _
         Suppress(5, 0, 0, 0, 0, False) = 5 And _
         Suppress(5, -0.8, 0, 0, 0, False) = 5 And _
         Suppress(5, -0.9, -45, 0, 0, False) = -0.9 And _
@@ -879,7 +903,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' The returned value indicates how many full days per second this system
       ' can calculate when performing real-time continuous calculations.
 
-      Const DurationTicks As Double = 2*TicksPerSecond ' 2 seconds
+      Const DurationTicks As Double = 0.1*TicksPerSecond ' 0.1 seconds
 
       Dim InputPointDriver As DBMPointDriverWaterUsageModel
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)

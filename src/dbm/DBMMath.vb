@@ -171,12 +171,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Hogg and Tanis' Probability and Statistical Inference (7e).
 
       ' Precomputed results
-      If p = 0.99 And n = 6 Then Return 3.70744533800376
-      If p = 0.99 And n = 7 Then Return 3.49948706845407
-      If p = 0.99 And n = 8 Then Return 3.35538805213598
-      If p = 0.99 And n = 9 Then Return 3.2498355357257
-      If p = 0.99 And n = 10 Then Return 3.16927251686568
-      If p = 0.99 And n = 11 Then Return 3.10580635664082
+      If p = 0.99 Then
+        If n = 6 Then Return 3.70744533800376
+        If n = 7 Then Return 3.49948706845407
+        If n = 8 Then Return 3.35538805213598
+        If n = 9 Then Return 3.2498355357257
+        If n = 10 Then Return 3.16927251686568
+        If n = 11 Then Return 3.10580635664082
+      End If
 
       If n < 30 Then
         Return TInv((p+1)/2, n) ' n<30 Student's t-distribution
@@ -399,6 +401,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function SlopeToAngle(Slope As Double) As Double
 
       ' Returns angle in degrees for Slope.
+
+      ' Precomputed result
+      If Slope = 1 Then Return 45
 
       Return Atan(Slope)/(2*PI)*360
 

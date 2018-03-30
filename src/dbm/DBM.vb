@@ -80,6 +80,16 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Points As New Dictionary(Of Object, DBMPoint)
 
 
+    Private Shared Function GetFileVersionInfo As FileVersionInfo
+
+      ' Returns FileVersionInfo for assembly.
+
+      Return FileVersionInfo.GetVersionInfo(System.Reflection.Assembly. _
+        GetExecutingAssembly.Location)
+
+    End Function
+
+
     Public Shared Function Version As String
 
       ' Returns a string containing the full version number including, if set,
@@ -87,8 +97,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Const GITHASH As String = "" ' Updated automatically by the build script.
 
-      Return FileVersionInfo.GetVersionInfo(System.Reflection.Assembly. _
-        GetExecutingAssembly.Location).FileVersion & _
+      Return GetFileVersionInfo.FileVersion & _
         If(GITHASH = "", "", "+" & GITHASH)
 
     End Function
@@ -99,8 +108,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns a string containing product name, version number, copyright and
       ' license notice.
 
-      With FileVersionInfo.GetVersionInfo(System.Reflection.Assembly. _
-        GetExecutingAssembly.Location)
+      With GetFileVersionInfo
         Return .ProductName & " v" & Version & NewLine & _
           .Comments & NewLine & _
           .LegalCopyright & NewLine & _
@@ -174,6 +182,31 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Shared Function HasCorrelation(RelErrCorr As Double, _
+      RelErrAngle As Double) As Boolean
+
+      ' If correlation with measurement and (relative) prediction errors are
+      ' about the same size.
+
+      Return RelErrCorr > CorrelationThreshold And _
+        Abs(RelErrAngle-SlopeToAngle(1)) <= RegressionAngleRange
+
+    End Function
+
+
+    Public Shared Function HasAnticorrelation(AbsErrCorr As Double, _
+      AbsErrAngle As Double, SubtractSelf As Boolean) As Boolean
+
+      ' If anticorrelation with adjacent measurement and (absolute) prediction
+      ' errors are about the same size.
+
+      Return AbsErrCorr < -CorrelationThreshold And _
+        Abs(AbsErrAngle+SlopeToAngle(1)) <= RegressionAngleRange And _
+        Not SubtractSelf
+
+    End Function
+
+
     Public Shared Function Suppress(Factor As Double, _
       AbsErrCorr As Double, AbsErrAngle As Double, _
       RelErrCorr As Double, RelErrAngle As Double, _
@@ -186,10 +219,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' of the error point cloud has to be around -45 or +45 degrees to indicate
       ' that both errors are about the same (absolute) size.
 
-      ' If anticorrelation with adjacent measurement and
-      ' (absolute) prediction errors are about the same size.
-      If Not SubtractSelf And AbsErrCorr < -CorrelationThreshold And _
-        Abs(AbsErrAngle+SlopeToAngle(1)) <= RegressionAngleRange Then
+      If HasAnticorrelation(AbsErrCorr, AbsErrAngle, SubtractSelf) Then
         ' If already suppressed due to anticorrelation
         If Factor < -CorrelationThreshold And Factor >= -1 Then
           ' Keep lowest value (strongest anticorrelation)
@@ -197,10 +227,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Else ' Not already suppressed due to anticorrelation
           Return AbsErrCorr ' Suppress
         End If
-      ' If correlation with measurement and
-      ' (relative) prediction errors are about the same size.
-      ElseIf RelErrCorr > CorrelationThreshold And _
-        Abs(RelErrAngle-SlopeToAngle(1)) <= RegressionAngleRange Then
+      ElseIf HasCorrelation(RelErrCorr, RelErrAngle) Then
         ' If not already suppressed due to anticorrelation
         If Not (Factor < -CorrelationThreshold And Factor >= -1) Then
           ' If already suppressed due to correlation
