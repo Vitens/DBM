@@ -26,7 +26,6 @@ Imports System
 Imports System.Collections.Generic
 Imports System.Environment
 Imports System.Globalization.CultureInfo
-Imports System.Text
 Imports System.Text.RegularExpressions
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
@@ -88,13 +87,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim InputPointDriver As DBMPointDriver = Nothing
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim StartTimestamp, EndTimestamp As DateTime
-      Dim AlwaysOutputCorrelationData As Boolean
-      Dim Line as StringBuilder
-      Dim Result As DBMResult
       Dim _DBM As New DBM
-      Dim PredictionErrors(), PredictionError As Double
-      Dim ErrorStatsData As DBMStatisticsData
-      Dim CorrelationPoint As DBMCorrelationPoint
 
       ' Parse command line arguments
       For Each CommandLineArg In GetCommandLineArgs
@@ -138,8 +131,6 @@ Namespace Vitens.DynamicBandwidthMonitor
               ElseIf Value.ToLower.Equals("intl") Then
                 InternationalFormat = True
               End If
-            ElseIf Parameter.Equals("oc") Then
-              AlwaysOutputCorrelationData = Convert.ToBoolean(Value)
             End If
           Catch ex As Exception
             Console.WriteLine(ex.ToString)
@@ -150,6 +141,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       If InputPointDriver IsNot Nothing And _
         StartTimestamp > DateTime.MinValue Then
+
         If EndTimestamp = DateTime.MinValue Then
           ' No end timestamp, set to start timestamp
           EndTimestamp = StartTimestamp
@@ -157,65 +149,26 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' Remove one interval from end timestamp
           EndTimestamp = EndTimestamp.AddSeconds(-CalculationInterval)
         End If
+
         _DBM.PrepareData(InputPointDriver, CorrelationPoints, _
           StartTimestamp, EndTimestamp.AddSeconds(CalculationInterval))
+
         Do While StartTimestamp <= EndTimestamp
-          Line = New StringBuilder
-          Result = _DBM.Result _
-            (InputPointDriver, CorrelationPoints, StartTimestamp)
-          With Result
-            Line.Append(FormatDateTime(.Timestamp))
-            Line.Append(Separator).Append(FormatNumber(.Factor))
-            Line.Append(Separator). _
-              Append(FormatNumber(.PredictionData.MeasuredValue))
-            Line.Append(Separator). _
-              Append(FormatNumber(.PredictionData.PredictedValue))
-            Line.Append(Separator). _
-              Append(FormatNumber(.PredictionData.LowerControlLimit))
-            Line.Append(Separator). _
-              Append(FormatNumber(.PredictionData.UpperControlLimit))
+
+          With _DBM.Result(InputPointDriver, CorrelationPoints, StartTimestamp)
+            Console.WriteLine(FormatDateTime(.Timestamp) & Separator & _
+            FormatNumber(.Factor) & Separator & _
+            FormatNumber(.PredictionData.MeasuredValue) & Separator & _
+            FormatNumber(.PredictionData.PredictedValue) & Separator & _
+            FormatNumber(.PredictionData.LowerControlLimit) & Separator & _
+            FormatNumber(.PredictionData.UpperControlLimit))
           End With
-          ' If an event is found and a correlation point is available
-          If CorrelationPoints.Count > 0 And _
-            (Result.Factor <> 0 Or AlwaysOutputCorrelationData) Then
-            For Each PredictionErrors In {Result.AbsoluteErrors, _
-              Result.RelativeErrors, Result.CorrelationAbsoluteErrors, _
-              Result.CorrelationRelativeErrors}
-              For Each PredictionError In PredictionErrors
-                Line.Append(Separator).Append(FormatNumber(PredictionError))
-              Next
-            Next
-            For Each ErrorStatsData In {Result.AbsoluteErrorStatsData, _
-              Result.RelativeErrorStatsData}
-              With ErrorStatsData
-                Line.Append(Separator).Append(FormatNumber(.Count))
-                Line.Append(Separator).Append(FormatNumber(.Slope))
-                Line.Append(Separator).Append(FormatNumber(.OriginSlope))
-                Line.Append(Separator).Append(FormatNumber(.Angle))
-                Line.Append(Separator).Append(FormatNumber(.OriginAngle))
-                Line.Append(Separator).Append(FormatNumber(.Intercept))
-                Line.Append(Separator).Append(FormatNumber(.StandardError))
-                Line.Append(Separator).Append(FormatNumber(.Correlation))
-                Line.Append(Separator). _
-                  Append(FormatNumber(.ModifiedCorrelation))
-                Line.Append(Separator).Append(FormatNumber(.Determination))
-              End With
-            Next
-            For Each CorrelationPoint In CorrelationPoints
-              Result = _DBM.Result _
-                (CorrelationPoint.PointDriver, Nothing, StartTimestamp)
-              With Result.PredictionData
-                Line.Append(Separator).Append(FormatNumber(.MeasuredValue))
-                Line.Append(Separator).Append(FormatNumber(.PredictedValue))
-                Line.Append(Separator).Append(FormatNumber(.LowerControlLimit))
-                Line.Append(Separator).Append(FormatNumber(.UpperControlLimit))
-              End With
-            Next
-          End If
-          Console.WriteLine(Line.ToString)
+
           ' Next interval
           StartTimestamp = StartTimestamp.AddSeconds(CalculationInterval)
+
         Loop
+
       End If
 
     End Sub
