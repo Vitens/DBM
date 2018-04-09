@@ -36,13 +36,13 @@ In this example, an exception causes the measured value (black) to cross the upp
 ![Sample 3a](img/sample3a.png)
 ![Sample 3b](img/sample3b.png)
 
-In this example, an exception causes the measured value (black) to cross the upper and lower control limits (gray). Because the pattern is checked against a similar pattern which has a comparable relative prediction error (calculated as _(predicted value / measured value) - 1_), the exception is suppressed. The DBM factor value is set to zero during this time.
+In this example, an exception causes the measured value (black) to cross the upper and lower control limits (gray). Because the pattern is checked against a similar pattern which has a comparable relative prediction error (calculated as _(predicted value / measured value) - 1_), the exception is suppressed. The DBM factor value is reset to zero during this time.
 
 ### Sample 4 - Suppressed exception (anticorrelation)
 ![Sample 4a](img/sample4a.png)
 ![Sample 4b](img/sample4b.png)
 
-In this example, an exception causes the measured value (black) to cross the lower control limit (gray). Because the pattern is checked against a similar, adjacent, pattern which has a comparable, but inverted, absolute prediction error (calculated as _predicted value - measured value_), the exception is suppressed. The DBM factor value is set to zero during this time.
+In this example, an exception causes the measured value (black) to cross the lower control limit (gray). Because the pattern is checked against a similar, adjacent, pattern which has a comparable, but inverted, absolute prediction error (calculated as _predicted value - measured value_), the exception is suppressed. The DBM factor value is reset to zero during this time.
 
 ## Program information
 
