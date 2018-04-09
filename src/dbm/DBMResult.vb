@@ -67,11 +67,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       AbsoluteErrors(Index) = PredictedValueEMA-MeasuredValueEMA
       RelativeErrors(Index) = PredictedValueEMA/MeasuredValueEMA-1
 
-      ' Store initial (no time offset because of prediction error
-      ' correlation calculations) results.
       If PredictionData Is Nothing Then
 
-        ' Store EMA results in new DBMPredictionData object.
+        ' Store EMA results in new DBMPredictionData object for
+        ' current timestamp.
         PredictionData = New DBMPredictionData
         With PredictionData
           .MeasuredValue = MeasuredValueEMA
@@ -84,9 +83,10 @@ Namespace Vitens.DynamicBandwidthMonitor
         If MeasuredValueEMA < LowerControlLimitEMA Then
           Factor = (PredictedValueEMA-MeasuredValueEMA)/ _
             (LowerControlLimitEMA-PredictedValueEMA)
+        End If
 
         ' Upper control limit exceeded, calculate factor.
-        ElseIf MeasuredValueEMA > UpperControlLimitEMA Then
+        If MeasuredValueEMA > UpperControlLimitEMA Then
           Factor = (MeasuredValueEMA-PredictedValueEMA)/ _
             (UpperControlLimitEMA-PredictedValueEMA)
         End If
