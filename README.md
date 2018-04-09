@@ -36,13 +36,13 @@ In this example, an exception causes the measured value (black) to cross the upp
 ![Sample 3a](img/sample3a.png)
 ![Sample 3b](img/sample3b.png)
 
-In this example, an exception causes the measured value (black) to cross the upper and lower control limits (gray). Because the pattern is checked against a similar pattern which has a comparable relative prediction error (calculated as _(predicted value / measured value) - 1_), the exception is suppressed. The DBM factor value is greater than zero and less than, or equal to one (correlation coefficient of the relative prediction error) during this time.
+In this example, an exception causes the measured value (black) to cross the upper and lower control limits (gray). Because the pattern is checked against a similar pattern which has a comparable relative prediction error (calculated as _(predicted value / measured value) - 1_), the exception is suppressed. The DBM factor value is set to zero during this time.
 
 ### Sample 4 - Suppressed exception (anticorrelation)
 ![Sample 4a](img/sample4a.png)
 ![Sample 4b](img/sample4b.png)
 
-In this example, an exception causes the measured value (black) to cross the lower control limit (gray). Because the pattern is checked against a similar, adjacent, pattern which has a comparable, but inverted, absolute prediction error (calculated as _predicted value - measured value_), the exception is suppressed. The DBM factor value is less than zero and greater than, or equal to negative one (correlation coefficient of the absolute prediction error) during this time.
+In this example, an exception causes the measured value (black) to cross the lower control limit (gray). Because the pattern is checked against a similar, adjacent, pattern which has a comparable, but inverted, absolute prediction error (calculated as _predicted value - measured value_), the exception is suppressed. The DBM factor value is set to zero during this time.
 
 ## Program information
 
@@ -93,7 +93,6 @@ DBMTester is a command line utility that can be used to quickly calculate DBM re
 | `-st=`   | 1      | Start timestamp for calculations.                                                                                      |
 | `-et=`   | 0..1   | End timestamp for calculations, all intervals in between are calculated.                                               |
 | `-f=`    | 0..1   | Output format. `local` (default) for local formatting, `intl` for UTC time and international formatting (ISO 8601).    |
-| `-oc=`   | 0..1   | Output correlation data. Default (`false`) is to only output data during an exception; set to `true` to always output. |
 
 ### DBMDataRef
 DBMDataRef is a custom OSIsoft PI Asset Framework data reference which integrates DBM with PI AF. The build script automatically registers the data reference and support assemblies when run on the PI AF server. The data reference uses the parent attribute as input and automatically uses attributes from sibling and parent elements based on the same template containing good data for correlation calculations, unless the `NoCorrelation` category is applied to the output attribute. The value returned from the DBM calculation is determined by the applied property/trait:

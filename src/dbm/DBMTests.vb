@@ -101,24 +101,24 @@ Namespace Vitens.DynamicBandwidthMonitor
       UnitTestsPassed = UnitTestsPassed And _
         Suppress(5, 0, 0, 0, 0, False) = 5 And _
         Suppress(5, -0.8, 0, 0, 0, False) = 5 And _
-        Suppress(5, -0.9, -45, 0, 0, False) = -0.9 And _
+        Suppress(5, -0.9, -45, 0, 0, False) = 0 And _
         Suppress(5, -0.9, 0, 0, 0, True) = 5 And _
         Suppress(5, 0, 0, 0.8, 0, False) = 5 And _
-        Suppress(5, 0, 0, 0.9, 45, False) = 0.9 And _
-        Suppress(5, 0, 0, 0.9, 45, True) = 0.9 And _
+        Suppress(5, 0, 0, 0.9, 45, False) = 0 And _
+        Suppress(5, 0, 0, 0.9, 45, True) = 0 And _
         Suppress(-0.9, -0.85, 0, 0, 0, False) = -0.9 And _
-        Suppress(-0.9, -0.95, -45, 0, 0, False) = -0.95 And _
-        Suppress(0.9, 0, 0, 0.85, 45, False) = 0.9 And _
+        Suppress(-0.9, -0.95, -45, 0, 0, False) = 0 And _
+        Suppress(0.9, 0, 0, 0.85, 45, False) = 0 And _
         Suppress(0.9, 0, 0, 0.95, 1, True) = 0.9 And _
-        Suppress(-0.9, -0.99, -45, 0, 0, False) = -0.99 And _
+        Suppress(-0.9, -0.99, -45, 0, 0, False) = 0 And _
         Suppress(-0.9, 0.99, 0, 0, 0, False) = -0.9 And _
         Suppress(-0.9, 0.99, 0, 0, 0, True) = -0.9 And _
-        Suppress(0.99, -0.9, -45, 0, 0, False) = -0.9 And _
+        Suppress(0.99, -0.9, -45, 0, 0, False) = 0 And _
         Suppress(0.99, -0.9, 0, 0, 0, True) = 0.99 And _
         Suppress(-0.99, 0, 0, 0, 0, True) = -0.99 And _
         Suppress(0.99, 0, 0, 0, 0, True) = 0.99 And _
         Suppress(-0.98, -0.99, -1, 0, 0, False) = -0.98 And _
-        Suppress(-0.98, -0.99, -45, 0, 0, False) = -0.99
+        Suppress(-0.98, -0.99, -45, 0, 0, False) = 0
 
       UnitTestsPassed = UnitTestsPassed And _
         Round(NormSInv(0.7451), 4) = 0.6591 And _
@@ -864,11 +864,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         Result = _DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
         With Result
           IntegrationTestsPassed = IntegrationTestsPassed And _
-            Round(.Factor, 4) = {-1.7572, 0, 0, 0, 0, 1, -11.8493, -22.9119, _
-            0, 0, 0, 0, 1.1375, 0, 1, 0, 0, 0, 0, 0}(i) And _
-            Round(.OriginalFactor, 4) = {-1.7572, 0, 0, 0, 0, -11.7317, _
-            -11.8493, -22.9119, 0, 0, 0, 0, 1.1375, 0, 1.8921, 0, 0, 0, 0, _
-            0}(i) And _
+            Round(.Factor, 4) = {-1.7572, 0, 0, 0, 0, 0, -11.8493, -22.9119, _
+            0, 0, 0, 0, 1.1375, 0, 0, 0, 0, 0, 0, 0}(i) And _
             Round(.PredictionData.MeasuredValue, 4) = {527.5796, 687.0052, _
             1097.1504, 950.9752, 496.1124, 673.6569, 1139.1957, 867.4313, _
             504.9407, 656.4434, 1065.7651, 898.9191, 471.2433, 668.1, _

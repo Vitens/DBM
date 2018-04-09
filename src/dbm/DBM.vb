@@ -219,28 +219,12 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' of the error point cloud has to be around -45 or +45 degrees to indicate
       ' that both errors are about the same (absolute) size.
 
-      If HasAnticorrelation(AbsErrCorr, AbsErrAngle, SubtractSelf) Then
-        ' If already suppressed due to anticorrelation
-        If Factor < -CorrelationThreshold And Factor >= -1 Then
-          ' Keep lowest value (strongest anticorrelation)
-          Return Min(AbsErrCorr, Factor)
-        Else ' Not already suppressed due to anticorrelation
-          Return AbsErrCorr ' Suppress
-        End If
-      ElseIf HasCorrelation(RelErrCorr, RelErrAngle) Then
-        ' If not already suppressed due to anticorrelation
-        If Not (Factor < -CorrelationThreshold And Factor >= -1) Then
-          ' If already suppressed due to correlation
-          If Factor > CorrelationThreshold And Factor <= 1 Then
-            ' Keep highest value (strongest correlation)
-            Return Max(RelErrCorr, Factor)
-          Else ' Not already suppressed due to correlation
-            Return RelErrCorr ' Suppress
-          End If
-        End If
+      If HasCorrelation(RelErrCorr, RelErrAngle) Or _
+        HasAnticorrelation(AbsErrCorr, AbsErrAngle, SubtractSelf) Then
+        Return 0
+      Else
+        Return Factor
       End If
-
-      Return Factor
 
     End Function
 
@@ -283,7 +267,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim CorrelationResult As DBMResult
       Dim AbsoluteErrorStatsData, _
         RelativeErrorStatsData As New DBMStatisticsData
-      Dim Factor As Double
 
       RemoveStalePoints
 
@@ -296,41 +279,34 @@ Namespace Vitens.DynamicBandwidthMonitor
         (Timestamp, True, CorrelationPoints.Count > 0)
 
       ' If an event is found and a correlation point is available
-      If Result.Factor <> 0 And CorrelationPoints.Count > 0 Then
+      If CorrelationPoints.Count > 0 Then
         For Each CorrelationPoint In CorrelationPoints
-          ' If pattern of correlation point contains input point
-          If CorrelationPoint.SubtractSelf Then
-            ' Calculate result for correlation point, subtract input point
-            CorrelationResult = Point(CorrelationPoint.PointDriver).Result _
-              (Timestamp, False, True, Point(InputPointDriver))
-          Else
-            ' Calculate result for correlation point
-            CorrelationResult = Point(CorrelationPoint.PointDriver).Result _
-              (Timestamp, False, True)
-          End If
-          ' Calculate statistics of absolute error compared to prediction
-          AbsoluteErrorStatsData = Statistics _
-            (CorrelationResult.AbsoluteErrors, Result.AbsoluteErrors)
-          ' Calculate statistics of relative error compared to prediction
-          RelativeErrorStatsData = Statistics _
-            (CorrelationResult.RelativeErrors, Result.RelativeErrors)
-          Factor = Suppress(Result.Factor, _
-            AbsoluteErrorStatsData.ModifiedCorrelation, _
-            AbsoluteErrorStatsData.OriginAngle, _
-            RelativeErrorStatsData.ModifiedCorrelation, _
-            RelativeErrorStatsData.OriginAngle, _
-            CorrelationPoint.SubtractSelf) ' Suppress if not a local event.
-          If Factor <> Result.Factor Then ' Has event been suppressed
-            Result.Factor = Factor ' Store correlation coefficient
-            With CorrelationResult ' Store prediction errors for corr. point
-              Array.Copy(.AbsoluteErrors, Result.CorrelationAbsoluteErrors, _
-                .AbsoluteErrors.Length)
-              Array.Copy(.RelativeErrors, Result.CorrelationRelativeErrors, _
-                .RelativeErrors.Length)
-            End With
-            Result.AbsoluteErrorStatsData = AbsoluteErrorStatsData
-            Result.RelativeErrorStatsData = RelativeErrorStatsData
-            Result.SuppressedBy = CorrelationPoint.PointDriver ' Suppressed by
+          If Result.Factor <> 0 Then
+
+            ' If pattern of correlation point contains input point
+            If CorrelationPoint.SubtractSelf Then
+              ' Calculate result for correlation point, subtract input point
+              CorrelationResult = Point(CorrelationPoint.PointDriver).Result _
+                (Timestamp, False, True, Point(InputPointDriver))
+            Else
+              ' Calculate result for correlation point
+              CorrelationResult = Point(CorrelationPoint.PointDriver).Result _
+                (Timestamp, False, True)
+            End If
+
+            ' Calculate statistics of error compared to prediction
+            AbsoluteErrorStatsData = Statistics _
+              (CorrelationResult.AbsoluteErrors, Result.AbsoluteErrors)
+            RelativeErrorStatsData = Statistics _
+              (CorrelationResult.RelativeErrors, Result.RelativeErrors)
+
+            Result.Factor = Suppress(Result.Factor, _
+              AbsoluteErrorStatsData.ModifiedCorrelation, _
+              AbsoluteErrorStatsData.OriginAngle, _
+              RelativeErrorStatsData.ModifiedCorrelation, _
+              RelativeErrorStatsData.OriginAngle, _
+              CorrelationPoint.SubtractSelf) ' Suppress if not a local event.
+
           End If
         Next
       End If
