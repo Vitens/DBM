@@ -26,7 +26,6 @@ Imports System
 Imports System.Collections.Generic
 Imports System.Environment
 Imports System.Globalization.CultureInfo
-Imports System.Text
 Imports System.Text.RegularExpressions
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
@@ -88,7 +87,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim InputPointDriver As DBMPointDriver = Nothing
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim StartTimestamp, EndTimestamp As DateTime
-      Dim Line as StringBuilder
       Dim Result As DBMResult
       Dim _DBM As New DBM
 
@@ -154,22 +152,16 @@ Namespace Vitens.DynamicBandwidthMonitor
         _DBM.PrepareData(InputPointDriver, CorrelationPoints, _
           StartTimestamp, EndTimestamp.AddSeconds(CalculationInterval))
         Do While StartTimestamp <= EndTimestamp
-          Line = New StringBuilder
           Result = _DBM.Result _
             (InputPointDriver, CorrelationPoints, StartTimestamp)
           With Result
-            Line.Append(FormatDateTime(.Timestamp))
-            Line.Append(Separator).Append(FormatNumber(.Factor))
-            Line.Append(Separator). _
-              Append(FormatNumber(.PredictionData.MeasuredValue))
-            Line.Append(Separator). _
-              Append(FormatNumber(.PredictionData.PredictedValue))
-            Line.Append(Separator). _
-              Append(FormatNumber(.PredictionData.LowerControlLimit))
-            Line.Append(Separator). _
-              Append(FormatNumber(.PredictionData.UpperControlLimit))
+            Console.WriteLine(FormatDateTime(.Timestamp) & Separator & _
+            FormatNumber(.Factor) & Separator & _
+            FormatNumber(.PredictionData.MeasuredValue) & Separator & _
+            FormatNumber(.PredictionData.PredictedValue) & Separator & _
+            FormatNumber(.PredictionData.LowerControlLimit) & Separator & _
+            FormatNumber(.PredictionData.UpperControlLimit))
           End With
-          Console.WriteLine(Line.ToString)
           ' Next interval
           StartTimestamp = StartTimestamp.AddSeconds(CalculationInterval)
         Loop
