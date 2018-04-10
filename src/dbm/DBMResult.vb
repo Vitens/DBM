@@ -58,9 +58,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Function HasUnsuppressedException As Boolean
+    Public Function HasException As Boolean
 
-      ' Returns true if there is an unsuppressed exception.
+      ' Returns true if there is an exception.
 
       Return Abs(Factor) > 1
 
