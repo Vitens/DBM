@@ -23,6 +23,7 @@ Option Strict
 
 
 Imports System
+Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMPrediction
 Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
@@ -55,6 +56,28 @@ Namespace Vitens.DynamicBandwidthMonitor
       ReDim RelativeErrors(CorrelationPreviousPeriods)
 
     End Sub
+
+
+    Public Function HasUnsuppressedException As Boolean
+
+      ' Returns true if there is an unsuppressed exception.
+
+      Return Abs(Factor) > 1
+
+    End Function
+
+
+    Public Function HasSuppressedException As Boolean
+
+      ' Returns true if there is a suppressed exception.
+
+      With PredictionData
+        Return Factor = 0 And _
+          (.MeasuredValue < .LowerControlLimit Or _
+          .MeasuredValue > .UpperControlLimit)
+      End With
+
+    End Function
 
 
     Public Sub Calculate(Index As Integer, MeasuredValueEMA As Double, _
