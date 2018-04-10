@@ -203,10 +203,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       With Result.PredictionData
         If Attribute.Trait Is Nothing Then
           Value = New AFValue(Result.Factor, Result.Timestamp)
-          Value.Questionable = Abs(Result.Factor) > 1 ' Unsuppressed exception
-          Value.Substituted = (.MeasuredValue < .LowerControlLimit Or _
-            .MeasuredValue > .UpperControlLimit) And _
-            Result.Factor = 0 ' Suppressed exception
+          Value.Questionable = Result.HasException
+          Value.Substituted = Result.HasSuppressedException
         ElseIf Attribute.Trait Is LimitTarget Then
           Value = New AFValue(.MeasuredValue, Result.Timestamp)
         ElseIf Attribute.Trait Is Forecast Then
