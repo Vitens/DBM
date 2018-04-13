@@ -37,7 +37,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Class DBMPredictionData
 
 
-      Public MeasuredValue, PredictedValue, LowerControlLimit, _
+      Public MeasuredValue, PredictedValue, LowerControlLimit,
         UpperControlLimit As Double
 
 
@@ -68,7 +68,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         ' Extrapolate regression by one interval and use this result as a
         ' prediction.
-        .PredictedValue = _
+        .PredictedValue =
           ComparePatterns*StatisticsData.Slope+StatisticsData.Intercept
 
         ' Control limits are determined by using measures of process variation
@@ -76,7 +76,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' interval estimation. They are used to detect signals in process data
         ' that indicate that a process is not in control and, therefore, not
         ' operating predictably.
-        ControlLimit = ControlLimitRejectionCriterion(BandwidthCI, _
+        ControlLimit = ControlLimitRejectionCriterion(BandwidthCI,
           StatisticsData.Count-1)*StatisticsData.StandardError
 
         ' Set upper and lower control limits based on prediction, rejection
