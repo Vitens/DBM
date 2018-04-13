@@ -38,7 +38,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public SubtractSelf As Boolean ' True if input needs to be subtracted
 
 
-    Public Sub New(PointDriver As DBMPointDriverAbstract, _
+    Public Sub New(PointDriver As DBMPointDriverAbstract,
       SubtractSelf As Boolean)
 
       Me.PointDriver = PointDriver
