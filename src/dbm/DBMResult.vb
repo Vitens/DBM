@@ -72,16 +72,16 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns true if there is a suppressed exception.
 
       With PredictionData
-        Return Factor = 0 And _
-          (.MeasuredValue < .LowerControlLimit Or _
+        Return Factor = 0 And
+          (.MeasuredValue < .LowerControlLimit Or
           .MeasuredValue > .UpperControlLimit)
       End With
 
     End Function
 
 
-    Public Sub Calculate(Index As Integer, MeasuredValueEMA As Double, _
-      PredictedValueEMA As Double, LowerControlLimitEMA As Double, _
+    Public Sub Calculate(Index As Integer, MeasuredValueEMA As Double,
+      PredictedValueEMA As Double, LowerControlLimitEMA As Double,
       UpperControlLimitEMA As Double)
 
       ' Calculates and stores prediction errors and initial results.
@@ -104,13 +104,13 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         ' Lower control limit exceeded, calculate factor.
         If MeasuredValueEMA < LowerControlLimitEMA Then
-          Factor = (PredictedValueEMA-MeasuredValueEMA)/ _
+          Factor = (PredictedValueEMA-MeasuredValueEMA)/
             (LowerControlLimitEMA-PredictedValueEMA)
         End If
 
         ' Upper control limit exceeded, calculate factor.
         If MeasuredValueEMA > UpperControlLimitEMA Then
-          Factor = (MeasuredValueEMA-PredictedValueEMA)/ _
+          Factor = (MeasuredValueEMA-PredictedValueEMA)/
             (UpperControlLimitEMA-PredictedValueEMA)
         End If
 
