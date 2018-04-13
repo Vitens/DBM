@@ -52,7 +52,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Overridable Sub PrepareData(StartTimestamp As DateTime, _
+    Public Overridable Sub PrepareData(StartTimestamp As DateTime,
       EndTimestamp As DateTime)
 
       ' Retrieve and store values in bulk from the passed time range from a
