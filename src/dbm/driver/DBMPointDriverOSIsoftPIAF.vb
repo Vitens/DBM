@@ -58,7 +58,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Overrides Sub PrepareData(StartTimestamp As DateTime, _
+    Public Overrides Sub PrepareData(StartTimestamp As DateTime,
       EndTimestamp As DateTime)
 
       ' Retrieves an average value for each interval in the time range from
@@ -68,21 +68,21 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim PIValues As AFValues
       Dim Value As AFValue
 
-      If Not Values.ContainsKey(StartTimestamp) Or _
-        Not Values.ContainsKey(EndTimestamp.AddSeconds(-CalculationInterval)) _
-        Then ' No data yet
+      If Not Values.ContainsKey(StartTimestamp) Or
+        Not Values.ContainsKey(EndTimestamp.AddSeconds(
+        -CalculationInterval)) Then ' No data yet
 
-        PIValues = DirectCast(Point, AFAttribute).Data.Summaries _
-          (New AFTimeRange(New AFTime(StartTimestamp), _
-          New AFTime(EndTimestamp)), New AFTimeSpan(0, 0, 0, 0, 0, _
-          CalculationInterval, 0), Average, TimeWeighted, EarliestTime). _
+        PIValues = DirectCast(Point, AFAttribute).Data.Summaries(
+          New AFTimeRange(New AFTime(StartTimestamp),
+          New AFTime(EndTimestamp)), New AFTimeSpan(0, 0, 0, 0, 0,
+          CalculationInterval, 0), Average, TimeWeighted, EarliestTime).
           Item(Average) ' Get averages from PI AF
 
         Values.Clear
         For Each Value In PIValues ' Store averages in Values dictionary
           If Not Values.ContainsKey(Value.Timestamp.LocalTime) Then ' DST dupes
             If TypeOf Value.Value Is Double Then
-              Values.Add(Value.Timestamp.LocalTime, _
+              Values.Add(Value.Timestamp.LocalTime,
                 DirectCast(Value.Value, Double))
             Else
               Values.Add(Value.Timestamp.LocalTime, NaN)
@@ -106,9 +106,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       If Values.TryGetValue(Timestamp, Value) Then ' In cache
         Return Value ' Return value from cache
       Else
-        Return DirectCast(DirectCast(Point, AFAttribute).Data.Summary _
-          (New AFTimeRange(New AFTime(Timestamp), New AFTime _
-          (Timestamp.AddSeconds(CalculationInterval))), Average, TimeWeighted, _
+        Return DirectCast(DirectCast(Point, AFAttribute).Data.Summary(
+          New AFTimeRange(New AFTime(Timestamp), New AFTime(
+          Timestamp.AddSeconds(CalculationInterval))), Average, TimeWeighted,
           EarliestTime).Item(Average).Value, Double) ' Get average from PI AF
       End If
 
