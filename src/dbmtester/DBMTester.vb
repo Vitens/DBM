@@ -100,11 +100,11 @@ Namespace Vitens.DynamicBandwidthMonitor
             If Parameter.Equals("i") Then
               InputPointDriver = New DBMPointDriver(Value)
             ElseIf Parameter.Equals("c") Then
-              CorrelationPoints.Add _
-                (New DBMCorrelationPoint(New DBMPointDriver(Value), False))
+              CorrelationPoints.Add(
+                New DBMCorrelationPoint(New DBMPointDriver(Value), False))
             ElseIf Parameter.Equals("cs") Then
-              CorrelationPoints.Add _
-                (New DBMCorrelationPoint(New DBMPointDriver(Value), True))
+              CorrelationPoints.Add(
+                New DBMCorrelationPoint(New DBMPointDriver(Value), True))
             ElseIf Parameter.Equals("iv") Then
               CalculationInterval = Convert.ToInt32(Value)
             ElseIf Parameter.Equals("p") Then
@@ -139,7 +139,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         End If
       Next
 
-      If InputPointDriver IsNot Nothing And _
+      If InputPointDriver IsNot Nothing And
         StartTimestamp > DateTime.MinValue Then
 
         If EndTimestamp = DateTime.MinValue Then
@@ -150,17 +150,17 @@ Namespace Vitens.DynamicBandwidthMonitor
           EndTimestamp = EndTimestamp.AddSeconds(-CalculationInterval)
         End If
 
-        _DBM.PrepareData(InputPointDriver, CorrelationPoints, _
+        _DBM.PrepareData(InputPointDriver, CorrelationPoints,
           StartTimestamp, EndTimestamp.AddSeconds(CalculationInterval))
 
         Do While StartTimestamp <= EndTimestamp
 
           With _DBM.Result(InputPointDriver, CorrelationPoints, StartTimestamp)
-            Console.WriteLine(FormatDateTime(.Timestamp) & Separator & _
-            FormatNumber(.Factor) & Separator & _
-            FormatNumber(.PredictionData.MeasuredValue) & Separator & _
-            FormatNumber(.PredictionData.PredictedValue) & Separator & _
-            FormatNumber(.PredictionData.LowerControlLimit) & Separator & _
+            Console.WriteLine(FormatDateTime(.Timestamp) & Separator &
+            FormatNumber(.Factor) & Separator &
+            FormatNumber(.PredictionData.MeasuredValue) & Separator &
+            FormatNumber(.PredictionData.PredictedValue) & Separator &
+            FormatNumber(.PredictionData.LowerControlLimit) & Separator &
             FormatNumber(.PredictionData.UpperControlLimit))
           End With
 
