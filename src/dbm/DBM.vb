@@ -84,7 +84,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Returns FileVersionInfo for assembly.
 
-      Return FileVersionInfo.GetVersionInfo(System.Reflection.Assembly. _
+      Return FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.
         GetExecutingAssembly.Location)
 
     End Function
@@ -97,7 +97,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Const GITHASH As String = "" ' Updated automatically by the build script.
 
-      Return GetFileVersionInfo.FileVersion & _
+      Return GetFileVersionInfo.FileVersion &
         If(GITHASH = "", "", "+" & GITHASH)
 
     End Function
@@ -109,22 +109,22 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' license notice.
 
       With GetFileVersionInfo
-        Return .ProductName & " v" & Version & NewLine & _
-          .Comments & NewLine & _
-          .LegalCopyright & NewLine & _
-          NewLine & _
-          "This program is free software: you can redistribute it and/or " & _
-          "modify it under the terms of the GNU General Public License as " & _
-          "published by the Free Software Foundation, either version 3 of " & _
-          "the License, or (at your option) any later version." & NewLine & _
-          NewLine & _
-          "This program is distributed in the hope that it will be useful, " & _
-          "but WITHOUT ANY WARRANTY; without even the implied warranty of " & _
-          "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the " & _
-          "GNU General Public License for more details." & NewLine & _
-          NewLine & _
-          "You should have received a copy of the GNU General Public " & _
-          "License along with this program.  " & _
+        Return .ProductName & " v" & Version & NewLine &
+          .Comments & NewLine &
+          .LegalCopyright & NewLine &
+          NewLine &
+          "This program is free software: you can redistribute it and/or " &
+          "modify it under the terms of the GNU General Public License as " &
+          "published by the Free Software Foundation, either version 3 of " &
+          "the License, or (at your option) any later version." & NewLine &
+          NewLine &
+          "This program is distributed in the hope that it will be useful, " &
+          "but WITHOUT ANY WARRANTY; without even the implied warranty of " &
+          "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the " &
+          "GNU General Public License for more details." & NewLine &
+          NewLine &
+          "You should have received a copy of the GNU General Public " &
+          "License along with this program.  " &
           "If not, see <http://www.gnu.org/licenses/>." & NewLine
       End With
 
@@ -135,12 +135,11 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Returns a string containing test results and performance index.
 
-      Return _
-        " * Unit tests " & _
-        If(UnitTestsPassed, "PASSED", "FAILED") & "." & NewLine & _
-        " * Integration tests " & _
-        If(IntegrationTestsPassed, "PASSED", "FAILED") & "." & NewLine & _
-        " * Performance index " & _
+      Return " * Unit tests " &
+        If(UnitTestsPassed, "PASSED", "FAILED") & "." & NewLine &
+        " * Integration tests " &
+        If(IntegrationTestsPassed, "PASSED", "FAILED") & "." & NewLine &
+        " * Performance index " &
         Round(PerformanceIndex, 1).ToString & "." & NewLine
 
     End Function
@@ -182,34 +181,34 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function HasCorrelation(RelErrCorr As Double, _
+    Public Shared Function HasCorrelation(RelErrCorr As Double,
       RelErrAngle As Double) As Boolean
 
       ' If correlation with measurement and (relative) prediction errors are
       ' about the same size.
 
-      Return RelErrCorr > CorrelationThreshold And _
+      Return RelErrCorr > CorrelationThreshold And
         Abs(RelErrAngle-SlopeToAngle(1)) <= RegressionAngleRange
 
     End Function
 
 
-    Public Shared Function HasAnticorrelation(AbsErrCorr As Double, _
+    Public Shared Function HasAnticorrelation(AbsErrCorr As Double,
       AbsErrAngle As Double, SubtractSelf As Boolean) As Boolean
 
       ' If anticorrelation with adjacent measurement and (absolute) prediction
       ' errors are about the same size.
 
-      Return AbsErrCorr < -CorrelationThreshold And _
-        Abs(AbsErrAngle+SlopeToAngle(1)) <= RegressionAngleRange And _
+      Return AbsErrCorr < -CorrelationThreshold And
+        Abs(AbsErrAngle+SlopeToAngle(1)) <= RegressionAngleRange And
         Not SubtractSelf
 
     End Function
 
 
-    Public Shared Function Suppress(Factor As Double, _
-      AbsErrCorr As Double, AbsErrAngle As Double, _
-      RelErrCorr As Double, RelErrAngle As Double, _
+    Public Shared Function Suppress(Factor As Double,
+      AbsErrCorr As Double, AbsErrAngle As Double,
+      RelErrCorr As Double, RelErrAngle As Double,
       SubtractSelf As Boolean) As Double
 
       ' Events can be suppressed when a strong correlation is found in the
@@ -219,7 +218,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' of the error point cloud has to be around -45 or +45 degrees to indicate
       ' that both errors are about the same (absolute) size.
 
-      If HasCorrelation(RelErrCorr, RelErrAngle) Or _
+      If HasCorrelation(RelErrCorr, RelErrAngle) Or
         HasAnticorrelation(AbsErrCorr, AbsErrAngle, SubtractSelf) Then
         Return 0
       Else
@@ -229,8 +228,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Sub PrepareData(InputPointDriver As DBMPointDriverAbstract, _
-      CorrelationPoints As List(Of DBMCorrelationPoint), _
+    Public Sub PrepareData(InputPointDriver As DBMPointDriverAbstract,
+      CorrelationPoints As List(Of DBMCorrelationPoint),
       StartTimestamp As DateTime, EndTimestamp As DateTime)
 
       ' Will pass start and end timestamps to PrepareData method for input and
@@ -240,8 +239,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim CorrelationPoint As DBMCorrelationPoint
 
-      StartTimestamp = AlignTimestamp(StartTimestamp, CalculationInterval). _
-        AddSeconds((EMAPreviousPeriods+CorrelationPreviousPeriods)* _
+      StartTimestamp = AlignTimestamp(StartTimestamp, CalculationInterval).
+        AddSeconds((EMAPreviousPeriods+CorrelationPreviousPeriods)*
         -CalculationInterval).AddDays(ComparePatterns*-7)
       EndTimestamp = AlignTimestamp(EndTimestamp, CalculationInterval)
 
@@ -255,8 +254,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Function Result(InputPointDriver As DBMPointDriverAbstract, _
-      CorrelationPoints As List(Of DBMCorrelationPoint), _
+    Public Function Result(InputPointDriver As DBMPointDriverAbstract,
+      CorrelationPoints As List(Of DBMCorrelationPoint),
       Timestamp As DateTime) As DBMResult
 
       ' This is the main function to call to retrieve results for a specific
@@ -265,7 +264,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim CorrelationPoint As DBMCorrelationPoint
       Dim CorrelationResult As DBMResult
-      Dim AbsoluteErrorStatsData, _
+      Dim AbsoluteErrorStatsData,
         RelativeErrorStatsData As New DBMStatisticsData
 
       RemoveStalePoints
@@ -275,8 +274,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
 
       ' Calculate for input point
-      Result = Point(InputPointDriver).Result _
-        (Timestamp, True, CorrelationPoints.Count > 0)
+      Result = Point(InputPointDriver).Result(
+        Timestamp, True, CorrelationPoints.Count > 0)
 
       ' If an event is found and a correlation point is available
       If CorrelationPoints.Count > 0 Then
@@ -286,25 +285,25 @@ Namespace Vitens.DynamicBandwidthMonitor
             ' If pattern of correlation point contains input point
             If CorrelationPoint.SubtractSelf Then
               ' Calculate result for correlation point, subtract input point
-              CorrelationResult = Point(CorrelationPoint.PointDriver).Result _
-                (Timestamp, False, True, Point(InputPointDriver))
+              CorrelationResult = Point(CorrelationPoint.PointDriver).Result(
+                Timestamp, False, True, Point(InputPointDriver))
             Else
               ' Calculate result for correlation point
-              CorrelationResult = Point(CorrelationPoint.PointDriver).Result _
-                (Timestamp, False, True)
+              CorrelationResult = Point(CorrelationPoint.PointDriver).Result(
+                Timestamp, False, True)
             End If
 
             ' Calculate statistics of error compared to prediction
-            AbsoluteErrorStatsData = Statistics _
-              (CorrelationResult.AbsoluteErrors, Result.AbsoluteErrors)
-            RelativeErrorStatsData = Statistics _
-              (CorrelationResult.RelativeErrors, Result.RelativeErrors)
+            AbsoluteErrorStatsData = Statistics(
+              CorrelationResult.AbsoluteErrors, Result.AbsoluteErrors)
+            RelativeErrorStatsData = Statistics(
+              CorrelationResult.RelativeErrors, Result.RelativeErrors)
 
-            Result.Factor = Suppress(Result.Factor, _
-              AbsoluteErrorStatsData.ModifiedCorrelation, _
-              AbsoluteErrorStatsData.OriginAngle, _
-              RelativeErrorStatsData.ModifiedCorrelation, _
-              RelativeErrorStatsData.OriginAngle, _
+            Result.Factor = Suppress(Result.Factor,
+              AbsoluteErrorStatsData.ModifiedCorrelation,
+              AbsoluteErrorStatsData.OriginAngle,
+              RelativeErrorStatsData.ModifiedCorrelation,
+              RelativeErrorStatsData.OriginAngle,
               CorrelationPoint.SubtractSelf) ' Suppress if not a local event.
 
           End If

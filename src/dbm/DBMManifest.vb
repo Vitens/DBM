@@ -26,17 +26,14 @@ Option Strict
 ' returned using the DBM.Version function.
 
 
-<assembly:System.Reflection.AssemblyVersion _
-  ("1.18.*")>
+<assembly:System.Reflection.AssemblyVersion("1.18.*")>
 
-<assembly:System.Reflection.AssemblyProduct _
-  ("Dynamic Bandwidth Monitor")>
+<assembly:System.Reflection.AssemblyProduct("Dynamic Bandwidth Monitor")>
 
-<assembly:System.Reflection.AssemblyDescription _
-  ("Leak detection method implemented in a real-time data historian")>
+<assembly:System.Reflection.AssemblyDescription(
+  "Leak detection method implemented in a real-time data historian")>
 
-<assembly:System.Reflection.AssemblyCopyright _
-  ("Copyright (C) 2014, 2015, 2016, 2017, 2018  J.H. Fitié, Vitens N.V.")>
+<assembly:System.Reflection.AssemblyCopyright(
+  "Copyright (C) 2014, 2015, 2016, 2017, 2018  J.H. Fitié, Vitens N.V.")>
 
-<assembly:System.Reflection.AssemblyCompany _
-  ("Vitens N.V.")>
+<assembly:System.Reflection.AssemblyCompany("Vitens N.V.")>

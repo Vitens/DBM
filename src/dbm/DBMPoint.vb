@@ -41,7 +41,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private PredictionsSubtractPoint As DBMPoint
     Private PredictionsData As New Dictionary(Of DateTime, DBMPredictionData)
     Private PredictionsQueue As New Queue(Of DateTime) ' Insertion order queue
-    Public Shared PredictionsCacheSize As Integer = _
+    Public Shared PredictionsCacheSize As Integer =
       EMAPreviousPeriods+2*CorrelationPreviousPeriods+1
 
 
@@ -59,14 +59,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' calculation interval. Used by the DBM class to clean up unused
       ' resources.
 
-      Return Now >= AlignTimestamp(LastAccessTime, _
+      Return Now >= AlignTimestamp(LastAccessTime,
         CalculationInterval).AddSeconds(2*CalculationInterval)
 
     End Function
 
 
-    Public Function Result(Timestamp As DateTime, IsInputDBMPoint As Boolean, _
-      HasCorrelationDBMPoint As Boolean, _
+    Public Function Result(Timestamp As DateTime, IsInputDBMPoint As Boolean,
+      HasCorrelationDBMPoint As Boolean,
       Optional SubtractPoint As DBMPoint = Nothing) As DBMResult
 
       ' Retrieves data and calculates prediction and control limits for
@@ -79,9 +79,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
       Dim PredictionTimestamp, PatternTimestamp As DateTime
       Dim PredictionData As DBMPredictionData = Nothing
-      Dim Patterns(ComparePatterns), MeasuredValues(EMAPreviousPeriods), _
-        PredictedValues(EMAPreviousPeriods), _
-        LowerControlLimits(EMAPreviousPeriods), _
+      Dim Patterns(ComparePatterns), MeasuredValues(EMAPreviousPeriods),
+        PredictedValues(EMAPreviousPeriods),
+        LowerControlLimits(EMAPreviousPeriods),
         UpperControlLimits(EMAPreviousPeriods) As Double
 
       LastAccessTime = Now
@@ -102,27 +102,27 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Retrieve data and calculate prediction. Only do this for the required
         ' timestamp and only process previous timestamps for calculating
         ' correlation results if an exception was found.
-        If Result.PredictionData Is Nothing Or (IsInputDBMPoint And _
-          Result.Factor <> 0 And HasCorrelationDBMPoint) Or _
+        If Result.PredictionData Is Nothing Or (IsInputDBMPoint And
+          Result.Factor <> 0 And HasCorrelationDBMPoint) Or
           Not IsInputDBMPoint Then
 
           For EMACounter = 0 To EMAPreviousPeriods ' Filter high freq. variation
 
-            PredictionTimestamp = Result.Timestamp.AddSeconds _
-              (-(EMAPreviousPeriods-EMACounter+CorrelationCounter)* _
+            PredictionTimestamp = Result.Timestamp.AddSeconds(
+              -(EMAPreviousPeriods-EMACounter+CorrelationCounter)*
               CalculationInterval) ' Timestamp for prediction results
 
-            If Not PredictionsData.TryGetValue(PredictionTimestamp, _
+            If Not PredictionsData.TryGetValue(PredictionTimestamp,
               PredictionData) Then ' Calculate prediction data if not cached
 
               For PatternCounter = 0 To ComparePatterns ' Data for regression.
 
-                PatternTimestamp = PredictionTimestamp. _
+                PatternTimestamp = PredictionTimestamp.
                   AddDays(-(ComparePatterns-PatternCounter)*7) ' Timestamp
-                Patterns(PatternCounter) = _
+                Patterns(PatternCounter) =
                   PointDriver.TryGetData(PatternTimestamp) ' Get data
                 If SubtractPoint IsNot Nothing Then ' Subtract input if needed.
-                  Patterns(PatternCounter) -= _
+                  Patterns(PatternCounter) -=
                     SubtractPoint.PointDriver.TryGetData(PatternTimestamp)
                 End If
 
@@ -154,10 +154,10 @@ Namespace Vitens.DynamicBandwidthMonitor
           Next EMACounter
 
           ' Calculate final result using filtered calculation results.
-          Result.Calculate(CorrelationPreviousPeriods-CorrelationCounter, _
-            ExponentialMovingAverage(MeasuredValues), _
-            ExponentialMovingAverage(PredictedValues), _
-            ExponentialMovingAverage(LowerControlLimits), _
+          Result.Calculate(CorrelationPreviousPeriods-CorrelationCounter,
+            ExponentialMovingAverage(MeasuredValues),
+            ExponentialMovingAverage(PredictedValues),
+            ExponentialMovingAverage(LowerControlLimits),
             ExponentialMovingAverage(UpperControlLimits))
 
         End If

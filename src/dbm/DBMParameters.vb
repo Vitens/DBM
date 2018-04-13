@@ -45,7 +45,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared ComparePatterns As Integer = 12 ' weeks
 
     ' Number of previous intervals used to smooth the data.
-    Public Shared EMAPreviousPeriods As Integer = _
+    Public Shared EMAPreviousPeriods As Integer =
       CInt(0.5*3600/CalculationInterval-1) ' 5 intervals, 30 minutes
 
     ' Confidence interval used for removing outliers.
@@ -56,7 +56,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     ' Number of previous intervals used to calculate prediction error
     ' correlation when an exception is found.
-    Public Shared CorrelationPreviousPeriods As Integer = _
+    Public Shared CorrelationPreviousPeriods As Integer =
       CInt(2*3600/CalculationInterval-1) ' 23 intervals, 2 hours
 
     ' Absolute correlation lower limit for detecting (anti)correlation.
@@ -64,7 +64,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     ' Regression angle range (around -45/+45 degrees) required when suppressing
     ' based on (anti)correlation.
-    Public Shared RegressionAngleRange As Double = _
+    Public Shared RegressionAngleRange As Double =
       SlopeToAngle(2)-SlopeToAngle(1) ' 18.435 degrees, factor 2
 
 

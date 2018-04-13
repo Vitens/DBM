@@ -66,7 +66,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim dt_start As Double = l(1).Subtract(l(0)).TotalSeconds
       Dim dt_end As Double = l(l.Count-1).Subtract(l(l.Count-2)).TotalSeconds
-      Dim dt_avg As Double = _
+      Dim dt_avg As Double =
         l(l.Count-1).Subtract(l(0)).TotalSeconds/(l.Count-1)
 
       Return dt_start = dt_end And dt_start = dt_avg
@@ -84,7 +84,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim varray As Double() = Nothing
       Dim formatter As BinaryFormatter = new BinaryFormatter()
 
-      Using fs As Stream = new FileStream(SerializedCSVFileName, _
+      Using fs As Stream = new FileStream(SerializedCSVFileName,
         FileMode.Open, FileAccess.Read, FileShare.Read)
         first_ts = DirectCast(formatter.Deserialize(fs), DateTime)
         dt = DirectCast(formatter.Deserialize(fs), Integer)
@@ -92,7 +92,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       End Using
       For i = 0 To varray.Length-1
         Timestamp = first_ts.AddSeconds(i*dt)
-        If Not Double.IsNaN(varray(i)) And _
+        If Not Double.IsNaN(varray(i)) And
           Not Values.ContainsKey(Timestamp) Then
           Values.Add(Timestamp, varray(i))
         End If
@@ -101,7 +101,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Private Sub SaveBinaryData(SerializedCSVFileName As String, _
+    Private Sub SaveBinaryData(SerializedCSVFileName As String,
       tslist As IList(Of DateTime))
 
       ' Convert the Values dictionary into a Double array and
@@ -122,7 +122,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           varray(i) = NaN
         End If
       Next
-      Using fs As Stream = new FileStream(SerializedCSVFileName, _
+      Using fs As Stream = new FileStream(SerializedCSVFileName,
         FileMode.Create, FileAccess.Write, FileShare.None)
         formatter.Serialize(fs, first_ts)
         formatter.Serialize(fs, dt)
@@ -132,7 +132,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Overrides Sub PrepareData(StartTimestamp As DateTime, _
+    Public Overrides Sub PrepareData(StartTimestamp As DateTime,
       EndTimestamp As DateTime)
 
       ' Retrieves information from a CSV file and stores this in the Values
@@ -148,8 +148,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       CSVFileName = DirectCast(Point, String)
       If File.Exists(CSVFileName) Then
         SerializedCSVFileName = CSVFileName & ".bin"
-        If File.Exists(SerializedCSVFileName) And _
-          File.GetLastWriteTime(CSVFileName) < _
+        If File.Exists(SerializedCSVFileName) And
+          File.GetLastWriteTime(CSVFileName) <
           File.GetLastWriteTime(SerializedCSVFileName) Then
           LoadBinaryData(SerializedCSVFileName)
         Else

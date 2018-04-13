@@ -63,16 +63,16 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       If p < p_low Then ' Left tail
         q = Sqrt(-2*Log(p))
-        Return (((((c1*q+c2)*q+c3)*q+c4)*q+c5)*q+c6)/ _
+        Return (((((c1*q+c2)*q+c3)*q+c4)*q+c5)*q+c6)/
           ((((d1*q+d2)*q+d3)*q+d4)*q+1)
       ElseIf p <= p_high Then
         q = p-0.5
         r = q*q
-        Return (((((a1*r+a2)*r+a3)*r+a4)*r+a5)*r+a6)*q/ _
+        Return (((((a1*r+a2)*r+a3)*r+a4)*r+a5)*r+a6)*q/
           (((((b1*r+b2)*r+b3)*r+b4)*r+b5)*r+1)
       Else ' Right tail
         q = Sqrt(-2*Log(1-p))
-        Return -(((((c1*q+c2)*q+c3)*q+c4)*q+c5)*q+c6)/ _
+        Return -(((((c1*q+c2)*q+c3)*q+c4)*q+c5)*q+c6)/
           ((((d1*q+d2)*q+d3)*q+d4)*q+1)
       End If
 
@@ -108,8 +108,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           y = (((((0.4*y+6.3)*y+36)*y+94.5)/c-y-3)/b+1)*x
           y = Exp(a*y^2)-1
         Else
-          y = _
-            ((1/(((dof+6)/(dof*y)-0.089*d-0.822)*(dof+2)*3)+0.5/(dof+4))*y-1)* _
+          y = ((1/(((dof+6)/(dof*y)-0.089*d-0.822)*(dof+2)*3)+0.5/(dof+4))*y-1)*
             (dof+1)/(dof+2)+1/y
         End If
         Return Sqrt(dof*y)
@@ -140,8 +139,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function MedianAbsoluteDeviationScaleFactor _
-      (n As Integer) As Double ' Estimator; scale factor k
+    Public Shared Function MedianAbsoluteDeviationScaleFactor(
+      n As Integer) As Double ' Estimator; scale factor k
 
       ' k is a constant scale factor, which depends on the distribution.
       ' For a symmetric distribution with zero mean, the population MAD is the
@@ -160,7 +159,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function ControlLimitRejectionCriterion(p As Double, _
+    Public Shared Function ControlLimitRejectionCriterion(p As Double,
       n As Integer) As Double
 
       ' Return two-sided critical z-values for confidence interval p.
@@ -249,7 +248,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Array.Sort(MedianValues)
 
       If MedianValues.Length Mod 2 = 0 Then
-        Return (MedianValues(MedianValues.Length\2)+ _
+        Return (MedianValues(MedianValues.Length\2)+
           MedianValues(MedianValues.Length\2-1))/2
       Else
         Return MedianValues(MedianValues.Length\2)
@@ -258,7 +257,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function AbsoluteDeviation(Values() As Double, _
+    Public Shared Function AbsoluteDeviation(Values() As Double,
       From As Double) As Double()
 
       ' Returns an array which contains the absolute values of the input
@@ -296,8 +295,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function UseMeanAbsoluteDeviation(Values() As Double) _
-      As Boolean
+    Public Shared Function UseMeanAbsoluteDeviation(
+      Values() As Double) As Boolean
 
       ' Returns true if the Mean Absolute Deviation has to be used instead of
       ' the Median Absolute Deviation to detect outliers. Median absolute
@@ -324,7 +323,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function ControlLimit(Values() As Double, _
+    Public Shared Function ControlLimit(Values() As Double,
       p As Double) As Double
 
       ' Returns the control limits for the data series, based on either the
@@ -336,12 +335,12 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Count As Integer = NonNaNCount(Values)
 
       If UseMeanAbsoluteDeviation(Values) Then
-        Return MeanAbsoluteDeviation(Values)* _
-          MeanAbsoluteDeviationScaleFactor* _
+        Return MeanAbsoluteDeviation(Values)*
+          MeanAbsoluteDeviationScaleFactor*
           ControlLimitRejectionCriterion(p, Count-1)
       Else
-        Return MedianAbsoluteDeviation(Values)* _
-          MedianAbsoluteDeviationScaleFactor(Count-1)* _
+        Return MedianAbsoluteDeviation(Values)*
+          MedianAbsoluteDeviationScaleFactor(Count-1)*
           ControlLimitRejectionCriterion(p, Count-1)
       End If
 
@@ -354,7 +353,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' are filtered (replaced with NaNs) using either the mean or median
       ' absolute deviation function.
 
-      Dim ValuesCentralTendency, ValuesControlLimit, _
+      Dim ValuesCentralTendency, ValuesControlLimit,
         FilteredValues(Values.Length-1) As Double
       Dim i As Integer
 
@@ -374,8 +373,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function ExponentialMovingAverage _
-      (Values() As Double) As Double
+    Public Shared Function ExponentialMovingAverage(
+      Values() As Double) As Double
 
       ' Filter high frequency variation
       ' An exponential moving average (EMA), is a type of infinite impulse
@@ -410,13 +409,13 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function AlignTimestamp(Timestamp As DateTime, _
+    Public Shared Function AlignTimestamp(Timestamp As DateTime,
       Seconds As Integer) As DateTime
 
        ' Returns a DateTime for the passed timestamp aligned on the
        ' previous interval (in seconds).
 
-       Return New DateTime(Timestamp.Ticks-Timestamp.Ticks Mod _
+       Return New DateTime(Timestamp.Ticks-Timestamp.Ticks Mod
          Seconds*TicksPerSecond, Timestamp.Kind)
 
     End Function
