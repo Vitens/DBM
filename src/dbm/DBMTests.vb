@@ -851,7 +851,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Timestamp As DateTime
       Dim i As Integer
       Dim Result As DBMResult
-      Dim _DBM As New DBM
+      Dim DBM As New DBM
 
       IntegrationTestsPassed = True
 
@@ -861,7 +861,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
 
       For i = 0 to 19
-        Result = _DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
+        Result = DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
         With Result
           IntegrationTestsPassed = IntegrationTestsPassed And
             Round(.Factor, 4) = {-1.7572, 0, 0, 0, 0, 0, -11.8493, -22.9119,
@@ -912,7 +912,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim Timestamp, Timer As DateTime
       Dim Result As DBMResult
-      Dim _DBM As New DBM
+      Dim DBM As New DBM
       Dim i, Count As Integer
 
       InputPointDriver = New DBMPointDriverWaterUsageModel(0)
@@ -928,13 +928,13 @@ Namespace Vitens.DynamicBandwidthMonitor
       Timestamp = Timestamp.
         AddSeconds(PredictionsCacheSize*-CalculationInterval)
       For i = 1 To PredictionsCacheSize
-        Result = _DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
+        Result = DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
         Timestamp = Timestamp.AddSeconds(CalculationInterval)
       Next i
 
       Timer = Now
       Do While Now.Ticks-Timer.Ticks < DurationTicks
-        Result = _DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
+        Result = DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
         Count += 1
         Timestamp = Timestamp.AddSeconds(CalculationInterval)
       Loop

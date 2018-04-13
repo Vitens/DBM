@@ -87,7 +87,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim InputPointDriver As DBMPointDriver = Nothing
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim StartTimestamp, EndTimestamp As DateTime
-      Dim _DBM As New DBM
+      Dim DBM As New DBM
 
       ' Parse command line arguments
       For Each CommandLineArg In GetCommandLineArgs
@@ -150,12 +150,12 @@ Namespace Vitens.DynamicBandwidthMonitor
           EndTimestamp = EndTimestamp.AddSeconds(-CalculationInterval)
         End If
 
-        _DBM.PrepareData(InputPointDriver, CorrelationPoints,
+        DBM.PrepareData(InputPointDriver, CorrelationPoints,
           StartTimestamp, EndTimestamp.AddSeconds(CalculationInterval))
 
         Do While StartTimestamp <= EndTimestamp
 
-          With _DBM.Result(InputPointDriver, CorrelationPoints, StartTimestamp)
+          With DBM.Result(InputPointDriver, CorrelationPoints, StartTimestamp)
             Console.WriteLine(FormatDateTime(.Timestamp) & Separator &
             FormatNumber(.Factor) & Separator &
             FormatNumber(.PredictionData.MeasuredValue) & Separator &

@@ -68,7 +68,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const CategoryNoCorrelation As String = "NoCorrelation"
 
 
-    Private Shared _DBM As New DBM
+    Private Shared DBM As New DBM
     Private LastGetPointsTime As DateTime
     Private InputPointDriver As DBMPointDriver
     Private CorrelationPoints As List(Of DBMCorrelationPoint)
@@ -196,7 +196,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Timestamp = DirectCast(timeContext, AFTime)
       End If
 
-      Result = _DBM.Result(InputPointDriver, CorrelationPoints,
+      Result = DBM.Result(InputPointDriver, CorrelationPoints,
         Timestamp.LocalTime)
 
       ' Return value based on applied property/trait.
@@ -232,7 +232,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       GetInputAndCorrelationPoints
 
-      _DBM.PrepareData(InputPointDriver, CorrelationPoints,
+      DBM.PrepareData(InputPointDriver, CorrelationPoints,
         timeContext.StartTime.LocalTime, timeContext.EndTime.LocalTime)
 
       GetValues = New AFValues
