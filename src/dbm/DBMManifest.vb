@@ -36,5 +36,4 @@ Option Strict
 <assembly:System.Reflection.AssemblyCopyright(
   "Copyright (C) 2014, 2015, 2016, 2017, 2018  J.H. Fitié, Vitens N.V.")>
 
-<assembly:System.Reflection.AssemblyCompany _
-  ("Vitens N.V.")>
+<assembly:System.Reflection.AssemblyCompany("Vitens N.V.")>
