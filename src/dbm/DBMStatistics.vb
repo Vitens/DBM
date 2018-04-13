@@ -41,14 +41,14 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
       Public Count As Integer
-      Public Slope, OriginSlope, Angle, OriginAngle, Intercept, StandardError, _
+      Public Slope, OriginSlope, Angle, OriginAngle, Intercept, StandardError,
         Correlation, ModifiedCorrelation, Determination As Double
 
 
     End Class
 
 
-    Public Shared Function Statistics(ValuesY() As Double, _
+    Public Shared Function Statistics(ValuesY() As Double,
       Optional ValuesX() As Double = Nothing) As DBMStatisticsData
 
       ' Performs calculation of several statistics functions on the input
@@ -103,7 +103,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' A number that quantifies some type of correlation and dependence,
         ' meaning statistical relationships between two or more random
         ' variables or observed data values.
-        .Correlation = (.Count*SumXY-SumX*SumY)/ _
+        .Correlation = (.Count*SumXY-SumX*SumY)/
           Sqrt((.Count*SumXX-SumX^2)*(.Count*SumYY-SumY^2))
 
         ' Average is not removed in modified correlation as the expected average
