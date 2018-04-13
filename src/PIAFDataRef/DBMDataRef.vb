@@ -43,8 +43,8 @@ Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Namespace Vitens.DynamicBandwidthMonitor
 
 
-  <Description("DBMDataRef;Dynamic Bandwidth Monitor")> _
-    <Guid("e092c5ed-888b-4dbd-89eb-45206d77db9a")> _
+  <Description("DBMDataRef;Dynamic Bandwidth Monitor")>
+    <Guid("e092c5ed-888b-4dbd-89eb-45206d77db9a")>
     Public Class DBMDataRef
     Inherits AFDataReference
 
@@ -87,8 +87,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Readonly Property SupportedDataMethods As AFDataMethods
 
       Get
-        Return AFDataMethods.RecordedValue Or AFDataMethods.RecordedValues Or _
-          AFDataMethods.PlotValues Or AFDataMethods.Summary Or _
+        Return AFDataMethods.RecordedValue Or AFDataMethods.RecordedValues Or
+          AFDataMethods.PlotValues Or AFDataMethods.Summary Or
           AFDataMethods.Summaries
       End Get
 
@@ -125,8 +125,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim Element, ParentElement, SiblingElement As AFElement
 
-      If Now >= AlignTimestamp(LastGetPointsTime, CalculationInterval). _
-        AddSeconds(CalculationInterval) And _
+      If Now >= AlignTimestamp(LastGetPointsTime, CalculationInterval).
+        AddSeconds(CalculationInterval) And
         Attribute IsNot Nothing And Attribute.Parent IsNot Nothing Then
 
         LastGetPointsTime = Now
@@ -137,21 +137,21 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         ' Retrieve correlation points only when calculating the DBM factor value
         ' and if the correlation calculations are not disabled using categories.
-        If Attribute.Trait Is Nothing And _
+        If Attribute.Trait Is Nothing And
           Not Attribute.CategoriesString.Contains(CategoryNoCorrelation) Then
 
           ' Find siblings
           If ParentElement IsNot Nothing Then
             For Each SiblingElement In ParentElement.Elements
-              If Not SiblingElement.UniqueID.Equals(Element.UniqueID) And _
-                SiblingElement.Template IsNot Nothing AndAlso _
-                SiblingElement.Template.UniqueID.Equals _
-                (Element.Template.UniqueID) Then ' Same template, skip self
-                If SiblingElement.Attributes(Attribute.Parent.Name). _
+              If Not SiblingElement.UniqueID.Equals(Element.UniqueID) And
+                SiblingElement.Template IsNot Nothing AndAlso
+                SiblingElement.Template.UniqueID.Equals(
+                Element.Template.UniqueID) Then ' Same template, skip self
+                If SiblingElement.Attributes(Attribute.Parent.Name).
                   GetValue.IsGood Then ' Add only if has good data
-                  CorrelationPoints.Add(New DBMCorrelationPoint(New _
-                    DBMPointDriver(SiblingElement.Attributes _
-                    (Attribute.Parent.Name)), False))
+                  CorrelationPoints.Add(New DBMCorrelationPoint(
+                    New DBMPointDriver(SiblingElement.Attributes(
+                    Attribute.Parent.Name)), False))
                 End If
               End If
             Next
@@ -159,14 +159,14 @@ Namespace Vitens.DynamicBandwidthMonitor
 
           ' Find parents recursively
           Do While ParentElement IsNot Nothing
-            If ParentElement.Template IsNot Nothing AndAlso _
-              ParentElement.Template.UniqueID.Equals _
-              (Element.Template.UniqueID) Then ' Same template
-              If ParentElement.Attributes(Attribute.Parent.Name). _
+            If ParentElement.Template IsNot Nothing AndAlso
+              ParentElement.Template.UniqueID.Equals(
+              Element.Template.UniqueID) Then ' Same template
+              If ParentElement.Attributes(Attribute.Parent.Name).
                 GetValue.IsGood Then ' Add only if has good data
-                CorrelationPoints.Add(New DBMCorrelationPoint _
-                  (New DBMPointDriver(ParentElement.Attributes _
-                  (Attribute.Parent.Name)), True))
+                CorrelationPoints.Add(New DBMCorrelationPoint(
+                  New DBMPointDriver(ParentElement.Attributes(
+                  Attribute.Parent.Name)), True))
               End If
             End If
             ParentElement = ParentElement.Parent
@@ -179,8 +179,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Overrides Function GetValue(context As Object, _
-      timeContext As Object, inputAttributes As AFAttributeList, _
+    Public Overrides Function GetValue(context As Object,
+      timeContext As Object, inputAttributes As AFAttributeList,
       inputValues As AFValues) As AFValue
 
       Dim Timestamp As AFTime
@@ -190,13 +190,13 @@ Namespace Vitens.DynamicBandwidthMonitor
       GetInputAndCorrelationPoints
 
       If timeContext Is Nothing Then
-        Timestamp = DirectCast(InputPointDriver.Point, AFAttribute). _
+        Timestamp = DirectCast(InputPointDriver.Point, AFAttribute).
           GetValue.Timestamp
       Else
         Timestamp = DirectCast(timeContext, AFTime)
       End If
 
-      Result = _DBM.Result(InputPointDriver, CorrelationPoints, _
+      Result = _DBM.Result(InputPointDriver, CorrelationPoints,
         Timestamp.LocalTime)
 
       ' Return value based on applied property/trait.
@@ -221,8 +221,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Overrides Function GetValues(context As Object, _
-      timeContext As AFTimeRange, numberOfValues As Integer, _
+    Public Overrides Function GetValues(context As Object,
+      timeContext As AFTimeRange, numberOfValues As Integer,
       inputAttributes As AFAttributeList, inputValues As AFValues()) As AFValues
 
       ' Returns values for each interval in a time range. The (aligned) end time
@@ -232,18 +232,18 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       GetInputAndCorrelationPoints
 
-      _DBM.PrepareData(InputPointDriver, CorrelationPoints, _
+      _DBM.PrepareData(InputPointDriver, CorrelationPoints,
         timeContext.StartTime.LocalTime, timeContext.EndTime.LocalTime)
 
       GetValues = New AFValues
-      IntervalSeconds = Max(1, ((timeContext.EndTime.UtcSeconds-timeContext. _
-        StartTime.UtcSeconds)/CalculationInterval-1)/(numberOfValues-1))* _
+      IntervalSeconds = Max(1, ((timeContext.EndTime.UtcSeconds-timeContext.
+        StartTime.UtcSeconds)/CalculationInterval-1)/(numberOfValues-1))*
         CalculationInterval ' Required interval, first and last interv inclusive
       Do While timeContext.EndTime > timeContext.StartTime
-        GetValues.Add(GetValue(Nothing, timeContext.StartTime, _
+        GetValues.Add(GetValue(Nothing, timeContext.StartTime,
           Nothing, Nothing))
-        timeContext.StartTime = New AFTime _
-          (timeContext.StartTime.UtcSeconds+IntervalSeconds)
+        timeContext.StartTime = New AFTime(
+          timeContext.StartTime.UtcSeconds+IntervalSeconds)
       Loop
 
       Return GetValues
@@ -251,10 +251,10 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Overrides Function RecordedValues(timeRange As AFTimeRange, _
-      boundaryType As AFBoundaryType, filterExpression As String, _
-      includeFilteredValues As Boolean, inputAttributes As AFAttributeList, _
-      inputValues As AFValues(), inputTimes As List(Of AFTime), _
+    Public Overrides Function RecordedValues(timeRange As AFTimeRange,
+      boundaryType As AFBoundaryType, filterExpression As String,
+      includeFilteredValues As Boolean, inputAttributes As AFAttributeList,
+      inputValues As AFValues(), inputTimes As List(Of AFTime),
       Optional maxCount As Integer = 0) As AFValues
 
       Return GetValues(Nothing, timeRange, maxCount, Nothing, Nothing)
