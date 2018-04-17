@@ -184,7 +184,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       inputValues As AFValues) As AFValue
 
       Dim Timestamp As AFTime
-      Dim Result As DBMResult
       Dim Value As New AFValue
 
       GetInputAndCorrelationPoints
@@ -196,23 +195,20 @@ Namespace Vitens.DynamicBandwidthMonitor
         Timestamp = DirectCast(timeContext, AFTime)
       End If
 
-      Result = DBM.Result(InputPointDriver, CorrelationPoints,
-        Timestamp.LocalTime)
-
-      ' Return value based on applied property/trait.
-      With Result.PredictionData
+      ' Return DBM result parameter based on applied property/trait.
+      With DBM.Result(InputPointDriver, CorrelationPoints, Timestamp.LocalTime)
         If Attribute.Trait Is Nothing Then
-          Value = New AFValue(Result.Factor, Result.Timestamp)
-          Value.Questionable = Result.HasException
-          Value.Substituted = Result.HasSuppressedException
+          Value = New AFValue(.Factor, .Timestamp)
+          Value.Questionable = .HasException
+          Value.Substituted = .HasSuppressedException
         ElseIf Attribute.Trait Is LimitTarget Then
-          Value = New AFValue(.MeasuredValue, Result.Timestamp)
+          Value = New AFValue(.PredictionData.MeasuredValue, .Timestamp)
         ElseIf Attribute.Trait Is Forecast Then
-          Value = New AFValue(.PredictedValue, Result.Timestamp)
+          Value = New AFValue(.PredictionData.PredictedValue, .Timestamp)
         ElseIf Attribute.Trait Is LimitLoLo Then
-          Value = New AFValue(.LowerControlLimit, Result.Timestamp)
+          Value = New AFValue(.PredictionData.LowerControlLimit, .Timestamp)
         ElseIf Attribute.Trait Is LimitHiHi Then
-          Value = New AFValue(.UpperControlLimit, Result.Timestamp)
+          Value = New AFValue(.PredictionData.UpperControlLimit, .Timestamp)
         End If
       End With
 
