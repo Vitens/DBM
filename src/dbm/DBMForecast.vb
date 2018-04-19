@@ -46,10 +46,12 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Returns the range between the control limits and forecast value scaled
         ' for the requested confidence interval. This function requires that the
         ' results have been calculated for the default range using the Forecast
-        ' function before.
+        ' function before. Always use the standard normal distribution here as
+        ' we perform this calculation on an EMA-smoothed series of data and not
+        ' on a single forecast result.
 
-        Return (UpperControlLimit-ForecastValue)*
-          NormSInv(p)/NormSInv(BandwidthCI)
+        Return (UpperControlLimit-ForecastValue)/
+          NormSInv(BandwidthCI)*NormSInv(p)
 
       End Function
 
