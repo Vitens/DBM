@@ -43,8 +43,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Public Function Range(p As Double) As Double
 
-        ' Returns the range between the control limits and forecast value
-        ' for the requested confidence interval.
+        ' Returns the range between the control limits and forecast value scaled
+        ' for the requested confidence interval. This function requires that the
+        ' results have been calculated for the default range using the Forecast
+        ' function before.
 
         Return (UpperControlLimit-ForecastValue)*
           NormSInv(p)/NormSInv(BandwidthCI)
