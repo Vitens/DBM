@@ -158,10 +158,10 @@ Namespace Vitens.DynamicBandwidthMonitor
           With DBM.Result(InputPointDriver, CorrelationPoints, StartTimestamp)
             Console.WriteLine(FormatDateTime(.Timestamp) & Separator &
             FormatNumber(.Factor) & Separator &
-            FormatNumber(.PredictionData.MeasuredValue) & Separator &
-            FormatNumber(.PredictionData.PredictedValue) & Separator &
-            FormatNumber(.PredictionData.LowerControlLimit) & Separator &
-            FormatNumber(.PredictionData.UpperControlLimit))
+            FormatNumber(.ForecastData.Measurement) & Separator &
+            FormatNumber(.ForecastData.ForecastValue) & Separator &
+            FormatNumber(.ForecastData.LowerControlLimit) & Separator &
+            FormatNumber(.ForecastData.UpperControlLimit))
           End With
 
           ' Next interval

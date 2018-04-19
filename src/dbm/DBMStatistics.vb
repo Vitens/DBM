@@ -107,7 +107,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           Sqrt((.Count*SumXX-SumX^2)*(.Count*SumYY-SumY^2))
 
         ' Average is not removed in modified correlation as the expected average
-        ' is zero, assuming the calculated predictions are correct.
+        ' is zero, assuming the calculated forecasts are correct.
         .ModifiedCorrelation = SumXY/Sqrt(SumXX*SumYY)
 
         ' A number that indicates the proportion of the variance in the

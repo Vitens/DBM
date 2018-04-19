@@ -27,7 +27,7 @@ Imports System.Collections.Generic
 Imports System.DateTime
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
-Imports Vitens.DynamicBandwidthMonitor.DBMPrediction
+Imports Vitens.DynamicBandwidthMonitor.DBMForecast
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -38,10 +38,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public PointDriver As DBMPointDriverAbstract
     Private LastAccessTime As DateTime
-    Private PredictionsSubtractPoint As DBMPoint
-    Private PredictionsData As New Dictionary(Of DateTime, DBMPredictionData)
-    Private PredictionsQueue As New Queue(Of DateTime) ' Insertion order queue
-    Public Shared PredictionsCacheSize As Integer =
+    Private ForecastsSubtractPoint As DBMPoint
+    Private ForecastsData As New Dictionary(Of DateTime, DBMForecastData)
+    Private ForecastsQueue As New Queue(Of DateTime) ' Insertion order queue
+    Public Shared ForecastsCacheSize As Integer =
       EMAPreviousPeriods+2*CorrelationPreviousPeriods+1
 
 
@@ -69,18 +69,18 @@ Namespace Vitens.DynamicBandwidthMonitor
       HasCorrelationDBMPoint As Boolean,
       Optional SubtractPoint As DBMPoint = Nothing) As DBMResult
 
-      ' Retrieves data and calculates prediction and control limits for
-      ' this point. Also calculates and stores (historic) prediction errors for
-      ' correlation analysis later on. Prediction results are cached and then
+      ' Retrieves data and calculates forecast and control limits for
+      ' this point. Also calculates and stores (historic) forecast errors for
+      ' correlation analysis later on. Forecast results are cached and then
       ' reused when possible. This is important because, due to the use of a
       ' moving average, previously calculated results will often need to be
       ' included in later calculations.
 
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
-      Dim PredictionTimestamp, PatternTimestamp As DateTime
-      Dim PredictionData As DBMPredictionData = Nothing
-      Dim Patterns(ComparePatterns), MeasuredValues(EMAPreviousPeriods),
-        PredictedValues(EMAPreviousPeriods),
+      Dim ForecastTimestamp, PatternTimestamp As DateTime
+      Dim ForecastData As DBMForecastData = Nothing
+      Dim Patterns(ComparePatterns), Measurements(EMAPreviousPeriods),
+        ForecastValues(EMAPreviousPeriods),
         LowerControlLimits(EMAPreviousPeriods),
         UpperControlLimits(EMAPreviousPeriods) As Double
 
@@ -91,33 +91,33 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Cached results can only be reused if the point that is to be subtracted
       ' is identical to the one used in the cached results.
-      If SubtractPoint IsNot PredictionsSubtractPoint Then
-        PredictionsSubtractPoint = SubtractPoint
-        PredictionsData.Clear ' No, so clear results
-        PredictionsQueue.Clear
+      If SubtractPoint IsNot ForecastsSubtractPoint Then
+        ForecastsSubtractPoint = SubtractPoint
+        ForecastsData.Clear ' No, so clear results
+        ForecastsQueue.Clear
       End If
 
       For CorrelationCounter = 0 To CorrelationPreviousPeriods ' Correl. loop
 
-        ' Retrieve data and calculate prediction. Only do this for the required
+        ' Retrieve data and calculate forecast. Only do this for the required
         ' timestamp and only process previous timestamps for calculating
         ' correlation results if an exception was found.
-        If Result.PredictionData Is Nothing Or (IsInputDBMPoint And
+        If Result.ForecastData Is Nothing Or (IsInputDBMPoint And
           Result.Factor <> 0 And HasCorrelationDBMPoint) Or
           Not IsInputDBMPoint Then
 
           For EMACounter = 0 To EMAPreviousPeriods ' Filter high freq. variation
 
-            PredictionTimestamp = Result.Timestamp.AddSeconds(
+            ForecastTimestamp = Result.Timestamp.AddSeconds(
               -(EMAPreviousPeriods-EMACounter+CorrelationCounter)*
-              CalculationInterval) ' Timestamp for prediction results
+              CalculationInterval) ' Timestamp for forecast results
 
-            If Not PredictionsData.TryGetValue(PredictionTimestamp,
-              PredictionData) Then ' Calculate prediction data if not cached
+            If Not ForecastsData.TryGetValue(ForecastTimestamp,
+              ForecastData) Then ' Calculate forecast data if not cached
 
               For PatternCounter = 0 To ComparePatterns ' Data for regression.
 
-                PatternTimestamp = PredictionTimestamp.
+                PatternTimestamp = ForecastTimestamp.
                   AddDays(-(ComparePatterns-PatternCounter)*7) ' Timestamp
                 Patterns(PatternCounter) =
                   PointDriver.TryGetData(PatternTimestamp) ' Get data
@@ -128,25 +128,25 @@ Namespace Vitens.DynamicBandwidthMonitor
 
               Next PatternCounter
 
-              PredictionData = Prediction(Patterns)
+              ForecastData = Forecast(Patterns)
 
-              ' Limit number of cached prediction results per point. The size of
+              ' Limit number of cached forecast results per point. The size of
               ' the cache is automatically optimized for real-time continuous
               ' calculations.
-              Do While PredictionsData.Count >= PredictionsCacheSize
+              Do While ForecastsData.Count >= ForecastsCacheSize
                 ' Use the queue to remove the least recently inserted timestamp.
-                PredictionsData.Remove(PredictionsQueue.Dequeue)
+                ForecastsData.Remove(ForecastsQueue.Dequeue)
               Loop
 
-              ' Add calculated prediction to cache and queue.
-              PredictionsData.Add(PredictionTimestamp, PredictionData)
-              PredictionsQueue.Enqueue(PredictionTimestamp)
+              ' Add calculated forecast to cache and queue.
+              ForecastsData.Add(ForecastTimestamp, ForecastData)
+              ForecastsQueue.Enqueue(ForecastTimestamp)
 
             End If
 
-            With PredictionData ' Store results in arrays for EMA calculation.
-              MeasuredValues(EMACounter) = .MeasuredValue
-              PredictedValues(EMACounter) = .PredictedValue
+            With ForecastData ' Store results in arrays for EMA calculation.
+              Measurements(EMACounter) = .Measurement
+              ForecastValues(EMACounter) = .ForecastValue
               LowerControlLimits(EMACounter) = .LowerControlLimit
               UpperControlLimits(EMACounter) = .UpperControlLimit
             End With
@@ -155,8 +155,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
           ' Calculate final result using filtered calculation results.
           Result.Calculate(CorrelationPreviousPeriods-CorrelationCounter,
-            ExponentialMovingAverage(MeasuredValues),
-            ExponentialMovingAverage(PredictedValues),
+            ExponentialMovingAverage(Measurements),
+            ExponentialMovingAverage(ForecastValues),
             ExponentialMovingAverage(LowerControlLimits),
             ExponentialMovingAverage(UpperControlLimits))
 

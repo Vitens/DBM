@@ -31,22 +31,22 @@ Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
 Namespace Vitens.DynamicBandwidthMonitor
 
 
-  Public Class DBMPrediction
+  Public Class DBMForecast
 
 
-    Public Class DBMPredictionData
+    Public Class DBMForecastData
 
 
-      Public MeasuredValue, PredictedValue, LowerControlLimit,
+      Public Measurement, ForecastValue, LowerControlLimit,
         UpperControlLimit As Double
 
 
     End Class
 
 
-    Public Shared Function Prediction(Values() As Double) As DBMPredictionData
+    Public Shared Function Forecast(Values() As Double) As DBMForecastData
 
-      ' Calculates and stores prediction and control limits by removing
+      ' Calculates and stores forecast and control limits by removing
       ' outliers from the Values array and extrapolating the regression
       ' line by one interval.
       ' The result of the calculation is returned as a new object.
@@ -54,21 +54,21 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim StatisticsData As New DBMStatisticsData
       Dim ControlLimit As Double
 
-      Prediction = New DBMPredictionData
+      Forecast = New DBMForecastData
 
-      With Prediction
+      With Forecast
 
-        .MeasuredValue = Values(Values.Length-1)
+        .Measurement = Values(Values.Length-1)
 
         ' Calculate statistics for data after removing outliers. Exclude the
         ' last item in the array as this is the current measured value for
-        ' which we need to calculate a prediction and control limits.
+        ' which we need to calculate a forecast and control limits.
         Array.Resize(Values, Values.Length-1)
         StatisticsData = Statistics(RemoveOutliers(Values))
 
         ' Extrapolate regression by one interval and use this result as a
-        ' prediction.
-        .PredictedValue =
+        ' forecast.
+        .ForecastValue =
           ComparePatterns*StatisticsData.Slope+StatisticsData.Intercept
 
         ' Control limits are determined by using measures of process variation
@@ -79,14 +79,14 @@ Namespace Vitens.DynamicBandwidthMonitor
         ControlLimit = ControlLimitRejectionCriterion(BandwidthCI,
           StatisticsData.Count-1)*StatisticsData.StandardError
 
-        ' Set upper and lower control limits based on prediction, rejection
+        ' Set upper and lower control limits based on forecast, rejection
         ' criterion and standard error of the regression.
-        .LowerControlLimit = .PredictedValue-ControlLimit
-        .UpperControlLimit = .PredictedValue+ControlLimit
+        .LowerControlLimit = .ForecastValue-ControlLimit
+        .UpperControlLimit = .ForecastValue+ControlLimit
 
       End With
 
-      Return Prediction
+      Return Forecast
 
     End Function
 
