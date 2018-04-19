@@ -13,7 +13,7 @@ Copyright (C) 2014, 2015, 2016, 2017, 2018  J.H. Fitié, Vitens N.V.
 ## Description
 Water company Vitens has created a demonstration site called the Vitens Innovation Playground (VIP), in which new technologies and methodologies are developed, tested, and demonstrated. The projects conducted in the demonstration site can be categorized into one of four themes: energy optimization, real-time leak detection, online water quality monitoring, and customer interaction. In the real-time leak detection theme, a method for leak detection based on statistical demand forecasting was developed.
 
-Using historical demand patterns and statistical methods - such as median absolute deviation, linear regression, sample variance, and exponential moving averages - real-time values can be compared to a predicted demand pattern and checked to be within calculated bandwidths. The method was implemented in Vitens' realtime data historian, continuously comparing measured demand values to be within operational bounds.
+Using historical demand patterns and statistical methods - such as median absolute deviation, linear regression, sample variance, and exponential moving averages - real-time values can be compared to a forecast demand pattern and checked to be within calculated bandwidths. The method was implemented in Vitens' realtime data historian, continuously comparing measured demand values to be within operational bounds.
 
 One of the advantages of this method is that it doesn't require manual configuration or training sets. Next to leak detection, unmeasured supply between areas and unscheduled plant shutdowns were also detected. The method was found to be such a success within the company, that it was implemented in an operational dashboard and is now used in day-to-day operations.
 
@@ -22,27 +22,27 @@ Real-time, leak detection, demand forecasting, demand patterns, operational dash
 
 ## Samples
 
-### Sample 1 - Prediction
+### Sample 1 - Forecast
 ![Sample 1](img/sample1.png)
 
-In this example, two days before and after the current day are shown. For historic values, the measured data (black) is shown along with the predicted value (red). The upper and lower control limits (gray) were not crossed, so the DBM factor value (blue) equals zero. For future values, the prediction is shown along with the upper and lower control limits. Reliable predictions can be made for at least seven days in advance.
+In this example, two days before and after the current day are shown. For historic values, the measured data (black) is shown along with the forecast value (red). The upper and lower control limits (gray) were not crossed, so the DBM factor value (blue) equals zero. For future values, the forecast is shown along with the upper and lower control limits. Reliable forecasts can be made for at least seven days in advance.
 
 ### Sample 2 - Exception
 ![Sample 2](img/sample2.png)
 
-In this example, an exception causes the measured value (black) to cross the upper control limit (gray). The DBM factor value (blue) is greater than one during this time (calculated as _(measured value - predicted value)/(upper control limit - predicted value)_).
+In this example, an exception causes the measured value (black) to cross the upper control limit (gray). The DBM factor value (blue) is greater than one during this time (calculated as _(measured value - forecast value)/(upper control limit - forecast value)_).
 
 ### Sample 3 - Suppressed exception (correlation)
 ![Sample 3a](img/sample3a.png)
 ![Sample 3b](img/sample3b.png)
 
-In this example, an exception causes the measured value (black) to cross the upper and lower control limits (gray). Because the pattern is checked against a similar pattern which has a comparable relative prediction error (calculated as _(predicted value / measured value) - 1_), the exception is suppressed. The DBM factor value is reset to zero during this time.
+In this example, an exception causes the measured value (black) to cross the upper and lower control limits (gray). Because the pattern is checked against a similar pattern which has a comparable relative forecast error (calculated as _(forecast value / measured value) - 1_), the exception is suppressed. The DBM factor value is reset to zero during this time.
 
 ### Sample 4 - Suppressed exception (anticorrelation)
 ![Sample 4a](img/sample4a.png)
 ![Sample 4b](img/sample4b.png)
 
-In this example, an exception causes the measured value (black) to cross the lower control limit (gray). Because the pattern is checked against a similar, adjacent, pattern which has a comparable, but inverted, absolute prediction error (calculated as _predicted value - measured value_), the exception is suppressed. The DBM factor value is reset to zero during this time.
+In this example, an exception causes the measured value (black) to cross the lower control limit (gray). Because the pattern is checked against a similar, adjacent, pattern which has a comparable, but inverted, absolute forecast error (calculated as _forecast value - measured value_), the exception is suppressed. The DBM factor value is reset to zero during this time.
 
 ## Program information
 
@@ -66,11 +66,11 @@ DBM can be configured using several parameters. The values for these parameters 
 | Parameter                    | Default value | Units         | Description                                                                                             |
 | ---------------------------- | ------------- | ------------- | ------------------------------------------------------------------------------------------------------- |
 | `CalculationInterval`        | 300           | seconds       | Time interval at which the calculation is run.                                                          |
-| `ComparePatterns`            | 12            | weeks         | Number of weeks to look back to predict the current value and control limits.                           |
+| `ComparePatterns`            | 12            | weeks         | Number of weeks to look back to forecast the current value and control limits.                          |
 | `EMAPreviousPeriods`         | 5             | intervals     | Number of previous intervals used to smooth the data.                                                   |
 | `OutlierCI`                  | 0.99          | ratio         | Confidence interval used for removing outliers.                                                         |
 | `BandwidthCI`                | 0.99          | ratio         | Confidence interval used for determining control limits.                                                |
-| `CorrelationPreviousPeriods` | 23            | intervals     | Number of previous intervals used to calculate prediction error correlation when an exception is found. |
+| `CorrelationPreviousPeriods` | 23            | intervals     | Number of previous intervals used to calculate forecast error correlation when an exception is found.   |
 | `CorrelationThreshold`       | 0.83666       | dimensionless | Absolute correlation lower limit for detecting (anti)correlation.                                       |
 | `RegressionAngleRange`       | 18.435        | degrees       | Regression angle range (around -45/+45 degrees) required when suppressing based on (anti)correlation.   |
 
@@ -101,7 +101,7 @@ DBMDataRef is a custom OSIsoft PI Asset Framework data reference which integrate
 | -------------- | ------------------- |
 | None           | Factor              |
 | `Target`       | Measured value      |
-| `Forecast`     | Predicted value     |
+| `Forecast`     | Forecast value      |
 | `LoLo`         | Lower control limit |
 | `HiHi`         | Upper control limit |
 

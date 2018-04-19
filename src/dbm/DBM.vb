@@ -53,7 +53,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     ' Using historical demand patterns and statistical methods - such as median
     ' absolute deviation, linear regression, sample variance, and exponential
-    ' moving averages - real-time values can be compared to a predicted demand
+    ' moving averages - real-time values can be compared to a forecast demand
     ' pattern and checked to be within calculated bandwidths. The method was
     ' implemented in Vitens' realtime data historian, continuously comparing
     ' measured demand values to be within operational bounds.
@@ -184,7 +184,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function HasCorrelation(RelErrCorr As Double,
       RelErrAngle As Double) As Boolean
 
-      ' If correlation with measurement and (relative) prediction errors are
+      ' If correlation with measurement and (relative) forecast errors are
       ' about the same size.
 
       Return RelErrCorr > CorrelationThreshold And
@@ -196,7 +196,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function HasAnticorrelation(AbsErrCorr As Double,
       AbsErrAngle As Double, SubtractSelf As Boolean) As Boolean
 
-      ' If anticorrelation with adjacent measurement and (absolute) prediction
+      ' If anticorrelation with adjacent measurement and (absolute) forecast
       ' errors are about the same size.
 
       Return AbsErrCorr < -CorrelationThreshold And
@@ -212,8 +212,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       SubtractSelf As Boolean) As Double
 
       ' Events can be suppressed when a strong correlation is found in the
-      ' relative prediction errors of a containing area, or if a strong
-      ' anti-correlation is found in the absolute prediction errors of an
+      ' relative forecast errors of a containing area, or if a strong
+      ' anti-correlation is found in the absolute forecast errors of an
       ' adjacent area. In both cases, the direction (regression through origin)
       ' of the error point cloud has to be around -45 or +45 degrees to indicate
       ' that both errors are about the same (absolute) size.
@@ -293,7 +293,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                 Timestamp, False, True)
             End If
 
-            ' Calculate statistics of error compared to prediction
+            ' Calculate statistics of error compared to forecast
             AbsoluteErrorStatsData = Statistics(
               CorrelationResult.AbsoluteErrors, Result.AbsoluteErrors)
             RelativeErrorStatsData = Statistics(

@@ -25,7 +25,7 @@ Option Strict
 Imports System
 Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
-Imports Vitens.DynamicBandwidthMonitor.DBMPrediction
+Imports Vitens.DynamicBandwidthMonitor.DBMForecast
 Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
 
 
@@ -41,7 +41,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Timestamp As DateTime
-    Public PredictionData As DBMPredictionData
+    Public ForecastData As DBMForecastData
     Public Factor, AbsoluteErrors(), RelativeErrors() As Double
 
 
@@ -71,47 +71,46 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Returns true if there is a suppressed exception.
 
-      With PredictionData
+      With ForecastData
         Return Factor = 0 And
-          (.MeasuredValue < .LowerControlLimit Or
-          .MeasuredValue > .UpperControlLimit)
+          (.Measurement < .LowerControlLimit Or
+          .Measurement > .UpperControlLimit)
       End With
 
     End Function
 
 
-    Public Sub Calculate(Index As Integer, MeasuredValueEMA As Double,
-      PredictedValueEMA As Double, LowerControlLimitEMA As Double,
+    Public Sub Calculate(Index As Integer, MeasurementEMA As Double,
+      ForecastValueEMA As Double, LowerControlLimitEMA As Double,
       UpperControlLimitEMA As Double)
 
-      ' Calculates and stores prediction errors and initial results.
+      ' Calculates and stores forecast errors and initial results.
 
-      ' Prediction error (for prediction error correlation calculations).
-      AbsoluteErrors(Index) = PredictedValueEMA-MeasuredValueEMA
-      RelativeErrors(Index) = PredictedValueEMA/MeasuredValueEMA-1
+      ' Forecast error (for forecast error correlation calculations).
+      AbsoluteErrors(Index) = ForecastValueEMA-MeasurementEMA
+      RelativeErrors(Index) = ForecastValueEMA/MeasurementEMA-1
 
-      If PredictionData Is Nothing Then
+      If ForecastData Is Nothing Then
 
-        ' Store EMA results in new DBMPredictionData object for
-        ' current timestamp.
-        PredictionData = New DBMPredictionData
-        With PredictionData
-          .MeasuredValue = MeasuredValueEMA
-          .PredictedValue = PredictedValueEMA
+        ' Store EMA results in new DBMForecastData object for current timestamp.
+        ForecastData = New DBMForecastData
+        With ForecastData
+          .Measurement = MeasurementEMA
+          .ForecastValue = ForecastValueEMA
           .LowerControlLimit = LowerControlLimitEMA
           .UpperControlLimit = UpperControlLimitEMA
         End With
 
         ' Lower control limit exceeded, calculate factor.
-        If MeasuredValueEMA < LowerControlLimitEMA Then
-          Factor = (PredictedValueEMA-MeasuredValueEMA)/
-            (LowerControlLimitEMA-PredictedValueEMA)
+        If MeasurementEMA < LowerControlLimitEMA Then
+          Factor = (ForecastValueEMA-MeasurementEMA)/
+            (LowerControlLimitEMA-ForecastValueEMA)
         End If
 
         ' Upper control limit exceeded, calculate factor.
-        If MeasuredValueEMA > UpperControlLimitEMA Then
-          Factor = (MeasuredValueEMA-PredictedValueEMA)/
-            (UpperControlLimitEMA-PredictedValueEMA)
+        If MeasurementEMA > UpperControlLimitEMA Then
+          Factor = (MeasurementEMA-ForecastValueEMA)/
+            (UpperControlLimitEMA-ForecastValueEMA)
         End If
 
       End If

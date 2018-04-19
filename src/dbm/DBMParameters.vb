@@ -40,7 +40,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Time interval at which the calculation is run.
     Public Shared CalculationInterval As Integer = 300 ' seconds, 5 minutes
 
-    ' Number of weeks to look back to predict the current value and
+    ' Number of weeks to look back to forecast the current value and
     ' control limits.
     Public Shared ComparePatterns As Integer = 12 ' weeks
 
@@ -54,8 +54,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Confidence interval used for determining control limits.
     Public Shared BandwidthCI As Double = 0.99
 
-    ' Number of previous intervals used to calculate prediction error
-    ' correlation when an exception is found.
+    ' Number of previous intervals used to calculate forecast error correlation
+    ' when an exception is found.
     Public Shared CorrelationPreviousPeriods As Integer =
       CInt(2*3600/CalculationInterval-1) ' 23 intervals, 2 hours
 

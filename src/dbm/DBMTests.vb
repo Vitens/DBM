@@ -872,22 +872,22 @@ Namespace Vitens.DynamicBandwidthMonitor
             .HasSuppressedException = {False, False, False, False, False,
             True, False, False, False, False, False, False, False, False,
             True, False, False, False, False, False}(i) And
-            Round(.PredictionData.MeasuredValue, 4) = {527.5796, 687.0052,
+            Round(.ForecastData.Measurement, 4) = {527.5796, 687.0052,
             1097.1504, 950.9752, 496.1124, 673.6569, 1139.1957, 867.4313,
             504.9407, 656.4434, 1065.7651, 898.9191, 471.2433, 668.1,
             1103.9689, 897.7268, 525.3563, 676.7206, 1183.0887,
             975.8324}(i) And
-            Round(.PredictionData.PredictedValue, 4) = {548.7285, 716.9982,
+            Round(.ForecastData.ForecastValue, 4) = {548.7285, 716.9982,
             1059.0551, 919.4719, 488.6181, 683.6728, 1155.5986, 895.6872,
             503.2566, 655.7115, 1061.2282, 893.3488, 464.4957, 666.2928,
             1084.1527, 901.6546, 523.8671, 666.1729, 1190.3511,
             975.4264}(i) And
-            Round(.PredictionData.LowerControlLimit, 4) = {536.6932, 651.1959,
+            Round(.ForecastData.LowerControlLimit, 4) = {536.6932, 651.1959,
             971.9833, 841.23, 445.6438, 682.8191, 1154.2143, 894.454,
             494.6574, 644.6202, 1044.558, 879.175, 458.564, 659.4903,
             1073.6794, 887.693, 511.2267, 651.6276, 1159.4964,
             951.2698}(i) And
-            Round(.PredictionData.UpperControlLimit, 4) = {560.7638, 782.8006,
+            Round(.ForecastData.UpperControlLimit, 4) = {560.7638, 782.8006,
             1146.127, 997.7138, 531.5924, 684.5266, 1156.9829, 896.9205,
             511.8557, 666.8028, 1077.8984, 907.5226, 470.4274, 673.0952,
             1094.626, 915.6163, 536.5076, 680.7182, 1221.2057, 999.583}(i)
@@ -926,8 +926,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' the performance index as this then better simulates a real-time
       ' continuous calculation.
       Timestamp = Timestamp.
-        AddSeconds(PredictionsCacheSize*-CalculationInterval)
-      For i = 1 To PredictionsCacheSize
+        AddSeconds(ForecastsCacheSize*-CalculationInterval)
+      For i = 1 To ForecastsCacheSize
         Result = DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
         Timestamp = Timestamp.AddSeconds(CalculationInterval)
       Next i

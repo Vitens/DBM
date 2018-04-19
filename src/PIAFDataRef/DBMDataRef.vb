@@ -60,7 +60,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' property/trait:
     '   None      Factor
     '   Target    Measured value
-    '   Forecast  Predicted value
+    '   Forecast  Forecast value
     '   LoLo      Lower control limit
     '   HiHi      Upper control limit
 
@@ -202,13 +202,13 @@ Namespace Vitens.DynamicBandwidthMonitor
           Value.Questionable = .HasException
           Value.Substituted = .HasSuppressedException
         ElseIf Attribute.Trait Is LimitTarget Then
-          Value = New AFValue(.PredictionData.MeasuredValue, .Timestamp)
+          Value = New AFValue(.ForecastData.Measurement, .Timestamp)
         ElseIf Attribute.Trait Is Forecast Then
-          Value = New AFValue(.PredictionData.PredictedValue, .Timestamp)
+          Value = New AFValue(.ForecastData.ForecastValue, .Timestamp)
         ElseIf Attribute.Trait Is LimitLoLo Then
-          Value = New AFValue(.PredictionData.LowerControlLimit, .Timestamp)
+          Value = New AFValue(.ForecastData.LowerControlLimit, .Timestamp)
         ElseIf Attribute.Trait Is LimitHiHi Then
-          Value = New AFValue(.PredictionData.UpperControlLimit, .Timestamp)
+          Value = New AFValue(.ForecastData.UpperControlLimit, .Timestamp)
         End If
       End With
 
