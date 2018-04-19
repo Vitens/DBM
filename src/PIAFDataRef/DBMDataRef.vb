@@ -61,11 +61,17 @@ Namespace Vitens.DynamicBandwidthMonitor
     '   None      Factor
     '   Target    Measured value
     '   Forecast  Forecast value
-    '   LoLo      Lower control limit
-    '   HiHi      Upper control limit
+    '   Minimum   Lower control limit (p = 0.9999)
+    '   LoLo      Lower control limit (default)
+    '   Lo        Lower control limit (p = 0.95)
+    '   Hi        Upper control limit (p = 0.95)
+    '   HiHi      Upper control limit (default)
+    '   Maximum   Upper control limit (p = 0.9999)
 
 
     Const CategoryNoCorrelation As String = "NoCorrelation"
+    Const pValueLoHi As Double = 0.95 ' Confidence interval for Lo and Hi
+    Const pValueMinMax As Double = 0.9999 ' CI for Minimum and Maximum
 
 
     Private Shared DBM As New DBM
@@ -205,10 +211,22 @@ Namespace Vitens.DynamicBandwidthMonitor
           Value = New AFValue(.ForecastData.Measurement, .Timestamp)
         ElseIf Attribute.Trait Is Forecast Then
           Value = New AFValue(.ForecastData.ForecastValue, .Timestamp)
+        ElseIf Attribute.Trait Is LimitMinimum Then
+          Value = New AFValue(.ForecastData.ForecastValue-
+            .ForecastData.Range(pValueMinMax), .Timestamp)
         ElseIf Attribute.Trait Is LimitLoLo Then
           Value = New AFValue(.ForecastData.LowerControlLimit, .Timestamp)
+        ElseIf Attribute.Trait Is LimitLo Then
+          Value = New AFValue(.ForecastData.ForecastValue-
+            .ForecastData.Range(pValueLoHi), .Timestamp)
+        ElseIf Attribute.Trait Is LimitHi Then
+          Value = New AFValue(.ForecastData.ForecastValue+
+            .ForecastData.Range(pValueLoHi), .Timestamp)
         ElseIf Attribute.Trait Is LimitHiHi Then
           Value = New AFValue(.ForecastData.UpperControlLimit, .Timestamp)
+        ElseIf Attribute.Trait Is LimitMaximum Then
+          Value = New AFValue(.ForecastData.ForecastValue+
+            .ForecastData.Range(pValueMinMax), .Timestamp)
         End If
       End With
 

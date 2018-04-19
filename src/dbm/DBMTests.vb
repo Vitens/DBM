@@ -121,9 +121,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         Suppress(-0.98, -0.99, -45, 0, 0, False) = 0
 
       UnitTestsPassed = UnitTestsPassed And
-        Round(NormSInv(0.7451), 4) = 0.6591 And
-        Round(NormSInv(0.4188), 4) = -0.205 And
-        Round(NormSInv(0.1385), 4) = -1.0871 And
+        Round(NormSInv(0.95), 4) = 1.6449 And
+        Round(NormSInv(0.99), 4) = 2.3263 And
+        Round(NormSInv(0.9999), 4) = 3.719 And
         Round(NormSInv(0.8974), 4) = 1.2669 And
         Round(NormSInv(0.7663), 4) = 0.7267 And
         Round(NormSInv(0.2248), 4) = -0.7561 And
@@ -882,6 +882,14 @@ Namespace Vitens.DynamicBandwidthMonitor
             503.2566, 655.7115, 1061.2282, 893.3488, 464.4957, 666.2928,
             1084.1527, 901.6546, 523.8671, 666.1729, 1190.3511,
             975.4264}(i) And
+            Round(.ForecastData.Range(0.95), 4) = {8.5096, 46.5258, 61.5645,
+            55.3212, 30.3852, 0.6036, 0.9788, 0.872, 6.0801, 7.8421, 11.7867,
+            10.0216, 4.194, 4.8097, 7.4052, 9.8716, 8.9375, 10.2843, 21.8159,
+            17.08}(i) And
+            Round(.ForecastData.Range(BandwidthCI), 4) = {12.0353, 65.8024,
+            87.0718, 78.2419, 42.9743, 0.8537, 1.3843, 1.2332, 8.5991, 11.0913,
+            16.6702, 14.1738, 5.9317, 6.8025, 10.4733, 13.9616, 12.6405,
+            14.5453, 30.8546, 24.1566}(i) And
             Round(.ForecastData.LowerControlLimit, 4) = {536.6932, 651.1959,
             971.9833, 841.23, 445.6438, 682.8191, 1154.2143, 894.454,
             494.6574, 644.6202, 1044.558, 879.175, 458.564, 659.4903,

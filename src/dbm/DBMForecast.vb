@@ -41,6 +41,17 @@ Namespace Vitens.DynamicBandwidthMonitor
         UpperControlLimit As Double
 
 
+      Public Function Range(p As Double) As Double
+
+        ' Returns the range between the control limits and forecast value
+        ' for the requested confidence interval.
+
+        Return (UpperControlLimit-ForecastValue)*
+          NormSInv(p)/NormSInv(BandwidthCI)
+
+      End Function
+
+
     End Class
 
 
@@ -52,7 +63,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' The result of the calculation is returned as a new object.
 
       Dim StatisticsData As New DBMStatisticsData
-      Dim ControlLimit As Double
+      Dim Range As Double
 
       Forecast = New DBMForecastData
 
@@ -76,13 +87,13 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' interval estimation. They are used to detect signals in process data
         ' that indicate that a process is not in control and, therefore, not
         ' operating predictably.
-        ControlLimit = ControlLimitRejectionCriterion(BandwidthCI,
+        Range = ControlLimitRejectionCriterion(BandwidthCI,
           StatisticsData.Count-1)*StatisticsData.StandardError
 
         ' Set upper and lower control limits based on forecast, rejection
         ' criterion and standard error of the regression.
-        .LowerControlLimit = .ForecastValue-ControlLimit
-        .UpperControlLimit = .ForecastValue+ControlLimit
+        .LowerControlLimit = .ForecastValue-Range
+        .UpperControlLimit = .ForecastValue+Range
 
       End With
 
