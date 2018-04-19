@@ -61,6 +61,11 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim q, r As Double
 
+      ' Precomputed result
+      If p = 0.95 Then Return 1.64485362513334
+      If p = 0.99 Then Return 2.32634787438802
+      If p = 0.9999 Then Return 3.71901648212512
+
       If p < p_low Then ' Left tail
         q = Sqrt(-2*Log(p))
         Return (((((c1*q+c2)*q+c3)*q+c4)*q+c5)*q+c6)/
