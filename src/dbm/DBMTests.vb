@@ -27,8 +27,10 @@ Imports System.Collections.Generic
 Imports System.DateTime
 Imports System.Double
 Imports System.Math
+Imports System.String
 Imports System.TimeSpan
 Imports Vitens.DynamicBandwidthMonitor.DBM
+Imports Vitens.DynamicBandwidthMonitor.DBMInfo
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMPoint
@@ -73,6 +75,10 @@ Namespace Vitens.DynamicBandwidthMonitor
         Round(Hash({6, 4, 7, 1, 1, 4, 2, 4}), 4) = 2.2326 And
         Round(Hash({8, 4, 7, 3, 2, 6, 5, 7}), 4) = 3.6609 And
         Round(Hash({1, 5, 4, 7, 7, 8, 5, 1}), 4) = 1.8084
+
+      UnitTestsPassed = UnitTestsPassed And
+        Not IsNullOrEmpty(DBMInfo.Version) And
+        Not IsNullOrEmpty(LicenseNotice)
 
       UnitTestsPassed = UnitTestsPassed And
         HasCorrelation(0.9, 45) = True And
