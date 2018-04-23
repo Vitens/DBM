@@ -33,7 +33,7 @@ copy LICENSE build > NUL
 
 rem Apply patches
 if "%CI%" == "True" for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
-if "%CI%" == "True" powershell -Command "(Get-Content src\dbm\DBM.vb) -replace 'Const GITHASH As String = \".*?\"', 'Const GITHASH As String = \"%commit%\"' | Set-Content src\dbm\DBM.vb"
+if "%CI%" == "True" powershell -Command "(Get-Content src\dbm\DBMInfo.vb) -replace 'Const GITHASH As String = \".*?\"', 'Const GITHASH As String = \"%commit%\"' | Set-Content src\dbm\DBMInfo.vb"
 
 rem Build
 %vbc% /target:library /out:build\DBM.dll src\dbm\*.vb

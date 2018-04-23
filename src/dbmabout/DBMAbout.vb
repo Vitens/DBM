@@ -45,8 +45,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Output version, copyright, license information, test results
       ' and performance index.
 
-      Console.Write(DBM.LicenseNotice)
-      Console.Write(NewLine & DBM.TestResults)
+      Console.Write(DBMInfo.LicenseNotice)
+      Console.Write(NewLine & DBMInfo.TestResults)
 
     End Sub
 

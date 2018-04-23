@@ -24,13 +24,10 @@ Option Strict
 
 Imports System
 Imports System.Collections.Generic
-Imports System.Diagnostics
-Imports System.Environment
 Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
-Imports Vitens.DynamicBandwidthMonitor.DBMTests
 
 
 ' Assembly title
@@ -78,71 +75,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Points As New Dictionary(Of Object, DBMPoint)
-
-
-    Private Shared Function GetFileVersionInfo As FileVersionInfo
-
-      ' Returns FileVersionInfo for assembly.
-
-      Return FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.
-        GetExecutingAssembly.Location)
-
-    End Function
-
-
-    Public Shared Function Version As String
-
-      ' Returns a string containing the full version number including, if set,
-      ' Git hash.
-
-      Const GITHASH As String = "" ' Updated automatically by the build script.
-
-      Return GetFileVersionInfo.FileVersion &
-        If(GITHASH = "", "", "+" & GITHASH)
-
-    End Function
-
-
-    Public Shared Function LicenseNotice As String
-
-      ' Returns a string containing product name, version number, copyright and
-      ' license notice.
-
-      With GetFileVersionInfo
-        Return .ProductName & " v" & Version & NewLine &
-          .Comments & NewLine &
-          .LegalCopyright & NewLine &
-          NewLine &
-          "This program is free software: you can redistribute it and/or " &
-          "modify it under the terms of the GNU General Public License as " &
-          "published by the Free Software Foundation, either version 3 of " &
-          "the License, or (at your option) any later version." & NewLine &
-          NewLine &
-          "This program is distributed in the hope that it will be useful, " &
-          "but WITHOUT ANY WARRANTY; without even the implied warranty of " &
-          "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the " &
-          "GNU General Public License for more details." & NewLine &
-          NewLine &
-          "You should have received a copy of the GNU General Public " &
-          "License along with this program.  " &
-          "If not, see <http://www.gnu.org/licenses/>." & NewLine
-      End With
-
-    End Function
-
-
-    Public Shared Function TestResults As String
-
-      ' Returns a string containing test results and performance index.
-
-      Return " * Unit tests " &
-        If(UnitTestsPassed, "PASSED", "FAILED") & "." & NewLine &
-        " * Integration tests " &
-        If(IntegrationTestsPassed, "PASSED", "FAILED") & "." & NewLine &
-        " * Performance index " &
-        Round(PerformanceIndex, 1).ToString & "." & NewLine
-
-    End Function
 
 
     Private Sub RemoveStalePoints
