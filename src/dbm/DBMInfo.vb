@@ -45,7 +45,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function BuildDate As DateTime
+    Private Shared Function BuildDate As DateTime
 
       ' Returns the build date based on FileBuildPart.
 
