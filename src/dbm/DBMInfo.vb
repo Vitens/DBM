@@ -47,19 +47,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function BuildDate As DateTime
 
-      ' Returns the build date based on FileBuildPart and FilePrivatePart.
+      ' Returns the build date based on FileBuildPart.
 
-      With GetFileVersionInfo
-        BuildDate = DateTime.SpecifyKind(New DateTime(2000, 1, 1).
-          AddDays(.FileBuildPart).AddSeconds(.FilePrivatePart*2),
-          DateTimeKind.Local)
-      End With
-
-      If TimeZoneInfo.Local.IsDaylightSavingTime(BuildDate) Then
-        BuildDate = BuildDate.AddHours(1)
-      End If
-
-      Return BuildDate
+      Return New DateTime(2000, 1, 1).AddDays(GetFileVersionInfo.FileBuildPart)
 
     End Function
 
@@ -73,7 +63,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       With GetFileVersionInfo
         Return .FileMajorPart.ToString & "." & .FileMinorPart.ToString & ".0+" &
-          BuildDate.ToString("yyMMddhhmm") & If(GITHASH = "", "", "." & GITHASH)
+          BuildDate.ToString("yyMMdd") & If(GITHASH = "", "", "." & GITHASH)
       End With
 
     End Function
