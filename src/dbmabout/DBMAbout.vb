@@ -24,6 +24,7 @@ Option Strict
 
 Imports System
 Imports System.Environment
+Imports Vitens.DynamicBandwidthMonitor.DBMInfo
 
 
 ' Assembly title
@@ -45,8 +46,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Output version, copyright, license information, test results
       ' and performance index.
 
-      Console.Write(DBMInfo.LicenseNotice)
-      Console.Write(NewLine & DBMInfo.TestResults)
+      Console.Write(LicenseNotice)
+      Console.Write(NewLine & TestResults)
 
     End Sub
 

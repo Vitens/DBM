@@ -32,6 +32,7 @@ Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Asset.AFAttributeTrait
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Time
+Imports Vitens.DynamicBandwidthMonitor.DBMInfo
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
@@ -113,7 +114,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Property ConfigString As String
 
       Get
-        Return DBMInfo.LicenseNotice
+        Return LicenseNotice
       End Get
 
       Set
