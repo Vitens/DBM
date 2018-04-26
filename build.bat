@@ -48,13 +48,10 @@ if exist "%PIAFRef%" (
   cd build
   "%PIAFDir%\regplugin.exe" /Unregister DBMDataRef.dll
   "%PIAFDir%\regplugin.exe" DBMDataRef.dll
-  "%PIAFDir%\regplugin.exe" /Owner:DBMDataRef.dll DBM.dll
-  "%PIAFDir%\regplugin.exe" /Owner:DBMDataRef.dll DBMPointDriverOSIsoftPIAF.dll
+  "%PIAFDir%\regplugin.exe" /Owner:DBMDataRef.dll * /Exclude:DBMDataRef.dll
   cd ..
  )
 )
 
 rem Output version, copyright and license information and unit and integration test results
 build\DBMAbout.exe
-
-:ExitBuild
