@@ -2,7 +2,7 @@
 
 rem Dynamic Bandwidth Monitor
 rem Leak detection method implemented in a real-time data historian
-rem Copyright (C) 2014, 2015, 2016, 2017, 2018  J.H. Fitié, Vitens N.V.
+rem Copyright (C) 2014-2018  J.H. Fitié, Vitens N.V.
 rem
 rem This file is part of DBM.
 rem

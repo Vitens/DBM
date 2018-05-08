@@ -2,7 +2,7 @@
 
 # Dynamic Bandwidth Monitor
 # Leak detection method implemented in a real-time data historian
-# Copyright (C) 2014, 2015, 2016, 2017, 2018  J.H. Fitié, Vitens N.V.
+# Copyright (C) 2014-2018  J.H. Fitié, Vitens N.V.
 #
 # This file is part of DBM.
 #
@@ -20,9 +20,9 @@
 # along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 # Update copyright years
-grep -q $(date +%Y) $0 || find . -type f -exec \
-sed -i -E "s/^(.*Copyright \(C\) )(([0-9]{4}[, ] )+)(.*)$/\
-\1$(seq -s ', ' 2014 $(date +%Y))  \4/g" {} \;
+grep -q \\-$(date +%Y)\ \  $0 || find . -type f -exec \
+sed -i -E "s/^(.*Copyright \(C\) [0-9]{4}\-)[0-9]{4}(  .*)$/\
+\1$(date +%Y)\2/g" {} \;
 
 # Run build script using Wine
 export WINEDEBUG=fixme-all,err-ole
