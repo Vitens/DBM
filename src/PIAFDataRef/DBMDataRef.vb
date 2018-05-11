@@ -138,14 +138,16 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         LastGetPointsTime = Now
         Element = DirectCast(Attribute.Element, AFElement)
-        ParentElement = Element.Parent
         InputPointDriver = New DBMPointDriver(Attribute.Parent) ' Parent attrib.
         CorrelationPoints = New List(Of DBMCorrelationPoint)
 
-        ' Retrieve correlation points only when calculating the DBM factor value
-        ' and if the correlation calculations are not disabled using categories.
-        If Attribute.Trait Is Nothing And
+        ' Retrieve correlation points for non-root elements only when
+        ' calculating the DBM factor value and if correlation calculations are
+        ' not disabled using categories.
+        If Not Element.IsRoot And Attribute.Trait Is Nothing And
           Not Attribute.CategoriesString.Contains(CategoryNoCorrelation) Then
+
+          ParentElement = Element.Parent
 
           ' Find siblings
           If ParentElement IsNot Nothing Then
