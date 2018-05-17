@@ -48,9 +48,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Sub New
 
       ' Initialize array sizes. To be filled from back to front. When a
-      ' correlation calculation is not required (no exception detected or
-      ' no correlation points specified) only the last item in the arrays
-      ' contains a value.
+      ' correlation calculation is not required (no event detected or no
+      ' correlation points specified) only the last item in the arrays contains
+      ' a value.
 
       ReDim AbsoluteErrors(CorrelationPreviousPeriods)
       ReDim RelativeErrors(CorrelationPreviousPeriods)
@@ -58,18 +58,18 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Function HasException As Boolean
+    Public Function HasEvent As Boolean
 
-      ' Returns true if there is an exception.
+      ' Returns true if there is an event.
 
       Return Abs(Factor) > 1
 
     End Function
 
 
-    Public Function HasSuppressedException As Boolean
+    Public Function HasSuppressedEvent As Boolean
 
-      ' Returns true if there is a suppressed exception.
+      ' Returns true if there is a suppressed event.
 
       With ForecastData
         Return Factor = 0 And

@@ -872,10 +872,10 @@ Namespace Vitens.DynamicBandwidthMonitor
           IntegrationTestsPassed = IntegrationTestsPassed And
             Round(.Factor, 4) = {-1.7572, 0, 0, 0, 0, 0, -11.8493, -22.9119,
             0, 0, 0, 0, 1.1375, 0, 0, 0, 0, 0, 0, 0}(i) And
-            .HasException = {True, False, False, False, False, False, True,
+            .HasEvent = {True, False, False, False, False, False, True,
             True, False, False, False, False, True, False, False, False,
             False, False, False, False}(i) And
-            .HasSuppressedException = {False, False, False, False, False,
+            .HasSuppressedEvent = {False, False, False, False, False,
             True, False, False, False, False, False, False, False, False,
             True, False, False, False, False, False}(i) And
             Round(.ForecastData.Measurement, 4) = {527.5796, 687.0052,

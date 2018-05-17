@@ -55,7 +55,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared BandwidthCI As Double = 0.99
 
     ' Number of previous intervals used to calculate forecast error correlation
-    ' when an exception is found.
+    ' when an event is found.
     Public Shared CorrelationPreviousPeriods As Integer =
       CInt(2*3600/CalculationInterval-1) ' 23 intervals, 2 hours
 

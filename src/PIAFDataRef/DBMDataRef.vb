@@ -208,8 +208,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       With DBM.Result(InputPointDriver, CorrelationPoints, Timestamp.LocalTime)
         If Attribute.Trait Is Nothing Then
           Value = New AFValue(.Factor, .Timestamp)
-          Value.Questionable = .HasException
-          Value.Substituted = .HasSuppressedException
+          Value.Questionable = .HasEvent
+          Value.Substituted = .HasSuppressedEvent
         ElseIf Attribute.Trait Is LimitTarget Then
           Value = New AFValue(.ForecastData.Measurement, .Timestamp)
         ElseIf Attribute.Trait Is Forecast Then

@@ -27,22 +27,22 @@ Real-time, leak detection, demand forecasting, demand patterns, operational dash
 
 In this example, two days before and after the current day are shown. For historic values, the measured data (black) is shown along with the forecast value (red). The upper and lower control limits (gray) were not crossed, so the DBM factor value (blue) equals zero. For future values, the forecast is shown along with the upper and lower control limits. Reliable forecasts can be made for at least seven days in advance.
 
-### Sample 2 - Exception
+### Sample 2 - Event
 ![Sample 2](img/sample2.png)
 
-In this example, an exception causes the measured value (black) to cross the upper control limit (gray). The DBM factor value (blue) is greater than one during this time (calculated as _(measured value - forecast value)/(upper control limit - forecast value)_).
+In this example, an event causes the measured value (black) to cross the upper control limit (gray). The DBM factor value (blue) is greater than one during this time (calculated as _(measured value - forecast value)/(upper control limit - forecast value)_).
 
-### Sample 3 - Suppressed exception (correlation)
+### Sample 3 - Suppressed event (correlation)
 ![Sample 3a](img/sample3a.png)
 ![Sample 3b](img/sample3b.png)
 
-In this example, an exception causes the measured value (black) to cross the upper and lower control limits (gray). Because the pattern is checked against a similar pattern which has a comparable relative forecast error (calculated as _(forecast value / measured value) - 1_), the exception is suppressed. The DBM factor value is reset to zero during this time.
+In this example, an event causes the measured value (black) to cross the upper and lower control limits (gray). Because the pattern is checked against a similar pattern which has a comparable relative forecast error (calculated as _(forecast value / measured value) - 1_), the event is suppressed. The DBM factor value is reset to zero during this time.
 
-### Sample 4 - Suppressed exception (anticorrelation)
+### Sample 4 - Suppressed event (anticorrelation)
 ![Sample 4a](img/sample4a.png)
 ![Sample 4b](img/sample4b.png)
 
-In this example, an exception causes the measured value (black) to cross the lower control limit (gray). Because the pattern is checked against a similar, adjacent, pattern which has a comparable, but inverted, absolute forecast error (calculated as _forecast value - measured value_), the exception is suppressed. The DBM factor value is reset to zero during this time.
+In this example, an event causes the measured value (black) to cross the lower control limit (gray). Because the pattern is checked against a similar, adjacent, pattern which has a comparable, but inverted, absolute forecast error (calculated as _forecast value - measured value_), the event is suppressed. The DBM factor value is reset to zero during this time.
 
 ## Program information
 
@@ -63,16 +63,16 @@ DBM uses drivers to read information from a source of data. The following driver
 ### Parameters
 DBM can be configured using several parameters. The values for these parameters can be changed at runtime in the `Vitens.DynamicBandwidthMonitor.DBMParameters` class.
 
-| Parameter                    | Default value | Units         | Description                                                                                             |
-| ---------------------------- | ------------- | ------------- | ------------------------------------------------------------------------------------------------------- |
-| `CalculationInterval`        | 300           | seconds       | Time interval at which the calculation is run.                                                          |
-| `ComparePatterns`            | 12            | weeks         | Number of weeks to look back to forecast the current value and control limits.                          |
-| `EMAPreviousPeriods`         | 5             | intervals     | Number of previous intervals used to smooth the data.                                                   |
-| `OutlierCI`                  | 0.99          | ratio         | Confidence interval used for removing outliers.                                                         |
-| `BandwidthCI`                | 0.99          | ratio         | Confidence interval used for determining control limits.                                                |
-| `CorrelationPreviousPeriods` | 23            | intervals     | Number of previous intervals used to calculate forecast error correlation when an exception is found.   |
-| `CorrelationThreshold`       | 0.83666       | dimensionless | Absolute correlation lower limit for detecting (anti)correlation.                                       |
-| `RegressionAngleRange`       | 18.435        | degrees       | Regression angle range (around -45/+45 degrees) required when suppressing based on (anti)correlation.   |
+| Parameter                    | Default value | Units         | Description                                                                                           |
+| ---------------------------- | ------------- | ------------- | ----------------------------------------------------------------------------------------------------- |
+| `CalculationInterval`        | 300           | seconds       | Time interval at which the calculation is run.                                                        |
+| `ComparePatterns`            | 12            | weeks         | Number of weeks to look back to forecast the current value and control limits.                        |
+| `EMAPreviousPeriods`         | 5             | intervals     | Number of previous intervals used to smooth the data.                                                 |
+| `OutlierCI`                  | 0.99          | ratio         | Confidence interval used for removing outliers.                                                       |
+| `BandwidthCI`                | 0.99          | ratio         | Confidence interval used for determining control limits.                                              |
+| `CorrelationPreviousPeriods` | 23            | intervals     | Number of previous intervals used to calculate forecast error correlation when an event is found.     |
+| `CorrelationThreshold`       | 0.83666       | dimensionless | Absolute correlation lower limit for detecting (anti)correlation.                                     |
+| `RegressionAngleRange`       | 18.435        | degrees       | Regression angle range (around -45/+45 degrees) required when suppressing based on (anti)correlation. |
 
 ### DBMTester
 DBMTester is a command line utility that can be used to quickly calculate DBM results using the CSV driver. The following arguments are available:

@@ -104,7 +104,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
           ' Retrieve data and calculate forecast. Only do this for the required
           ' timestamp and only process previous timestamps for calculating
-          ' correlation results if an exception was found.
+          ' correlation results if an event was found.
           If Result.ForecastData Is Nothing Or (IsInputDBMPoint And
             Result.Factor <> 0 And HasCorrelationDBMPoint) Or
             Not IsInputDBMPoint Then
