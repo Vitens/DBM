@@ -63,14 +63,12 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' dictionary. Passed timestamps are ignored and all data in the CSV is
       ' loaded into memory.
 
-      Dim TimestampList As List(Of DateTime)
       Dim Substrings() As String
       Dim Timestamp As DateTime
       Dim Value As Double
 
       Values.Clear
       If File.Exists(DirectCast(Point, String)) Then
-        TimestampList = New List(Of DateTime)
         Using StreamReader As New StreamReader(DirectCast(Point, String))
           Do While Not StreamReader.EndOfStream
             ' Comma and tab delimiters; split timestamp and value
@@ -78,7 +76,6 @@ Namespace Vitens.DynamicBandwidthMonitor
             If Substrings.Length = 2 Then
               If DateTime.TryParse(Substrings(0), Timestamp) Then
                 If Double.TryParse(Substrings(1), Value) Then
-                  TimestampList.Add(Timestamp)
                   If Not Values.ContainsKey(Timestamp) Then
                     Values.Add(Timestamp, Value) ' Add data to dictionary
                   End If
