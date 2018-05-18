@@ -136,10 +136,10 @@ Namespace Vitens.DynamicBandwidthMonitor
                 ' Limit number of cached forecast results per point. The size of
                 ' the cache is automatically optimized for real-time continuous
                 ' calculations.
-                Do While ForecastsData.Count >= ForecastsCacheSize
+                If ForecastsData.Count >= ForecastsCacheSize Then
                   ' Use the queue to remove least recently inserted timestamp.
                   ForecastsData.Remove(ForecastsQueue.Dequeue)
-                Loop
+                End If
 
                 ' Add calculated forecast to cache and queue.
                 ForecastsData.Add(ForecastTimestamp, ForecastData)
