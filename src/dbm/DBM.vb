@@ -75,7 +75,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private Lock As New Object
-    Public Points As New Dictionary(Of Object, DBMPoint)
+    Private Points As New Dictionary(Of Object, DBMPoint)
 
 
     Private Sub RemoveStalePoints
@@ -104,7 +104,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Private Function Point(PointDriver As DBMPointDriverAbstract) As DBMPoint
+    Public Function Point(PointDriver As DBMPointDriverAbstract) As DBMPoint
 
       ' Returns DBMPoint object from Points dictionary. If dictionary does not
       ' yet contain object, it is added.
