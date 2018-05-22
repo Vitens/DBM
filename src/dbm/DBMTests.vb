@@ -654,6 +654,12 @@ Namespace Vitens.DynamicBandwidthMonitor
         Round(SlopeToAngle(-1.6831), 4) = -59.2837 And
         Round(SlopeToAngle(-2.0031), 4) = -63.4704
 
+      For i = 0 To 19
+        UnitTestsPassed = UnitTestsPassed And
+          RandomNumber(0, i+1) >= 0 And
+          RandomNumber(0, i+1) <= i+1
+      Next i
+
       UnitTestsPassed = UnitTestsPassed And
         AlignTimestamp(New DateTime(2016, 4, 4, 16, 33, 2), 60) =
         New DateTime(2016, 4, 4, 16, 33, 0) And
@@ -866,7 +872,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DBMCorrelationPoint(New DBMPointDriverWaterUsageModel(490), False))
       Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
 
-      For i = 0 to 19
+      For i = 0 To 19
         Result = DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
         With Result
           IntegrationTestsPassed = IntegrationTestsPassed And

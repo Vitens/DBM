@@ -24,7 +24,6 @@ Option Strict
 
 Imports System
 Imports System.Collections.Generic
-Imports System.DateTime
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMForecast
@@ -41,9 +40,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private Lock As New Object
     Private ForecastsSubtractPoint As DBMPoint
     Private ForecastsData As New Dictionary(Of DateTime, DBMForecastData)
-    Private ForecastsQueue As New Queue(Of DateTime) ' Insertion order queue
     Public Shared ForecastsCacheSize As Integer =
-      EMAPreviousPeriods+2*CorrelationPreviousPeriods+1
+      2*(EMAPreviousPeriods+2*CorrelationPreviousPeriods+1)
 
 
     Public Sub New(PointDriver As DBMPointDriverAbstract)
@@ -97,7 +95,6 @@ Namespace Vitens.DynamicBandwidthMonitor
         If SubtractPoint IsNot ForecastsSubtractPoint Then
           ForecastsSubtractPoint = SubtractPoint
           ForecastsData.Clear ' No, so clear results
-          ForecastsQueue.Clear
         End If
 
         For CorrelationCounter = 0 To CorrelationPreviousPeriods ' Correl. loop
@@ -135,15 +132,15 @@ Namespace Vitens.DynamicBandwidthMonitor
 
                 ' Limit number of cached forecast results per point. The size of
                 ' the cache is automatically optimized for real-time continuous
-                ' calculations.
+                ' calculations. Cache size is limited using random eviction
+                ' policy.
                 If ForecastsData.Count >= ForecastsCacheSize Then
-                  ' Use the queue to remove least recently inserted timestamp.
-                  ForecastsData.Remove(ForecastsQueue.Dequeue)
+                  ForecastsData.Remove(ForecastsData.ElementAt(
+                    RandomNumber(0, ForecastsData.Count-1)).Key)
                 End If
 
-                ' Add calculated forecast to cache and queue.
+                ' Add calculated forecast to cache.
                 ForecastsData.Add(ForecastTimestamp, ForecastData)
-                ForecastsQueue.Enqueue(ForecastTimestamp)
 
               End If
 
