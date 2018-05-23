@@ -24,6 +24,7 @@ Option Strict
 
 Imports System
 Imports System.Collections.Generic
+Imports System.DateTime
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMForecast
@@ -36,6 +37,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public PointDriver As DBMPointDriverAbstract
+    Private LastAccessTime As DateTime
     Private ForecastsSubtractPoint As DBMPoint
     Private ForecastsData As New Dictionary(Of DateTime, DBMForecastData)
     Public Shared ForecastsCacheSize As Integer =
@@ -45,8 +47,21 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Sub New(PointDriver As DBMPointDriverAbstract)
 
       Me.PointDriver = PointDriver
+      LastAccessTime = Now
 
     End Sub
+
+
+    Public Function IsStale As Boolean
+
+      ' Returns true if this DBMPoint has not been used for at least one
+      ' calculation interval. Used by the DBM class to clean up unused
+      ' resources.
+
+      Return Now >= AlignTimestamp(LastAccessTime,
+        CalculationInterval).AddSeconds(2*CalculationInterval)
+
+    End Function
 
 
     Public Function Result(Timestamp As DateTime, IsInputDBMPoint As Boolean,
@@ -67,6 +82,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         ForecastValues(EMAPreviousPeriods),
         LowerControlLimits(EMAPreviousPeriods),
         UpperControlLimits(EMAPreviousPeriods) As Double
+
+      LastAccessTime = Now
 
       Result = New DBMResult
       Result.Timestamp = AlignTimestamp(Timestamp, CalculationInterval)
