@@ -193,22 +193,24 @@ Namespace Vitens.DynamicBandwidthMonitor
       timeContext As Object, inputAttributes As AFAttributeList,
       inputValues As AFValues) As AFValue
 
-      Dim Timestamp As AFTime
-      Dim Value As New AFValue
-
-      UpdatePoints
-
-      If timeContext Is Nothing Then
-        Timestamp = DirectCast(InputPointDriver.Point, AFAttribute).
-          GetValue.Timestamp
-      Else
-        Timestamp = DirectCast(timeContext, AFTime)
-      End If
-
-      ' Return DBM result parameter based on applied property/trait.
       SyncLock Lock ' Ensure that multiple threads do not execute simultaneously
+
+        Dim Timestamp As AFTime
+        Dim Value As New AFValue
+
+        UpdatePoints
+
+        If timeContext Is Nothing Then
+          Timestamp = DirectCast(InputPointDriver.Point, AFAttribute).
+            GetValue.Timestamp
+        Else
+          Timestamp = DirectCast(timeContext, AFTime)
+        End If
+
+        ' Return DBM result parameter based on applied property/trait.
         With DBM.Result(
           InputPointDriver, CorrelationPoints, Timestamp.LocalTime)
+
           If Attribute.Trait Is Nothing Then
             Value = New AFValue(.Factor, .Timestamp)
             Value.Questionable = .HasEvent
@@ -234,10 +236,12 @@ Namespace Vitens.DynamicBandwidthMonitor
             Value = New AFValue(.ForecastData.ForecastValue+
               .ForecastData.Range(pValueMinMax), .Timestamp)
           End If
-        End With
-      End SyncLock
 
-      Return Value
+        End With
+
+        Return Value
+
+      End SyncLock
 
     End Function
 
