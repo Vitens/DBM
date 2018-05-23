@@ -75,7 +75,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const pValueMinMax As Double = 0.9999 ' CI for Minimum and Maximum
 
 
-    Private Shared DBM As New DBM
+    Private DBM As New DBM
     Private LastGetPointsTime As DateTime
     Private InputPointDriver As DBMPointDriver
     Private CorrelationPoints As List(Of DBMCorrelationPoint)
