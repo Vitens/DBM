@@ -76,7 +76,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private DBM As New DBM
-    Private LastGetPointsTime As DateTime
+    Private PointsUpdated As DateTime
     Private InputPointDriver As DBMPointDriver
     Private CorrelationPoints As List(Of DBMCorrelationPoint)
 
@@ -123,20 +123,20 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
-    Private Sub GetInputAndCorrelationPoints
+    Private Sub UpdatePoints
 
       ' Retrieve input and correlation PI points from AF hierarchy. Recheck for
       ' changes after every calculation interval and only if owned by an
       ' attribute (element is an instance of an element template) and attribute
-      ' has a parent attribute referring to an input PI point.
+      ' has a parent attribute.
 
       Dim Element, ParentElement, SiblingElement As AFElement
 
-      If Now >= AlignTimestamp(LastGetPointsTime, CalculationInterval).
+      If Now >= AlignTimestamp(PointsUpdated, CalculationInterval).
         AddSeconds(CalculationInterval) And
         Attribute IsNot Nothing And Attribute.Parent IsNot Nothing Then
 
-        LastGetPointsTime = Now
+        PointsUpdated = Now
         Element = DirectCast(Attribute.Element, AFElement)
         InputPointDriver = New DBMPointDriver(Attribute.Parent) ' Parent attrib.
         CorrelationPoints = New List(Of DBMCorrelationPoint)
@@ -195,7 +195,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Timestamp As AFTime
       Dim Value As New AFValue
 
-      GetInputAndCorrelationPoints
+      UpdatePoints
 
       If timeContext Is Nothing Then
         Timestamp = DirectCast(InputPointDriver.Point, AFAttribute).
@@ -247,7 +247,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim IntervalSeconds As Double
 
-      GetInputAndCorrelationPoints
+      UpdatePoints
 
       DBM.PrepareData(InputPointDriver, CorrelationPoints,
         timeContext.StartTime.LocalTime, timeContext.EndTime.LocalTime)
