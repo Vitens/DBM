@@ -75,10 +75,11 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const pValueMinMax As Double = 0.9999 ' CI for Minimum and Maximum
 
 
-    Private Shared DBM As New DBM
-    Private LastGetPointsTime As DateTime
+    Private PointsUpdated As DateTime
     Private InputPointDriver As DBMPointDriver
     Private CorrelationPoints As List(Of DBMCorrelationPoint)
+    Private Lock As New Object
+    Private DBM As New DBM
 
 
     Public Overrides Readonly Property SupportedContexts _
@@ -123,20 +124,20 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
-    Private Sub GetInputAndCorrelationPoints
+    Private Sub UpdatePoints
 
       ' Retrieve input and correlation PI points from AF hierarchy. Recheck for
       ' changes after every calculation interval and only if owned by an
       ' attribute (element is an instance of an element template) and attribute
-      ' has a parent attribute referring to an input PI point.
+      ' has a parent attribute.
 
       Dim Element, ParentElement, SiblingElement As AFElement
 
-      If Now >= AlignTimestamp(LastGetPointsTime, CalculationInterval).
+      If Now >= AlignTimestamp(PointsUpdated, CalculationInterval).
         AddSeconds(CalculationInterval) And
         Attribute IsNot Nothing And Attribute.Parent IsNot Nothing Then
 
-        LastGetPointsTime = Now
+        PointsUpdated = Now
         Element = DirectCast(Attribute.Element, AFElement)
         InputPointDriver = New DBMPointDriver(Attribute.Parent) ' Parent attrib.
         CorrelationPoints = New List(Of DBMCorrelationPoint)
@@ -192,48 +193,55 @@ Namespace Vitens.DynamicBandwidthMonitor
       timeContext As Object, inputAttributes As AFAttributeList,
       inputValues As AFValues) As AFValue
 
-      Dim Timestamp As AFTime
-      Dim Value As New AFValue
+      SyncLock Lock ' Ensure that multiple threads do not execute simultaneously
 
-      GetInputAndCorrelationPoints
+        Dim Timestamp As AFTime
+        Dim Value As New AFValue
 
-      If timeContext Is Nothing Then
-        Timestamp = DirectCast(InputPointDriver.Point, AFAttribute).
-          GetValue.Timestamp
-      Else
-        Timestamp = DirectCast(timeContext, AFTime)
-      End If
+        UpdatePoints
 
-      ' Return DBM result parameter based on applied property/trait.
-      With DBM.Result(InputPointDriver, CorrelationPoints, Timestamp.LocalTime)
-        If Attribute.Trait Is Nothing Then
-          Value = New AFValue(.Factor, .Timestamp)
-          Value.Questionable = .HasEvent
-          Value.Substituted = .HasSuppressedEvent
-        ElseIf Attribute.Trait Is LimitTarget Then
-          Value = New AFValue(.ForecastData.Measurement, .Timestamp)
-        ElseIf Attribute.Trait Is Forecast Then
-          Value = New AFValue(.ForecastData.ForecastValue, .Timestamp)
-        ElseIf Attribute.Trait Is LimitMinimum Then
-          Value = New AFValue(.ForecastData.ForecastValue-
-            .ForecastData.Range(pValueMinMax), .Timestamp)
-        ElseIf Attribute.Trait Is LimitLoLo Then
-          Value = New AFValue(.ForecastData.LowerControlLimit, .Timestamp)
-        ElseIf Attribute.Trait Is LimitLo Then
-          Value = New AFValue(.ForecastData.ForecastValue-
-            .ForecastData.Range(pValueLoHi), .Timestamp)
-        ElseIf Attribute.Trait Is LimitHi Then
-          Value = New AFValue(.ForecastData.ForecastValue+
-            .ForecastData.Range(pValueLoHi), .Timestamp)
-        ElseIf Attribute.Trait Is LimitHiHi Then
-          Value = New AFValue(.ForecastData.UpperControlLimit, .Timestamp)
-        ElseIf Attribute.Trait Is LimitMaximum Then
-          Value = New AFValue(.ForecastData.ForecastValue+
-            .ForecastData.Range(pValueMinMax), .Timestamp)
+        If timeContext Is Nothing Then
+          Timestamp = DirectCast(InputPointDriver.Point, AFAttribute).
+            GetValue.Timestamp
+        Else
+          Timestamp = DirectCast(timeContext, AFTime)
         End If
-      End With
 
-      Return Value
+        ' Return DBM result parameter based on applied property/trait.
+        With DBM.Result(
+          InputPointDriver, CorrelationPoints, Timestamp.LocalTime)
+
+          If Attribute.Trait Is Nothing Then
+            Value = New AFValue(.Factor, .Timestamp)
+            Value.Questionable = .HasEvent
+            Value.Substituted = .HasSuppressedEvent
+          ElseIf Attribute.Trait Is LimitTarget Then
+            Value = New AFValue(.ForecastData.Measurement, .Timestamp)
+          ElseIf Attribute.Trait Is Forecast Then
+            Value = New AFValue(.ForecastData.ForecastValue, .Timestamp)
+          ElseIf Attribute.Trait Is LimitMinimum Then
+            Value = New AFValue(.ForecastData.ForecastValue-
+              .ForecastData.Range(pValueMinMax), .Timestamp)
+          ElseIf Attribute.Trait Is LimitLoLo Then
+            Value = New AFValue(.ForecastData.LowerControlLimit, .Timestamp)
+          ElseIf Attribute.Trait Is LimitLo Then
+            Value = New AFValue(.ForecastData.ForecastValue-
+              .ForecastData.Range(pValueLoHi), .Timestamp)
+          ElseIf Attribute.Trait Is LimitHi Then
+            Value = New AFValue(.ForecastData.ForecastValue+
+              .ForecastData.Range(pValueLoHi), .Timestamp)
+          ElseIf Attribute.Trait Is LimitHiHi Then
+            Value = New AFValue(.ForecastData.UpperControlLimit, .Timestamp)
+          ElseIf Attribute.Trait Is LimitMaximum Then
+            Value = New AFValue(.ForecastData.ForecastValue+
+              .ForecastData.Range(pValueMinMax), .Timestamp)
+          End If
+
+        End With
+
+        Return Value
+
+      End SyncLock
 
     End Function
 
@@ -247,7 +255,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim IntervalSeconds As Double
 
-      GetInputAndCorrelationPoints
+      UpdatePoints
 
       DBM.PrepareData(InputPointDriver, CorrelationPoints,
         timeContext.StartTime.LocalTime, timeContext.EndTime.LocalTime)
