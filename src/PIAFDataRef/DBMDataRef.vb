@@ -78,8 +78,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private PointsUpdated As DateTime
     Private InputPointDriver As DBMPointDriver
     Private CorrelationPoints As List(Of DBMCorrelationPoint)
-    Private Lock As New Object
-    Private DBM As New DBM
+    Private Shared DBM As New DBM
 
 
     Public Overrides Readonly Property SupportedContexts _
@@ -193,55 +192,50 @@ Namespace Vitens.DynamicBandwidthMonitor
       timeContext As Object, inputAttributes As AFAttributeList,
       inputValues As AFValues) As AFValue
 
-      SyncLock Lock ' Ensure that multiple threads do not execute simultaneously
+      Dim Timestamp As AFTime
+      Dim Value As New AFValue
 
-        Dim Timestamp As AFTime
-        Dim Value As New AFValue
+      UpdatePoints
 
-        UpdatePoints
+      If timeContext Is Nothing Then
+        Timestamp = DirectCast(InputPointDriver.Point, AFAttribute).
+          GetValue.Timestamp
+      Else
+        Timestamp = DirectCast(timeContext, AFTime)
+      End If
 
-        If timeContext Is Nothing Then
-          Timestamp = DirectCast(InputPointDriver.Point, AFAttribute).
-            GetValue.Timestamp
-        Else
-          Timestamp = DirectCast(timeContext, AFTime)
+      ' Return DBM result parameter based on applied property/trait.
+      With DBM.Result(InputPointDriver, CorrelationPoints, Timestamp.LocalTime)
+
+        If Attribute.Trait Is Nothing Then
+          Value = New AFValue(.Factor, .Timestamp)
+          Value.Questionable = .HasEvent
+          Value.Substituted = .HasSuppressedEvent
+        ElseIf Attribute.Trait Is LimitTarget Then
+          Value = New AFValue(.ForecastData.Measurement, .Timestamp)
+        ElseIf Attribute.Trait Is Forecast Then
+          Value = New AFValue(.ForecastData.ForecastValue, .Timestamp)
+        ElseIf Attribute.Trait Is LimitMinimum Then
+          Value = New AFValue(.ForecastData.ForecastValue-
+            .ForecastData.Range(pValueMinMax), .Timestamp)
+        ElseIf Attribute.Trait Is LimitLoLo Then
+          Value = New AFValue(.ForecastData.LowerControlLimit, .Timestamp)
+        ElseIf Attribute.Trait Is LimitLo Then
+          Value = New AFValue(.ForecastData.ForecastValue-
+            .ForecastData.Range(pValueLoHi), .Timestamp)
+        ElseIf Attribute.Trait Is LimitHi Then
+          Value = New AFValue(.ForecastData.ForecastValue+
+            .ForecastData.Range(pValueLoHi), .Timestamp)
+        ElseIf Attribute.Trait Is LimitHiHi Then
+          Value = New AFValue(.ForecastData.UpperControlLimit, .Timestamp)
+        ElseIf Attribute.Trait Is LimitMaximum Then
+          Value = New AFValue(.ForecastData.ForecastValue+
+            .ForecastData.Range(pValueMinMax), .Timestamp)
         End If
 
-        ' Return DBM result parameter based on applied property/trait.
-        With DBM.Result(
-          InputPointDriver, CorrelationPoints, Timestamp.LocalTime)
+      End With
 
-          If Attribute.Trait Is Nothing Then
-            Value = New AFValue(.Factor, .Timestamp)
-            Value.Questionable = .HasEvent
-            Value.Substituted = .HasSuppressedEvent
-          ElseIf Attribute.Trait Is LimitTarget Then
-            Value = New AFValue(.ForecastData.Measurement, .Timestamp)
-          ElseIf Attribute.Trait Is Forecast Then
-            Value = New AFValue(.ForecastData.ForecastValue, .Timestamp)
-          ElseIf Attribute.Trait Is LimitMinimum Then
-            Value = New AFValue(.ForecastData.ForecastValue-
-              .ForecastData.Range(pValueMinMax), .Timestamp)
-          ElseIf Attribute.Trait Is LimitLoLo Then
-            Value = New AFValue(.ForecastData.LowerControlLimit, .Timestamp)
-          ElseIf Attribute.Trait Is LimitLo Then
-            Value = New AFValue(.ForecastData.ForecastValue-
-              .ForecastData.Range(pValueLoHi), .Timestamp)
-          ElseIf Attribute.Trait Is LimitHi Then
-            Value = New AFValue(.ForecastData.ForecastValue+
-              .ForecastData.Range(pValueLoHi), .Timestamp)
-          ElseIf Attribute.Trait Is LimitHiHi Then
-            Value = New AFValue(.ForecastData.UpperControlLimit, .Timestamp)
-          ElseIf Attribute.Trait Is LimitMaximum Then
-            Value = New AFValue(.ForecastData.ForecastValue+
-              .ForecastData.Range(pValueMinMax), .Timestamp)
-          End If
-
-        End With
-
-        Return Value
-
-      End SyncLock
+      Return Value
 
     End Function
 
