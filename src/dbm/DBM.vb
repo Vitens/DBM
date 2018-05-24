@@ -83,11 +83,11 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Stale items are removed so that used resources can be freed to prevent
       ' all available memory from filling up.
 
-      Dim Pair As KeyValuePair(Of Object, DBMPoint)
-      Dim StalePoints As New List(Of Object)
-      Dim StalePoint As Object
-
       SyncLock Lock ' Ensure that multiple threads do not execute simultaneously
+
+        Dim Pair As KeyValuePair(Of Object, DBMPoint)
+        Dim StalePoints As New List(Of Object)
+        Dim StalePoint As Object
 
         For Each Pair In Points
           If Pair.Value.IsStale Then ' Find stale points

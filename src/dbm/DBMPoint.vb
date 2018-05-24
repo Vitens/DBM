@@ -76,15 +76,15 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' moving average, previously calculated results will often need to be
       ' included in later calculations.
 
-      Dim CorrelationCounter, EMACounter, PatternCounter As Integer
-      Dim ForecastTimestamp, PatternTimestamp As DateTime
-      Dim ForecastData As DBMForecastData = Nothing
-      Dim Patterns(ComparePatterns), Measurements(EMAPreviousPeriods),
-        ForecastValues(EMAPreviousPeriods),
-        LowerControlLimits(EMAPreviousPeriods),
-        UpperControlLimits(EMAPreviousPeriods) As Double
-
       SyncLock Lock ' Ensure that multiple threads do not execute simultaneously
+
+        Dim CorrelationCounter, EMACounter, PatternCounter As Integer
+        Dim ForecastTimestamp, PatternTimestamp As DateTime
+        Dim ForecastData As DBMForecastData = Nothing
+        Dim Patterns(ComparePatterns), Measurements(EMAPreviousPeriods),
+          ForecastValues(EMAPreviousPeriods),
+          LowerControlLimits(EMAPreviousPeriods),
+          UpperControlLimits(EMAPreviousPeriods) As Double
 
         LastAccessTime = Now
 
@@ -165,9 +165,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         Next CorrelationCounter
 
-      End SyncLock
+        Return Result
 
-      Return Result
+      End SyncLock
 
     End Function
 
