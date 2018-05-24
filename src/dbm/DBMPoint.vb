@@ -38,6 +38,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public PointDriver As DBMPointDriverAbstract
     Private LastAccessTime As DateTime
+    Private Lock As New Object
     Private ForecastsSubtractPoint As DBMPoint
     Private ForecastsData As New Dictionary(Of DateTime, DBMForecastData)
     Public Shared ForecastsCacheSize As Integer =
@@ -83,84 +84,88 @@ Namespace Vitens.DynamicBandwidthMonitor
         LowerControlLimits(EMAPreviousPeriods),
         UpperControlLimits(EMAPreviousPeriods) As Double
 
-      LastAccessTime = Now
+      SyncLock Lock ' Ensure that multiple threads do not execute simultaneously
 
-      Result = New DBMResult
-      Result.Timestamp = AlignTimestamp(Timestamp, CalculationInterval)
+        LastAccessTime = Now
 
-      ' Cached results can only be reused if the point that is to be subtracted
-      ' is identical to the one used in the cached results.
-      If SubtractPoint IsNot ForecastsSubtractPoint Then
-        ForecastsSubtractPoint = SubtractPoint
-        ForecastsData.Clear ' No, so clear results
-      End If
+        Result = New DBMResult
+        Result.Timestamp = AlignTimestamp(Timestamp, CalculationInterval)
 
-      For CorrelationCounter = 0 To CorrelationPreviousPeriods ' Correl. loop
-
-        ' Retrieve data and calculate forecast. Only do this for the required
-        ' timestamp and only process previous timestamps for calculating
-        ' correlation results if an event was found.
-        If Result.ForecastData Is Nothing Or (IsInputDBMPoint And
-          Result.Factor <> 0 And HasCorrelationDBMPoint) Or
-          Not IsInputDBMPoint Then
-
-          For EMACounter = 0 To EMAPreviousPeriods ' Filter high freq. variation
-
-            ForecastTimestamp = Result.Timestamp.AddSeconds(
-              -(EMAPreviousPeriods-EMACounter+CorrelationCounter)*
-              CalculationInterval) ' Timestamp for forecast results
-
-            If Not ForecastsData.TryGetValue(ForecastTimestamp,
-              ForecastData) Then ' Calculate forecast data if not cached
-
-              For PatternCounter = 0 To ComparePatterns ' Data for regression.
-
-                PatternTimestamp = ForecastTimestamp.
-                  AddDays(-(ComparePatterns-PatternCounter)*7) ' Timestamp
-                Patterns(PatternCounter) =
-                  PointDriver.TryGetData(PatternTimestamp) ' Get data
-                If SubtractPoint IsNot Nothing Then ' Subtract input if needed.
-                  Patterns(PatternCounter) -=
-                    SubtractPoint.PointDriver.TryGetData(PatternTimestamp)
-                End If
-
-              Next PatternCounter
-
-              ForecastData = Forecast(Patterns)
-
-              ' Limit number of cached forecast results per point. The size of
-              ' the cache is automatically optimized for real-time continuous
-              ' calculations. Cache size is limited using random eviction
-              ' policy.
-              If ForecastsData.Count >= ForecastsCacheSize Then
-                ForecastsData.Remove(ForecastsData.ElementAt(
-                  RandomNumber(0, ForecastsData.Count-1)).Key)
-              End If
-
-              ' Add calculated forecast to cache.
-              ForecastsData.Add(ForecastTimestamp, ForecastData)
-
-            End If
-
-            With ForecastData ' Store results in arrays for EMA calculation.
-              Measurements(EMACounter) = .Measurement
-              ForecastValues(EMACounter) = .ForecastValue
-              LowerControlLimits(EMACounter) = .LowerControlLimit
-              UpperControlLimits(EMACounter) = .UpperControlLimit
-            End With
-
-          Next EMACounter
-
-          ' Calculate final result using filtered calculation results.
-          Result.Calculate(CorrelationPreviousPeriods-CorrelationCounter,
-            ExponentialMovingAverage(Measurements),
-            ExponentialMovingAverage(ForecastValues),
-            ExponentialMovingAverage(LowerControlLimits),
-            ExponentialMovingAverage(UpperControlLimits))
-
+        ' Cached results can only be reused if the point that is to be
+        ' subtracted is identical to the one used in the cached results.
+        If SubtractPoint IsNot ForecastsSubtractPoint Then
+          ForecastsSubtractPoint = SubtractPoint
+          ForecastsData.Clear ' No, so clear results
         End If
 
-      Next CorrelationCounter
+        For CorrelationCounter = 0 To CorrelationPreviousPeriods ' Correl. loop
+
+          ' Retrieve data and calculate forecast. Only do this for the required
+          ' timestamp and only process previous timestamps for calculating
+          ' correlation results if an event was found.
+          If Result.ForecastData Is Nothing Or (IsInputDBMPoint And
+            Result.Factor <> 0 And HasCorrelationDBMPoint) Or
+            Not IsInputDBMPoint Then
+
+            For EMACounter = 0 To EMAPreviousPeriods ' Filter hi freq. variation
+
+              ForecastTimestamp = Result.Timestamp.AddSeconds(
+                -(EMAPreviousPeriods-EMACounter+CorrelationCounter)*
+                CalculationInterval) ' Timestamp for forecast results
+
+              If Not ForecastsData.TryGetValue(ForecastTimestamp,
+                ForecastData) Then ' Calculate forecast data if not cached
+
+                For PatternCounter = 0 To ComparePatterns ' Data for regression.
+
+                  PatternTimestamp = ForecastTimestamp.
+                    AddDays(-(ComparePatterns-PatternCounter)*7) ' Timestamp
+                  Patterns(PatternCounter) =
+                    PointDriver.TryGetData(PatternTimestamp) ' Get data
+                  If SubtractPoint IsNot Nothing Then ' Subtract input if req'd
+                    Patterns(PatternCounter) -=
+                      SubtractPoint.PointDriver.TryGetData(PatternTimestamp)
+                  End If
+
+                Next PatternCounter
+
+                ForecastData = Forecast(Patterns)
+
+                ' Limit number of cached forecast results per point. The size of
+                ' the cache is automatically optimized for real-time continuous
+                ' calculations. Cache size is limited using random eviction
+                ' policy.
+                If ForecastsData.Count >= ForecastsCacheSize Then
+                  ForecastsData.Remove(ForecastsData.ElementAt(
+                    RandomNumber(0, ForecastsData.Count-1)).Key)
+                End If
+
+                ' Add calculated forecast to cache.
+                ForecastsData.Add(ForecastTimestamp, ForecastData)
+
+              End If
+
+              With ForecastData ' Store results in arrays for EMA calculation.
+                Measurements(EMACounter) = .Measurement
+                ForecastValues(EMACounter) = .ForecastValue
+                LowerControlLimits(EMACounter) = .LowerControlLimit
+                UpperControlLimits(EMACounter) = .UpperControlLimit
+              End With
+
+            Next EMACounter
+
+            ' Calculate final result using filtered calculation results.
+            Result.Calculate(CorrelationPreviousPeriods-CorrelationCounter,
+              ExponentialMovingAverage(Measurements),
+              ExponentialMovingAverage(ForecastValues),
+              ExponentialMovingAverage(LowerControlLimits),
+              ExponentialMovingAverage(UpperControlLimits))
+
+          End If
+
+        Next CorrelationCounter
+
+      End SyncLock
 
       Return Result
 
