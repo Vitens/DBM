@@ -74,7 +74,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' distribution processes.
 
 
-    Private Lock As New Object
     Private Points As New Dictionary(Of Object, DBMPoint)
 
 
@@ -83,23 +82,19 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Stale items are removed so that used resources can be freed to prevent
       ' all available memory from filling up.
 
-      SyncLock Lock ' Ensure that multiple threads do not execute simultaneously
+      Dim Pair As KeyValuePair(Of Object, DBMPoint)
+      Dim StalePoints As New List(Of Object)
+      Dim StalePoint As Object
 
-        Dim Pair As KeyValuePair(Of Object, DBMPoint)
-        Dim StalePoints As New List(Of Object)
-        Dim StalePoint As Object
+      For Each Pair In Points
+        If Pair.Value.IsStale Then ' Find stale points
+          StalePoints.Add(Pair.Key)
+        End If
+      Next
 
-        For Each Pair In Points
-          If Pair.Value.IsStale Then ' Find stale points
-            StalePoints.Add(Pair.Key)
-          End If
-        Next
-
-        For Each StalePoint In StalePoints
-          Points.Remove(StalePoint) ' Remove stale points
-        Next
-
-      End SyncLock
+      For Each StalePoint In StalePoints
+        Points.Remove(StalePoint) ' Remove stale points
+      Next
 
     End Sub
 
@@ -109,15 +104,11 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns DBMPoint object from Points dictionary. If dictionary does not
       ' yet contain object, it is added.
 
-      SyncLock Lock ' Ensure that multiple threads do not execute simultaneously
+      If Not Points.ContainsKey(PointDriver.Point) Then
+        Points.Add(PointDriver.Point, New DBMPoint(PointDriver)) ' Add new pt.
+      End If
 
-        If Not Points.ContainsKey(PointDriver.Point) Then
-          Points.Add(PointDriver.Point, New DBMPoint(PointDriver)) ' Add new pt.
-        End If
-
-        Return Points.Item(PointDriver.Point)
-
-      End SyncLock
+      Return Points.Item(PointDriver.Point)
 
     End Function
 
