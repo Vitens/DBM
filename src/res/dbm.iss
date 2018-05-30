@@ -1,10 +1,12 @@
 #define AppName "Dynamic Bandwidth Monitor"
 #define AppVersion GetFileVersion('..\..\build\DBM.dll')
+#define AppPublisher "J.H. Fitié, Vitens N.V."
 [Setup]
 AppId={#AppName}
 AppName={#AppName}
 AppVersion={#AppVersion}
-AppPublisher=J.H. Fitié, Vitens N.V.
+AppPublisher={#AppPublisher}
+AppCopyright=Copyright (C) 2014-2018  {#AppPublisher}
 SetupIconFile=..\..\src\res\dbm.ico
 LicenseFile=..\..\LICENSE
 DefaultDirName={pf}\{#AppName}
