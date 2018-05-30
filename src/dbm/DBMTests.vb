@@ -70,6 +70,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim StatisticsData As New DBMStatisticsData
 
       UnitTestsPassed = True
+      UnitTestsPassed = False
 
       UnitTestsPassed = UnitTestsPassed And
         Round(Hash({6, 4, 7, 1, 1, 4, 2, 4}), 4) = 2.2326 And
