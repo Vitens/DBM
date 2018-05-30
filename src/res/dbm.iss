@@ -5,6 +5,7 @@
 AppId={#AppName}
 AppName={#AppName}
 AppVersion={#AppVersion}
+VersionInfoVersion={#AppVersion}
 AppPublisher={#AppPublisher}
 AppCopyright=Copyright (C) 2014-2018  {#AppPublisher}
 SetupIconFile=..\..\src\res\dbm.ico
