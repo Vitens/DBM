@@ -69,7 +69,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim i As Integer
       Dim StatisticsData As New DBMStatisticsData
 
-      UnitTestsPassed = False
+      UnitTestsPassed = True
 
       UnitTestsPassed = UnitTestsPassed And
         Round(Hash({6, 4, 7, 1, 1, 4, 2, 4}), 4) = 2.2326 And
@@ -865,7 +865,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Result As DBMResult
       Dim DBM As New DBM
 
-      IntegrationTestsPassed = True
+      IntegrationTestsPassed = False
 
       InputPointDriver = New DBMPointDriverWaterUsageModel(0)
       CorrelationPoints.Add(
