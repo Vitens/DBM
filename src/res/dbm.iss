@@ -1,17 +1,15 @@
-; iscc /O"%TEMP%" /Fdbmsetup /Qp -
-; "%ProgramFiles%\Inno Setup 5\ISCC.exe" /O"%TEMP%" /Fdbmsetup src\res\dbm.iss && %TEMP%\dbmsetup.exe
-#define MyAppName "Dynamic Bandwidth Monitor"
-#define MyAppVersion GetFileVersion('..\..\build\DBM.dll')
+#define AppName "Dynamic Bandwidth Monitor"
+#define AppVersion GetFileVersion('..\..\build\DBM.dll')
 [Setup]
-AppId={#MyAppName}
-AppName={#MyAppName}
-AppVersion={#MyAppVersion}
+AppId={#AppName}
+AppName={#AppName}
+AppVersion={#AppVersion}
 AppPublisher=J.H. Fitié, Vitens N.V.
 SetupIconFile=..\..\src\res\dbm.ico
 LicenseFile=..\..\LICENSE
-DefaultDirName={pf}\{#MyAppName}
+DefaultDirName={pf}\{#AppName}
 DisableDirPage=yes
-DefaultGroupName={#MyAppName}
+DefaultGroupName={#AppName}
 DisableProgramGroupPage=yes
 DisableReadyPage=yes
 [Files]
