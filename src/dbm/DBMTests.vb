@@ -866,7 +866,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim DBM As New DBM
 
       IntegrationTestsPassed = True
-      IntegrationTestsPassed = False
 
       InputPointDriver = New DBMPointDriverWaterUsageModel(0)
       CorrelationPoints.Add(
