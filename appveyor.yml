@@ -19,7 +19,7 @@ after_build:
         appveyor PushArtifact "%TEMP%\DBM_v%binversion%+%commit%_bin.zip"
         7z a "%TEMP%\DBM_v%binversion%+%commit%_src.zip" * -x!.git>NUL
         appveyor PushArtifact "%TEMP%\DBM_v%binversion%+%commit%_src.zip"
-        "%ProgramFiles(x86)%\Inno Setup 5\ISCC.exe" /O"%TEMP%" /FSetup_DBM_v%binversion%+%commit% src\res\dbm.iss
+        "%ProgramFiles(x86)%\Inno Setup 5\ISCC.exe" /O"%TEMP%" /FSetup_DBM_v%binversion%+%commit% /Qp src\res\dbm.iss
         appveyor PushArtifact "%TEMP%\Setup_DBM_v%binversion%+%commit%.exe"
 deploy:
   tag: 'v$(binversion)+$(commit)'
