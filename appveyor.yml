@@ -20,7 +20,7 @@ after_build:
 test_script:
   -
     cmd: |-
-        build\DBMAbout.exe|find "FAILED">NUL&&echo exit 1||echo no exit
+        build\DBMAbout.exe|find "FAILED">NUL&&exit 1||exit 0
 deploy:
   tag: 'v$(binversion)+$(commit)'
   release: 'DBM v$(binversion)+$(commit)'
