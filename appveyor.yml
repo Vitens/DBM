@@ -20,10 +20,7 @@ after_build:
 test_script:
   -
     cmd: |-
-        build\DBMAbout.exe|find "Unit tests PASSED">NUL&&set result=Passed||set result=Failed
-        appveyor AddTest "Unit tests" -Framework "" -FileName "" -Outcome %result%
-        build\DBMAbout.exe|find "Integration tests PASSED">NUL&&set result=Passed||set result=Failed
-        appveyor AddTest "Integration tests" -Framework "" -FileName "" -Outcome %result%
+        build\DBMAbout.exe|find "FAILED">NUL&&exit 1
 deploy:
   tag: 'v$(binversion)+$(commit)'
   release: 'DBM v$(binversion)+$(commit)'
