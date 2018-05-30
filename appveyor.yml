@@ -15,10 +15,6 @@ after_build:
     cmd: |-
         for /f "delims=" %%i in ('powershell -Command "(Get-Item build\DBM.dll).VersionInfo.ProductVersion"') do set binversion=%%i
         for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
-        7z a "%TEMP%\DBM_v%binversion%+%commit%_bin.zip" .\build\*>NUL
-        appveyor PushArtifact "%TEMP%\DBM_v%binversion%+%commit%_bin.zip"
-        7z a "%TEMP%\DBM_v%binversion%+%commit%_src.zip" * -x!.git>NUL
-        appveyor PushArtifact "%TEMP%\DBM_v%binversion%+%commit%_src.zip"
         "%ProgramFiles(x86)%\Inno Setup 5\ISCC.exe" /O"%TEMP%" /FSetup_DBM_v%binversion%+%commit% /Q src\res\dbm.iss
         appveyor PushArtifact "%TEMP%\Setup_DBM_v%binversion%+%commit%.exe"
 test_script:
