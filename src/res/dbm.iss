@@ -12,7 +12,6 @@ VersionInfoVersion={#Version}
 SetupIconFile=..\..\src\res\dbm.ico
 WizardImageFile=WizModernImage.bmp
 WizardSmallImageFile=WizModernSmallImage.bmp
-LicenseFile=..\..\LICENSE
 DefaultDirName={pf}\{#Application}
 DefaultGroupName={#Application}
 
