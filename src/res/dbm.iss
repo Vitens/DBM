@@ -10,10 +10,14 @@ AppPublisher={#Publisher}
 AppCopyright=Copyright (C) 2014-2018  {#Publisher}
 VersionInfoVersion={#Version}
 SetupIconFile=..\..\src\res\dbm.ico
+LicenseFile=..\..\LICENSE
 WizardImageFile=WizModernImage.bmp
 WizardSmallImageFile=WizModernSmallImage.bmp
 DefaultDirName={pf}\{#Application}
+DisableDirPage=yes
 DefaultGroupName={#Application}
+DisableProgramGroupPage=yes
+DisableReadyPage=yes
 
 [Files]
 Source: "..\..\*"; Excludes: "\.git,\build"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
