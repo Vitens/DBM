@@ -23,9 +23,10 @@ DisableReadyPage=yes
 Source: "..\..\*"; Excludes: "\.git,\build"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
 
 [Icons]
-Name: "{group}\Files"; Filename: "{app}\"
-Name: "{group}\Build"; Filename: "{app}\build.bat"
+Name: "{group}\Files"; Filename: "{app}\"; IconFilename: "{app}\src\res\dbm.ico"
+Name: "{group}\Build"; Filename: "{app}\build.bat"; IconFilename: "{app}\src\res\dbm.ico"
 Name: "{group}\About"; Filename: "{app}\build\DBMAbout.exe"
+Name: "{group}\Uninstall"; Filename: "{uninstallexe}"
 
 [Run]
 Filename: "{app}\build.bat"
