@@ -17,7 +17,6 @@ DefaultDirName={pf}\{#Application}
 DisableDirPage=yes
 DefaultGroupName={#Application}
 DisableProgramGroupPage=yes
-DisableReadyPage=yes
 
 [Files]
 Source: "..\..\*"; Excludes: "\.git,\build"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
