@@ -25,6 +25,7 @@ Option Strict
 Imports System
 Imports System.Collections.Generic
 Imports System.Math
+Imports System.Threading
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
@@ -74,6 +75,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' distribution processes.
 
 
+    Private Lock As New Object
     Private Points As New Dictionary(Of Object, DBMPoint)
 
 
@@ -86,15 +88,22 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim StalePoints As New List(Of Object)
       Dim StalePoint As Object
 
-      For Each Pair In Points
-        If Pair.Value.IsStale Then ' Find stale points
-          StalePoints.Add(Pair.Key)
-        End If
-      Next
+      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
+      Try
 
-      For Each StalePoint In StalePoints
-        Points.Remove(StalePoint) ' Remove stale points
-      Next
+        For Each Pair In Points
+          If Pair.Value.IsStale Then ' Find stale points
+            StalePoints.Add(Pair.Key)
+          End If
+        Next
+
+        For Each StalePoint In StalePoints
+          Points.Remove(StalePoint) ' Remove stale points
+        Next
+
+      Finally
+        Monitor.Exit(Lock) ' Ensure that the lock is released.
+      End Try
 
     End Sub
 
@@ -104,11 +113,18 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns DBMPoint object from Points dictionary. If dictionary does not
       ' yet contain object, it is added.
 
-      If Not Points.ContainsKey(PointDriver.Point) Then
-        Points.Add(PointDriver.Point, New DBMPoint(PointDriver)) ' Add new pt.
-      End If
+      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
+      Try
 
-      Return Points.Item(PointDriver.Point)
+        If Not Points.ContainsKey(PointDriver.Point) Then
+          Points.Add(PointDriver.Point, New DBMPoint(PointDriver)) ' Add new pt.
+        End If
+
+        Return Points.Item(PointDriver.Point)
+
+      Finally
+        Monitor.Exit(Lock) ' Ensure that the lock is released.
+      End Try
 
     End Function
 
