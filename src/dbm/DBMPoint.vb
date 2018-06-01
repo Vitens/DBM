@@ -64,17 +64,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Sub PrepareData(StartTimestamp As DateTime, EndTimestamp As DateTime)
-
-      ' Retrieve and store values in bulk from the passed time range from a
-      ' source of data, to be used in the GetData function. Called from the
-      ' DBM.PrepareData sub.
-
-      PointDriver.PrepareData(StartTimestamp, EndTimestamp)
-
-    End Sub
-
-
     Public Function Result(Timestamp As DateTime, IsInputDBMPoint As Boolean,
       HasCorrelationDBMPoint As Boolean,
       Optional SubtractPoint As DBMPoint = Nothing) As DBMResult
