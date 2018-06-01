@@ -75,6 +75,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' distribution processes.
 
 
+    Private Lock As New Object
     Private Points As New Dictionary(Of Object, DBMPoint)
 
 
@@ -87,7 +88,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim StalePoints As New List(Of Object)
       Dim StalePoint As Object
 
-      Monitor.Enter(Points) ' Request the lock, and block until it is obtained.
+      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
 
         For Each Pair In Points
@@ -101,7 +102,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Next
 
       Finally
-        Monitor.Exit(Points) ' Ensure that the lock is released.
+        Monitor.Exit(Lock) ' Ensure that the lock is released.
       End Try
 
     End Sub
@@ -112,7 +113,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns DBMPoint object from Points dictionary. If dictionary does not
       ' yet contain object, it is added.
 
-      Monitor.Enter(Points) ' Request the lock, and block until it is obtained.
+      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
 
         If Not Points.ContainsKey(PointDriver.Point) Then
@@ -122,7 +123,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Return Points.Item(PointDriver.Point)
 
       Finally
-        Monitor.Exit(Points) ' Ensure that the lock is released.
+        Monitor.Exit(Lock) ' Ensure that the lock is released.
       End Try
 
     End Function
