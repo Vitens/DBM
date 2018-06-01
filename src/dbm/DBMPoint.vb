@@ -38,8 +38,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public PointDriver As DBMPointDriverAbstract
-    Private Lock As New Object
     Private LastAccessTime As DateTime
+    Private Lock As New Object
     Private ForecastsSubtractPoint As DBMPoint
     Private ForecastsData As New Dictionary(Of DateTime, DBMForecastData)
     Public Shared ForecastsCacheSize As Integer =
