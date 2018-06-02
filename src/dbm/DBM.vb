@@ -24,6 +24,7 @@ Option Strict
 
 Imports System
 Imports System.Collections.Generic
+Imports System.DateTime
 Imports System.Math
 Imports System.Threading
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
@@ -76,13 +77,14 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private Lock As New Object
+    Private StalePointsRemoved As DateTime
     Private Points As New Dictionary(Of Object, DBMPoint)
 
 
     Private Sub RemoveStalePoints
 
-      ' Stale items are removed so that used resources can be freed to prevent
-      ' all available memory from filling up.
+      ' Stale items are removed after every calculation interval so that unused
+      ' resources can be freed to prevent all available memory from filling up.
 
       Dim Pair As KeyValuePair(Of Object, DBMPoint)
       Dim StalePoints As New List(Of Object)
@@ -91,15 +93,22 @@ Namespace Vitens.DynamicBandwidthMonitor
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
 
-        For Each Pair In Points
-          If Pair.Value.IsStale Then ' Find stale points
-            StalePoints.Add(Pair.Key)
-          End If
-        Next
+        If Now >= AlignTimestamp(StalePointsRemoved, CalculationInterval).
+          AddSeconds(CalculationInterval) Then
 
-        For Each StalePoint In StalePoints
-          Points.Remove(StalePoint) ' Remove stale points
-        Next
+          StalePointsRemoved = Now
+
+          For Each Pair In Points
+            If Pair.Value.IsStale Then ' Find stale points
+              StalePoints.Add(Pair.Key)
+            End If
+          Next
+
+          For Each StalePoint In StalePoints
+            Points.Remove(StalePoint) ' Remove stale points
+          Next
+
+        End If
 
       Finally
         Monitor.Exit(Lock) ' Ensure that the lock is released.
