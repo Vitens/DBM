@@ -1,4 +1,4 @@
-#define Application GetStringFileInfo('ProductName', '..\..\build\DBM.dll')
+#define Application "Dynamic Bandwidth Monitor"
 #define Version GetFileVersion('..\..\build\DBM.dll')
 #define Publisher GetFileCompany('..\..\build\DBM.dll')
 #define Copyright GetFileCopyright('..\..\build\DBM.dll')
