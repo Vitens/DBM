@@ -1,4 +1,4 @@
-#define Application GetStringFileInfo('PRODUCT_NAME', '..\..\build\DBM.dll')
+#define Application GetStringFileInfo('ProductName', '..\..\build\DBM.dll')
 #define Version GetFileVersion('..\..\build\DBM.dll')
 #define Publisher GetFileCompany('..\..\build\DBM.dll')
 #define Copyright GetFileCopyright('..\..\build\DBM.dll')
