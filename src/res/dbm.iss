@@ -19,6 +19,7 @@ DisableDirPage=yes
 DefaultGroupName={#Application}
 DisableProgramGroupPage=yes
 DisableReadyPage=yes
+InfoAfterFile={tmp}\build.out
 
 [Files]
 Source: "..\..\*"; Excludes: "\.git,\build"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
@@ -30,7 +31,7 @@ Name: "{group}\About"; Filename: "{app}\build\DBMAbout.exe"
 Name: "{group}\Uninstall"; Filename: "{uninstallexe}"
 
 [Run]
-Filename: "{app}\build.bat"; WorkingDir: "{app}"; Parameters: ">build.log"; StatusMsg: "Building {#Application} v{#Version}..."; Flags: runhidden
+Filename: "{app}\build.bat"; Parameters: ">%TEMP%\build.out"; StatusMsg: "Building {#Application} v{#Version}..."; Flags: runhidden
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}\build"
