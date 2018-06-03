@@ -1,13 +1,14 @@
 #define Application "Dynamic Bandwidth Monitor"
-#define Version GetFileVersion('..\..\build\DBM.dll')
-#define Publisher "J.H. Fitié, Vitens N.V."
+#define Version GetFileVersion("..\..\build\DBM.dll")
+#define Company GetFileCompany("..\..\build\DBM.dll")
+#define Copyright GetFileCopyright("..\..\build\DBM.dll")
 
 [Setup]
 AppId={#Application}
 AppName={#Application}
 AppVersion={#Version}
-AppPublisher={#Publisher}
-AppCopyright=Copyright (C) 2014-2018  {#Publisher}
+AppPublisher={#Company}
+AppCopyright={#Copyright}
 VersionInfoVersion={#Version}
 SetupIconFile=..\..\src\res\dbm.ico
 WizardImageFile=WizModernImage.bmp
@@ -29,7 +30,7 @@ Name: "{group}\About"; Filename: "{app}\build\DBMAbout.exe"
 Name: "{group}\Uninstall"; Filename: "{uninstallexe}"
 
 [Run]
-Filename: "{app}\build.bat"; StatusMsg: "Building..."; Flags: runhidden
+Filename: "{app}\build.bat"; StatusMsg: "Building {#Application} v{#Version}..."; Flags: runhidden
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}\build"
