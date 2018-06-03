@@ -14,23 +14,23 @@ SetupIconFile=dbm.ico
 WizardImageFile=WizModernImage.bmp
 WizardSmallImageFile=WizModernSmallImage.bmp
 LicenseFile=..\..\LICENSE
-DefaultDirName={pf}\{#Application}
+DefaultDirName={pf}\{#Company}\{#Application}
 DisableDirPage=yes
-DefaultGroupName={#Application}
+DefaultGroupName={#Company}\{#Application}
 DisableProgramGroupPage=yes
 DisableReadyPage=yes
 
 [Files]
-Source: "..\..\*"; Excludes: "\.git,\build"; DestDir: "{#Company}\{app}"; Flags: ignoreversion recursesubdirs
+Source: "..\..\*"; Excludes: "\.git,\build"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
 
 [Icons]
-Name: "{group}\Files"; Filename: "{#Company}\{app}\"; IconFilename: "{#Company}\{app}\src\res\dbm.ico"
-Name: "{group}\Build"; Filename: "{#Company}\{app}\build.bat"; IconFilename: "{#Company}\{app}\src\res\dbm.ico"
-Name: "{group}\About"; Filename: "{#Company}\{app}\build\DBMAbout.exe"
+Name: "{group}\Files"; Filename: "{app}\"; IconFilename: "{app}\src\res\dbm.ico"
+Name: "{group}\Build"; Filename: "{app}\build.bat"; IconFilename: "{app}\src\res\dbm.ico"
+Name: "{group}\About"; Filename: "{app}\build\DBMAbout.exe"
 Name: "{group}\Uninstall"; Filename: "{uninstallexe}"
 
 [Run]
-Filename: "{#Company}\{app}\build.bat"; StatusMsg: "Building {#Application} v{#Version}..."; Flags: runhidden
+Filename: "{app}\build.bat"; StatusMsg: "Building {#Application} v{#Version}..."; Flags: runhidden
 
 [UninstallDelete]
-Type: filesandordirs; Name: "{#Company}\{app}\build"
+Type: filesandordirs; Name: "{app}\build"
