@@ -1,13 +1,13 @@
 #define Application "Dynamic Bandwidth Monitor"
-#define Version GetFileVersion('..\..\build\DBM.dll')
-#define Publisher GetFileCompany('..\..\build\DBM.dll')
-#define Copyright GetFileCopyright('..\..\build\DBM.dll')
+#define Version GetFileVersion("..\..\build\DBM.dll")
+#define Company GetFileCompany("..\..\build\DBM.dll")
+#define Copyright GetFileCopyright("..\..\build\DBM.dll")
 
 [Setup]
 AppId={#Application}
 AppName={#Application}
 AppVersion={#Version}
-AppPublisher={#Publisher}
+AppPublisher={#Company}
 AppCopyright={#Copyright}
 VersionInfoVersion={#Version}
 SetupIconFile=..\..\src\res\dbm.ico
