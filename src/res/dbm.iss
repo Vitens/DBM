@@ -1,4 +1,4 @@
-#define Application {%product}
+#define Application GetEnv("product")
 #define Version GetFileVersion("..\..\build\DBM.dll")
 #define Company GetFileCompany("..\..\build\DBM.dll")
 #define Copyright GetFileCopyright("..\..\build\DBM.dll")
