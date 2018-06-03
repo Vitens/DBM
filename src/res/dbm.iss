@@ -1,4 +1,4 @@
-#define Application "Dynamic Bandwidth Monitor"
+#define Application GetEnv("product")
 #define Version GetFileVersion("..\..\build\DBM.dll")
 #define Company GetFileCompany("..\..\build\DBM.dll")
 #define Copyright GetFileCopyright("..\..\build\DBM.dll")
@@ -10,13 +10,13 @@ AppVersion={#Version}
 AppPublisher={#Company}
 AppCopyright={#Copyright}
 VersionInfoVersion={#Version}
-SetupIconFile=..\..\src\res\dbm.ico
+SetupIconFile=dbm.ico
 WizardImageFile=WizModernImage.bmp
 WizardSmallImageFile=WizModernSmallImage.bmp
 LicenseFile=..\..\LICENSE
-DefaultDirName={pf}\{#Application}
+DefaultDirName={pf}\{#Company}\{#Application}
 DisableDirPage=yes
-DefaultGroupName={#Application}
+DefaultGroupName={#Company}\{#Application}
 DisableProgramGroupPage=yes
 DisableReadyPage=yes
 
