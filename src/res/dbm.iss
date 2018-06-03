@@ -19,7 +19,7 @@ DisableDirPage=yes
 DefaultGroupName={#Application}
 DisableProgramGroupPage=yes
 DisableReadyPage=yes
-InfoAfterFile={tmp}\build.out
+InfoAfterFile=compiler:{tmp}\build.out
 
 [Files]
 Source: "..\..\*"; Excludes: "\.git,\build"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
