@@ -34,7 +34,7 @@ Name: "{group}\About"; Filename: "{cmd}"; Parameters: "/K DBMAbout.exe"; Working
 Name: "{group}\Uninstall"; Filename: "{uninstallexe}"
 
 [Run]
-Filename: "{app}\build.bat"; StatusMsg: "Building {#SetupSetting("AppVerName")}..."; Flags: runhidden
+Filename: "{app}\build.bat"; StatusMsg: "Building {#Product}..."; Flags: runhidden
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}\build"
