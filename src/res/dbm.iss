@@ -23,9 +23,6 @@ DisableProgramGroupPage=yes
 DisableReadyPage=yes
 UninstallDisplayIcon={app}\src\res\dbm.ico
 
-[Messages]
-SetupWindowTitle={#SetupSetting("AppVerName")}
-
 [Files]
 Source: "..\..\*"; Excludes: "\.git,\build"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
 
