@@ -8,6 +8,7 @@
 AppId={#Product}
 AppName={#Product}
 AppVersion={#Version}+{#Commit}
+AppVerName={#Product} v{#AppVersion}
 AppPublisher={#Company}
 AppCopyright={#Copyright}
 VersionInfoVersion={#Version}
@@ -32,7 +33,7 @@ Name: "{group}\About"; Filename: "{cmd}"; Parameters: "/K DBMAbout.exe"; Working
 Name: "{group}\Uninstall"; Filename: "{uninstallexe}"
 
 [Run]
-Filename: "{app}\build.bat"; StatusMsg: "Building {#Product} v{#Version}+{#Commit}..."; Flags: runhidden
+Filename: "{app}\build.bat"; StatusMsg: "Building {#AppVerName}..."; Flags: runhidden
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}\build"
