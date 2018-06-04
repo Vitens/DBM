@@ -1,12 +1,14 @@
-#define Application GetEnv("product")
-#define Version GetFileVersion("..\..\build\DBM.dll")
+#define Product GetEnv("product")
+#define Version GetEnv("version")
+#define Commit GetEnv("commit")
 #define Company GetFileCompany("..\..\build\DBM.dll")
 #define Copyright GetFileCopyright("..\..\build\DBM.dll")
 
 [Setup]
-AppId={#Application}
-AppName={#Application}
-AppVersion={#Version}
+AppId={#Product}
+AppName={#Product}
+AppVersion={#Version}+{#Commit}
+AppVerName={#Product} v{#SetupSetting("AppVersion")}
 AppPublisher={#Company}
 AppCopyright={#Copyright}
 VersionInfoVersion={#Version}
@@ -14,23 +16,24 @@ SetupIconFile=dbm.ico
 WizardImageFile=WizModernImage.bmp
 WizardSmallImageFile=WizModernSmallImage.bmp
 LicenseFile=..\..\LICENSE
-DefaultDirName={pf}\{#Company}\{#Application}
+DefaultDirName={pf}\{#Company}\{#Product}
 DisableDirPage=yes
-DefaultGroupName={#Company}\{#Application}
+DefaultGroupName={#Company}\{#Product}
 DisableProgramGroupPage=yes
 DisableReadyPage=yes
+UninstallDisplayIcon={app}\src\res\dbm.ico
 
 [Files]
 Source: "..\..\*"; Excludes: "\.git,\build"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
 
 [Icons]
-Name: "{group}\Files"; Filename: "{app}\"; IconFilename: "{app}\src\res\dbm.ico"
-Name: "{group}\Build"; Filename: "{app}\build.bat"; IconFilename: "{app}\src\res\dbm.ico"
-Name: "{group}\About"; Filename: "{app}\build\DBMAbout.exe"
+Name: "{group}\Files"; Filename: "{app}"; IconFilename: "{app}\src\res\dbm.ico"
+Name: "{group}\Build"; Filename: "{cmd}"; Parameters: "/k build.bat"; WorkingDir: "{app}"; IconFilename: "{app}\src\res\dbm.ico"
+Name: "{group}\About"; Filename: "{cmd}"; Parameters: "/k DBMAbout.exe"; WorkingDir: "{app}\build"; IconFilename: "{app}\src\res\dbm.ico"
 Name: "{group}\Uninstall"; Filename: "{uninstallexe}"
 
 [Run]
-Filename: "{app}\build.bat"; StatusMsg: "Building {#Application} v{#Version}..."; Flags: runhidden
+Filename: "{app}\build.bat"; StatusMsg: "Building {#Product}..."; Flags: runhidden
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}\build"
