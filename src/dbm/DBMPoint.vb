@@ -38,7 +38,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public PointDriver As DBMPointDriverAbstract
-    Private LastAccessed As DateTime
+    Private PointTimeOut As DateTime
     Private Lock As New Object
     Private ForecastsSubtractPoint As DBMPoint
     Private ForecastsData As New Dictionary(Of DateTime, DBMForecastData)
@@ -49,16 +49,17 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Sub New(PointDriver As DBMPointDriverAbstract)
 
       Me.PointDriver = PointDriver
-      UpdateLastAccessTime
+      UpdateTimeOut
 
     End Sub
 
 
-    Public Sub UpdateLastAccessTime
+    Public Sub UpdateTimeOut
 
-      ' Update last access time.
+      ' Update timestamp when point turns stale.
 
-      LastAccessed = Now
+      PointTimeOut = AlignTimestamp(Now, CalculationInterval).
+        AddSeconds(2*CalculationInterval)
 
     End Sub
 
@@ -72,8 +73,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
 
-        Return Now >= AlignTimestamp(LastAccessed,
-          CalculationInterval).AddSeconds(2*CalculationInterval)
+        Return Now >= PointTimeOut
 
       Finally
         Monitor.Exit(Lock) ' Ensure that the lock is released.
@@ -91,7 +91,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
 
-        UpdateLastAccessTime ' Prevent point going stale after preparing data
+        UpdateTimeOut ' Prevent point going stale after preparing data
 
         PointDriver.PrepareData(StartTimestamp, EndTimestamp)
 
@@ -124,7 +124,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
 
-        UpdateLastAccessTime ' Prevent point going stale after calculation
+        UpdateTimeOut ' Prevent point going stale after calculation
 
         Result = New DBMResult
         Result.Timestamp = AlignTimestamp(Timestamp, CalculationInterval)
