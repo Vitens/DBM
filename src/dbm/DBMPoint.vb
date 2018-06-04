@@ -49,6 +49,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Sub New(PointDriver As DBMPointDriverAbstract)
 
       Me.PointDriver = PointDriver
+      LastAccessed = Now
 
     End Sub
 
@@ -93,6 +94,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
+
+        LastAccessed = Now
 
         Result = New DBMResult
         Result.Timestamp = AlignTimestamp(Timestamp, CalculationInterval)
