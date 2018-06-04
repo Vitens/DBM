@@ -190,20 +190,13 @@ Namespace Vitens.DynamicBandwidthMonitor
         -CalculationInterval).AddDays(ComparePatterns*-7)
       EndTimestamp = AlignTimestamp(EndTimestamp, CalculationInterval)
 
-      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
-      Try
-
-        Point(InputPointDriver).PrepareData(StartTimestamp, EndTimestamp)
-        If CorrelationPoints IsNot Nothing Then
-          For Each CorrelationPoint In CorrelationPoints
-            Point(CorrelationPoint.PointDriver).PrepareData(StartTimestamp,
-              EndTimestamp)
-          Next
-        End If
-
-      Finally
-        Monitor.Exit(Lock) ' Ensure that the lock is released.
-      End Try
+      Point(InputPointDriver).PrepareData(StartTimestamp, EndTimestamp)
+      If CorrelationPoints IsNot Nothing Then
+        For Each CorrelationPoint In CorrelationPoints
+          Point(CorrelationPoint.PointDriver).PrepareData(StartTimestamp,
+            EndTimestamp)
+        Next
+      End If
 
     End Sub
 
