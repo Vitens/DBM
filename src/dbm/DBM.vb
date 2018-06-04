@@ -77,7 +77,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private Lock As New Object
-    Private StalePointsRemoved As DateTime
+    Private StalePointsTimeOut As DateTime
     Private Points As New Dictionary(Of Object, DBMPoint)
 
 
@@ -97,10 +97,10 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' unused resources can be freed to prevent all available memory from
         ' filling up.
 
-        If Now >= AlignTimestamp(StalePointsRemoved, CalculationInterval).
-          AddSeconds(CalculationInterval) Then
+        If Now >= StalePointsTimeOut Then
 
-          StalePointsRemoved = Now
+          StalePointsTimeOut = AlignTimestamp(Now, CalculationInterval).
+            AddSeconds(CalculationInterval)
 
           For Each Pair In Points
             If Pair.Value.IsStale Then ' Find stale points
