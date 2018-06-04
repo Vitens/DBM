@@ -38,7 +38,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public PointDriver As DBMPointDriverAbstract
-    Private LastAccessed As DateTime
+    Public LastAccessed As DateTime
     Private Lock As New Object
     Private ForecastsSubtractPoint As DBMPoint
     Private ForecastsData As New Dictionary(Of DateTime, DBMForecastData)
@@ -71,26 +71,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       End Try
 
     End Function
-
-
-    Public Sub PrepareData(StartTimestamp As DateTime, EndTimestamp As DateTime)
-
-      ' Retrieve and store values in bulk for the passed time range from a
-      ' source of data, to be used in the PointDriver.GetData method. Called
-      ' from the DBM.PrepareData sub and passed on to the PointDriver.
-
-      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
-      Try
-
-        LastAccessed = Now ' Prevent point going stale after preparing data
-
-        PointDriver.PrepareData(StartTimestamp, EndTimestamp)
-
-      Finally
-        Monitor.Exit(Lock) ' Ensure that the lock is released.
-      End Try
-
-    End Sub
 
 
     Public Function Result(Timestamp As DateTime, IsInputDBMPoint As Boolean,

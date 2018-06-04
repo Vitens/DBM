@@ -129,6 +129,8 @@ Namespace Vitens.DynamicBandwidthMonitor
           Points.Add(PointDriver.Point, New DBMPoint(PointDriver)) ' Add new pt.
         End If
 
+        Points.Item(PointDriver.Point).LastAccessed = Now
+
         Return Points.Item(PointDriver.Point)
 
       Finally
@@ -201,11 +203,12 @@ Namespace Vitens.DynamicBandwidthMonitor
         -CalculationInterval).AddDays(ComparePatterns*-7)
       EndTimestamp = AlignTimestamp(EndTimestamp, CalculationInterval)
 
-      Point(InputPointDriver).PrepareData(StartTimestamp, EndTimestamp)
+      Point(InputPointDriver).PointDriver.PrepareData(
+        StartTimestamp, EndTimestamp)
       If CorrelationPoints IsNot Nothing Then
         For Each CorrelationPoint In CorrelationPoints
-          Point(CorrelationPoint.PointDriver).PrepareData(StartTimestamp,
-            EndTimestamp)
+          Point(CorrelationPoint.PointDriver).PointDriver.PrepareData(
+            StartTimestamp, EndTimestamp)
         Next
       End If
 
