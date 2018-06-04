@@ -28,8 +28,8 @@ Source: "..\..\*"; Excludes: "\.git,\build"; DestDir: "{app}"; Flags: ignorevers
 
 [Icons]
 Name: "{group}\Files"; Filename: "{app}"; IconFilename: "{app}\src\res\dbm.ico"
-Name: "{group}\Build"; Filename: "{cmd}"; Parameters: "/K build.bat"; WorkingDir: "{app}"; IconFilename: "{app}\src\res\dbm.ico"
-Name: "{group}\About"; Filename: "{cmd}"; Parameters: "/K DBMAbout.exe"; WorkingDir: "{app}\build"; IconFilename: "{app}\src\res\dbm.ico"
+Name: "{group}\Build"; Filename: "{cmd}"; Parameters: "/k build.bat"; WorkingDir: "{app}"; IconFilename: "{app}\src\res\dbm.ico"
+Name: "{group}\About"; Filename: "{cmd}"; Parameters: "/k DBMAbout.exe"; WorkingDir: "{app}\build"; IconFilename: "{app}\src\res\dbm.ico"
 Name: "{group}\Uninstall"; Filename: "{uninstallexe}"
 
 [Run]
