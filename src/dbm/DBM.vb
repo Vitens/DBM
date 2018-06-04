@@ -81,10 +81,10 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private Points As New Dictionary(Of Object, DBMPoint)
 
 
-    Private Sub RemoveStalePoints
+    Private Function Point(PointDriver As DBMPointDriverAbstract) As DBMPoint
 
-      ' Stale items are removed after every calculation interval so that unused
-      ' resources can be freed to prevent all available memory from filling up.
+      ' Returns DBMPoint object from Points dictionary. If dictionary does not
+      ' yet contain object, it is added.
 
       Dim Pair As KeyValuePair(Of Object, DBMPoint)
       Dim StalePoints As New List(Of Object)
@@ -92,6 +92,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
+
+        ' Stale items are removed after every calculation interval so that
+        ' unused resources can be freed to prevent all available memory from
+        ' filling up.
 
         If Now >= AlignTimestamp(StalePointsRemoved, CalculationInterval).
           AddSeconds(CalculationInterval) Then
@@ -109,21 +113,6 @@ Namespace Vitens.DynamicBandwidthMonitor
           Next
 
         End If
-
-      Finally
-        Monitor.Exit(Lock) ' Ensure that the lock is released.
-      End Try
-
-    End Sub
-
-
-    Public Function Point(PointDriver As DBMPointDriverAbstract) As DBMPoint
-
-      ' Returns DBMPoint object from Points dictionary. If dictionary does not
-      ' yet contain object, it is added.
-
-      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
-      Try
 
         If Not Points.ContainsKey(PointDriver.Point) Then
           Points.Add(PointDriver.Point, New DBMPoint(PointDriver)) ' Add new pt.
@@ -231,8 +220,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim CorrelationResult As DBMResult
       Dim AbsoluteErrorStatsData,
         RelativeErrorStatsData As New DBMStatisticsData
-
-      RemoveStalePoints
 
       If CorrelationPoints Is Nothing Then ' Empty list if Nothing was passed.
         CorrelationPoints = New List(Of DBMCorrelationPoint)
