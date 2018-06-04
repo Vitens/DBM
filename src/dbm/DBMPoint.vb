@@ -124,7 +124,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
 
-        UpdateLastAccessTime
+        UpdateLastAccessTime ' Prevent point going stale after calculation
 
         Result = New DBMResult
         Result.Timestamp = AlignTimestamp(Timestamp, CalculationInterval)
