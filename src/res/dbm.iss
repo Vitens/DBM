@@ -20,7 +20,7 @@ DisableDirPage=yes
 DefaultGroupName={#Company}\{#Product}
 DisableProgramGroupPage=yes
 DisableReadyPage=yes
-UninstallDisplayIcon=dbm.ico
+UninstallDisplayIcon={app}\src\res\dbm.ico
 
 [Files]
 Source: "..\..\*"; Excludes: "\.git,\build"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
