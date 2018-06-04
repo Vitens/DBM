@@ -8,7 +8,7 @@
 AppId={#Product}
 AppName={#Product}
 AppVersion={#Version}+{#Commit}
-AppVerName={#Product} v{#AppVersion}
+AppVerName={#Product} v{#SetupSetting("AppVersion")}
 AppPublisher={#Company}
 AppCopyright={#Copyright}
 VersionInfoVersion={#Version}
