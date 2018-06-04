@@ -82,7 +82,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
 
-        LastAccessed = Now
+        LastAccessed = Now ' Prevent point going stale after preparing data
 
         PointDriver.PrepareData(StartTimestamp, EndTimestamp)
 
