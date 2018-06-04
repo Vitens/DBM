@@ -1,12 +1,13 @@
-#define Application GetEnv("product")
-#define Version GetFileVersion("..\..\build\DBM.dll")
+#define Product GetEnv("product")
+#define Version GetEnv("version")
+#define Commit GetEnv("commit")
 #define Company GetFileCompany("..\..\build\DBM.dll")
 #define Copyright GetFileCopyright("..\..\build\DBM.dll")
 
 [Setup]
-AppId={#Application}
-AppName={#Application}
-AppVersion={#Version}
+AppId={#Product}
+AppName={#Product}
+AppVersion={#Version}+{#Commit}
 AppPublisher={#Company}
 AppCopyright={#Copyright}
 VersionInfoVersion={#Version}
@@ -14,9 +15,9 @@ SetupIconFile=dbm.ico
 WizardImageFile=WizModernImage.bmp
 WizardSmallImageFile=WizModernSmallImage.bmp
 LicenseFile=..\..\LICENSE
-DefaultDirName={pf}\{#Company}\{#Application}
+DefaultDirName={pf}\{#Company}\{#Product}
 DisableDirPage=yes
-DefaultGroupName={#Company}\{#Application}
+DefaultGroupName={#Company}\{#Product}
 DisableProgramGroupPage=yes
 DisableReadyPage=yes
 
@@ -30,7 +31,7 @@ Name: "{group}\About"; Filename: "{app}\build\DBMAbout.exe"
 Name: "{group}\Uninstall"; Filename: "{uninstallexe}"
 
 [Run]
-Filename: "{app}\build.bat"; StatusMsg: "Building {#Application} v{#Version}..."; Flags: runhidden
+Filename: "{app}\build.bat"; StatusMsg: "Building {#Product} v{#Version}+{#Commit}..."; Flags: runhidden
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}\build"
