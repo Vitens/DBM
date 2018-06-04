@@ -56,7 +56,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       EndTimestamp As DateTime)
 
       ' Retrieve and store values in bulk for the passed time range from a
-      ' source of data, to be used in the GetData function.
+      ' source of data, to be used in the GetData method.
 
     End Sub
 
