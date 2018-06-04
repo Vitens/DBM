@@ -15,6 +15,7 @@ VersionInfoVersion={#Version}
 SetupIconFile=dbm.ico
 WizardImageFile=WizModernImage.bmp
 WizardSmallImageFile=WizModernSmallImage.bmp
+DisableWelcomePage=No
 LicenseFile=..\..\LICENSE
 DefaultDirName={pf}\{#Company}\{#Product}
 DisableDirPage=yes
