@@ -49,6 +49,15 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Sub New(PointDriver As DBMPointDriverAbstract)
 
       Me.PointDriver = PointDriver
+      UpdateLastAccessTime
+
+    End Sub
+
+
+    Public Sub UpdateLastAccessTime
+
+      ' Update last access time.
+
       LastAccessed = Now
 
     End Sub
@@ -82,7 +91,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
 
-        LastAccessed = Now ' Prevent point going stale after preparing data
+        UpdateLastAccessTime ' Prevent point going stale after preparing data
 
         PointDriver.PrepareData(StartTimestamp, EndTimestamp)
 
@@ -115,7 +124,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
 
-        LastAccessed = Now
+        UpdateLastAccessTime
 
         Result = New DBMResult
         Result.Timestamp = AlignTimestamp(Timestamp, CalculationInterval)

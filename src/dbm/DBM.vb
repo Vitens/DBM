@@ -116,6 +116,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         If Not Points.ContainsKey(PointDriver.Point) Then
           Points.Add(PointDriver.Point, New DBMPoint(PointDriver)) ' Add new pt.
+        Else
+          Points.Item(PointDriver.Point).UpdateLastAccessTime ' Last access time
         End If
 
         Return Points.Item(PointDriver.Point)
