@@ -98,7 +98,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
 
-        RefreshTimeOut ' Refresh point after preparing data
+        RefreshTimeOut
 
         PointDriver.PrepareData(StartTimestamp, EndTimestamp)
 
@@ -131,7 +131,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
 
-        RefreshTimeOut ' Refresh point after calculation
+        RefreshTimeOut
 
         Result = New DBMResult
         Result.Timestamp = AlignTimestamp(Timestamp, CalculationInterval)
