@@ -75,7 +75,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const pValueMinMax As Double = 0.9999 ' CI for Minimum and Maximum
 
 
-    Private PointsUpdated As DateTime
+    Private NextPointsUpdate As DateTime
     Private InputPointDriver As DBMPointDriver
     Private CorrelationPoints As List(Of DBMCorrelationPoint)
     Private Shared DBM As New DBM
@@ -132,11 +132,11 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim Element, ParentElement, SiblingElement As AFElement
 
-      If Now >= AlignTimestamp(PointsUpdated, CalculationInterval).
-        AddSeconds(CalculationInterval) And
-        Attribute IsNot Nothing And Attribute.Parent IsNot Nothing Then
+      If Now >= NextPointsUpdate And Attribute IsNot Nothing And
+        Attribute.Parent IsNot Nothing Then
 
-        PointsUpdated = Now
+        NextPointsUpdate = AlignTimestamp(Now, CalculationInterval).
+          AddSeconds(CalculationInterval)
         Element = DirectCast(Attribute.Element, AFElement)
         InputPointDriver = New DBMPointDriver(Attribute.Parent) ' Parent attrib.
         CorrelationPoints = New List(Of DBMCorrelationPoint)

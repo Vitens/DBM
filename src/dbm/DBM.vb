@@ -77,7 +77,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private Lock As New Object
-    Private StalePointsRemoved As DateTime
+    Private NextStalePointsCheck As DateTime
     Private Points As New Dictionary(Of Object, DBMPoint)
 
 
@@ -93,10 +93,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
 
-        If Now >= AlignTimestamp(StalePointsRemoved, CalculationInterval).
-          AddSeconds(CalculationInterval) Then
+        If Now >= NextStalePointsCheck Then
 
-          StalePointsRemoved = Now
+          NextStalePointsCheck = AlignTimestamp(Now, CalculationInterval).
+            AddSeconds(CalculationInterval)
 
           For Each Pair In Points
             If Pair.Value.IsStale Then ' Find stale points
