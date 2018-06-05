@@ -49,14 +49,14 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Sub New(PointDriver As DBMPointDriverAbstract)
 
       Me.PointDriver = PointDriver
-      UpdateTimeOut
+      RefreshTimeOut
 
     End Sub
 
 
-    Private Sub UpdateTimeOut
+    Private Sub RefreshTimeOut
 
-      ' Update timestamp when point turns stale.
+      ' Update timestamp after which point turns stale.
 
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
@@ -98,7 +98,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
 
-        UpdateTimeOut ' Prevent point going stale after preparing data
+        RefreshTimeOut ' Refresh point after preparing data
 
         PointDriver.PrepareData(StartTimestamp, EndTimestamp)
 
@@ -131,7 +131,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
 
-        UpdateTimeOut ' Prevent point going stale after calculation
+        RefreshTimeOut ' Refresh point after calculation
 
         Result = New DBMResult
         Result.Timestamp = AlignTimestamp(Timestamp, CalculationInterval)
