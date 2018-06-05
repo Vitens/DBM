@@ -58,15 +58,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Update timestamp after which point turns stale.
 
-      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
-      Try
-
-        PointTimeOut = AlignTimestamp(Now, CalculationInterval).
-          AddSeconds(2*CalculationInterval)
-
-      Finally
-        Monitor.Exit(Lock) ' Ensure that the lock is released.
-      End Try
+      PointTimeOut = AlignTimestamp(Now, CalculationInterval).
+        AddSeconds(2*CalculationInterval)
 
     End Sub
 
