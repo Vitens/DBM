@@ -70,14 +70,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' calculation interval. Used by the DBM class to clean up unused
       ' resources.
 
-      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
-      Try
-
-        Return Now >= PointTimeOut
-
-      Finally
-        Monitor.Exit(Lock) ' Ensure that the lock is released.
-      End Try
+      Return Now >= PointTimeOut
 
     End Function
 
