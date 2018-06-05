@@ -81,38 +81,44 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private Points As New Dictionary(Of Object, DBMPoint)
 
 
-    Private Function Point(PointDriver As DBMPointDriverAbstract) As DBMPoint
+    Private Sub RemoveStalePoints
 
-      ' Returns DBMPoint object from Points dictionary. If dictionary does not
-      ' yet contain object, it is added.
+      ' Stale items are removed after every calculation interval so that unused
+      ' resources can be freed to prevent all available memory from filling up.
 
       Dim Pair As KeyValuePair(Of Object, DBMPoint)
       Dim StalePoints As New List(Of Object)
       Dim StalePoint As Object
 
+      If Now >= NextStalePointsCheck Then
+
+        NextStalePointsCheck = AlignTimestamp(Now, CalculationInterval).
+          AddSeconds(CalculationInterval)
+
+        For Each Pair In Points
+          If Pair.Value.IsStale Then ' Find stale points
+            StalePoints.Add(Pair.Key)
+          End If
+        Next
+
+        For Each StalePoint In StalePoints
+          Points.Remove(StalePoint) ' Remove stale points
+        Next
+
+      End If
+
+    End Sub
+
+
+    Private Function Point(PointDriver As DBMPointDriverAbstract) As DBMPoint
+
+      ' Returns DBMPoint object from Points dictionary. If dictionary does not
+      ' yet contain object, it is added.
+
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
 
-        ' Stale items are removed after every calculation interval so that
-        ' unused resources can be freed to prevent all available memory from
-        ' filling up.
-
-        If Now >= NextStalePointsCheck Then
-
-          NextStalePointsCheck = AlignTimestamp(Now, CalculationInterval).
-            AddSeconds(CalculationInterval)
-
-          For Each Pair In Points
-            If Pair.Value.IsStale Then ' Find stale points
-              StalePoints.Add(Pair.Key)
-            End If
-          Next
-
-          For Each StalePoint In StalePoints
-            Points.Remove(StalePoint) ' Remove stale points
-          Next
-
-        End If
+        RemoveStalePoints
 
         If Not Points.ContainsKey(PointDriver.Point) Then
           Points.Add(PointDriver.Point, New DBMPoint(PointDriver)) ' Add new pt.
