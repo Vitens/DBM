@@ -76,9 +76,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' distribution processes.
 
 
-    Private Lock As New Object
     Private NextStalePointsCheck As DateTime
     Private Points As New Dictionary(Of Object, DBMPoint)
+    Private Lock As New Object
 
 
     Private Sub RemoveStalePoints
