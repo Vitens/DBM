@@ -76,9 +76,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' distribution processes.
 
 
-    Private Lock As New Object
     Private NextStalePointsCheck As DateTime
     Private Points As New Dictionary(Of Object, DBMPoint)
+    Private Lock As New Object
 
 
     Private Sub RemoveStalePoints
@@ -90,40 +90,46 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim StalePoints As New List(Of Object)
       Dim StalePoint As Object
 
-      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
-      Try
+      ' SyncLock: Access to this method does not have to be synchronized because
+      '           this private method is only called from the Point function
+      '           where the lock is already obtained. Items can be removed from
+      '           the dictionary in this method.
 
-        If Now >= NextStalePointsCheck Then
+      If Now >= NextStalePointsCheck Then
 
-          NextStalePointsCheck = AlignTimestamp(Now, CalculationInterval).
-            AddSeconds(CalculationInterval)
+        NextStalePointsCheck = AlignTimestamp(Now, CalculationInterval).
+          AddSeconds(CalculationInterval)
 
-          For Each Pair In Points
-            If Pair.Value.IsStale Then ' Find stale points
-              StalePoints.Add(Pair.Key)
-            End If
-          Next
+        For Each Pair In Points
+          If Pair.Value.IsStale Then ' Find stale points
+            StalePoints.Add(Pair.Key)
+          End If
+        Next
 
-          For Each StalePoint In StalePoints
-            Points.Remove(StalePoint) ' Remove stale points
-          Next
+        For Each StalePoint In StalePoints
+          Points.Remove(StalePoint) ' Remove stale points
+        Next
 
-        End If
-
-      Finally
-        Monitor.Exit(Lock) ' Ensure that the lock is released.
-      End Try
+      End If
 
     End Sub
 
 
-    Public Function Point(PointDriver As DBMPointDriverAbstract) As DBMPoint
+    Private Function Point(PointDriver As DBMPointDriverAbstract) As DBMPoint
 
       ' Returns DBMPoint object from Points dictionary. If dictionary does not
       ' yet contain object, it is added.
 
+      ' SyncLock: Access to this method has to be synchronized because the
+      '           Points dictionary may be modified here. New Points can be
+      '           added and an item from the dictionary is returned. The
+      '           PrepareData or Result methods, where this method is accessed,
+      '           might be called by multiple threads at once.
+
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
+
+        RemoveStalePoints
 
         If Not Points.ContainsKey(PointDriver.Point) Then
           Points.Add(PointDriver.Point, New DBMPoint(PointDriver)) ' Add new pt.
@@ -196,26 +202,26 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim CorrelationPoint As DBMCorrelationPoint
 
+      ' SyncLock: Access to this method does not have to be synchronized because
+      '           this is already done in the Point method for this class and in
+      '           the PrepareData method in the DBMPoint class. This means that,
+      '           for each DBMPoint instance, the PrepareData method will never
+      '           be executed by more than one thread at a time. Only the first
+      '           call will actually prepare the data. Subsequent calls will
+      '           then use cached data.
+
       StartTimestamp = AlignTimestamp(StartTimestamp, CalculationInterval).
         AddSeconds((EMAPreviousPeriods+CorrelationPreviousPeriods)*
         -CalculationInterval).AddDays(ComparePatterns*-7)
       EndTimestamp = AlignTimestamp(EndTimestamp, CalculationInterval)
 
-      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
-      Try
-
-        Point(InputPointDriver).PointDriver.PrepareData(
-          StartTimestamp, EndTimestamp)
-        If CorrelationPoints IsNot Nothing Then
-          For Each CorrelationPoint In CorrelationPoints
-            Point(CorrelationPoint.PointDriver).PointDriver.PrepareData(
-              StartTimestamp, EndTimestamp)
-          Next
-        End If
-
-      Finally
-        Monitor.Exit(Lock) ' Ensure that the lock is released.
-      End Try
+      Point(InputPointDriver).PrepareData(StartTimestamp, EndTimestamp)
+      If CorrelationPoints IsNot Nothing Then
+        For Each CorrelationPoint In CorrelationPoints
+          Point(CorrelationPoint.PointDriver).PrepareData(StartTimestamp,
+            EndTimestamp)
+        Next
+      End If
 
     End Sub
 
@@ -232,8 +238,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim CorrelationResult As DBMResult
       Dim AbsoluteErrorStatsData,
         RelativeErrorStatsData As New DBMStatisticsData
-
-      RemoveStalePoints
 
       If CorrelationPoints Is Nothing Then ' Empty list if Nothing was passed.
         CorrelationPoints = New List(Of DBMCorrelationPoint)

@@ -59,7 +59,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns a string containing the full version number including, if set,
       ' Git hash. Use Semantic Versioning Specification (SemVer).
 
-      Const GITHASH As String = "" ' Updated automatically by the build script.
+      Const GITHASH As String = "" ' Updated by the build script.
 
       With GetFileVersionInfo
         Return .FileMajorPart.ToString & "." & .FileMinorPart.ToString & ".0+" &

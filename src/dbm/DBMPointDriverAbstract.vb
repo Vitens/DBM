@@ -55,8 +55,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overridable Sub PrepareData(StartTimestamp As DateTime,
       EndTimestamp As DateTime)
 
-      ' Retrieve and store values in bulk from the passed time range from a
-      ' source of data, to be used in the GetData function.
+      ' Retrieve and store values in bulk for the passed time range from a
+      ' source of data, to be used in the GetData method.
 
     End Sub
 
