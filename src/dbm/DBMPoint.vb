@@ -85,16 +85,24 @@ Namespace Vitens.DynamicBandwidthMonitor
       '           the PrepareData method of this class while another thread
       '           later calls the RemoveStalePoints method to clean up stale
       '           points simultaneously), which is why the lock here is
-      '           required.
+      '           required. If the lock was not aquired, return False as the
+      '           instance is in active use.
 
-      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
-      Try
+      If Monitor.TryEnter(Lock) Then ' Request the lock, do not block.
 
-        Return Now >= PointTimeOut
+        Try
 
-      Finally
-        Monitor.Exit(Lock) ' Ensure that the lock is released.
-      End Try
+          Return Now >= PointTimeOut ' Returns True if the point has timed out.
+
+        Finally
+          Monitor.Exit(Lock) ' Ensure that the lock is released.
+        End Try
+
+      Else
+
+        Return False ' Return False if the lock was not acquired.
+
+      End If
 
     End Function
 
