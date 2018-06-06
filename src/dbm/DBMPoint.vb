@@ -111,7 +111,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       '           DBM.PrepareData method, where this method is called from for
       '           each required PointDriver, access has to be synchronized so
       '           that only the first call will actually prepare the data.
-      '           Subsequent calls will then use the cached data (this
+      '           Subsequent calls will then use this cached data (this
       '           functionality should be built into the PointDriver.PrepareData
       '           method).
 
