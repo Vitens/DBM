@@ -90,6 +90,11 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim StalePoints As New List(Of Object)
       Dim StalePoint As Object
 
+      ' SyncLock: Access to this method does not have to be synchronized because
+      '           this private method is only called from the Point function
+      '           where the lock is already obtained. Items can be removed from
+      '           the dictionary in this method.
+
       If Now >= NextStalePointsCheck Then
 
         NextStalePointsCheck = AlignTimestamp(Now, CalculationInterval).
@@ -114,6 +119,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Returns DBMPoint object from Points dictionary. If dictionary does not
       ' yet contain object, it is added.
+
+      ' SyncLock: Access to this method has to be synchronized because the
+      '           Points dictionary may be modified here. New Points can be
+      '           added and an item from the dictionary is returned. The
+      '           PrepareData or Result methods, where this method is accessed,
+      '           might be called by multiple threads at once.
 
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
