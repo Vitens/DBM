@@ -38,8 +38,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public PointDriver As DBMPointDriverAbstract
+    Private TimeOutLock, Lock As New Object
     Private PointTimeOut As DateTime
-    Private Lock As New Object
     Private ForecastsSubtractPoint As DBMPoint
     Private ForecastsData As New Dictionary(Of DateTime, DBMForecastData)
     Public Shared ForecastsCacheSize As Integer =
@@ -58,14 +58,19 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Update timestamp after which point turns stale.
 
-      ' SyncLock: Access to this method does not have to be synchronized because
-      '           this private method is only called from the constructor and
-      '           from the PrepareData and Result methods, where the lock is
-      '           already obtained. New instances are only created in the
-      '           DBM.Point method, to which access is synchronized.
+      ' SyncLock: Access to this method has to be synchronized because the
+      '           PointTimeOut is modified here and should be available in the
+      '           IsStale method.
 
-      PointTimeOut = AlignTimestamp(Now, CalculationInterval).
-        AddSeconds(2*CalculationInterval)
+      Monitor.Enter(TimeOutLock) ' Request the lock, and block until obtained.
+      Try
+
+        PointTimeOut = AlignTimestamp(Now, CalculationInterval).
+          AddSeconds(2*CalculationInterval)
+
+      Finally
+        Monitor.Exit(TimeOutLock) ' Ensure that the lock is released.
+      End Try
 
     End Sub
 
@@ -77,32 +82,17 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' resources.
 
       ' SyncLock: Access to this method has to be synchronized because the
-      '           PointTimeOut variable can be modified by the RefreshTimeOut
-      '           method. The RefreshTimeOut method is called from the
-      '           constructor and the PrepareData and Result methods. In the DBM
-      '           class, an instance of this class could be called by multiple
-      '           threads simultaneously (for example a thread can be executing
-      '           the PrepareData method of this class while another thread
-      '           later calls the RemoveStalePoints method to clean up stale
-      '           points simultaneously), which is why the lock here is
-      '           required. If the lock was not aquired, return False as the
-      '           instance is in active use.
+      '           PointTimeOut should be available here and is modified in the
+      '           RefreshTimeOut method.
 
-      If Monitor.TryEnter(Lock) Then ' Request the lock, do not block.
+      Monitor.Enter(TimeOutLock) ' Request the lock, and block until obtained.
+      Try
 
-        Try
+        Return Now >= PointTimeOut ' Returns True if the point has timed out.
 
-          Return Now >= PointTimeOut ' Returns True if the point has timed out.
-
-        Finally
-          Monitor.Exit(Lock) ' Ensure that the lock is released.
-        End Try
-
-      Else
-
-        Return False ' Return False if the lock was not acquired.
-
-      End If
+      Finally
+        Monitor.Exit(TimeOutLock) ' Ensure that the lock is released.
+      End Try
 
     End Function
 
@@ -121,7 +111,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       '           that only the first call will actually prepare the data.
       '           Subsequent calls will then use this cached data (this
       '           functionality should be built into the PointDriver.PrepareData
-      '           method).
+      '           method). The same lock is shared between PrepareData and
+      '           Result because these methods should not be executed
+      '           simultaneously.
 
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
@@ -158,7 +150,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' SyncLock: Access to this method has to be synchronized because the
       '           ForecastsData dictionary, which contains cached results, is
-      '           modified during the result calculations.
+      '           modified during the result calculations. The same lock is
+      '           shared between PrepareData and Result because these methods
+      '           should not be executed simultaneously.
 
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
