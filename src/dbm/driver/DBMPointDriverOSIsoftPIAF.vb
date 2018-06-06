@@ -68,29 +68,23 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim PIValues As AFValues
       Dim Value As AFValue
 
-      If Not Values.ContainsKey(StartTimestamp) Or
-        Not Values.ContainsKey(EndTimestamp.AddSeconds(
-        -CalculationInterval)) Then ' No data yet
+      PIValues = DirectCast(Point, AFAttribute).Data.Summaries(
+        New AFTimeRange(New AFTime(StartTimestamp),
+        New AFTime(EndTimestamp)), New AFTimeSpan(0, 0, 0, 0, 0,
+        CalculationInterval, 0), Average, TimeWeighted, EarliestTime).
+        Item(Average) ' Get averages from PI AF
 
-        PIValues = DirectCast(Point, AFAttribute).Data.Summaries(
-          New AFTimeRange(New AFTime(StartTimestamp),
-          New AFTime(EndTimestamp)), New AFTimeSpan(0, 0, 0, 0, 0,
-          CalculationInterval, 0), Average, TimeWeighted, EarliestTime).
-          Item(Average) ' Get averages from PI AF
-
-        Values.Clear
-        For Each Value In PIValues ' Store averages in Values dictionary
-          If Not Values.ContainsKey(Value.Timestamp.LocalTime) Then ' DST dupes
-            If TypeOf Value.Value Is Double Then
-              Values.Add(Value.Timestamp.LocalTime,
-                DirectCast(Value.Value, Double))
-            Else
-              Values.Add(Value.Timestamp.LocalTime, NaN)
-            End If
+      Values.Clear
+      For Each Value In PIValues ' Store averages in Values dictionary
+        If Not Values.ContainsKey(Value.Timestamp.LocalTime) Then ' DST dupes
+          If TypeOf Value.Value Is Double Then
+            Values.Add(Value.Timestamp.LocalTime,
+              DirectCast(Value.Value, Double))
+          Else
+            Values.Add(Value.Timestamp.LocalTime, NaN)
           End If
-        Next
-
-      End If
+        End If
+      Next
 
     End Sub
 

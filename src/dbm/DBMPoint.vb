@@ -39,7 +39,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public PointDriver As DBMPointDriverAbstract
     Private TimeOutLock, Lock As New Object
-    Private PointTimeOut As DateTime
+    Private PointTimeOut, PreparedStartTimestamp,
+      PreparedEndTimestamp As DateTime
     Private ForecastsSubtractPoint As DBMPoint
     Private ForecastsData As New Dictionary(Of DateTime, DBMForecastData)
     Public Shared ForecastsCacheSize As Integer =
@@ -101,7 +102,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Retrieve and store values in bulk for the passed time range from a
       ' source of data, to be used in the PointDriver.GetData method. Called
-      ' from the DBM.PrepareData sub and passed on to the PointDriver.
+      ' from the DBM.PrepareData sub and passed on to the PointDriver. The
+      ' (aligned) timestamps are stored to prevent future calls to
+      ' PointDriver.PrepareData for time ranges for which data is already
+      ' available.
 
       ' SyncLock: Access to this method has to be synchronized because the
       '           (expensive) PrepareData method is called for the PointDriver
@@ -109,18 +113,24 @@ Namespace Vitens.DynamicBandwidthMonitor
       '           DBM.PrepareData method, where this method is called from for
       '           each required PointDriver, access has to be synchronized so
       '           that only the first call will actually prepare the data.
-      '           Subsequent calls will then use this cached data (this
-      '           functionality should be built into the PointDriver.PrepareData
-      '           method). The same lock is shared between PrepareData and
-      '           Result because these methods should not be executed
-      '           simultaneously.
+      '           Subsequent calls will then use this cached data. The same lock
+      '           is shared between PrepareData and Result because these methods
+      '           should not be executed simultaneously.
 
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
 
         RefreshTimeOut
 
-        PointDriver.PrepareData(StartTimestamp, EndTimestamp)
+        If StartTimestamp < PreparedStartTimestamp Or
+          EndTimestamp > PreparedEndTimestamp Then ' Only if not yet available
+
+          PointDriver.PrepareData(StartTimestamp, EndTimestamp)
+
+          PreparedStartTimestamp = StartTimestamp
+          PreparedEndTimestamp = EndTimestamp
+
+        End If
 
       Finally
         Monitor.Exit(Lock) ' Ensure that the lock is released.
