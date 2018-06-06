@@ -58,6 +58,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Update timestamp after which point turns stale.
 
+      ' SyncLock: Access to this method does not have to be synchronized because
+      '           this private method is only called from the constructor and
+      '           from the PrepareData and Result methods, where the lock is
+      '           already obtained. New instances are only created in the
+      '           DBM.Point method, to which access is synchronized.
+
       PointTimeOut = AlignTimestamp(Now, CalculationInterval).
         AddSeconds(2*CalculationInterval)
 
@@ -70,7 +76,25 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' calculation interval. Used by the DBM class to clean up unused
       ' resources.
 
-      Return Now >= PointTimeOut
+      ' SyncLock: Access to this method has to be synchronized because the
+      '           PointTimeOut variable can be modified by the RefreshTimeOut
+      '           method. The RefreshTimeOut method is called from the
+      '           constructor and the PrepareData and Result methods. In the DBM
+      '           class, an instance of this class could be called by multiple
+      '           threads simultaneously (for example a thread can be executing
+      '           the PrepareData method of this class while another thread
+      '           later calls the RemoveStalePoints method to clean up stale
+      '           points simultaneously), which is why the lock here is
+      '           required.
+
+      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
+      Try
+
+        Return Now >= PointTimeOut
+
+      Finally
+        Monitor.Exit(Lock) ' Ensure that the lock is released.
+      End Try
 
     End Function
 
@@ -80,6 +104,16 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Retrieve and store values in bulk for the passed time range from a
       ' source of data, to be used in the PointDriver.GetData method. Called
       ' from the DBM.PrepareData sub and passed on to the PointDriver.
+
+      ' SyncLock: Access to this method has to be synchronized because the
+      '           (expensive) PrepareData method is called for the PointDriver
+      '           instance. Since multiple threads might simultaneously call the
+      '           DBM.PrepareData method, where this method is called from for
+      '           each required PointDriver, access has to be synchronized so
+      '           that only the first call will actually prepare the data.
+      '           Subsequent calls will then use the cached data (this
+      '           functionality should be built into the PointDriver.PrepareData
+      '           method).
 
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
@@ -113,6 +147,10 @@ Namespace Vitens.DynamicBandwidthMonitor
         ForecastValues(EMAPreviousPeriods),
         LowerControlLimits(EMAPreviousPeriods),
         UpperControlLimits(EMAPreviousPeriods) As Double
+
+      ' SyncLock: Access to this method has to be synchronized because the
+      '           ForecastsData dictionary, which contains cached results, is
+      '           modified during the result calculations.
 
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
