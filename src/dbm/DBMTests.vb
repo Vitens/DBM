@@ -819,46 +819,11 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Class DBMPointDriverWaterUsageModel
-      Inherits DBMPointDriverAbstract
-
-
-      Public Sub New(Point As Object)
-
-        MyBase.New(Point)
-
-      End Sub
-
-
-      Public Overrides Function GetData(Timestamp As DateTime) As Double
-
-        ' Model based on hourly water usage in Leeuwarden 2016.
-        ' Calculated using polynomial regressions based on hourly (quintic),
-        ' daily (cubic) and monthly (quartic) periodicity.
-
-        If TypeOf Point Is Integer Then ' Point contains offset in hours
-          Timestamp = Timestamp.AddHours(DirectCast(Point, Integer))
-        End If
-
-        With Timestamp
-          Return 790*(-0.00012*.Month^4+0.0035*.Month^3-0.032*.Month^2+0.1*
-            .Month+0.93)*(0.000917*.DayOfWeek^3-0.0155*.DayOfWeek^2+0.0628*
-            .DayOfWeek+0.956)*(-0.00001221*(.Hour+.Minute/60)^5+0.0007805*
-            (.Hour+.Minute/60)^4-0.01796*(.Hour+.Minute/60)^3+0.1709*(.Hour+
-            .Minute/60)^2-0.5032*(.Hour+.Minute/60)+0.7023)
-        End With
-
-      End Function
-
-
-    End Class
-
-
     Public Shared Function IntegrationTestsPassed As Boolean
 
       ' Integration tests, returns True if all tests pass.
 
-      Dim InputPointDriver As DBMPointDriverWaterUsageModel
+      Dim InputPointDriver As DBMPointDriverTestModel
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim Timestamp As DateTime
       Dim i As Integer
@@ -867,9 +832,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       IntegrationTestsPassed = True
 
-      InputPointDriver = New DBMPointDriverWaterUsageModel(0)
+      InputPointDriver = New DBMPointDriverTestModel(0)
       CorrelationPoints.Add(
-        New DBMCorrelationPoint(New DBMPointDriverWaterUsageModel(490), False))
+        New DBMCorrelationPoint(New DBMPointDriverTestModel(490), False))
       Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
 
       For i = 0 To 19
@@ -928,18 +893,18 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Const DurationTicks As Double = 0.1*TicksPerSecond ' 0.1 seconds
 
-      Dim InputPointDriver As DBMPointDriverWaterUsageModel
+      Dim InputPointDriver As DBMPointDriverTestModel
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim Timestamp, Timer As DateTime
       Dim Result As DBMResult
       Dim DBM As New DBM
       Dim i, Count As Integer
 
-      InputPointDriver = New DBMPointDriverWaterUsageModel(0)
+      InputPointDriver = New DBMPointDriverTestModel(0)
       CorrelationPoints.Add(New DBMCorrelationPoint(
-        New DBMPointDriverWaterUsageModel(5394), False))
+        New DBMPointDriverTestModel(5394), False))
       CorrelationPoints.Add(New DBMCorrelationPoint(
-        New DBMPointDriverWaterUsageModel(227), True))
+        New DBMPointDriverTestModel(227), True))
       Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
 
       ' Pre-fill cache for the DBMPoint to calculate a more realistic value for
