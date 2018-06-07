@@ -42,7 +42,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private PointTimeOut, PreparedStartTimestamp,
       PreparedEndTimestamp As DateTime
     Private ForecastsSubtractPoint As DBMPoint
-    Private ForecastsData As New Dictionary(Of DateTime, DBMForecastData)
+    Private ForecastsItem As New Dictionary(Of DateTime, DBMForecastItem)
     Public Shared ForecastsCacheSize As Integer =
       2*(EMAPreviousPeriods+2*CorrelationPreviousPeriods+1)
 
@@ -152,14 +152,14 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
       Dim ForecastTimestamp, PatternTimestamp As DateTime
-      Dim ForecastData As DBMForecastData = Nothing
+      Dim ForecastItem As DBMForecastItem = Nothing
       Dim Patterns(ComparePatterns), Measurements(EMAPreviousPeriods),
         ForecastValues(EMAPreviousPeriods),
         LowerControlLimits(EMAPreviousPeriods),
         UpperControlLimits(EMAPreviousPeriods) As Double
 
       ' SyncLock: Access to this method has to be synchronized because the
-      '           ForecastsData dictionary, which contains cached results, is
+      '           ForecastsItem dictionary, which contains cached results, is
       '           modified during the result calculations. The same lock is
       '           shared between PrepareData and Result because these methods
       '           should not be executed simultaneously.
@@ -176,7 +176,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' subtracted is identical to the one used in the cached results.
         If SubtractPoint IsNot ForecastsSubtractPoint Then
           ForecastsSubtractPoint = SubtractPoint
-          ForecastsData.Clear ' No, so clear results
+          ForecastsItem.Clear ' No, so clear results
         End If
 
         For CorrelationCounter = 0 To CorrelationPreviousPeriods ' Correl. loop
@@ -184,7 +184,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' Retrieve data and calculate forecast. Only do this for the required
           ' timestamp and only process previous timestamps for calculating
           ' correlation results if an event was found.
-          If Result.ForecastData Is Nothing Or (IsInputDBMPoint And
+          If Result.ForecastItem Is Nothing Or (IsInputDBMPoint And
             Result.Factor <> 0 And HasCorrelationDBMPoint) Or
             Not IsInputDBMPoint Then
 
@@ -194,8 +194,8 @@ Namespace Vitens.DynamicBandwidthMonitor
                 -(EMAPreviousPeriods-EMACounter+CorrelationCounter)*
                 CalculationInterval) ' Timestamp for forecast results
 
-              If Not ForecastsData.TryGetValue(ForecastTimestamp,
-                ForecastData) Then ' Calculate forecast data if not cached
+              If Not ForecastsItem.TryGetValue(ForecastTimestamp,
+                ForecastItem) Then ' Calculate forecast data if not cached
 
                 For PatternCounter = 0 To ComparePatterns ' Data for regression.
 
@@ -210,23 +210,23 @@ Namespace Vitens.DynamicBandwidthMonitor
 
                 Next PatternCounter
 
-                ForecastData = Forecast(Patterns)
+                ForecastItem = Forecast(Patterns)
 
                 ' Limit number of cached forecast results per point. The size of
                 ' the cache is automatically optimized for real-time continuous
                 ' calculations. Cache size is limited using random eviction
                 ' policy.
-                If ForecastsData.Count >= ForecastsCacheSize Then
-                  ForecastsData.Remove(ForecastsData.ElementAt(
-                    RandomNumber(0, ForecastsData.Count-1)).Key)
+                If ForecastsItem.Count >= ForecastsCacheSize Then
+                  ForecastsItem.Remove(ForecastsItem.ElementAt(
+                    RandomNumber(0, ForecastsItem.Count-1)).Key)
                 End If
 
                 ' Add calculated forecast to cache.
-                ForecastsData.Add(ForecastTimestamp, ForecastData)
+                ForecastsItem.Add(ForecastTimestamp, ForecastItem)
 
               End If
 
-              With ForecastData ' Store results in arrays for EMA calculation.
+              With ForecastItem ' Store results in arrays for EMA calculation.
                 Measurements(EMACounter) = .Measurement
                 ForecastValues(EMACounter) = .ForecastValue
                 LowerControlLimits(EMACounter) = .LowerControlLimit

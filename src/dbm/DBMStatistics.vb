@@ -22,6 +22,7 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 
+Imports System
 Imports System.Double
 Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
@@ -37,19 +38,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' calling the Statistics method.
 
 
-    Public Class DBMStatisticsData
-
-
-      Public Count As Integer
-      Public Slope, OriginSlope, Angle, OriginAngle, Intercept, StandardError,
-        Correlation, ModifiedCorrelation, Determination As Double
-
-
-    End Class
-
-
     Public Shared Function Statistics(ValuesY() As Double,
-      Optional ValuesX() As Double = Nothing) As DBMStatisticsData
+      Optional ValuesX() As Double = Nothing) As DBMStatisticsItem
 
       ' Performs calculation of several statistics functions on the input
       ' data. If no values for X are passed, a linear scale starting at 0 is
@@ -59,7 +49,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim i As Integer
       Dim SumX, SumY, SumXX, SumYY, SumXY As Double
 
-      Statistics = New DBMStatisticsData
+      Statistics = New DBMStatisticsItem
 
       With Statistics
 

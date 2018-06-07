@@ -34,44 +34,17 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMForecast
 
 
-    Public Class DBMForecastData
-
-
-      Public Measurement, ForecastValue, LowerControlLimit,
-        UpperControlLimit As Double
-
-
-      Public Function Range(p As Double) As Double
-
-        ' Returns the range between the control limits and forecast value scaled
-        ' for the requested confidence interval. This function requires that the
-        ' results have been calculated for the default range using the Forecast
-        ' function before. Always use the full sample size and appropriate
-        ' distribution as the calculation is run on an EMA-smoothed series of
-        ' data and not on a single forecast result from which outliers might be
-        ' removed.
-
-        Return (UpperControlLimit-ForecastValue)/
-          ControlLimitRejectionCriterion(2*BandwidthCI-1, ComparePatterns-1)*
-          ControlLimitRejectionCriterion(2*p-1, ComparePatterns-1)
-
-      End Function
-
-
-    End Class
-
-
-    Public Shared Function Forecast(Values() As Double) As DBMForecastData
+    Public Shared Function Forecast(Values() As Double) As DBMForecastItem
 
       ' Calculates and stores forecast and control limits by removing
       ' outliers from the Values array and extrapolating the regression
       ' line by one interval.
       ' The result of the calculation is returned as a new object.
 
-      Dim StatisticsData As New DBMStatisticsData
+      Dim StatisticsItem As New DBMStatisticsItem
       Dim Range As Double
 
-      Forecast = New DBMForecastData
+      Forecast = New DBMForecastItem
 
       With Forecast
 
@@ -81,12 +54,12 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' last item in the array as this is the current measured value for
         ' which we need to calculate a forecast and control limits.
         Array.Resize(Values, Values.Length-1)
-        StatisticsData = Statistics(RemoveOutliers(Values))
+        StatisticsItem = Statistics(RemoveOutliers(Values))
 
         ' Extrapolate regression by one interval and use this result as a
         ' forecast.
         .ForecastValue =
-          ComparePatterns*StatisticsData.Slope+StatisticsData.Intercept
+          ComparePatterns*StatisticsItem.Slope+StatisticsItem.Intercept
 
         ' Control limits are determined by using measures of process variation
         ' and are based on the concepts surrounding hypothesis testing and
@@ -94,7 +67,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' that indicate that a process is not in control and, therefore, not
         ' operating predictably.
         Range = ControlLimitRejectionCriterion(BandwidthCI,
-          StatisticsData.Count-1)*StatisticsData.StandardError
+          StatisticsItem.Count-1)*StatisticsItem.StandardError
 
         ' Set upper and lower control limits based on forecast, rejection
         ' criterion and standard error of the regression.

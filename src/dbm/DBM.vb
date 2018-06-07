@@ -236,8 +236,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim CorrelationPoint As DBMCorrelationPoint
       Dim CorrelationResult As DBMResult
-      Dim AbsoluteErrorStatsData,
-        RelativeErrorStatsData As New DBMStatisticsData
+      Dim AbsoluteErrorStatsItem,
+        RelativeErrorStatsItem As New DBMStatisticsItem
 
       If CorrelationPoints Is Nothing Then ' Empty list if Nothing was passed.
         CorrelationPoints = New List(Of DBMCorrelationPoint)
@@ -264,16 +264,16 @@ Namespace Vitens.DynamicBandwidthMonitor
             End If
 
             ' Calculate statistics of error compared to forecast
-            AbsoluteErrorStatsData = Statistics(
+            AbsoluteErrorStatsItem = Statistics(
               CorrelationResult.AbsoluteErrors, Result.AbsoluteErrors)
-            RelativeErrorStatsData = Statistics(
+            RelativeErrorStatsItem = Statistics(
               CorrelationResult.RelativeErrors, Result.RelativeErrors)
 
             Result.Factor = Suppress(Result.Factor,
-              AbsoluteErrorStatsData.ModifiedCorrelation,
-              AbsoluteErrorStatsData.OriginAngle,
-              RelativeErrorStatsData.ModifiedCorrelation,
-              RelativeErrorStatsData.OriginAngle,
+              AbsoluteErrorStatsItem.ModifiedCorrelation,
+              AbsoluteErrorStatsItem.OriginAngle,
+              RelativeErrorStatsItem.ModifiedCorrelation,
+              RelativeErrorStatsItem.OriginAngle,
               CorrelationPoint.SubtractSelf) ' Suppress if not a local event.
 
           End If

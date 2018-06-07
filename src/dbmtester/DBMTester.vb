@@ -28,7 +28,6 @@ Imports System.Environment
 Imports System.Globalization.CultureInfo
 Imports System.Text.RegularExpressions
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
-Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
 
 
 ' Assembly title
@@ -158,10 +157,10 @@ Namespace Vitens.DynamicBandwidthMonitor
           With DBM.Result(InputPointDriver, CorrelationPoints, StartTimestamp)
             Console.WriteLine(FormatDateTime(.Timestamp) & Separator &
             FormatNumber(.Factor) & Separator &
-            FormatNumber(.ForecastData.Measurement) & Separator &
-            FormatNumber(.ForecastData.ForecastValue) & Separator &
-            FormatNumber(.ForecastData.LowerControlLimit) & Separator &
-            FormatNumber(.ForecastData.UpperControlLimit))
+            FormatNumber(.ForecastItem.Measurement) & Separator &
+            FormatNumber(.ForecastItem.ForecastValue) & Separator &
+            FormatNumber(.ForecastItem.LowerControlLimit) & Separator &
+            FormatNumber(.ForecastItem.UpperControlLimit))
           End With
 
           ' Next interval
