@@ -212,25 +212,25 @@ Namespace Vitens.DynamicBandwidthMonitor
           Value.Questionable = .HasEvent
           Value.Substituted = .HasSuppressedEvent
         ElseIf Attribute.Trait Is LimitTarget Then
-          Value = New AFValue(.ForecastData.Measurement, .Timestamp)
+          Value = New AFValue(.ForecastItem.Measurement, .Timestamp)
         ElseIf Attribute.Trait Is Forecast Then
-          Value = New AFValue(.ForecastData.ForecastValue, .Timestamp)
+          Value = New AFValue(.ForecastItem.ForecastValue, .Timestamp)
         ElseIf Attribute.Trait Is LimitMinimum Then
-          Value = New AFValue(.ForecastData.ForecastValue-
-            .ForecastData.Range(pValueMinMax), .Timestamp)
+          Value = New AFValue(.ForecastItem.ForecastValue-
+            .ForecastItem.Range(pValueMinMax), .Timestamp)
         ElseIf Attribute.Trait Is LimitLoLo Then
-          Value = New AFValue(.ForecastData.LowerControlLimit, .Timestamp)
+          Value = New AFValue(.ForecastItem.LowerControlLimit, .Timestamp)
         ElseIf Attribute.Trait Is LimitLo Then
-          Value = New AFValue(.ForecastData.ForecastValue-
-            .ForecastData.Range(pValueLoHi), .Timestamp)
+          Value = New AFValue(.ForecastItem.ForecastValue-
+            .ForecastItem.Range(pValueLoHi), .Timestamp)
         ElseIf Attribute.Trait Is LimitHi Then
-          Value = New AFValue(.ForecastData.ForecastValue+
-            .ForecastData.Range(pValueLoHi), .Timestamp)
+          Value = New AFValue(.ForecastItem.ForecastValue+
+            .ForecastItem.Range(pValueLoHi), .Timestamp)
         ElseIf Attribute.Trait Is LimitHiHi Then
-          Value = New AFValue(.ForecastData.UpperControlLimit, .Timestamp)
+          Value = New AFValue(.ForecastItem.UpperControlLimit, .Timestamp)
         ElseIf Attribute.Trait Is LimitMaximum Then
-          Value = New AFValue(.ForecastData.ForecastValue+
-            .ForecastData.Range(pValueMinMax), .Timestamp)
+          Value = New AFValue(.ForecastItem.ForecastValue+
+            .ForecastItem.Range(pValueMinMax), .Timestamp)
         End If
 
       End With
