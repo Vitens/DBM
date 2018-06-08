@@ -25,8 +25,6 @@ Option Strict
 Imports System
 Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
-Imports Vitens.DynamicBandwidthMonitor.DBMForecast
-Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -41,7 +39,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Timestamp As DateTime
-    Public ForecastData As DBMForecastData
+    Public ForecastItem As DBMForecastItem
     Public Factor, AbsoluteErrors(), RelativeErrors() As Double
 
 
@@ -71,7 +69,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Returns true if there is a suppressed event.
 
-      With ForecastData
+      With ForecastItem
         Return Factor = 0 And
           (.Measurement < .LowerControlLimit Or
           .Measurement > .UpperControlLimit)
@@ -90,11 +88,11 @@ Namespace Vitens.DynamicBandwidthMonitor
       AbsoluteErrors(Index) = ForecastValueEMA-MeasurementEMA
       RelativeErrors(Index) = ForecastValueEMA/MeasurementEMA-1
 
-      If ForecastData Is Nothing Then
+      If ForecastItem Is Nothing Then
 
-        ' Store EMA results in new DBMForecastData object for current timestamp.
-        ForecastData = New DBMForecastData
-        With ForecastData
+        ' Store EMA results in new DBMForecastItem object for current timestamp.
+        ForecastItem = New DBMForecastItem
+        With ForecastItem
           .Measurement = MeasurementEMA
           .ForecastValue = ForecastValueEMA
           .LowerControlLimit = LowerControlLimitEMA

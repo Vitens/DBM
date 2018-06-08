@@ -67,7 +67,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Unit tests, returns True if all tests pass.
 
       Dim i As Integer
-      Dim StatisticsData As New DBMStatisticsData
+      Dim StatisticsItem As New DBMStatisticsItem
 
       UnitTestsPassed = True
 
@@ -704,77 +704,77 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       For i = 0 To 19
         If i = 0 Then
-          StatisticsData = Statistics({3411, 3067, 3159, 2579, 2604, 3549,
+          StatisticsItem = Statistics({3411, 3067, 3159, 2579, 2604, 3549,
             2028, 3521, 3629, 3418, 2091, 2828})
         ElseIf i = 1 Then
-          StatisticsData = Statistics({3725, 3581, 2747, 3924, 3743, 2112,
+          StatisticsItem = Statistics({3725, 3581, 2747, 3924, 3743, 2112,
             3899, 2728, 3050, 3534, 2107, 3185})
         ElseIf i = 2 Then
-          StatisticsData = Statistics({2937, 2596, 3245, 3296, 2528, 2559,
+          StatisticsItem = Statistics({2937, 2596, 3245, 3296, 2528, 2559,
             3660, 3649, 3178, 3972, 3822, 2454})
         ElseIf i = 3 Then
-          StatisticsData = Statistics({3390, 3960, 2488, 3068, 2213, 3999,
+          StatisticsItem = Statistics({3390, 3960, 2488, 3068, 2213, 3999,
             3352, 2031, 3150, 2200, 2206, 3598})
         ElseIf i = 4 Then
-          StatisticsData = Statistics({2569, 2091, 2592, 2764, 2602, 3897,
+          StatisticsItem = Statistics({2569, 2091, 2592, 2764, 2602, 3897,
             3960, 2803, 2557, 2321, 2326, 3293})
         ElseIf i = 5 Then
-          StatisticsData = Statistics({2820, 2826, 3425, 2652, 3266, 2415,
+          StatisticsItem = Statistics({2820, 2826, 3425, 2652, 3266, 2415,
             2372, 3167, 2161, 2916, 3811, 2523})
         ElseIf i = 6 Then
-          StatisticsData = Statistics({3570, 2758, 2579, 3839, 3263, 3255,
+          StatisticsItem = Statistics({3570, 2758, 2579, 3839, 3263, 3255,
             2857, 2196, 3122, 3389, 3827, 3670})
         ElseIf i = 7 Then
-          StatisticsData = Statistics({2045, 3087, 3832, 2861, 3356, 3005,
+          StatisticsItem = Statistics({2045, 3087, 3832, 2861, 3356, 3005,
             3027, 2926, 2707, 2810, 2539, 2111})
         ElseIf i = 8 Then
-          StatisticsData = Statistics({2488, 3958, 2122, 2781, 2730, 2980,
+          StatisticsItem = Statistics({2488, 3958, 2122, 2781, 2730, 2980,
             2311, 2949, 2515, 3258, 3084, 2313})
         ElseIf i = 9 Then
-          StatisticsData = Statistics({3877, 3309, 3012, 2781, 2215, 3568,
+          StatisticsItem = Statistics({3877, 3309, 3012, 2781, 2215, 3568,
             2919, 3507, 3192, 3665, 2038, 2421})
         ElseIf i = 10 Then
-          StatisticsData = Statistics({2148, 2211, 2663, 2256, 2000, 3074,
+          StatisticsItem = Statistics({2148, 2211, 2663, 2256, 2000, 3074,
             3314, 3088, 3655, 2164, 2384, 3358}, {3, 5, 10, 20, 28, 32, 41,
             46, 57, 66, 74, 76})
         ElseIf i = 11 Then
-          StatisticsData = Statistics({2908, 2714, 2300, 3409, 3858, 3060,
+          StatisticsItem = Statistics({2908, 2714, 2300, 3409, 3858, 3060,
             2179, 3515, 2804, 2924, 2984, 2415}, {10, 18, 28, 35, 44, 50, 51,
             62, 63, 66, 74, 80})
         ElseIf i = 12 Then
-          StatisticsData = Statistics({2659, 2191, 3180, 2340, 3855, 2196,
+          StatisticsItem = Statistics({2659, 2191, 3180, 2340, 3855, 2196,
             2888, 2546, 3745, 3501, 2546, 3347}, {9, 11, 13, 18, 21, 26, 28,
             37, 42, 47, 56, 61})
         ElseIf i = 13 Then
-          StatisticsData = Statistics({2513, 2180, 2062, 2645, 3580, 2595,
+          StatisticsItem = Statistics({2513, 2180, 2062, 2645, 3580, 2595,
             2471, 2961, 2509, 2681, 2090, 2965}, {6, 14, 23, 26, 32, 35, 37,
             41, 45, 48, 58, 68})
         ElseIf i = 14 Then
-          StatisticsData = Statistics({2412, 3729, 3177, 3510, 3856, 2662,
+          StatisticsItem = Statistics({2412, 3729, 3177, 3510, 3856, 2662,
             3086, 2161, 3269, 2820, 3921, 2229}, {7, 12, 23, 29, 30, 32, 36,
             38, 41, 49, 55, 61})
         ElseIf i = 15 Then
-          StatisticsData = Statistics({3847, 3240, 2695, 2298, 2960, 2439,
+          StatisticsItem = Statistics({3847, 3240, 2695, 2298, 2960, 2439,
             3987, 2261, 2058, 2691, 3095, 3846}, {4, 9, 15, 18, 20, 26, 36,
             45, 49, 58, 64, 71})
         ElseIf i = 16 Then
-          StatisticsData = Statistics({3076, 2813, 3694, 3652, 3345, 3444,
+          StatisticsItem = Statistics({3076, 2813, 3694, 3652, 3345, 3444,
             3994, 2680, 2990, 2826, 3391, 2358}, {7, 14, 24, 28, 37, 40, 49,
             51, 55, 61, 69, 77})
         ElseIf i = 17 Then
-          StatisticsData = Statistics({2846, 3086, 3629, 3082, 2855, 3018,
+          StatisticsItem = Statistics({2846, 3086, 3629, 3082, 2855, 3018,
             2456, 3238, 2980, 3362, 3773, 2741}, {6, 16, 23, 29, 35, 40, 49,
             60, 64, 73, 75, 78})
         ElseIf i = 18 Then
-          StatisticsData = Statistics({2605, 2586, 2301, 3060, 2447, 3169,
+          StatisticsItem = Statistics({2605, 2586, 2301, 3060, 2447, 3169,
             2727, 3752, 2956, 2381, 3368, 3495}, {6, 13, 24, 30, 38, 47, 57,
             59, 69, 77, 86, 96})
         ElseIf i = 19 Then
-          StatisticsData = Statistics({3228, 3564, 2323, 3616, 2405, 3914,
+          StatisticsItem = Statistics({3228, 3564, 2323, 3616, 2405, 3914,
             2132, 2123, 3586, 2759, 2927, 2239}, {10, 15, 21, 22, 24, 32, 34,
             43, 46, 53, 55, 63})
         End If
-        With StatisticsData
+        With StatisticsItem
           UnitTestsPassed = UnitTestsPassed And
             Round(.Slope, 4) = {-24.1399, -67.5699, 51.3427, -56.9825,
             27.3182, -2.6573, 32.1923, -46.8462, -11.1224, -61.5455, 9.4424,
@@ -819,46 +819,11 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Class DBMPointDriverWaterUsageModel
-      Inherits DBMPointDriverAbstract
-
-
-      Public Sub New(Point As Object)
-
-        MyBase.New(Point)
-
-      End Sub
-
-
-      Public Overrides Function GetData(Timestamp As DateTime) As Double
-
-        ' Model based on hourly water usage in Leeuwarden 2016.
-        ' Calculated using polynomial regressions based on hourly (quintic),
-        ' daily (cubic) and monthly (quartic) periodicity.
-
-        If TypeOf Point Is Integer Then ' Point contains offset in hours
-          Timestamp = Timestamp.AddHours(DirectCast(Point, Integer))
-        End If
-
-        With Timestamp
-          Return 790*(-0.00012*.Month^4+0.0035*.Month^3-0.032*.Month^2+0.1*
-            .Month+0.93)*(0.000917*.DayOfWeek^3-0.0155*.DayOfWeek^2+0.0628*
-            .DayOfWeek+0.956)*(-0.00001221*(.Hour+.Minute/60)^5+0.0007805*
-            (.Hour+.Minute/60)^4-0.01796*(.Hour+.Minute/60)^3+0.1709*(.Hour+
-            .Minute/60)^2-0.5032*(.Hour+.Minute/60)+0.7023)
-        End With
-
-      End Function
-
-
-    End Class
-
-
     Public Shared Function IntegrationTestsPassed As Boolean
 
       ' Integration tests, returns True if all tests pass.
 
-      Dim InputPointDriver As DBMPointDriverWaterUsageModel
+      Dim InputPointDriver As DBMPointDriverTestModel
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim Timestamp As DateTime
       Dim i As Integer
@@ -867,9 +832,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       IntegrationTestsPassed = True
 
-      InputPointDriver = New DBMPointDriverWaterUsageModel(0)
+      InputPointDriver = New DBMPointDriverTestModel(0)
       CorrelationPoints.Add(
-        New DBMCorrelationPoint(New DBMPointDriverWaterUsageModel(490), False))
+        New DBMCorrelationPoint(New DBMPointDriverTestModel(490), False))
       Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
 
       For i = 0 To 19
@@ -884,30 +849,30 @@ Namespace Vitens.DynamicBandwidthMonitor
             .HasSuppressedEvent = {False, False, False, False, False,
             True, False, False, False, False, False, False, False, False,
             True, False, False, False, False, False}(i) And
-            Round(.ForecastData.Measurement, 4) = {527.5796, 687.0052,
+            Round(.ForecastItem.Measurement, 4) = {527.5796, 687.0052,
             1097.1504, 950.9752, 496.1124, 673.6569, 1139.1957, 867.4313,
             504.9407, 656.4434, 1065.7651, 898.9191, 471.2433, 668.1,
             1103.9689, 897.7268, 525.3563, 676.7206, 1183.0887,
             975.8324}(i) And
-            Round(.ForecastData.ForecastValue, 4) = {548.7285, 716.9982,
+            Round(.ForecastItem.ForecastValue, 4) = {548.7285, 716.9982,
             1059.0551, 919.4719, 488.6181, 683.6728, 1155.5986, 895.6872,
             503.2566, 655.7115, 1061.2282, 893.3488, 464.4957, 666.2928,
             1084.1527, 901.6546, 523.8671, 666.1729, 1190.3511,
             975.4264}(i) And
-            Round(.ForecastData.Range(0.95), 4) = {7.952, 43.4768, 57.5299,
+            Round(.ForecastItem.Range(0.95), 4) = {7.952, 43.4768, 57.5299,
             51.6959, 28.3939, 0.5641, 0.9146, 0.8148, 5.6816, 7.3282, 11.0143,
             9.3649, 3.9192, 4.4945, 6.9199, 9.2247, 8.3518, 9.6103, 20.3862,
             15.9607}(i) And
-            Round(.ForecastData.Range(BandwidthCI), 4) = {12.0353, 65.8024,
+            Round(.ForecastItem.Range(BandwidthCI), 4) = {12.0353, 65.8024,
             87.0718, 78.2419, 42.9743, 0.8537, 1.3843, 1.2332, 8.5991, 11.0913,
             16.6702, 14.1738, 5.9317, 6.8025, 10.4733, 13.9616, 12.6405,
             14.5453, 30.8546, 24.1566}(i) And
-            Round(.ForecastData.LowerControlLimit, 4) = {536.6932, 651.1959,
+            Round(.ForecastItem.LowerControlLimit, 4) = {536.6932, 651.1959,
             971.9833, 841.23, 445.6438, 682.8191, 1154.2143, 894.454,
             494.6574, 644.6202, 1044.558, 879.175, 458.564, 659.4903,
             1073.6794, 887.693, 511.2267, 651.6276, 1159.4964,
             951.2698}(i) And
-            Round(.ForecastData.UpperControlLimit, 4) = {560.7638, 782.8006,
+            Round(.ForecastItem.UpperControlLimit, 4) = {560.7638, 782.8006,
             1146.127, 997.7138, 531.5924, 684.5266, 1156.9829, 896.9205,
             511.8557, 666.8028, 1077.8984, 907.5226, 470.4274, 673.0952,
             1094.626, 915.6163, 536.5076, 680.7182, 1221.2057, 999.583}(i)
@@ -928,18 +893,18 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Const DurationTicks As Double = 0.1*TicksPerSecond ' 0.1 seconds
 
-      Dim InputPointDriver As DBMPointDriverWaterUsageModel
+      Dim InputPointDriver As DBMPointDriverTestModel
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim Timestamp, Timer As DateTime
       Dim Result As DBMResult
       Dim DBM As New DBM
       Dim i, Count As Integer
 
-      InputPointDriver = New DBMPointDriverWaterUsageModel(0)
+      InputPointDriver = New DBMPointDriverTestModel(0)
       CorrelationPoints.Add(New DBMCorrelationPoint(
-        New DBMPointDriverWaterUsageModel(5394), False))
+        New DBMPointDriverTestModel(5394), False))
       CorrelationPoints.Add(New DBMCorrelationPoint(
-        New DBMPointDriverWaterUsageModel(227), True))
+        New DBMPointDriverTestModel(227), True))
       Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
 
       ' Pre-fill cache for the DBMPoint to calculate a more realistic value for
