@@ -23,7 +23,6 @@ Option Strict
 
 
 Imports System
-Imports System.Collections.Generic
 Imports System.DateTime
 Imports System.Threading
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
@@ -37,14 +36,14 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMPoint
 
 
+' TODO VARIABLE ORDER
     Public PointDriver As DBMPointDriverAbstract
     Private TimeOutLock, Lock As New Object
     Private PointTimeOut, PreparedStartTimestamp,
       PreparedEndTimestamp As DateTime
+    Private Cache As New DBMCache(2*(EMAPreviousPeriods+2*
+      CorrelationPreviousPeriods+1)) ' optimized for continuous calculations
     Private ForecastsSubtractPoint As DBMPoint
-    Private ForecastsItem As New Dictionary(Of DateTime, DBMForecastItem)
-    Public Shared ForecastsCacheSize As Integer =
-      2*(EMAPreviousPeriods+2*CorrelationPreviousPeriods+1)
 
 
     Public Sub New(PointDriver As DBMPointDriverAbstract)
@@ -158,6 +157,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         LowerControlLimits(EMAPreviousPeriods),
         UpperControlLimits(EMAPreviousPeriods) As Double
 
+' TODO COMMENT!!!!!
+' TODO SYNCLOCK????
       ' SyncLock: Access to this method has to be synchronized because the
       '           ForecastsItem dictionary, which contains cached results, is
       '           modified during the result calculations. The same lock is
@@ -176,7 +177,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' subtracted is identical to the one used in the cached results.
         If SubtractPoint IsNot ForecastsSubtractPoint Then
           ForecastsSubtractPoint = SubtractPoint
-          ForecastsItem.Clear ' No, so clear results
+          Cache.Clear ' No, so clear results
         End If
 
         For CorrelationCounter = 0 To CorrelationPreviousPeriods ' Correl. loop
@@ -193,9 +194,10 @@ Namespace Vitens.DynamicBandwidthMonitor
               ForecastTimestamp = Result.Timestamp.AddSeconds(
                 -(EMAPreviousPeriods-EMACounter+CorrelationCounter)*
                 CalculationInterval) ' Timestamp for forecast results
+              ForecastItem =
+                DirectCast(Cache.GetItem(ForecastTimestamp), DBMForecastItem)
 
-              If Not ForecastsItem.TryGetValue(ForecastTimestamp,
-                ForecastItem) Then ' Calculate forecast data if not cached
+              If ForecastItem Is Nothing Then ' Not cached
 
                 For PatternCounter = 0 To ComparePatterns ' Data for regression.
 
@@ -211,18 +213,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                 Next PatternCounter
 
                 ForecastItem = Forecast(Patterns)
-
-                ' Limit number of cached forecast results per point. The size of
-                ' the cache is automatically optimized for real-time continuous
-                ' calculations. Cache size is limited using random eviction
-                ' policy.
-                If ForecastsItem.Count >= ForecastsCacheSize Then
-                  ForecastsItem.Remove(ForecastsItem.ElementAt(
-                    RandomNumber(0, ForecastsItem.Count-1)).Key)
-                End If
-
-                ' Add calculated forecast to cache.
-                ForecastsItem.Add(ForecastTimestamp, ForecastItem)
+                Cache.AddItem(ForecastTimestamp, ForecastItem)
 
               End If
 
