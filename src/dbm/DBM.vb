@@ -24,9 +24,7 @@ Option Strict
 
 Imports System
 Imports System.Collections.Generic
-Imports System.DateTime
 Imports System.Math
-Imports System.Threading
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
@@ -76,70 +74,17 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' distribution processes.
 
 
-    Private NextStalePointsCheck As DateTime
-    Private Points As New Dictionary(Of Object, DBMPoint)
-    Private Lock As New Object
-
-
-    Private Sub RemoveStalePoints
-
-      ' Stale items are removed after every calculation interval so that unused
-      ' resources can be freed to prevent all available memory from filling up.
-
-      Dim Pair As KeyValuePair(Of Object, DBMPoint)
-      Dim StalePoints As New List(Of Object)
-      Dim StalePoint As Object
-
-      ' SyncLock: Access to this method does not have to be synchronized because
-      '           this private method is only called from the Point function
-      '           where the lock is already obtained. Items can be removed from
-      '           the dictionary in this method.
-
-      If Now >= NextStalePointsCheck Then
-
-        NextStalePointsCheck = AlignTimestamp(Now, CalculationInterval).
-          AddSeconds(CalculationInterval)
-
-        For Each Pair In Points
-          If Pair.Value.IsStale Then ' Find stale points
-            StalePoints.Add(Pair.Key)
-          End If
-        Next
-
-        For Each StalePoint In StalePoints
-          Points.Remove(StalePoint) ' Remove stale points
-        Next
-
-      End If
-
-    End Sub
+    Private PointsCache As New DBMCache
 
 
     Private Function Point(PointDriver As DBMPointDriverAbstract) As DBMPoint
 
-      ' Returns DBMPoint object from Points dictionary. If dictionary does not
-      ' yet contain object, it is added.
+      ' Returns DBMPoint object from the cache. If cache does not yet contain
+      ' object, it is added.
 
-      ' SyncLock: Access to this method has to be synchronized because the
-      '           Points dictionary may be modified here. New Points can be
-      '           added and an item from the dictionary is returned. The
-      '           PrepareData or Result methods, where this method is accessed,
-      '           might be called by multiple threads at once.
-
-      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
-      Try
-
-        RemoveStalePoints
-
-        If Not Points.ContainsKey(PointDriver.Point) Then
-          Points.Add(PointDriver.Point, New DBMPoint(PointDriver)) ' Add new pt.
-        End If
-
-        Return Points.Item(PointDriver.Point)
-
-      Finally
-        Monitor.Exit(Lock) ' Ensure that the lock is released.
-      End Try
+      PointsCache.AddItemIfNotExists(PointDriver.Point,
+        New DBMPoint(PointDriver))
+      Return DirectCast(PointsCache.GetItem(PointDriver.Point), DBMPoint)
 
     End Function
 
