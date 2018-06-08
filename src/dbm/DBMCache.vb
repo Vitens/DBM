@@ -42,8 +42,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private MaximumItems As Integer
     Private ItemStaleInterval As Integer
     Private Lock As New Object
-    Private CacheItems As New Dictionary(Of Object, DBMCacheItem)
     Private NextStaleItemsCheck As DateTime
+    Private CacheItems As New Dictionary(Of Object, DBMCacheItem)
 
 
     Public Sub New(Optional MaximumItems As Integer = 0,
@@ -52,20 +52,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       Me.MaximumItems = MaximumItems ' Use default (0) value for unlimited items
       Me.ItemStaleInterval = ItemStaleInterval ' Default val. (0) for no timeout
       UpdateCheck
-
-    End Sub
-
-
-    Public Sub Clear
-
-      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
-      Try
-
-        CacheItems.Clear
-
-      Finally
-        Monitor.Exit(Lock) ' Ensure that the lock is released.
-      End Try
 
     End Sub
 
