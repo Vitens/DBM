@@ -105,7 +105,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim StaleItem As Object
 
       ' SyncLock: Access to this method does not have to be synchronized because
-      '           this private method is only called from the LimitSize method
+      '           this private method is only called from the AddItem method
       '           where the lock is already obtained.
 
       If Now >= NextStaleItemsCheck Then
@@ -136,8 +136,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       '           this private method is only called from the AddItem method
       '           where the lock is already obtained. Items can be removed from
       '           the dictionary in this method.
-
-      RemoveStaleItems
 
       If MaximumItems > 0 Then
         If CacheItems.Count >= MaximumItems Then
@@ -182,6 +180,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
 
+        RemoveStaleItems
         LimitSize
 
         CacheItems.Add(ValidatedKey(Key),
