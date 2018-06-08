@@ -23,7 +23,6 @@ Option Strict
 
 
 Imports System
-Imports System.DateTime
 Imports System.Threading
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
@@ -37,61 +36,16 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public PointDriver As DBMPointDriverAbstract
-    Private TimeOutLock, Lock As New Object
-    Private PointTimeOut, PreparedStartTimestamp,
-      PreparedEndTimestamp As DateTime
+    Private Lock As New Object
+    Private PreparedStartTimestamp, PreparedEndTimestamp As DateTime
     Private SubtractPointsCache As New DBMCache ' Cache of forecast results
 
 
     Public Sub New(PointDriver As DBMPointDriverAbstract)
 
       Me.PointDriver = PointDriver
-      RefreshTimeOut
 
     End Sub
-
-
-    Private Sub RefreshTimeOut
-
-      ' Update timestamp after which point turns stale.
-
-      ' SyncLock: Access to this method has to be synchronized because the
-      '           PointTimeOut is modified here and should be available in the
-      '           IsStale method.
-
-      Monitor.Enter(TimeOutLock) ' Request the lock, and block until obtained.
-      Try
-
-        PointTimeOut = AlignTimestamp(Now, CalculationInterval).
-          AddSeconds(2*CalculationInterval)
-
-      Finally
-        Monitor.Exit(TimeOutLock) ' Ensure that the lock is released.
-      End Try
-
-    End Sub
-
-
-    Public Function IsStale As Boolean
-
-      ' Returns true if this DBMPoint has not been used for at least one
-      ' calculation interval. Used by the DBM class to clean up unused
-      ' resources.
-
-      ' SyncLock: Access to this method has to be synchronized because the
-      '           PointTimeOut should be available here and is modified in the
-      '           RefreshTimeOut method.
-
-      Monitor.Enter(TimeOutLock) ' Request the lock, and block until obtained.
-      Try
-
-        Return Now >= PointTimeOut ' Returns True if the point has timed out.
-
-      Finally
-        Monitor.Exit(TimeOutLock) ' Ensure that the lock is released.
-      End Try
-
-    End Function
 
 
     Public Sub PrepareData(StartTimestamp As DateTime, EndTimestamp As DateTime)
@@ -113,8 +67,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
-
-        RefreshTimeOut
 
         If StartTimestamp < PreparedStartTimestamp Or
           EndTimestamp > PreparedEndTimestamp Then ' Only if not yet available
@@ -152,8 +104,6 @@ Namespace Vitens.DynamicBandwidthMonitor
         ForecastValues(EMAPreviousPeriods),
         LowerControlLimits(EMAPreviousPeriods),
         UpperControlLimits(EMAPreviousPeriods) As Double
-
-      RefreshTimeOut
 
       Result = New DBMResult
       Result.Timestamp = AlignTimestamp(Timestamp, CalculationInterval)
