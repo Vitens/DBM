@@ -24,8 +24,10 @@ Option Strict
 
 Imports System
 Imports System.Collections.Generic
+Imports System.DateTime
 Imports System.Threading
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
+Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -38,13 +40,18 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private MaximumItems As Integer
+    Private ItemStaleInterval As Integer
     Private Lock As New Object
     Private CacheItems As New Dictionary(Of Object, DBMCacheItem)
+    Private NextStaleItemsCheck As DateTime
 
 
-    Public Sub New(Optional MaximumItems As Integer = Nothing)
+    Public Sub New(Optional MaximumItems As Integer = 0,
+      Optional ItemStaleInterval As Integer = 0)
 
-      Me.MaximumItems = MaximumItems ' Use default value for unlimited items.
+      Me.MaximumItems = MaximumItems ' Use default (0) value for unlimited items
+      Me.ItemStaleInterval = ItemStaleInterval ' Default val. (0) for no timeout
+      UpdateCheck
 
     End Sub
 
@@ -63,6 +70,63 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
+    Private Sub UpdateCheck
+
+      ' Update timestamp after which stale items have to be checked.
+
+      If ItemStaleInterval > 0 Then
+      
+        ' SyncLock: Access to this method has to be synchronized because the
+        '           NextStaleItemsCheck variable is modified here and should be
+        '           available in the RemoveStaleItems method.
+
+        Monitor.Enter(Lock) ' Request the lock, and block until obtained.
+        Try
+
+          NextStaleItemsCheck = NextInterval(Now)
+
+        Finally
+          Monitor.Exit(Lock) ' Ensure that the lock is released.
+        End Try
+
+      Else
+
+        NextStaleItemsCheck = DateTime.MaxValue ' Never
+
+      End If
+
+    End Sub
+
+
+    Private Sub RemoveStaleItems
+
+      Dim Pair As KeyValuePair(Of Object, DBMCacheItem)
+      Dim StaleItems As New List(Of Object)
+      Dim StaleItem As Object
+
+      ' SyncLock: Access to this method does not have to be synchronized because
+      '           this private method is only called from the LimitSize method
+      '           where the lock is already obtained.
+
+      If Now >= NextStaleItemsCheck Then
+
+        UpdateCheck
+
+        For Each Pair In CacheItems
+          If Pair.Value.IsStale Then ' Find stale items
+            StaleItems.Add(Pair.Key)
+          End If
+        Next
+
+        For Each StaleItem In StaleItems
+          CacheItems.Remove(StaleItem) ' Remove stale items
+        Next
+
+      End If
+
+    End Sub
+
+
     Private Sub LimitSize
 
       ' Limit number of cached forecast results per point. Cache size is limited
@@ -72,6 +136,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       '           this private method is only called from the AddItem method
       '           where the lock is already obtained. Items can be removed from
       '           the dictionary in this method.
+
+      RemoveStaleItems
 
       If MaximumItems > 0 Then
         If CacheItems.Count >= MaximumItems Then
@@ -118,7 +184,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         LimitSize
 
-        CacheItems.Add(ValidatedKey(Key), New DBMCacheItem(Item))
+        CacheItems.Add(ValidatedKey(Key),
+          New DBMCacheItem(Item, ItemStaleInterval))
 
       Finally
         Monitor.Exit(Lock) ' Ensure that the lock is released.
@@ -161,7 +228,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Monitor.Exit(Lock) ' Ensure that the lock is released.
       End Try
 
-      Return CacheItem.Item
+      Return CacheItem.GetItem
 
     End Function
 
