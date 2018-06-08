@@ -418,6 +418,15 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Shared Function NextInterval(Timestamp As DateTime,
+      Optional Intervals As Integer = 1) As DateTime
+
+       Return AlignTimestamp(Timestamp, CalculationInterval).
+            AddSeconds(Intervals*CalculationInterval)
+
+    End Function
+
+
   End Class
 
 

@@ -23,8 +23,6 @@ Option Strict
 
 
 Imports System
-Imports System.Collections.Generic
-Imports System.DateTime
 Imports System.Threading
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
@@ -38,64 +36,16 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public PointDriver As DBMPointDriverAbstract
-    Private TimeOutLock, Lock As New Object
-    Private PointTimeOut, PreparedStartTimestamp,
-      PreparedEndTimestamp As DateTime
-    Private ForecastsSubtractPoint As DBMPoint
-    Private ForecastsItem As New Dictionary(Of DateTime, DBMForecastItem)
-    Public Shared ForecastsCacheSize As Integer =
-      2*(EMAPreviousPeriods+2*CorrelationPreviousPeriods+1)
+    Private Lock As New Object
+    Private PreparedStartTimestamp, PreparedEndTimestamp As DateTime
+    Private SubtractPointsCache As New DBMCache ' Cache of forecast results
 
 
     Public Sub New(PointDriver As DBMPointDriverAbstract)
 
       Me.PointDriver = PointDriver
-      RefreshTimeOut
 
     End Sub
-
-
-    Private Sub RefreshTimeOut
-
-      ' Update timestamp after which point turns stale.
-
-      ' SyncLock: Access to this method has to be synchronized because the
-      '           PointTimeOut is modified here and should be available in the
-      '           IsStale method.
-
-      Monitor.Enter(TimeOutLock) ' Request the lock, and block until obtained.
-      Try
-
-        PointTimeOut = AlignTimestamp(Now, CalculationInterval).
-          AddSeconds(2*CalculationInterval)
-
-      Finally
-        Monitor.Exit(TimeOutLock) ' Ensure that the lock is released.
-      End Try
-
-    End Sub
-
-
-    Public Function IsStale As Boolean
-
-      ' Returns true if this DBMPoint has not been used for at least one
-      ' calculation interval. Used by the DBM class to clean up unused
-      ' resources.
-
-      ' SyncLock: Access to this method has to be synchronized because the
-      '           PointTimeOut should be available here and is modified in the
-      '           RefreshTimeOut method.
-
-      Monitor.Enter(TimeOutLock) ' Request the lock, and block until obtained.
-      Try
-
-        Return Now >= PointTimeOut ' Returns True if the point has timed out.
-
-      Finally
-        Monitor.Exit(TimeOutLock) ' Ensure that the lock is released.
-      End Try
-
-    End Function
 
 
     Public Sub PrepareData(StartTimestamp As DateTime, EndTimestamp As DateTime)
@@ -119,8 +69,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
-
-        RefreshTimeOut
 
         If StartTimestamp < PreparedStartTimestamp Or
           EndTimestamp > PreparedEndTimestamp Then ' Only if not yet available
@@ -150,6 +98,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' moving average, previously calculated results will often need to be
       ' included in later calculations.
 
+      Dim ForecastItemsCache As DBMCache ' Cached forecast results for subtr.pt.
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
       Dim ForecastTimestamp, PatternTimestamp As DateTime
       Dim ForecastItem As DBMForecastItem = Nothing
@@ -158,26 +107,23 @@ Namespace Vitens.DynamicBandwidthMonitor
         LowerControlLimits(EMAPreviousPeriods),
         UpperControlLimits(EMAPreviousPeriods) As Double
 
-      ' SyncLock: Access to this method has to be synchronized because the
-      '           ForecastsItem dictionary, which contains cached results, is
-      '           modified during the result calculations. The same lock is
+      ' SyncLock: Access to this method has to be synchronized. The same lock is
       '           shared between PrepareData and Result because these methods
       '           should not be executed simultaneously.
 
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
 
-        RefreshTimeOut
-
         Result = New DBMResult
         Result.Timestamp = AlignTimestamp(Timestamp, CalculationInterval)
 
-        ' Cached results can only be reused if the point that is to be
-        ' subtracted is identical to the one used in the cached results.
-        If SubtractPoint IsNot ForecastsSubtractPoint Then
-          ForecastsSubtractPoint = SubtractPoint
-          ForecastsItem.Clear ' No, so clear results
-        End If
+        ' If required, create new cache for this subtract point. The size of the
+        ' cache is automatically optimized for real-time continuous
+        ' calculations.
+        SubtractPointsCache.AddItemIfNotExists(SubtractPoint,
+          New DBMCache(2*(EMAPreviousPeriods+2*CorrelationPreviousPeriods+1)))
+        ForecastItemsCache = DirectCast(SubtractPointsCache.
+          GetItem(SubtractPoint), DBMCache)
 
         For CorrelationCounter = 0 To CorrelationPreviousPeriods ' Correl. loop
 
@@ -193,9 +139,10 @@ Namespace Vitens.DynamicBandwidthMonitor
               ForecastTimestamp = Result.Timestamp.AddSeconds(
                 -(EMAPreviousPeriods-EMACounter+CorrelationCounter)*
                 CalculationInterval) ' Timestamp for forecast results
+              ForecastItem = DirectCast(ForecastItemsCache.
+                GetItem(ForecastTimestamp), DBMForecastItem)
 
-              If Not ForecastsItem.TryGetValue(ForecastTimestamp,
-                ForecastItem) Then ' Calculate forecast data if not cached
+              If ForecastItem Is Nothing Then ' Not cached
 
                 For PatternCounter = 0 To ComparePatterns ' Data for regression.
 
@@ -211,18 +158,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                 Next PatternCounter
 
                 ForecastItem = Forecast(Patterns)
-
-                ' Limit number of cached forecast results per point. The size of
-                ' the cache is automatically optimized for real-time continuous
-                ' calculations. Cache size is limited using random eviction
-                ' policy.
-                If ForecastsItem.Count >= ForecastsCacheSize Then
-                  ForecastsItem.Remove(ForecastsItem.ElementAt(
-                    RandomNumber(0, ForecastsItem.Count-1)).Key)
-                End If
-
-                ' Add calculated forecast to cache.
-                ForecastsItem.Add(ForecastTimestamp, ForecastItem)
+                ForecastItemsCache.AddItem(ForecastTimestamp, ForecastItem)
 
               End If
 

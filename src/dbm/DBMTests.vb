@@ -33,7 +33,6 @@ Imports Vitens.DynamicBandwidthMonitor.DBM
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
-Imports Vitens.DynamicBandwidthMonitor.DBMPoint
 Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
 
 
@@ -702,6 +701,48 @@ Namespace Vitens.DynamicBandwidthMonitor
         AlignTimestamp(New DateTime(2016, 2, 11, 0, 44, 7), 86400) = 
         New DateTime(2016, 2, 11, 0, 0, 0)
 
+      UnitTestsPassed = UnitTestsPassed And
+        NextInterval(New DateTime(2016, 4, 4, 16, 33, 2)) =
+        New DateTime(2016, 4, 4, 16, 35, 0) And
+        NextInterval(New DateTime(2015, 7, 15, 2, 29, 58)) = 
+        New DateTime(2015, 7, 15, 2, 30, 0) And
+        NextInterval(New DateTime(2016, 4, 1, 22, 5, 17)) = 
+        New DateTime(2016, 4, 1, 22, 10, 0) And
+        NextInterval(New DateTime(2013, 12, 1, 21, 47, 35)) = 
+        New DateTime(2013, 12, 1, 21, 50, 0) And
+        NextInterval(New DateTime(2016, 11, 22, 0, 22, 17)) = 
+        New DateTime(2016, 11, 22, 0, 25, 0) And
+        NextInterval(New DateTime(2016, 10, 11, 19, 11, 41)) = 
+        New DateTime(2016, 10, 11, 19, 15, 0) And
+        NextInterval(New DateTime(2013, 10, 26, 4, 24, 53)) = 
+        New DateTime(2013, 10, 26, 4, 25, 0) And
+        NextInterval(New DateTime(2014, 5, 2, 2, 52, 41)) = 
+        New DateTime(2014, 5, 2, 2, 55, 0) And
+        NextInterval(New DateTime(2014, 8, 16, 13, 11, 10)) = 
+        New DateTime(2014, 8, 16, 13, 15, 0) And
+        NextInterval(New DateTime(2014, 10, 25, 8, 26, 4)) = 
+        New DateTime(2014, 10, 25, 8, 30, 0) And
+        NextInterval(New DateTime(2015, 6, 2, 18, 36, 24), 1) = 
+        New DateTime(2015, 6, 2, 18, 40, 0) And
+        NextInterval(New DateTime(2016, 11, 21, 16, 24, 27), 2) = 
+        New DateTime(2016, 11, 21, 16, 30, 0) And
+        NextInterval(New DateTime(2014, 4, 4, 8, 42, 10), 3) = 
+        New DateTime(2014, 4, 4, 8, 55, 0) And
+        NextInterval(New DateTime(2016, 2, 22, 19, 8, 41), 4) = 
+        New DateTime(2016, 2, 22, 19, 25, 0) And
+        NextInterval(New DateTime(2015, 9, 13, 22, 48, 17), 5) = 
+        New DateTime(2015, 9, 13, 23, 10, 0) And
+        NextInterval(New DateTime(2016, 10, 20, 2, 47, 48), 6) = 
+        New DateTime(2016, 10, 20, 3, 15, 0) And
+        NextInterval(New DateTime(2014, 2, 8, 23, 12, 34), 7) = 
+        New DateTime(2014, 2, 8, 23, 45, 0) And
+        NextInterval(New DateTime(2016, 2, 27, 23, 40, 39), 8) = 
+        New DateTime(2016, 2, 28, 0, 20, 0) And
+        NextInterval(New DateTime(2015, 8, 26, 9, 35, 55), -12) = 
+        New DateTime(2015, 8, 26, 8, 35, 0) And
+        NextInterval(New DateTime(2016, 2, 11, 0, 44, 7), 0) = 
+        New DateTime(2016, 2, 11, 0, 40, 0)
+
       For i = 0 To 19
         If i = 0 Then
           StatisticsItem = Statistics({3411, 3067, 3159, 2579, 2604, 3549,
@@ -898,7 +939,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Timestamp, Timer As DateTime
       Dim Result As DBMResult
       Dim DBM As New DBM
-      Dim i, Count As Integer
+      Dim Count As Integer
 
       InputPointDriver = New DBMPointDriverTestModel(0)
       CorrelationPoints.Add(New DBMCorrelationPoint(
@@ -906,16 +947,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       CorrelationPoints.Add(New DBMCorrelationPoint(
         New DBMPointDriverTestModel(227), True))
       Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
-
-      ' Pre-fill cache for the DBMPoint to calculate a more realistic value for
-      ' the performance index as this then better simulates a real-time
-      ' continuous calculation.
-      Timestamp = Timestamp.
-        AddSeconds(ForecastsCacheSize*-CalculationInterval)
-      For i = 1 To ForecastsCacheSize
-        Result = DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
-        Timestamp = Timestamp.AddSeconds(CalculationInterval)
-      Next i
 
       Timer = Now
       Do While Now.Ticks-Timer.Ticks < DurationTicks
