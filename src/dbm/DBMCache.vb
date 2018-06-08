@@ -34,14 +34,17 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMCache
 
 
+    Const KeyNothingAlternative = Int32.MinValue
+
+
     Private MaximumItems As Integer
     Private Lock As New Object
     Private CacheItems As New Dictionary(Of Object, DBMCacheItem)
 
 
-    Public Sub New(MaximumItems As Integer)
+    Public Sub New(Optional MaximumItems As Integer = Nothing)
 
-      Me.MaximumItems = MaximumItems
+      Me.MaximumItems = MaximumItems ' Use default value for unlimited items.
 
     End Sub
 
@@ -70,22 +73,52 @@ Namespace Vitens.DynamicBandwidthMonitor
       '           where the lock is already obtained. Items can be removed from
       '           the dictionary in this method.
 
-      If CacheItems.Count >= MaximumItems Then
-        CacheItems.Remove(CacheItems.ElementAt(
-          RandomNumber(0, CacheItems.Count-1)).Key)
+      If MaximumItems > 0 Then
+        If CacheItems.Count >= MaximumItems Then
+          CacheItems.Remove(CacheItems.ElementAt(
+            RandomNumber(0, CacheItems.Count-1)).Key)
+        End If
       End If
 
     End Sub
 
 
-    Public Sub AddItem(Index As Object, Item As Object)
+    Private Function ValidatedKey(Key As Object) As Object
+
+      ' Keys cannot be Nothing, as the dictionary requires an instance of an
+      ' object to be used for the hash code.
+
+      If Key Is Nothing Then
+        Return KeyNothingAlternative
+      Else
+        Return Key
+      End If
+
+    End Function
+
+
+    Public Function HasItem(Key As Object) As Boolean
+
+      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
+      Try
+
+        Return CacheItems.ContainsKey(ValidatedKey(Key))
+
+      Finally
+        Monitor.Exit(Lock) ' Ensure that the lock is released.
+      End Try
+
+    End Function
+
+
+    Public Sub AddItem(Key As Object, Item As Object)
 
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
 
         LimitSize
 
-        CacheItems.Add(Index, New DBMCacheItem(Item))
+        CacheItems.Add(ValidatedKey(Key), New DBMCacheItem(Item))
 
       Finally
         Monitor.Exit(Lock) ' Ensure that the lock is released.
@@ -94,14 +127,33 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Function GetItem(Index As Object) As Object
+    Public Sub AddItemIfNotExists(Key As Object, Item As Object)
+
+      ' SyncLock: Access to this method has to be synchronized because multiple
+      '           threads could try to add a new item simultaneously. HasItem
+      '           will then return False on each thread and the same item might
+      '           be added multiple times through AddItem.
+
+      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
+      Try
+
+        If Not HasItem(Key) Then AddItem(Key, Item)
+
+      Finally
+        Monitor.Exit(Lock) ' Ensure that the lock is released.
+      End Try
+
+    End Sub
+
+
+    Public Function GetItem(Key As Object) As Object
 
       Dim CacheItem As New DBMCacheItem
 
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
 
-        If Not CacheItems.TryGetValue(Index, CacheItem) Then
+        If Not CacheItems.TryGetValue(ValidatedKey(Key), CacheItem) Then
           CacheItem = New DBMCacheItem ' Not found, return default empty value
         End If
 

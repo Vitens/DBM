@@ -36,14 +36,11 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMPoint
 
 
-' TODO VARIABLE ORDER
     Public PointDriver As DBMPointDriverAbstract
     Private TimeOutLock, Lock As New Object
     Private PointTimeOut, PreparedStartTimestamp,
       PreparedEndTimestamp As DateTime
-    Private Cache As New DBMCache(2*(EMAPreviousPeriods+2*
-      CorrelationPreviousPeriods+1)) ' optimized for continuous calculations
-    Private ForecastsSubtractPoint As DBMPoint
+    Private Caches As New DBMCache ' Cache of forecast results per subtract pt.
 
 
     Public Sub New(PointDriver As DBMPointDriverAbstract)
@@ -112,9 +109,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       '           DBM.PrepareData method, where this method is called from for
       '           each required PointDriver, access has to be synchronized so
       '           that only the first call will actually prepare the data.
-      '           Subsequent calls will then use this cached data. The same lock
-      '           is shared between PrepareData and Result because these methods
-      '           should not be executed simultaneously.
+      '           Subsequent calls will then use this cached data.
 
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
@@ -149,6 +144,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' moving average, previously calculated results will often need to be
       ' included in later calculations.
 
+      Dim Cache As DBMCache ' Cached forecast results for SubtractPoint
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
       Dim ForecastTimestamp, PatternTimestamp As DateTime
       Dim ForecastItem As DBMForecastItem = Nothing
@@ -157,91 +153,75 @@ Namespace Vitens.DynamicBandwidthMonitor
         LowerControlLimits(EMAPreviousPeriods),
         UpperControlLimits(EMAPreviousPeriods) As Double
 
-' TODO COMMENT!!!!!
-' TODO SYNCLOCK????
-      ' SyncLock: Access to this method has to be synchronized because the
-      '           ForecastsItem dictionary, which contains cached results, is
-      '           modified during the result calculations. The same lock is
-      '           shared between PrepareData and Result because these methods
-      '           should not be executed simultaneously.
+      RefreshTimeOut
 
-      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
-      Try
+      Result = New DBMResult
+      Result.Timestamp = AlignTimestamp(Timestamp, CalculationInterval)
 
-        RefreshTimeOut
+      ' If required, create new cache for this subtract point. The size of the
+      ' cache is automatically optimized for real-time continuous calculations.
+      Caches.AddItemIfNotExists(SubtractPoint,
+        New DBMCache(2*(EMAPreviousPeriods+2*CorrelationPreviousPeriods+1)))
+      Cache = DirectCast(Caches.GetItem(SubtractPoint), DBMCache)
 
-        Result = New DBMResult
-        Result.Timestamp = AlignTimestamp(Timestamp, CalculationInterval)
+      For CorrelationCounter = 0 To CorrelationPreviousPeriods ' Correl. loop
 
-        ' Cached results can only be reused if the point that is to be
-        ' subtracted is identical to the one used in the cached results.
-        If SubtractPoint IsNot ForecastsSubtractPoint Then
-          ForecastsSubtractPoint = SubtractPoint
-          Cache.Clear ' No, so clear results
+        ' Retrieve data and calculate forecast. Only do this for the required
+        ' timestamp and only process previous timestamps for calculating
+        ' correlation results if an event was found.
+        If Result.ForecastItem Is Nothing Or (IsInputDBMPoint And
+          Result.Factor <> 0 And HasCorrelationDBMPoint) Or
+          Not IsInputDBMPoint Then
+
+          For EMACounter = 0 To EMAPreviousPeriods ' Filter high freq. variation
+
+            ForecastTimestamp = Result.Timestamp.AddSeconds(
+              -(EMAPreviousPeriods-EMACounter+CorrelationCounter)*
+              CalculationInterval) ' Timestamp for forecast results
+            ForecastItem = DirectCast(Cache.GetItem(ForecastTimestamp),
+              DBMForecastItem)
+
+            If ForecastItem Is Nothing Then ' Not cached
+
+              For PatternCounter = 0 To ComparePatterns ' Data for regression.
+
+                PatternTimestamp = ForecastTimestamp.
+                  AddDays(-(ComparePatterns-PatternCounter)*7) ' Timestamp
+                Patterns(PatternCounter) =
+                  PointDriver.TryGetData(PatternTimestamp) ' Get data
+                If SubtractPoint IsNot Nothing Then ' Subtract input if req'd
+                  Patterns(PatternCounter) -=
+                    SubtractPoint.PointDriver.TryGetData(PatternTimestamp)
+                End If
+
+              Next PatternCounter
+
+              ForecastItem = Forecast(Patterns)
+              Cache.AddItem(ForecastTimestamp, ForecastItem)
+
+            End If
+
+            With ForecastItem ' Store results in arrays for EMA calculation.
+              Measurements(EMACounter) = .Measurement
+              ForecastValues(EMACounter) = .ForecastValue
+              LowerControlLimits(EMACounter) = .LowerControlLimit
+              UpperControlLimits(EMACounter) = .UpperControlLimit
+            End With
+
+          Next EMACounter
+
+          ' Calculate final result using filtered calculation results.
+          Result.Calculate(CorrelationPreviousPeriods-CorrelationCounter,
+            ExponentialMovingAverage(Measurements),
+            ExponentialMovingAverage(ForecastValues),
+            ExponentialMovingAverage(LowerControlLimits),
+            ExponentialMovingAverage(UpperControlLimits))
+
         End If
 
-        For CorrelationCounter = 0 To CorrelationPreviousPeriods ' Correl. loop
+      Next CorrelationCounter
 
-          ' Retrieve data and calculate forecast. Only do this for the required
-          ' timestamp and only process previous timestamps for calculating
-          ' correlation results if an event was found.
-          If Result.ForecastItem Is Nothing Or (IsInputDBMPoint And
-            Result.Factor <> 0 And HasCorrelationDBMPoint) Or
-            Not IsInputDBMPoint Then
-
-            For EMACounter = 0 To EMAPreviousPeriods ' Filter hi freq. variation
-
-              ForecastTimestamp = Result.Timestamp.AddSeconds(
-                -(EMAPreviousPeriods-EMACounter+CorrelationCounter)*
-                CalculationInterval) ' Timestamp for forecast results
-              ForecastItem =
-                DirectCast(Cache.GetItem(ForecastTimestamp), DBMForecastItem)
-
-              If ForecastItem Is Nothing Then ' Not cached
-
-                For PatternCounter = 0 To ComparePatterns ' Data for regression.
-
-                  PatternTimestamp = ForecastTimestamp.
-                    AddDays(-(ComparePatterns-PatternCounter)*7) ' Timestamp
-                  Patterns(PatternCounter) =
-                    PointDriver.TryGetData(PatternTimestamp) ' Get data
-                  If SubtractPoint IsNot Nothing Then ' Subtract input if req'd
-                    Patterns(PatternCounter) -=
-                      SubtractPoint.PointDriver.TryGetData(PatternTimestamp)
-                  End If
-
-                Next PatternCounter
-
-                ForecastItem = Forecast(Patterns)
-                Cache.AddItem(ForecastTimestamp, ForecastItem)
-
-              End If
-
-              With ForecastItem ' Store results in arrays for EMA calculation.
-                Measurements(EMACounter) = .Measurement
-                ForecastValues(EMACounter) = .ForecastValue
-                LowerControlLimits(EMACounter) = .LowerControlLimit
-                UpperControlLimits(EMACounter) = .UpperControlLimit
-              End With
-
-            Next EMACounter
-
-            ' Calculate final result using filtered calculation results.
-            Result.Calculate(CorrelationPreviousPeriods-CorrelationCounter,
-              ExponentialMovingAverage(Measurements),
-              ExponentialMovingAverage(ForecastValues),
-              ExponentialMovingAverage(LowerControlLimits),
-              ExponentialMovingAverage(UpperControlLimits))
-
-          End If
-
-        Next CorrelationCounter
-
-        Return Result
-
-      Finally
-        Monitor.Exit(Lock) ' Ensure that the lock is released.
-      End Try
+      Return Result
 
     End Function
 
