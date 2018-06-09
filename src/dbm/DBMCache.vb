@@ -60,26 +60,22 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Update timestamp after which stale items have to be checked.
 
-      If ItemStaleInterval > 0 Then
-      
-        ' SyncLock: Access to this method has to be synchronized because the
-        '           NextStaleItemsCheck variable is modified here and should be
-        '           available in the RemoveStaleItems method.
+      ' SyncLock: Access to this method has to be synchronized because the
+      '           NextStaleItemsCheck variable is modified here and should be
+      '           available in the RemoveStaleItems method.
 
-        Monitor.Enter(Lock) ' Request the lock, and block until obtained.
-        Try
+      Monitor.Enter(Lock) ' Request the lock, and block until obtained.
+      Try
 
+        If ItemStaleInterval > 0 Then
           NextStaleItemsCheck = NextInterval(Now)
+        Else
+          NextStaleItemsCheck = DateTime.MaxValue ' Never
+        End If
 
-        Finally
-          Monitor.Exit(Lock) ' Ensure that the lock is released.
-        End Try
-
-      Else
-
-        NextStaleItemsCheck = DateTime.MaxValue ' Never
-
-      End If
+      Finally
+        Monitor.Exit(Lock) ' Ensure that the lock is released.
+      End Try
 
     End Sub
 
