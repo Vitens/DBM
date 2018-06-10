@@ -24,10 +24,8 @@ Option Strict
 
 Imports System
 Imports System.Collections.Generic
-Imports System.DateTime
 Imports System.Threading
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
-Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -40,71 +38,13 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private MaximumItems As Integer
-    Private ItemStaleInterval As Integer
-    Private Lock As New Object
-    Private NextStaleItemsCheck As DateTime
     Private CacheItems As New Dictionary(Of Object, DBMCacheItem)
+    Private Lock As New Object
 
 
-    Public Sub New(Optional MaximumItems As Integer = 0,
-      Optional ItemStaleInterval As Integer = 0)
+    Public Sub New(Optional MaximumItems As Integer = 0)
 
       Me.MaximumItems = MaximumItems ' Use default (0) value for unlimited items
-      Me.ItemStaleInterval = ItemStaleInterval ' Default val. (0) for no timeout
-      UpdateCheck
-
-    End Sub
-
-
-    Private Sub UpdateCheck
-
-      ' Update timestamp after which stale items have to be checked.
-
-      ' SyncLock: Access to this method has to be synchronized because the
-      '           NextStaleItemsCheck variable is modified here and should be
-      '           available in the RemoveStaleItems method.
-
-      Monitor.Enter(Lock) ' Request the lock, and block until obtained.
-      Try
-
-        If ItemStaleInterval > 0 Then
-          NextStaleItemsCheck = NextInterval(Now)
-        Else
-          NextStaleItemsCheck = DateTime.MaxValue ' Never
-        End If
-
-      Finally
-        Monitor.Exit(Lock) ' Ensure that the lock is released.
-      End Try
-
-    End Sub
-
-
-    Private Sub RemoveStaleItems
-
-      Dim Pair As KeyValuePair(Of Object, DBMCacheItem)
-      Dim StaleItems As New List(Of Object)
-      Dim StaleItem As Object
-
-      ' SyncLock: Access to this method does not have to be synchronized because
-      '           this private method is only called from the AddItem method
-      '           where the lock is already obtained.
-
-      If Now >= NextStaleItemsCheck Then
-
-        UpdateCheck
-
-        For Each Pair In CacheItems
-          If Pair.Value.IsStale Then ' Find stale items
-            StaleItems.Add(Pair.Key)
-          End If
-        Next
-
-        For Each StaleItem In StaleItems
-          CacheItems.Remove(StaleItem) ' Remove stale items
-        Next
-
-      End If
 
     End Sub
 
@@ -119,11 +59,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       '           where the lock is already obtained. Items can be removed from
       '           the dictionary in this method.
 
-      If MaximumItems > 0 Then
-        If CacheItems.Count >= MaximumItems Then
-          CacheItems.Remove(CacheItems.ElementAt(
-            RandomNumber(0, CacheItems.Count-1)).Key)
-        End If
+      If MaximumItems > 0 And CacheItems.Count >= MaximumItems Then
+        CacheItems.Remove(CacheItems.ElementAt(
+          RandomNumber(0, CacheItems.Count-1)).Key)
       End If
 
     End Sub
@@ -162,11 +100,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
 
-        RemoveStaleItems
         LimitSize
 
-        CacheItems.Add(ValidatedKey(Key),
-          New DBMCacheItem(Item, ItemStaleInterval))
+        CacheItems.Add(ValidatedKey(Key), New DBMCacheItem(Item))
 
       Finally
         Monitor.Exit(Lock) ' Ensure that the lock is released.
@@ -209,7 +145,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Monitor.Exit(Lock) ' Ensure that the lock is released.
       End Try
 
-      Return CacheItem.GetItem
+      Return CacheItem.Item
 
     End Function
 
