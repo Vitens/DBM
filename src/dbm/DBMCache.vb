@@ -34,7 +34,7 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMCache
 
 
-    Const KeyNothingAlternative = Int32.MinValue
+    Const KeyNothingAlternative As Integer = Int32.MinValue
 
 
     Private MaximumItems As Integer

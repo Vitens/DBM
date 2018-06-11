@@ -36,6 +36,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' for its calculations. The values for these parameters can be changed
     ' at runtime.
 
+    ' Controls the size of the caching algorithms. Use 0 for unlimited items.
+    Public Shared CacheSizeFactor As Integer = 3 ' Try to keep at default (0-16)
 
     ' Time interval at which the calculation is run.
     Public Shared CalculationInterval As Integer = 300 ' seconds, 5 minutes
