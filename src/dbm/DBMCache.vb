@@ -63,6 +63,20 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Sub Clear
+
+      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
+      Try
+
+        CacheItems.Clear
+
+      Finally
+        Monitor.Exit(Lock) ' Ensure that the lock is released.
+      End Try
+
+    End Sub
+
+
     Public Sub AddItem(Key As Object, Item As Object)
 
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.

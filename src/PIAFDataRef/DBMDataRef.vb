@@ -25,7 +25,6 @@ Option Strict
 Imports System
 Imports System.Collections.Generic
 Imports System.ComponentModel
-Imports System.DateTime
 Imports System.Math
 Imports System.Runtime.InteropServices
 Imports OSIsoft.AF.Asset
@@ -33,7 +32,6 @@ Imports OSIsoft.AF.Asset.AFAttributeTrait
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Time
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
-Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
@@ -75,7 +73,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const pValueMinMax As Double = 0.9999 ' CI for Minimum and Maximum
 
 
-    Private NextPointsUpdate As DateTime
+    Private PointsStale As New DBMStale
     Private InputPointDriver As DBMPointDriver
     Private CorrelationPoints As List(Of DBMCorrelationPoint)
     Private Shared DBM As New DBM
@@ -132,10 +130,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim Element, ParentElement, SiblingElement As AFElement
 
-      If Now >= NextPointsUpdate And Attribute IsNot Nothing And
+      If PointsStale.IsStale And Attribute IsNot Nothing And
         Attribute.Parent IsNot Nothing Then
 
-        NextPointsUpdate = NextInterval(Now)
+        PointsStale.Refresh
         Element = DirectCast(Attribute.Element, AFElement)
         InputPointDriver = New DBMPointDriver(Attribute.Parent) ' Parent attrib.
         CorrelationPoints = New List(Of DBMCorrelationPoint)
