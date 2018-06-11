@@ -109,8 +109,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         Result.Timestamp = AlignTimestamp(Timestamp, CalculationInterval)
 
         If CacheStale.IsStale Then ' Clear forecast results cache if stale
-          SubtractPointsCache.Clear
           CacheStale.Refresh
+          SubtractPointsCache.Clear
         End If
 
         ' If required, create new cache for this subtract point. The size of the
