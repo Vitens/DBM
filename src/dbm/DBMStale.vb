@@ -38,30 +38,18 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private TimeOut As DateTime ' Stale by default
 
 
-    Public Sub Refresh
-
-      ' Update timestamp when object turns stale.
-
-      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
-      Try
-
-        TimeOut = NextInterval(Now)
-
-      Finally
-        Monitor.Exit(Lock) ' Ensure that the lock is released.
-      End Try
-
-    End Sub
-
-
     Public Function IsStale As Boolean
 
-      ' Returns True if this object has turned stale.
+      ' Returns True if this object has turned stale. The timeout will be
+      ' automatically updated to the next interval if required.
 
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
 
-        Return Now >= TimeOut
+        IsStale = Now >= TimeOut ' True if past timeout
+        If IsStale Then TimeOut = NextInterval(Now) ' Update timeout when stale
+
+        Return IsStale
 
       Finally
         Monitor.Exit(Lock) ' Ensure that the lock is released.

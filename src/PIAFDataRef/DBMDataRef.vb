@@ -133,7 +133,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       If PointsStale.IsStale And Attribute IsNot Nothing And
         Attribute.Parent IsNot Nothing Then
 
-        PointsStale.Refresh
         Element = DirectCast(Attribute.Element, AFElement)
         InputPointDriver = New DBMPointDriver(Attribute.Parent) ' Parent attrib.
         CorrelationPoints = New List(Of DBMCorrelationPoint)

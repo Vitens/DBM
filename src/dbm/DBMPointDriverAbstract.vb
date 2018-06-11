@@ -67,8 +67,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       If DataStale.IsStale Or StartTimestamp < PrepStartTimestamp Or
         EndTimestamp > PrepEndTimestamp Then ' If stale or not available
 
-        DataStale.Refresh ' Stale data at next interval
-
         Try
           PrepareData(StartTimestamp, EndTimestamp)
         Catch
