@@ -74,7 +74,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' distribution processes.
 
 
-    Private PointsCache As New DBMCache(0, 2) ' time out after 2 intervals
+    Private PointsCache As New DBMCache(CInt(4^(CacheSizeFactor-1))) ' 64 items
 
 
     Private Function Point(PointDriver As DBMPointDriverAbstract) As DBMPoint
@@ -82,8 +82,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns DBMPoint object from the cache. If cache does not yet contain
       ' object, it is added.
 
-      PointsCache.AddItemIfNotExists(PointDriver.Point,
-        New DBMPoint(PointDriver))
+      If Not PointsCache.HasItem(PointDriver.Point) Then
+        PointsCache.AddItem(PointDriver.Point, New DBMPoint(PointDriver))
+      End If
+
       Return DirectCast(PointsCache.GetItem(PointDriver.Point), DBMPoint)
 
     End Function

@@ -23,10 +23,6 @@ Option Strict
 
 
 Imports System
-Imports System.DateTime
-Imports System.Threading
-Imports Vitens.DynamicBandwidthMonitor.DBMMath
-Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -35,72 +31,14 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMCacheItem
 
 
-    Private Item As Object
-    Private ItemStaleInterval As Integer
-    Private Lock As New Object
-    Private TimeOut As DateTime
+    Public Item As Object
 
 
-    Public Sub New(Optional Item As Object = Nothing,
-      Optional ItemStaleInterval As Integer = 0)
+    Public Sub New(Optional Item As Object = Nothing)
 
       Me.Item = Item
-      Me.ItemStaleInterval = ItemStaleInterval ' Default val. (0) for no timeout
-      UpdateTimeOut
 
     End Sub
-
-
-    Private Sub UpdateTimeOut
-
-      ' Update timestamp after which item turns stale.
-
-      ' SyncLock: Access to this method has to be synchronized because the
-      '           TimeOut variable is modified here and should be available in
-      '           the IsStale method.
-
-      Monitor.Enter(Lock) ' Request the lock, and block until obtained.
-      Try
-
-        If ItemStaleInterval > 0 Then
-          TimeOut = NextInterval(Now, ItemStaleInterval)
-        Else
-          TimeOut = DateTime.MaxValue ' Never
-        End If
-
-      Finally
-        Monitor.Exit(Lock) ' Ensure that the lock is released.
-      End Try
-
-    End Sub
-
-
-    Public Function GetItem As Object
-
-      UpdateTimeOut
-      Return Item
-
-    End Function
-
-
-    Public Function IsStale As Boolean
-
-      ' Returns true if this item has turned stale.
-
-      ' SyncLock: Access to this method has to be synchronized because the
-      '           TimeOut variable should be available here and is modified in
-      '           the UpdateTimeOut method.
-
-      Monitor.Enter(Lock) ' Request the lock, and block until obtained.
-      Try
-
-        Return Now >= TimeOut ' Returns True if the point has timed out.
-
-      Finally
-        Monitor.Exit(Lock) ' Ensure that the lock is released.
-      End Try
-
-    End Function
 
 
   End Class

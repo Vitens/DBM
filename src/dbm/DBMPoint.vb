@@ -23,6 +23,7 @@ Option Strict
 
 
 Imports System
+Imports System.Math
 Imports System.Threading
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
@@ -38,7 +39,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public PointDriver As DBMPointDriverAbstract
     Private Lock As New Object
     Private PreparedStartTimestamp, PreparedEndTimestamp As DateTime
-    Private SubtractPointsCache As New DBMCache ' Cache of forecast results
+    Private SubtractPointsCache As New DBMCache(
+      CInt(Sqrt(4^CacheSizeFactor)/2)) ' Cache of forecast results; 8 items
 
 
     Public Sub New(PointDriver As DBMPointDriverAbstract)
@@ -120,8 +122,11 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' If required, create new cache for this subtract point. The size of the
         ' cache is automatically optimized for real-time continuous
         ' calculations.
-        SubtractPointsCache.AddItemIfNotExists(SubtractPoint,
-          New DBMCache(2*(EMAPreviousPeriods+2*CorrelationPreviousPeriods+1)))
+        If Not SubtractPointsCache.HasItem(SubtractPoint) Then
+          SubtractPointsCache.AddItem(SubtractPoint, New DBMCache(
+            CacheSizeFactor*(EMAPreviousPeriods+
+            2*CorrelationPreviousPeriods+1))) ' 208 items
+        End If
         ForecastItemsCache = DirectCast(SubtractPointsCache.
           GetItem(SubtractPoint), DBMCache)
 
