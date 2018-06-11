@@ -38,31 +38,13 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private MaximumItems As Integer
-    Private CacheItems As New Dictionary(Of Object, DBMCacheItem)
     Private Lock As New Object
+    Private CacheItems As New Dictionary(Of Object, DBMCacheItem)
 
 
     Public Sub New(Optional MaximumItems As Integer = 0)
 
       Me.MaximumItems = MaximumItems ' Use default (0) value for unlimited items
-
-    End Sub
-
-
-    Private Sub LimitSize
-
-      ' Limit number of cached forecast results per point. Cache size is limited
-      ' using random eviction policy.
-
-      ' SyncLock: Access to this method does not have to be synchronized because
-      '           this private method is only called from the AddItem method
-      '           where the lock is already obtained. Items can be removed from
-      '           the dictionary in this method.
-
-      If MaximumItems > 0 And CacheItems.Count >= MaximumItems Then
-        CacheItems.Remove(CacheItems.ElementAt(
-          RandomNumber(0, CacheItems.Count-1)).Key)
-      End If
 
     End Sub
 
@@ -81,6 +63,28 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Sub AddItem(Key As Object, Item As Object)
+
+      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
+      Try
+
+        ' Limit number of cached forecast results per point. Cache size is
+        ' limited using random eviction policy.
+
+        If MaximumItems > 0 And CacheItems.Count >= MaximumItems Then
+          CacheItems.Remove(CacheItems.ElementAt(
+            RandomNumber(0, CacheItems.Count-1)).Key)
+        End If
+
+        CacheItems.Add(ValidatedKey(Key), New DBMCacheItem(Item))
+
+      Finally
+        Monitor.Exit(Lock) ' Ensure that the lock is released.
+      End Try
+
+    End Sub
+
+
     Public Function HasItem(Key As Object) As Boolean
 
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
@@ -93,41 +97,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       End Try
 
     End Function
-
-
-    Public Sub AddItem(Key As Object, Item As Object)
-
-      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
-      Try
-
-        LimitSize
-
-        CacheItems.Add(ValidatedKey(Key), New DBMCacheItem(Item))
-
-      Finally
-        Monitor.Exit(Lock) ' Ensure that the lock is released.
-      End Try
-
-    End Sub
-
-
-    Public Sub AddItemIfNotExists(Key As Object, Item As Object)
-
-      ' SyncLock: Access to this method has to be synchronized because multiple
-      '           threads could try to add a new item simultaneously. HasItem
-      '           will then return False on each thread and the same item might
-      '           be added multiple times through AddItem.
-
-      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
-      Try
-
-        If Not HasItem(Key) Then AddItem(Key, Item)
-
-      Finally
-        Monitor.Exit(Lock) ' Ensure that the lock is released.
-      End Try
-
-    End Sub
 
 
     Public Function GetItem(Key As Object) As Object

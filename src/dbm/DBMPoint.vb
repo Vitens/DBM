@@ -122,8 +122,11 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' If required, create new cache for this subtract point. The size of the
         ' cache is automatically optimized for real-time continuous
         ' calculations.
-        SubtractPointsCache.AddItemIfNotExists(SubtractPoint, New DBMCache(
-          CacheSizeFactor*(EMAPreviousPeriods+2*CorrelationPreviousPeriods+1)))
+        If Not SubtractPointsCache.HasItem(SubtractPoint) Then
+          SubtractPointsCache.AddItem(SubtractPoint, New DBMCache(
+            CacheSizeFactor*(EMAPreviousPeriods+
+            2*CorrelationPreviousPeriods+1)))
+        End If
         ForecastItemsCache = DirectCast(SubtractPointsCache.
           GetItem(SubtractPoint), DBMCache)
 

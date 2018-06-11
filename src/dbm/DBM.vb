@@ -82,8 +82,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns DBMPoint object from the cache. If cache does not yet contain
       ' object, it is added.
 
-      PointsCache.AddItemIfNotExists(PointDriver.Point,
-        New DBMPoint(PointDriver))
+      If Not PointsCache.HasItem(PointDriver.Point) Then
+        PointsCache.AddItem(PointDriver.Point, New DBMPoint(PointDriver))
+      End If
+
       Return DirectCast(PointsCache.GetItem(PointDriver.Point), DBMPoint)
 
     End Function
