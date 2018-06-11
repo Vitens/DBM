@@ -135,8 +135,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       If Now >= NextPointsUpdate And Attribute IsNot Nothing And
         Attribute.Parent IsNot Nothing Then
 
-        NextPointsUpdate = AlignTimestamp(Now, CalculationInterval).
-          AddSeconds(CalculationInterval)
+        NextPointsUpdate = NextInterval(Now)
         Element = DirectCast(Attribute.Element, AFElement)
         InputPointDriver = New DBMPointDriver(Attribute.Parent) ' Parent attrib.
         CorrelationPoints = New List(Of DBMCorrelationPoint)

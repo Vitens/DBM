@@ -24,6 +24,8 @@ Option Strict
 
 Imports System
 Imports System.Double
+Imports System.DateTime
+Imports Vitens.DynamicBandwidthMonitor.DBMMath
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -40,6 +42,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Point As Object
+    Private PrepStaleTimestamp, PrepStartTimestamp, PrepEndTimestamp As DateTime
 
 
     Public Sub New(Point As Object)
@@ -48,6 +51,34 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' New to store the unique identifier in the Point object.
 
       Me.Point = Point
+
+    End Sub
+
+
+    Public Sub TryPrepareData(StartTimestamp As DateTime,
+      EndTimestamp As DateTime)
+
+      ' The TryPrepareData function is called from the DBMPoint class to
+      ' retrieve data using the overridden PrepareData function. The
+      ' (aligned) timestamps are stored to prevent future calls to
+      ' PointDriver.PrepareData for time ranges for which data is already
+      ' available. After one interval, the data turns stale and is retrieved
+      ' again at the next call.
+
+      If Now >= PrepStaleTimestamp Or StartTimestamp < PrepStartTimestamp Or
+        EndTimestamp > PrepEndTimestamp Then ' If stale or not available
+
+        PrepStaleTimestamp = NextInterval(Now) ' Stale data at next interval
+
+        Try
+          PrepareData(StartTimestamp, EndTimestamp)
+        Catch
+        End Try
+
+        PrepStartTimestamp = StartTimestamp
+        PrepEndTimestamp = EndTimestamp
+
+      End If
 
     End Sub
 

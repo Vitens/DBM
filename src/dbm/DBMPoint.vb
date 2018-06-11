@@ -38,7 +38,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public PointDriver As DBMPointDriverAbstract
     Private Lock As New Object
-    Private PreparedStartTimestamp, PreparedEndTimestamp As DateTime
     Private SubtractPointsCache As New DBMCache(
       CInt(Sqrt(4^CacheSizeFactor)/2)) ' Cache of forecast results; 8 items
 
@@ -54,10 +53,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Retrieve and store values in bulk for the passed time range from a
       ' source of data, to be used in the PointDriver.GetData method. Called
-      ' from the DBM.PrepareData sub and passed on to the PointDriver. The
-      ' (aligned) timestamps are stored to prevent future calls to
-      ' PointDriver.PrepareData for time ranges for which data is already
-      ' available.
+      ' from the DBM.PrepareData sub and passed on to the PointDriver.
 
       ' SyncLock: Access to this method has to be synchronized because the
       '           (expensive) PrepareData method is called for the PointDriver
@@ -72,15 +68,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
       Try
 
-        If StartTimestamp < PreparedStartTimestamp Or
-          EndTimestamp > PreparedEndTimestamp Then ' Only if not yet available
-
-          PointDriver.PrepareData(StartTimestamp, EndTimestamp)
-
-          PreparedStartTimestamp = StartTimestamp
-          PreparedEndTimestamp = EndTimestamp
-
-        End If
+        PointDriver.TryPrepareData(StartTimestamp, EndTimestamp)
 
       Finally
         Monitor.Exit(Lock) ' Ensure that the lock is released.

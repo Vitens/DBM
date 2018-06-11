@@ -157,9 +157,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       '           call will actually prepare the data. Subsequent calls will
       '           then use cached data.
 
-      StartTimestamp = AlignTimestamp(StartTimestamp, CalculationInterval).
-        AddSeconds((EMAPreviousPeriods+CorrelationPreviousPeriods)*
-        -CalculationInterval).AddDays(ComparePatterns*-7)
+      StartTimestamp = NextInterval(StartTimestamp,
+        -EMAPreviousPeriods-CorrelationPreviousPeriods).
+        AddDays(ComparePatterns*-7)
       EndTimestamp = AlignTimestamp(EndTimestamp, CalculationInterval)
 
       Point(InputPointDriver).PrepareData(StartTimestamp, EndTimestamp)
