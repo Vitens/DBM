@@ -24,7 +24,6 @@ Option Strict
 
 Imports System
 Imports System.DateTime
-Imports System.Threading
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 
 
@@ -34,7 +33,6 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMStale
 
 
-    Private Lock As New Object
     Private TimeOut As DateTime ' Stale by default
 
 
@@ -43,17 +41,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns True if this object has turned stale. The timeout will be
       ' automatically updated to the next interval if required.
 
-      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
-      Try
+      IsStale = Now >= TimeOut ' True if past timeout
+      If IsStale Then TimeOut = NextInterval(Now) ' Update timeout when stale
 
-        IsStale = Now >= TimeOut ' True if past timeout
-        If IsStale Then TimeOut = NextInterval(Now) ' Update timeout when stale
-
-        Return IsStale
-
-      Finally
-        Monitor.Exit(Lock) ' Ensure that the lock is released.
-      End Try
+      Return IsStale
 
     End Function
 
