@@ -184,23 +184,12 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Overrides Function GetValue(context As Object,
-      timeContext As Object, inputAttributes As AFAttributeList,
-      inputValues As AFValues) As AFValue
-
-      Dim Timestamp As AFTime
-      Dim Value As New AFValue
-
-      UpdatePoints
-
-      If timeContext Is Nothing Then
-        Timestamp = DirectCast(InputPointDriver.Point, AFAttribute).
-          GetValue.Timestamp
-      Else
-        Timestamp = DirectCast(timeContext, AFTime)
-      End If
+    Private Function DBMResult(Timestamp As AFTime) As AFValue
 
       ' Return DBM result parameter based on applied property/trait.
+
+      Dim Value As New AFValue
+
       With DBM.Result(InputPointDriver, CorrelationPoints, Timestamp.LocalTime)
 
         If Attribute.Trait Is Nothing Then
@@ -236,6 +225,26 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Overrides Function GetValue(context As Object,
+      timeContext As Object, inputAttributes As AFAttributeList,
+      inputValues As AFValues) As AFValue
+
+      Dim Timestamp As AFTime
+
+      UpdatePoints
+
+      If timeContext Is Nothing Then
+        Timestamp = DirectCast(InputPointDriver.Point, AFAttribute).
+          GetValue.Timestamp
+      Else
+        Timestamp = DirectCast(timeContext, AFTime)
+      End If
+
+      Return DBMResult(Timestamp)
+
+    End Function
+
+
     Public Overrides Function GetValues(context As Object,
       timeContext As AFTimeRange, numberOfValues As Integer,
       inputAttributes As AFAttributeList, inputValues As AFValues()) As AFValues
@@ -255,8 +264,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         StartTime.UtcSeconds)/CalculationInterval-1)/(numberOfValues-1))*
         CalculationInterval ' Required interval, first and last interv inclusive
       Do While timeContext.EndTime > timeContext.StartTime
-        GetValues.Add(GetValue(Nothing, timeContext.StartTime,
-          Nothing, Nothing))
+        GetValues.Add(DBMResult(timeContext.StartTime))
         timeContext.StartTime = New AFTime(
           timeContext.StartTime.UtcSeconds+IntervalSeconds)
       Loop
