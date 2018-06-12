@@ -149,14 +149,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim CorrelationPoint As DBMCorrelationPoint
 
-      ' SyncLock: Access to this method does not have to be synchronized because
-      '           this is already done in the Point method for this class and in
-      '           the PrepareData method in the DBMPoint class. This means that,
-      '           for each DBMPoint instance, the PrepareData method will never
-      '           be executed by more than one thread at a time. Only the first
-      '           call will actually prepare the data. Subsequent calls will
-      '           then use cached data.
-
       StartTimestamp = NextInterval(StartTimestamp,
         -EMAPreviousPeriods-CorrelationPreviousPeriods).
         AddDays(ComparePatterns*-7)
