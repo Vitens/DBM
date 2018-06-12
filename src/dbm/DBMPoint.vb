@@ -38,6 +38,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public PointDriver As DBMPointDriverAbstract
     Private Lock As New Object
+    Private CacheStale As New DBMStale
     Private SubtractPointsCache As New DBMCache(
       CInt(Sqrt(4^CacheSizeFactor)/2)) ' Cache of forecast results; 8 items
 
@@ -110,6 +111,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' If required, create new cache for this subtract point. The size of the
         ' cache is automatically optimized for real-time continuous
         ' calculations.
+        If CacheStale.IsStale Then SubtractPointsCache.Clear ' Clear stale cache
         If Not SubtractPointsCache.HasItem(SubtractPoint) Then
           SubtractPointsCache.AddItem(SubtractPoint, New DBMCache(
             CacheSizeFactor*(EMAPreviousPeriods+
