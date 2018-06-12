@@ -57,12 +57,11 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Sub TryPrepareData(StartTimestamp As DateTime,
       EndTimestamp As DateTime)
 
-      ' The TryPrepareData function is called from the DBMPoint class to
-      ' retrieve data using the overridden PrepareData function. The
-      ' (aligned) timestamps are stored to prevent future calls to
-      ' PrepareData for time ranges for which data is already available. After
-      ' one interval, the data turns stale and is retrieved again at the next
-      ' call.
+      ' The TryPrepareData function is called from the DBM class to retrieve
+      ' data using the overridden PrepareData function. The (aligned) timestamps
+      ' are stored to prevent future calls to PrepareData for time ranges for
+      ' which data is already available. After one interval, the data turns
+      ' stale and is retrieved again at the next call.
 
       If DataStale.IsStale Or StartTimestamp < PrepStartTimestamp Or
         EndTimestamp > PrepEndTimestamp Then ' If stale or not available

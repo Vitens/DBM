@@ -142,10 +142,11 @@ Namespace Vitens.DynamicBandwidthMonitor
       CorrelationPoints As List(Of DBMCorrelationPoint),
       StartTimestamp As DateTime, EndTimestamp As DateTime)
 
-      ' Will pass start and end timestamps to PrepareData method for input and
-      ' correlation points. The driver can then prepare the dataset for which
-      ' calculations are required in the next step. The (aligned) end time
-      ' itself is excluded. Useful for retrieving in bulk and caching in memory.
+      ' Will pass start and end timestamps to TryPrepareData method for input
+      ' and correlation PointDrivers. The driver can then prepare the dataset
+      ' for which calculations are required in the next step. The (aligned) end
+      ' time itself is excluded. Useful for retrieving in bulk and caching in
+      ' memory.
 
       Dim CorrelationPoint As DBMCorrelationPoint
 
@@ -154,11 +155,12 @@ Namespace Vitens.DynamicBandwidthMonitor
         AddDays(ComparePatterns*-7)
       EndTimestamp = AlignTimestamp(EndTimestamp, CalculationInterval)
 
-      Point(InputPointDriver).PrepareData(StartTimestamp, EndTimestamp)
+      Point(InputPointDriver).PointDriver.
+        TryPrepareData(StartTimestamp, EndTimestamp)
       If CorrelationPoints IsNot Nothing Then
         For Each CorrelationPoint In CorrelationPoints
-          Point(CorrelationPoint.PointDriver).PrepareData(StartTimestamp,
-            EndTimestamp)
+          Point(CorrelationPoint.PointDriver).PointDriver.
+            TryPrepareData(StartTimestamp, EndTimestamp)
         Next
       End If
 
