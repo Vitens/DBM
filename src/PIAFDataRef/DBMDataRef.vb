@@ -182,13 +182,16 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Private Function DBMResult(Timestamp As AFTime) As AFValue
+    Private Function DBMResult(Timestamp As AFTime,
+      Optional EndTimestamp As AFTime = Nothing) As AFValue
 
       ' Return DBM result parameter based on applied property/trait.
 
       Dim Value As New AFValue
 
       If PointsStale.IsStale Then UpdatePoints ' Update points periodically
+      If Not EndTimestamp.IsEmpty Then DBM.PrepareData(InputPointDriver,
+        CorrelationPoints, Timestamp.LocalTime, EndTimestamp.LocalTime)
 
       With DBM.Result(InputPointDriver, CorrelationPoints, Timestamp.LocalTime)
 
@@ -252,15 +255,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim IntervalSeconds As Double
 
-      DBM.PrepareData(InputPointDriver, CorrelationPoints,
-        timeContext.StartTime.LocalTime, timeContext.EndTime.LocalTime)
-
       GetValues = New AFValues
       IntervalSeconds = Max(1, ((timeContext.EndTime.UtcSeconds-timeContext.
         StartTime.UtcSeconds)/CalculationInterval-1)/(numberOfValues-1))*
         CalculationInterval ' Required interval, first and last interv inclusive
       Do While timeContext.EndTime > timeContext.StartTime
-        GetValues.Add(DBMResult(timeContext.StartTime))
+        GetValues.Add(DBMResult(timeContext.StartTime, timeContext.EndTime))
         timeContext.StartTime = New AFTime(
           timeContext.StartTime.UtcSeconds+IntervalSeconds)
       Loop
