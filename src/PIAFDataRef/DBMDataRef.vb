@@ -73,9 +73,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const pValueMinMax As Double = 0.9999 ' CI for Minimum and Maximum
 
 
-    Private PointsStale As New DBMStale
     Private InputPointDriver As DBMPointDriver
     Private CorrelationPoints As List(Of DBMCorrelationPoint)
+    Private PointsStale As New DBMStale
     Private Shared DBM As New DBM
 
 
@@ -123,15 +123,13 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Sub UpdatePoints
 
-      ' Retrieve input and correlation PI points from AF hierarchy. Recheck for
-      ' changes after every calculation interval and only if owned by an
-      ' attribute (element is an instance of an element template) and attribute
-      ' has a parent attribute.
+      ' Retrieve input and correlation PI points from AF hierarchy if owned by
+      ' an attribute (element is an instance of an element template) and
+      ' attribute has a parent attribute.
 
       Dim Element, ParentElement, SiblingElement As AFElement
 
-      If PointsStale.IsStale And Attribute IsNot Nothing And
-        Attribute.Parent IsNot Nothing Then
+      If Attribute IsNot Nothing And Attribute.Parent IsNot Nothing Then
 
         Element = DirectCast(Attribute.Element, AFElement)
         InputPointDriver = New DBMPointDriver(Attribute.Parent) ' Parent attrib.
@@ -190,6 +188,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim Value As New AFValue
 
+      If PointsStale.IsStale Then UpdatePoints ' Update points periodically
+
       With DBM.Result(InputPointDriver, CorrelationPoints, Timestamp.LocalTime)
 
         If Attribute.Trait Is Nothing Then
@@ -231,8 +231,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim Timestamp As AFTime
 
-      UpdatePoints
-
       If timeContext Is Nothing Then
         Timestamp = DirectCast(InputPointDriver.Point, AFAttribute).
           GetValue.Timestamp
@@ -253,8 +251,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' itself is excluded.
 
       Dim IntervalSeconds As Double
-
-      UpdatePoints
 
       DBM.PrepareData(InputPointDriver, CorrelationPoints,
         timeContext.StartTime.LocalTime, timeContext.EndTime.LocalTime)
