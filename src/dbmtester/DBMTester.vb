@@ -27,6 +27,7 @@ Imports System.Collections.Generic
 Imports System.Environment
 Imports System.Globalization.CultureInfo
 Imports System.Text.RegularExpressions
+Imports System.Threading
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
@@ -129,6 +130,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                 InternationalFormat = False
               ElseIf Value.ToLower.Equals("intl") Then
                 InternationalFormat = True
+                Thread.CurrentThread.CurrentCulture = InvariantCulture
               End If
             End If
           Catch ex As Exception

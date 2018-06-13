@@ -37,3 +37,4 @@ Filename: "{app}\build.bat"; StatusMsg: "Building {#Product}..."; Flags: runhidd
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}\build"
+Type: files; Name: "{app}\samples\sample?.csv"
