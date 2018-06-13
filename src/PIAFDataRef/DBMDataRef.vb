@@ -27,6 +27,7 @@ Imports System.Collections.Generic
 Imports System.ComponentModel
 Imports System.Math
 Imports System.Runtime.InteropServices
+Imports System.Threading
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Asset.AFAttributeTrait
 Imports OSIsoft.AF.Data
@@ -189,41 +190,49 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim Value As New AFValue
 
-      If PointsStale.IsStale Then UpdatePoints ' Update points periodically
-      If Not EndTimestamp.IsEmpty Then DBM.PrepareData(InputPointDriver,
-        CorrelationPoints, Timestamp.LocalTime, EndTimestamp.LocalTime)
+      Monitor.Enter(DBM) ' Request the lock, and block until it is obtained.
+      Try
 
-      With DBM.Result(InputPointDriver, CorrelationPoints, Timestamp.LocalTime)
+        If PointsStale.IsStale Then UpdatePoints ' Update points periodically
+        If Not EndTimestamp.IsEmpty Then DBM.PrepareData(InputPointDriver,
+          CorrelationPoints, Timestamp.LocalTime, EndTimestamp.LocalTime)
 
-        If Attribute.Trait Is Nothing Then
-          Value = New AFValue(.Factor, .Timestamp)
-          Value.Questionable = .HasEvent
-          Value.Substituted = .HasSuppressedEvent
-        ElseIf Attribute.Trait Is LimitTarget Then
-          Value = New AFValue(.ForecastItem.Measurement, .Timestamp)
-        ElseIf Attribute.Trait Is Forecast Then
-          Value = New AFValue(.ForecastItem.ForecastValue, .Timestamp)
-        ElseIf Attribute.Trait Is LimitMinimum Then
-          Value = New AFValue(.ForecastItem.ForecastValue-
-            .ForecastItem.Range(pValueMinMax), .Timestamp)
-        ElseIf Attribute.Trait Is LimitLoLo Then
-          Value = New AFValue(.ForecastItem.LowerControlLimit, .Timestamp)
-        ElseIf Attribute.Trait Is LimitLo Then
-          Value = New AFValue(.ForecastItem.ForecastValue-
-            .ForecastItem.Range(pValueLoHi), .Timestamp)
-        ElseIf Attribute.Trait Is LimitHi Then
-          Value = New AFValue(.ForecastItem.ForecastValue+
-            .ForecastItem.Range(pValueLoHi), .Timestamp)
-        ElseIf Attribute.Trait Is LimitHiHi Then
-          Value = New AFValue(.ForecastItem.UpperControlLimit, .Timestamp)
-        ElseIf Attribute.Trait Is LimitMaximum Then
-          Value = New AFValue(.ForecastItem.ForecastValue+
-            .ForecastItem.Range(pValueMinMax), .Timestamp)
-        End If
+        With DBM.Result(
+          InputPointDriver, CorrelationPoints, Timestamp.LocalTime)
 
-      End With
+          If Attribute.Trait Is Nothing Then
+            Value = New AFValue(.Factor, .Timestamp)
+            Value.Questionable = .HasEvent
+            Value.Substituted = .HasSuppressedEvent
+          ElseIf Attribute.Trait Is LimitTarget Then
+            Value = New AFValue(.ForecastItem.Measurement, .Timestamp)
+          ElseIf Attribute.Trait Is Forecast Then
+            Value = New AFValue(.ForecastItem.ForecastValue, .Timestamp)
+          ElseIf Attribute.Trait Is LimitMinimum Then
+            Value = New AFValue(.ForecastItem.ForecastValue-
+              .ForecastItem.Range(pValueMinMax), .Timestamp)
+          ElseIf Attribute.Trait Is LimitLoLo Then
+            Value = New AFValue(.ForecastItem.LowerControlLimit, .Timestamp)
+          ElseIf Attribute.Trait Is LimitLo Then
+            Value = New AFValue(.ForecastItem.ForecastValue-
+              .ForecastItem.Range(pValueLoHi), .Timestamp)
+          ElseIf Attribute.Trait Is LimitHi Then
+            Value = New AFValue(.ForecastItem.ForecastValue+
+              .ForecastItem.Range(pValueLoHi), .Timestamp)
+          ElseIf Attribute.Trait Is LimitHiHi Then
+            Value = New AFValue(.ForecastItem.UpperControlLimit, .Timestamp)
+          ElseIf Attribute.Trait Is LimitMaximum Then
+            Value = New AFValue(.ForecastItem.ForecastValue+
+              .ForecastItem.Range(pValueMinMax), .Timestamp)
+          End If
 
-      Return Value
+        End With
+
+        Return Value
+
+      Finally
+        Monitor.Exit(DBM) ' Ensure that the lock is released.
+      End Try
 
     End Function
 
