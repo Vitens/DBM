@@ -142,31 +142,25 @@ Namespace Vitens.DynamicBandwidthMonitor
       CorrelationPoints As List(Of DBMCorrelationPoint),
       StartTimestamp As DateTime, EndTimestamp As DateTime)
 
-      ' Will pass start and end timestamps to PrepareData method for input and
-      ' correlation points. The driver can then prepare the dataset for which
-      ' calculations are required in the next step. The (aligned) end time
-      ' itself is excluded. Useful for retrieving in bulk and caching in memory.
+      ' Will pass start and end timestamps to TryPrepareData method for input
+      ' and correlation PointDrivers. The driver can then prepare the dataset
+      ' for which calculations are required in the next step. The (aligned) end
+      ' time itself is excluded. Useful for retrieving in bulk and caching in
+      ' memory.
 
       Dim CorrelationPoint As DBMCorrelationPoint
-
-      ' SyncLock: Access to this method does not have to be synchronized because
-      '           this is already done in the Point method for this class and in
-      '           the PrepareData method in the DBMPoint class. This means that,
-      '           for each DBMPoint instance, the PrepareData method will never
-      '           be executed by more than one thread at a time. Only the first
-      '           call will actually prepare the data. Subsequent calls will
-      '           then use cached data.
 
       StartTimestamp = NextInterval(StartTimestamp,
         -EMAPreviousPeriods-CorrelationPreviousPeriods).
         AddDays(ComparePatterns*-7)
       EndTimestamp = AlignTimestamp(EndTimestamp, CalculationInterval)
 
-      Point(InputPointDriver).PrepareData(StartTimestamp, EndTimestamp)
+      Point(InputPointDriver).PointDriver.
+        TryPrepareData(StartTimestamp, EndTimestamp)
       If CorrelationPoints IsNot Nothing Then
         For Each CorrelationPoint In CorrelationPoints
-          Point(CorrelationPoint.PointDriver).PrepareData(StartTimestamp,
-            EndTimestamp)
+          Point(CorrelationPoint.PointDriver).PointDriver.
+            TryPrepareData(StartTimestamp, EndTimestamp)
         Next
       End If
 

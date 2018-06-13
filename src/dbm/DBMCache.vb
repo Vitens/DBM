@@ -24,7 +24,6 @@ Option Strict
 
 Imports System
 Imports System.Collections.Generic
-Imports System.Threading
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 
 
@@ -38,7 +37,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private MaximumItems As Integer
-    Private Lock As New Object
     Private CacheItems As New Dictionary(Of Object, DBMCacheItem)
 
 
@@ -65,50 +63,29 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Sub Clear
 
-      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
-      Try
-
-        CacheItems.Clear
-
-      Finally
-        Monitor.Exit(Lock) ' Ensure that the lock is released.
-      End Try
+      CacheItems.Clear
 
     End Sub
 
 
     Public Sub AddItem(Key As Object, Item As Object)
 
-      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
-      Try
+      ' Limit number of cached forecast results per point. Cache size is
+      ' limited using random eviction policy.
 
-        ' Limit number of cached forecast results per point. Cache size is
-        ' limited using random eviction policy.
+      If MaximumItems > 0 And CacheItems.Count >= MaximumItems Then
+        CacheItems.Remove(CacheItems.ElementAt(
+          RandomNumber(0, CacheItems.Count-1)).Key)
+      End If
 
-        If MaximumItems > 0 And CacheItems.Count >= MaximumItems Then
-          CacheItems.Remove(CacheItems.ElementAt(
-            RandomNumber(0, CacheItems.Count-1)).Key)
-        End If
-
-        CacheItems.Add(ValidatedKey(Key), New DBMCacheItem(Item))
-
-      Finally
-        Monitor.Exit(Lock) ' Ensure that the lock is released.
-      End Try
+      CacheItems.Add(ValidatedKey(Key), New DBMCacheItem(Item))
 
     End Sub
 
 
     Public Function HasItem(Key As Object) As Boolean
 
-      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
-      Try
-
-        Return CacheItems.ContainsKey(ValidatedKey(Key))
-
-      Finally
-        Monitor.Exit(Lock) ' Ensure that the lock is released.
-      End Try
+      Return CacheItems.ContainsKey(ValidatedKey(Key))
 
     End Function
 
@@ -117,16 +94,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim CacheItem As New DBMCacheItem
 
-      Monitor.Enter(Lock) ' Request the lock, and block until it is obtained.
-      Try
-
-        If Not CacheItems.TryGetValue(ValidatedKey(Key), CacheItem) Then
-          CacheItem = New DBMCacheItem ' Not found, return default empty value
-        End If
-
-      Finally
-        Monitor.Exit(Lock) ' Ensure that the lock is released.
-      End Try
+      If Not CacheItems.TryGetValue(ValidatedKey(Key), CacheItem) Then
+        CacheItem = New DBMCacheItem ' Not found, return default empty value
+      End If
 
       Return CacheItem.Item
 
