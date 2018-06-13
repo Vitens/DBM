@@ -25,6 +25,7 @@ Option Strict
 Imports System
 Imports System.Collections.Generic
 Imports System.ComponentModel
+Imports System.DateTime
 Imports System.Math
 Imports System.Runtime.InteropServices
 Imports System.Threading
@@ -244,8 +245,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Timestamp As AFTime
 
       If timeContext Is Nothing Then
-        Timestamp = DirectCast(InputPointDriver.Point, AFAttribute).
-          GetValue.Timestamp
+        Timestamp = Now
       Else
         Timestamp = DirectCast(timeContext, AFTime)
       End If
