@@ -23,6 +23,7 @@ test_script:
   -
     cmd: |-
         build\DBMAbout.exe|find "FAILED">NUL&&exit 1||exit 0
+        if not exist "%ProgramFiles(x86)%\Vitens N.V.\DBM\%product%\DBM.dll" exit 1
 deploy:
   tag: 'v$(version)+$(commit)'
   release: '$(product) v$(version)+$(commit)'
