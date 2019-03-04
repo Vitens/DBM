@@ -1,7 +1,7 @@
 #define Product GetEnv("product")
 #define Version GetEnv("version")
 #define Commit GetEnv("commit")
-#define Company GetFileCompany("..\..\build\DBM.dll")
+#define Company GetEnv("company")
 #define Copyright GetFileCopyright("..\..\build\DBM.dll")
 
 [Setup]

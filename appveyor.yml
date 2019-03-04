@@ -14,9 +14,9 @@ after_build:
   -
     cmd: |-
         set product=DBM
-        for /f "delims=" %%i in ('powershell -Command "(Get-Item build\DBM.dll).VersionInfo.CompanyName"') do set company=%%i
         for /f "delims=" %%i in ('powershell -Command "(Get-Item build\DBM.dll).VersionInfo.ProductVersion"') do set version=%%i
         for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
+        for /f "delims=" %%i in ('powershell -Command "(Get-Item build\DBM.dll).VersionInfo.CompanyName"') do set company=%%i
         "%ProgramFiles(x86)%\Inno Setup 5\ISCC.exe" /O"%TEMP%" /FSetup_%product%_v%version%+%commit% /Q src\res\dbm.iss
         "%TEMP%\Setup_%product%_v%version%+%commit%.exe" /VERYSILENT /NORESTART
         appveyor PushArtifact "%TEMP%\Setup_%product%_v%version%+%commit%.exe"
