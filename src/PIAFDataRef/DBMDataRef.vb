@@ -85,9 +85,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       As AFDataReferenceContext
 
       Get
-        With AFDataReferenceContext
-          Return .Time
-        End With
+        Return AFDataReferenceContext.Time
       End Get
 
     End Property
@@ -96,10 +94,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Readonly Property SupportedDataMethods As AFDataMethods
 
       Get
-        With AFDataMethods
-          Return .RecordedValue Or .RecordedValues Or .PlotValues Or
-            .Summary Or .Summaries
-        End With
+        Return AFDataMethods.RecordedValue Or AFDataMethods.RecordedValues Or
+          AFDataMethods.PlotValues Or AFDataMethods.Summary Or
+          AFDataMethods.Summaries
       End Get
 
     End Property
@@ -108,9 +105,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Readonly Property SupportedMethods As AFDataReferenceMethod
 
       Get
-        With AFDataReferenceMethod
-          Return .GetValue Or .GetValues
-        End With
+        Return AFDataReferenceMethod.GetValue Or AFDataReferenceMethod.GetValues
       End Get
 
     End Property
