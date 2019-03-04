@@ -85,7 +85,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       As AFDataReferenceContext
 
       Get
-        Return AFDataReferenceContext.Time
+        With AFDataReferenceContext
+          Return .Time
+        End With
       End Get
 
     End Property
@@ -94,9 +96,10 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Readonly Property SupportedDataMethods As AFDataMethods
 
       Get
-        Return AFDataMethods.RecordedValue Or AFDataMethods.RecordedValues Or
-          AFDataMethods.PlotValues Or AFDataMethods.Summary Or
-          AFDataMethods.Summaries
+        With AFDataMethods
+          Return .RecordedValue Or .RecordedValues Or .PlotValues Or
+            .Summary Or .Summaries
+        End With
       End Get
 
     End Property
@@ -105,7 +108,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Readonly Property SupportedMethods As AFDataReferenceMethod
 
       Get
-        Return AFDataReferenceMethod.GetValue Or AFDataReferenceMethod.GetValues
+        With AFDataReferenceMethod
+          Return .GetValue Or .GetValues
+        End With
       End Get
 
     End Property
@@ -189,6 +194,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Return DBM result parameter based on applied property/trait.
 
+      Dim AlignedTimestamp As AFTime ' DST issue with DateTime obj in DBMResult
       Dim Value As New AFValue
 
       Monitor.Enter(DBM) ' Request the lock, and block until it is obtained.
@@ -201,30 +207,34 @@ Namespace Vitens.DynamicBandwidthMonitor
         With DBM.Result(
           InputPointDriver, CorrelationPoints, Timestamp.LocalTime)
 
+          AlignedTimestamp = New AFTime(Timestamp.UtcSeconds-
+            Timestamp.UtcSeconds Mod CalculationInterval) ' Align prev interval
           If Attribute.Trait Is Nothing Then
-            Value = New AFValue(.Factor, .Timestamp)
+            Value = New AFValue(.Factor, AlignedTimestamp)
             Value.Questionable = .HasEvent
             Value.Substituted = .HasSuppressedEvent
           ElseIf Attribute.Trait Is LimitTarget Then
-            Value = New AFValue(.ForecastItem.Measurement, .Timestamp)
+            Value = New AFValue(.ForecastItem.Measurement, AlignedTimestamp)
           ElseIf Attribute.Trait Is Forecast Then
-            Value = New AFValue(.ForecastItem.ForecastValue, .Timestamp)
+            Value = New AFValue(.ForecastItem.ForecastValue, AlignedTimestamp)
           ElseIf Attribute.Trait Is LimitMinimum Then
             Value = New AFValue(.ForecastItem.ForecastValue-
-              .ForecastItem.Range(pValueMinMax), .Timestamp)
+              .ForecastItem.Range(pValueMinMax), AlignedTimestamp)
           ElseIf Attribute.Trait Is LimitLoLo Then
-            Value = New AFValue(.ForecastItem.LowerControlLimit, .Timestamp)
+            Value = New AFValue(.ForecastItem.LowerControlLimit,
+              AlignedTimestamp)
           ElseIf Attribute.Trait Is LimitLo Then
             Value = New AFValue(.ForecastItem.ForecastValue-
-              .ForecastItem.Range(pValueLoHi), .Timestamp)
+              .ForecastItem.Range(pValueLoHi), AlignedTimestamp)
           ElseIf Attribute.Trait Is LimitHi Then
             Value = New AFValue(.ForecastItem.ForecastValue+
-              .ForecastItem.Range(pValueLoHi), .Timestamp)
+              .ForecastItem.Range(pValueLoHi), AlignedTimestamp)
           ElseIf Attribute.Trait Is LimitHiHi Then
-            Value = New AFValue(.ForecastItem.UpperControlLimit, .Timestamp)
+            Value = New AFValue(.ForecastItem.UpperControlLimit,
+              AlignedTimestamp)
           ElseIf Attribute.Trait Is LimitMaximum Then
             Value = New AFValue(.ForecastItem.ForecastValue+
-              .ForecastItem.Range(pValueMinMax), .Timestamp)
+              .ForecastItem.Range(pValueMinMax), AlignedTimestamp)
           End If
 
         End With
