@@ -18,6 +18,7 @@ after_build:
         for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
         "%ProgramFiles(x86)%\Inno Setup 5\ISCC.exe" /O"%TEMP%" /FSetup_%product%_v%version%+%commit% /Q src\res\dbm.iss
         appveyor PushArtifact "%TEMP%\Setup_%product%_v%version%+%commit%.exe"
+        "%TEMP%\Setup_%product%_v%version%+%commit%.exe" /VERYSILENT /NORESTART
 test_script:
   -
     cmd: |-
