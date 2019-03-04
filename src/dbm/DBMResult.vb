@@ -23,6 +23,7 @@ Option Strict
 
 
 Imports System
+Imports System.Double
 Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
@@ -98,6 +99,11 @@ Namespace Vitens.DynamicBandwidthMonitor
           .LowerControlLimit = LowerControlLimitEMA
           .UpperControlLimit = UpperControlLimitEMA
         End With
+
+        ' No factor if there is no valid measurement.
+        If IsNaN(MeasurementEMA) Then
+          Factor = NaN
+        End If
 
         ' Lower control limit exceeded, calculate factor.
         If MeasurementEMA < LowerControlLimitEMA Then
