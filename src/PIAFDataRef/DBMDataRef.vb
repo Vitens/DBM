@@ -31,6 +31,8 @@ Imports System.Runtime.InteropServices
 Imports System.Threading
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Asset.AFAttributeTrait
+Imports OSIsoft.AF.Asset.AFSystemStateCode
+Imports OSIsoft.AF.Asset.AFValue
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Time
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
@@ -247,15 +249,19 @@ Namespace Vitens.DynamicBandwidthMonitor
       timeContext As Object, inputAttributes As AFAttributeList,
       inputValues As AFValues) As AFValue
 
-      Dim Timestamp As AFTime
+      ' Returns a value only if no time context is given. Without a time
+      ' context, the value for the current timestamp is returned. This is done
+      ' so that backfilling or recalculating with the PI Analysis Service does
+      ' not slow down the system and cause skipped calculations because of a
+      ' synclocked DBM object. For analysis of historic timestamps over a time
+      ' range, the GetValues method should be used.
 
       If timeContext Is Nothing Then
-        Timestamp = Now
+        Return DBMResult(Now)
       Else
-        Timestamp = DirectCast(timeContext, AFTime)
+        Return CreateSystemStateValue(NoSample,
+          DirectCast(timeContext, AFTime)) ' Return No Sample
       End If
-
-      Return DBMResult(Timestamp)
 
     End Function
 
