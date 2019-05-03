@@ -75,7 +75,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const pValueLoHi As Double = 0.95 ' Confidence interval for Lo and Hi
     Const pValueMinMax As Double = 0.9999 ' CI for Minimum and Maximum
 
-
     Private InputPointDriver As DBMPointDriver
     Private CorrelationPoints As List(Of DBMCorrelationPoint)
     Private PointsStale As New DBMStale
