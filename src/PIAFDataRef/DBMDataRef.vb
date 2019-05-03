@@ -193,53 +193,65 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim AlignedTimestamp As AFTime ' DST issue with DateTime obj in DBMResult
       Dim Value As New AFValue
 
-      Monitor.Enter(DBM) ' Request the lock, and block until it is obtained.
-      Try
+      If Monitor.TryEnter(DBM, CalculationInterval * 1000) Then
 
-        If PointsStale.IsStale Then UpdatePoints ' Update points periodically
-        If Not EndTimestamp.IsEmpty Then DBM.PrepareData(InputPointDriver,
-          CorrelationPoints, Timestamp.LocalTime, EndTimestamp.LocalTime)
+        ' Attempts to acquire an exclusive lock on the specified object for
+        ' 500 milliseconds.
+        ' Lock was acquired.
 
-        With DBM.Result(
-          InputPointDriver, CorrelationPoints, Timestamp.LocalTime)
+        Try
 
-          AlignedTimestamp = New AFTime(Timestamp.UtcSeconds-
-            Timestamp.UtcSeconds Mod CalculationInterval) ' Align prev interval
-          If Attribute.Trait Is Nothing Then
-            Value = New AFValue(.Factor, AlignedTimestamp)
-            Value.Questionable = .HasEvent
-            Value.Substituted = .HasSuppressedEvent
-          ElseIf Attribute.Trait Is LimitTarget Then
-            Value = New AFValue(.ForecastItem.Measurement, AlignedTimestamp)
-          ElseIf Attribute.Trait Is Forecast Then
-            Value = New AFValue(.ForecastItem.ForecastValue, AlignedTimestamp)
-          ElseIf Attribute.Trait Is LimitMinimum Then
-            Value = New AFValue(.ForecastItem.ForecastValue-
-              .ForecastItem.Range(pValueMinMax), AlignedTimestamp)
-          ElseIf Attribute.Trait Is LimitLoLo Then
-            Value = New AFValue(.ForecastItem.LowerControlLimit,
-              AlignedTimestamp)
-          ElseIf Attribute.Trait Is LimitLo Then
-            Value = New AFValue(.ForecastItem.ForecastValue-
-              .ForecastItem.Range(pValueLoHi), AlignedTimestamp)
-          ElseIf Attribute.Trait Is LimitHi Then
-            Value = New AFValue(.ForecastItem.ForecastValue+
-              .ForecastItem.Range(pValueLoHi), AlignedTimestamp)
-          ElseIf Attribute.Trait Is LimitHiHi Then
-            Value = New AFValue(.ForecastItem.UpperControlLimit,
-              AlignedTimestamp)
-          ElseIf Attribute.Trait Is LimitMaximum Then
-            Value = New AFValue(.ForecastItem.ForecastValue+
-              .ForecastItem.Range(pValueMinMax), AlignedTimestamp)
-          End If
+          If PointsStale.IsStale Then UpdatePoints ' Update points periodically
+          If Not EndTimestamp.IsEmpty Then DBM.PrepareData(InputPointDriver,
+            CorrelationPoints, Timestamp.LocalTime, EndTimestamp.LocalTime)
 
-        End With
+          With DBM.Result(
+            InputPointDriver, CorrelationPoints, Timestamp.LocalTime)
 
-        Return Value
+            AlignedTimestamp = New AFTime(Timestamp.UtcSeconds-
+              Timestamp.UtcSeconds Mod CalculationInterval) ' Align prv interval
+            If Attribute.Trait Is Nothing Then
+              Value = New AFValue(.Factor, AlignedTimestamp)
+              Value.Questionable = .HasEvent
+              Value.Substituted = .HasSuppressedEvent
+            ElseIf Attribute.Trait Is LimitTarget Then
+              Value = New AFValue(.ForecastItem.Measurement, AlignedTimestamp)
+            ElseIf Attribute.Trait Is Forecast Then
+              Value = New AFValue(.ForecastItem.ForecastValue, AlignedTimestamp)
+            ElseIf Attribute.Trait Is LimitMinimum Then
+              Value = New AFValue(.ForecastItem.ForecastValue-
+                .ForecastItem.Range(pValueMinMax), AlignedTimestamp)
+            ElseIf Attribute.Trait Is LimitLoLo Then
+              Value = New AFValue(.ForecastItem.LowerControlLimit,
+                AlignedTimestamp)
+            ElseIf Attribute.Trait Is LimitLo Then
+              Value = New AFValue(.ForecastItem.ForecastValue-
+                .ForecastItem.Range(pValueLoHi), AlignedTimestamp)
+            ElseIf Attribute.Trait Is LimitHi Then
+              Value = New AFValue(.ForecastItem.ForecastValue+
+                .ForecastItem.Range(pValueLoHi), AlignedTimestamp)
+            ElseIf Attribute.Trait Is LimitHiHi Then
+              Value = New AFValue(.ForecastItem.UpperControlLimit,
+                AlignedTimestamp)
+            ElseIf Attribute.Trait Is LimitMaximum Then
+              Value = New AFValue(.ForecastItem.ForecastValue+
+                .ForecastItem.Range(pValueMinMax), AlignedTimestamp)
+            End If
 
-      Finally
-        Monitor.Exit(DBM) ' Ensure that the lock is released.
-      End Try
+          End With
+
+          Return Value
+
+        Finally
+          Monitor.Exit(DBM) ' Ensure that the lock is released.
+        End Try
+
+      Else
+
+        ' Lock was not acquired.
+        Return New AFValue(NaN, Timestamp)
+
+      End If
 
     End Function
 
@@ -251,24 +263,12 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Timestamp As AFTime
 
       If timeContext Is Nothing Then
-        ' Always returns a value for the current timestamp if no time context
-        ' is given.
-        Return DBMResult(Now)
+        Timestamp = Now
       Else
         Timestamp = DirectCast(timeContext, AFTime)
-        If (Now - Timestamp.LocalTime).TotalSeconds > CalculationInterval Then
-          ' Never return historic values older than one calculation interval.
-          ' This is done so that backfilling or recalculating with the PI
-          ' Analysis Service does not slow down the system and cause skipped
-          ' calculations because of a synclocked DBM object. NULL (year 1970)
-          ' timestamps are used when recalculating historic data. Even for
-          ' real-time calculations, a time context is always passed.
-          Return New AFValue(NaN, Timestamp)
-        Else
-          ' Only return historic values if within one calculation interval.
-          Return DBMResult(Timestamp)
-        End If
       End If
+
+      Return DBMResult(Timestamp)
 
     End Function
 
