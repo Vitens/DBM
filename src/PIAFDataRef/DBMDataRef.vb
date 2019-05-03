@@ -26,6 +26,7 @@ Imports System
 Imports System.Collections.Generic
 Imports System.ComponentModel
 Imports System.DateTime
+Imports System.Double
 Imports System.Math
 Imports System.Runtime.InteropServices
 Imports System.Threading
