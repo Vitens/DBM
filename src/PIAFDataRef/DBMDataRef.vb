@@ -75,7 +75,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const CategoryNoCorrelation As String = "NoCorrelation"
     Const pValueLoHi As Double = 0.95 ' Confidence interval for Lo and Hi
     Const pValueMinMax As Double = 0.9999 ' CI for Minimum and Maximum
-    Const RecalcProcess As String = "PIRecalculationProcessor"
+    Const PIRecalcProcessName As String = "PIRecalculationProcessor"
 
 
     Private InputPointDriver As DBMPointDriver
@@ -250,19 +250,15 @@ Namespace Vitens.DynamicBandwidthMonitor
       timeContext As Object, inputAttributes As AFAttributeList,
       inputValues As AFValues) As AFValue
 
-      ' When recalculating with the PI Analysis Service, returns a value only if
-      ' no time context is given. Without a time context, the value for the
-      ' current timestamp is returned. This is done so that backfilling or
-      ' recalculating does not slow down the system and cause skipped
-      ' calculations because of a synclocked DBM object. For all other
-      ' processes, values are returned as expected.
-
-      If timeContext Is Nothing Then
-        Return DBMResult(Now)
-      ElseIf GetCurrentProcess.ProcessName.Equals(RecalcProcess)
-        Return New AFValue(NaN, DirectCast(timeContext, AFTime))
+      If GetCurrentProcess.ProcessName.Equals(PIRecalcProcessName) Then
+        ' No results are calculated for PI Analysis Service recalculations
+        Return New AFValue(NaN,DirectCast(timeContext, AFTime))
       Else
-        Return DBMResult(DirectCast(timeContext, AFTime))
+        If timeContext Is Nothing Then
+          Return DBMResult(Now)
+        Else
+          Return DBMResult(DirectCast(timeContext, AFTime))
+        End If
       End If
 
     End Function
