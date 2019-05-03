@@ -27,7 +27,6 @@ Imports System.Collections.Generic
 Imports System.ComponentModel
 Imports System.DateTime
 Imports System.Diagnostics.Process
-Imports System.Double
 Imports System.Math
 Imports System.Runtime.InteropServices
 Imports System.Threading
@@ -249,6 +248,20 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Function GetValue(context As Object,
       timeContext As Object, inputAttributes As AFAttributeList,
       inputValues As AFValues) As AFValue
+
+      If timeContext Is Nothing Then
+        If GetCurrentProcess.ProcessName.Equals(PIRecalcProcessName) Then
+          ' No results are calculated for PI Analysis Service recalculations.
+          ' This is done so that backfilling or recalculating with the PI
+          ' Analysis Service does not slow down the system and cause skipped
+          ' calculations because of a synclocked DBM object.
+          Return Nothing
+        Else
+          Return DBMResult(Now)
+        End If
+      Else
+        Return DBMResult(DirectCast(timeContext, AFTime))
+      End If
 
       If GetCurrentProcess.ProcessName.Equals(PIRecalcProcessName) Then
         ' No results are calculated for PI Analysis Service recalculations. This
