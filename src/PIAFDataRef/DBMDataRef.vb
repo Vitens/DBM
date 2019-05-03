@@ -26,7 +26,6 @@ Imports System
 Imports System.Collections.Generic
 Imports System.ComponentModel
 Imports System.DateTime
-Imports System.Diagnostics.Process
 Imports System.Double
 Imports System.Math
 Imports System.Runtime.InteropServices
@@ -75,8 +74,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const CategoryNoCorrelation As String = "NoCorrelation"
     Const pValueLoHi As Double = 0.95 ' Confidence interval for Lo and Hi
     Const pValueMinMax As Double = 0.9999 ' CI for Minimum and Maximum
-    Const PIRecalcProcessName As String = "PIRecalculationProcessor"
-
 
     Private InputPointDriver As DBMPointDriver
     Private CorrelationPoints As List(Of DBMCorrelationPoint)
@@ -250,14 +247,22 @@ Namespace Vitens.DynamicBandwidthMonitor
       timeContext As Object, inputAttributes As AFAttributeList,
       inputValues As AFValues) As AFValue
 
-      If GetCurrentProcess.ProcessName.Equals(PIRecalcProcessName) Then
-        ' No results are calculated for PI Analysis Service recalculations
-        Return New AFValue(NaN,DirectCast(timeContext, AFTime))
+      Dim Timestamp As AFTime
+
+      If timeContext Is Nothing Then
+        ' Always returns a value for the current timestamp if no time context
+        ' is given.
+        Return DBMResult(Now)
       Else
-        If timeContext Is Nothing Then
-          Return DBMResult(Now)
+        If (Now - Timestamp.LocalTime).TotalSeconds > CalculationInterval Then
+          ' Never return historic values older than one calculation interval.
+          ' This is done so that backfilling or recalculating with the PI
+          ' Analysis Service does not slow down the system and cause skipped
+          ' calculations because of a synclocked DBM object.
+          Return New AFValue(NaN,DirectCast(timeContext, AFTime))
         Else
-          Return DBMResult(DirectCast(timeContext, AFTime))
+          ' Only return historic values if within one calculation interval.
+          Return DBMResult(Timestamp)
         End If
       End If
 
