@@ -193,12 +193,11 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim AlignedTimestamp As AFTime ' DST issue with DateTime obj in DBMResult
       Dim Value As New AFValue
 
+      ' Attempts to acquire an exclusive lock on the DBM object for one
+      ' calculation interval.
       If Monitor.TryEnter(DBM, CalculationInterval * 1000) Then
 
-        ' Attempts to acquire an exclusive lock on the specified object for
-        ' 500 milliseconds.
         ' Lock was acquired.
-
         Try
 
           If PointsStale.IsStale Then UpdatePoints ' Update points periodically
