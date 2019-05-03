@@ -259,8 +259,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       If timeContext Is Nothing Then
         Return DBMResult(Now)
       Else
-        Return CreateSystemStateValue(NoSample,
-          DirectCast(timeContext, AFTime)) ' Return No Sample
+        Return CreateSystemStateValue(AccessDenied,
+          DirectCast(timeContext, AFTime)) ' Return Access Denied
       End If
 
     End Function
