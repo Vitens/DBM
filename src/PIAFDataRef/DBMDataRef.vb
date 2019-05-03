@@ -260,7 +260,9 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' Never return historic values older than one calculation interval.
           ' This is done so that backfilling or recalculating with the PI
           ' Analysis Service does not slow down the system and cause skipped
-          ' calculations because of a synclocked DBM object.
+          ' calculations because of a synclocked DBM object. NULL (year 1970)
+          ' timestamps are used when recalculating historic data. Even for
+          ' real-time calculations, a time context is always passed.
           Return New AFValue(NaN, Timestamp)
         Else
           ' Only return historic values if within one calculation interval.
