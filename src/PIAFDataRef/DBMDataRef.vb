@@ -249,18 +249,18 @@ Namespace Vitens.DynamicBandwidthMonitor
       timeContext As Object, inputAttributes As AFAttributeList,
       inputValues As AFValues) As AFValue
 
-      If timeContext Is Nothing Then
-        If GetCurrentProcess.ProcessName.Equals(PIRecalcProcessName) Then
-          ' No results are calculated for PI Analysis Service recalculations.
-          ' This is done so that backfilling or recalculating with the PI
-          ' Analysis Service does not slow down the system and cause skipped
-          ' calculations because of a synclocked DBM object.
-          Return Nothing
-        Else
-          Return DBMResult(Now)
-        End If
+      If GetCurrentProcess.ProcessName.Equals(PIRecalcProcessName) Then
+        ' No results are calculated for PI Analysis Service recalculations.
+        ' This is done so that backfilling or recalculating with the PI
+        ' Analysis Service does not slow down the system and cause skipped
+        ' calculations because of a synclocked DBM object.
+        Return New AFValue(0, DirectCast(timeContext, AFTime)) ' Return 0
       Else
-        Return DBMResult(DirectCast(timeContext, AFTime))
+        If timeContext Is Nothing Then
+          Return DBMResult(Now)
+        Else
+          Return DBMResult(DirectCast(timeContext, AFTime))
+        End If
       End If
 
     End Function
