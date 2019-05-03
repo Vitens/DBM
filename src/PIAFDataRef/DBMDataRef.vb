@@ -26,13 +26,13 @@ Imports System
 Imports System.Collections.Generic
 Imports System.ComponentModel
 Imports System.DateTime
+Imports System.Diagnostics.Process
+Imports System.Double
 Imports System.Math
 Imports System.Runtime.InteropServices
 Imports System.Threading
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Asset.AFAttributeTrait
-Imports OSIsoft.AF.Asset.AFSystemStateCode
-Imports OSIsoft.AF.Asset.AFValue
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Time
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
@@ -75,6 +75,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const CategoryNoCorrelation As String = "NoCorrelation"
     Const pValueLoHi As Double = 0.95 ' Confidence interval for Lo and Hi
     Const pValueMinMax As Double = 0.9999 ' CI for Minimum and Maximum
+    Const RecalcProcess As String = "PIRecalculationProcessor"
 
 
     Private InputPointDriver As DBMPointDriver
@@ -249,18 +250,19 @@ Namespace Vitens.DynamicBandwidthMonitor
       timeContext As Object, inputAttributes As AFAttributeList,
       inputValues As AFValues) As AFValue
 
-      ' Returns a value only if no time context is given. Without a time
-      ' context, the value for the current timestamp is returned. This is done
-      ' so that backfilling or recalculating with the PI Analysis Service does
-      ' not slow down the system and cause skipped calculations because of a
-      ' synclocked DBM object. For analysis of historic timestamps over a time
-      ' range, the GetValues method should be used.
+      ' When recalculating with the PI Analysis Service, returns a value only if
+      ' no time context is given. Without a time context, the value for the
+      ' current timestamp is returned. This is done so that backfilling or
+      ' recalculating does not slow down the system and cause skipped
+      ' calculations because of a synclocked DBM object. For all other
+      ' processes, values are returned as expected.
 
       If timeContext Is Nothing Then
         Return DBMResult(Now)
+      ElseIf GetCurrentProcess.ProcessName.Equals(RecalcProcess)
+        Return New AFValue(NaN, DirectCast(timeContext, AFTime))
       Else
-        Return CreateSystemStateValue(AccessDenied,
-          DirectCast(timeContext, AFTime)) ' Return Access Denied
+        Return DBMResult(DirectCast(timeContext, AFTime))
       End If
 
     End Function
