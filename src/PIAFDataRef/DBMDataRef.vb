@@ -26,7 +26,6 @@ Imports System
 Imports System.Collections.Generic
 Imports System.ComponentModel
 Imports System.DateTime
-Imports System.Double
 Imports System.Math
 Imports System.Runtime.InteropServices
 Imports System.Threading
@@ -79,7 +78,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private InputPointDriver As DBMPointDriver
     Private CorrelationPoints As List(Of DBMCorrelationPoint)
     Private PointsStale As New DBMStale
-    Private Shared DBM As New DBM
+    Private Shared SharedDBM As New DBM
 
 
     Public Overrides Readonly Property SupportedContexts _
@@ -185,7 +184,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Private Function DBMResult(Timestamp As AFTime,
+    Private Function DBMResult(ByRef DBM As DBM, Timestamp As AFTime,
       Optional EndTimestamp As AFTime = Nothing) As AFValue
 
       ' Return DBM result parameter based on applied property/trait.
@@ -193,64 +192,53 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim AlignedTimestamp As AFTime ' DST issue with DateTime obj in DBMResult
       Dim Value As New AFValue
 
-      ' Attempts to acquire an exclusive lock on the DBM object for one
-      ' calculation interval.
-      If Monitor.TryEnter(DBM, CalculationInterval * 1000) Then
+      Monitor.Enter(DBM) ' Request the lock, and block until it is obtained.
+      Try
 
-        ' Lock was acquired.
-        Try
+        If PointsStale.IsStale Then UpdatePoints ' Update points periodically
+        If Not EndTimestamp.IsEmpty Then DBM.PrepareData(InputPointDriver,
+          CorrelationPoints, Timestamp.LocalTime, EndTimestamp.LocalTime)
 
-          If PointsStale.IsStale Then UpdatePoints ' Update points periodically
-          If Not EndTimestamp.IsEmpty Then DBM.PrepareData(InputPointDriver,
-            CorrelationPoints, Timestamp.LocalTime, EndTimestamp.LocalTime)
+        With DBM.Result(
+          InputPointDriver, CorrelationPoints, Timestamp.LocalTime)
 
-          With DBM.Result(
-            InputPointDriver, CorrelationPoints, Timestamp.LocalTime)
+          AlignedTimestamp = New AFTime(Timestamp.UtcSeconds-
+            Timestamp.UtcSeconds Mod CalculationInterval) ' Align prev interval
+          If Attribute.Trait Is Nothing Then
+            Value = New AFValue(.Factor, AlignedTimestamp)
+            Value.Questionable = .HasEvent
+            Value.Substituted = .HasSuppressedEvent
+          ElseIf Attribute.Trait Is LimitTarget Then
+            Value = New AFValue(.ForecastItem.Measurement, AlignedTimestamp)
+          ElseIf Attribute.Trait Is Forecast Then
+            Value = New AFValue(.ForecastItem.ForecastValue, AlignedTimestamp)
+          ElseIf Attribute.Trait Is LimitMinimum Then
+            Value = New AFValue(.ForecastItem.ForecastValue-
+              .ForecastItem.Range(pValueMinMax), AlignedTimestamp)
+          ElseIf Attribute.Trait Is LimitLoLo Then
+            Value = New AFValue(.ForecastItem.LowerControlLimit,
+              AlignedTimestamp)
+          ElseIf Attribute.Trait Is LimitLo Then
+            Value = New AFValue(.ForecastItem.ForecastValue-
+              .ForecastItem.Range(pValueLoHi), AlignedTimestamp)
+          ElseIf Attribute.Trait Is LimitHi Then
+            Value = New AFValue(.ForecastItem.ForecastValue+
+              .ForecastItem.Range(pValueLoHi), AlignedTimestamp)
+          ElseIf Attribute.Trait Is LimitHiHi Then
+            Value = New AFValue(.ForecastItem.UpperControlLimit,
+              AlignedTimestamp)
+          ElseIf Attribute.Trait Is LimitMaximum Then
+            Value = New AFValue(.ForecastItem.ForecastValue+
+              .ForecastItem.Range(pValueMinMax), AlignedTimestamp)
+          End If
 
-            AlignedTimestamp = New AFTime(Timestamp.UtcSeconds-
-              Timestamp.UtcSeconds Mod CalculationInterval) ' Align prv interval
-            If Attribute.Trait Is Nothing Then
-              Value = New AFValue(.Factor, AlignedTimestamp)
-              Value.Questionable = .HasEvent
-              Value.Substituted = .HasSuppressedEvent
-            ElseIf Attribute.Trait Is LimitTarget Then
-              Value = New AFValue(.ForecastItem.Measurement, AlignedTimestamp)
-            ElseIf Attribute.Trait Is Forecast Then
-              Value = New AFValue(.ForecastItem.ForecastValue, AlignedTimestamp)
-            ElseIf Attribute.Trait Is LimitMinimum Then
-              Value = New AFValue(.ForecastItem.ForecastValue-
-                .ForecastItem.Range(pValueMinMax), AlignedTimestamp)
-            ElseIf Attribute.Trait Is LimitLoLo Then
-              Value = New AFValue(.ForecastItem.LowerControlLimit,
-                AlignedTimestamp)
-            ElseIf Attribute.Trait Is LimitLo Then
-              Value = New AFValue(.ForecastItem.ForecastValue-
-                .ForecastItem.Range(pValueLoHi), AlignedTimestamp)
-            ElseIf Attribute.Trait Is LimitHi Then
-              Value = New AFValue(.ForecastItem.ForecastValue+
-                .ForecastItem.Range(pValueLoHi), AlignedTimestamp)
-            ElseIf Attribute.Trait Is LimitHiHi Then
-              Value = New AFValue(.ForecastItem.UpperControlLimit,
-                AlignedTimestamp)
-            ElseIf Attribute.Trait Is LimitMaximum Then
-              Value = New AFValue(.ForecastItem.ForecastValue+
-                .ForecastItem.Range(pValueMinMax), AlignedTimestamp)
-            End If
+        End With
 
-          End With
+        Return Value
 
-          Return Value
-
-        Finally
-          Monitor.Exit(DBM) ' Ensure that the lock is released.
-        End Try
-
-      Else
-
-        ' Lock was not acquired.
-        Return New AFValue(NaN, Timestamp)
-
-      End If
+      Finally
+        Monitor.Exit(DBM) ' Ensure that the lock is released.
+      End Try
 
     End Function
 
@@ -267,7 +255,11 @@ Namespace Vitens.DynamicBandwidthMonitor
         Timestamp = DirectCast(timeContext, AFTime)
       End If
 
-      Return DBMResult(Timestamp)
+      ' Create a new DBM object for each call to the GetValue method. This is
+      ' done so that multiple parallel calls do not block execution (f.ex. when
+      ' performing real-time calculations using the PI Analysis Service). The
+      ' downside to this is that caching is not available.
+      Return DBMResult(New DBM, Timestamp)
 
     End Function
 
@@ -286,7 +278,12 @@ Namespace Vitens.DynamicBandwidthMonitor
         StartTime.UtcSeconds)/CalculationInterval-1)/(numberOfValues-1))*
         CalculationInterval ' Required interval, first and last interv inclusive
       Do While timeContext.EndTime > timeContext.StartTime
-        GetValues.Add(DBMResult(timeContext.StartTime, timeContext.EndTime))
+        ' Use the shared DBM object for each call to the GetValues method. This
+        ' is done so caching is enabled when retrieving many values over a
+        ' period of time. A parallel call is blocked and executed after the data
+        ' has been cached for faster execution.
+        GetValues.Add(
+          DBMResult(SharedDBM, timeContext.StartTime, timeContext.EndTime))
         timeContext.StartTime = New AFTime(
           timeContext.StartTime.UtcSeconds+IntervalSeconds)
       Loop
