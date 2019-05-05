@@ -197,9 +197,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         Monitor.Enter(PointsStale) ' Request the lock, and block until obtained.
         Try
-          If PointsStale.IsStale Then
-            UpdatePoints ' Update points periodically
-          End If
+          If PointsStale.IsStale Then UpdatePoints ' Update points periodically
         Finally
           Monitor.Exit(PointsStale) ' Ensure that the lock is released.
         End Try
