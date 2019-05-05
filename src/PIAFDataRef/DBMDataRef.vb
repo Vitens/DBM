@@ -256,9 +256,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
 
       ' Create a new DBM object for each call to the GetValue method. This is
-      ' done so that multiple parallel calls do not block execution (f.ex. when
-      ' performing real-time calculations using the PI Analysis Service). The
-      ' downside to this is that caching is not available.
+      ' done so that multiple parallel calls for a single value do not block
+      ' execution (for example when performing real-time calculations using the
+      ' PI Analysis Service). The downside to this is that caching is not
+      ' available.
       Return DBMResult(New DBM, Timestamp)
 
     End Function
@@ -279,9 +280,10 @@ Namespace Vitens.DynamicBandwidthMonitor
         CalculationInterval ' Required interval, first and last interv inclusive
       Do While timeContext.EndTime > timeContext.StartTime
         ' Use the shared DBM object for each call to the GetValues method. This
-        ' is done so caching is enabled when retrieving many values over a
-        ' period of time. A parallel call is blocked and executed after the data
-        ' has been cached for faster execution.
+        ' is done so that caching is enabled when retrieving multiple values
+        ' over a period of time. A parallel call is blocked and executed after
+        ' the data has been cached for faster execution and only a single call
+        ' to the PI Data Archive server.
         GetValues.Add(
           DBMResult(SharedDBM, timeContext.StartTime, timeContext.EndTime))
         timeContext.StartTime = New AFTime(
