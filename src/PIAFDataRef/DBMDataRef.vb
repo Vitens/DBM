@@ -195,7 +195,15 @@ Namespace Vitens.DynamicBandwidthMonitor
       Monitor.Enter(DBM) ' Request the lock, and block until it is obtained.
       Try
 
-        If PointsStale.IsStale Then UpdatePoints ' Update points periodically
+        Monitor.Enter(PointsStale) ' Request the lock, and block until obtained.
+        Try
+          If PointsStale.IsStale Then
+            UpdatePoints ' Update points periodically
+          End If
+        Finally
+          Monitor.Exit(PointsStale) ' Ensure that the lock is released.
+        End Try
+
         If Not EndTimestamp.IsEmpty Then DBM.PrepareData(InputPointDriver,
           CorrelationPoints, Timestamp.LocalTime, EndTimestamp.LocalTime)
 
