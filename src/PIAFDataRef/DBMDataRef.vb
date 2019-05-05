@@ -267,7 +267,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         Return DBMResult(New DBM, Now)
       Else
         Timestamp = DirectCast(timeContext, AFTime)
-        If AlignTimestamp(Timestamp.LocalTime).Equals(AlignTimestamp(Now)) Then
+        If AlignTimestamp(Timestamp.LocalTime, CalculationInterval).
+          Equals(AlignTimestamp(Now, CalculationInterval)) Then
           Return DBMResult(New DBM, Timestamp)
         Else
           ' Never return historic values older than one calculation interval.
