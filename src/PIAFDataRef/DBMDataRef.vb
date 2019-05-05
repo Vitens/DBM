@@ -31,6 +31,8 @@ Imports System.Runtime.InteropServices
 Imports System.Threading
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Asset.AFAttributeTrait
+Imports OSIsoft.AF.Asset.AFSystemStateCode
+Imports OSIsoft.AF.Asset.AFValue
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Time
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
@@ -256,17 +258,25 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Timestamp As AFTime
 
       If timeContext Is Nothing Then
-        Timestamp = Now
+        ' Create a new DBM object for each call to the GetValue method. This is
+        ' done so that multiple parallel calls for a single value do not block
+        ' execution (for example when performing real-time calculations using
+        ' the PI Analysis Service). The downside to this is that caching is not
+        ' available.
+        Return DBMResult(New DBM, Now)
       Else
         Timestamp = DirectCast(timeContext, AFTime)
+        If AlignTimestamp(Timestamp.LocalTime).Equals(AlignTimestamp(Now)) Then
+          Return DBMResult(New DBM, Timestamp)
+        Else
+          ' Never return historic values older than one calculation interval.
+          ' This is done so that backfilling or recalculating with the PI
+          ' Analysis Service does not slow down the system. For analysis of
+          ' historic timestamps over a time range, the GetValues method should
+          ' be used.
+          Return CreateSystemStateValue(NoSample, Timestamp) ' Return No Sample
+        End If
       End If
-
-      ' Create a new DBM object for each call to the GetValue method. This is
-      ' done so that multiple parallel calls for a single value do not block
-      ' execution (for example when performing real-time calculations using the
-      ' PI Analysis Service). The downside to this is that caching is not
-      ' available.
-      Return DBMResult(New DBM, Timestamp)
 
     End Function
 
