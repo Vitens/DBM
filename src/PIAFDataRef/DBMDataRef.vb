@@ -196,9 +196,16 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Value As New AFValue
 
       Monitor.Enter(DBM) ' Request the lock, and block until it is obtained.
+      ' We lock the DBM object so that when there are parallel calls, data will
+      ' be retrieved and cached only for the first call. Subsequent calls can
+      ' then use these cached values for faster calculation execution.
       Try
 
         Monitor.Enter(PointsStale) ' Request the lock, and block until obtained.
+        ' We lock the PointsStale object so that points are only updated once
+        ' every calculation interval. Because multiple instances of the DBM
+        ' object might exist and be active, we have to apply an additional lock
+        ' here after already locking the DBM object before.
         Try
           If PointsStale.IsStale Then UpdatePoints ' Update points periodically
         Finally
