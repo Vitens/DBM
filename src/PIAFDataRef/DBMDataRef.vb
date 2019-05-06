@@ -212,20 +212,8 @@ Namespace Vitens.DynamicBandwidthMonitor
           Monitor.Exit(PointsStale) ' Ensure that the lock is released.
         End Try
 
-        If EndTimestamp.IsEmpty Then
-          ' Prepare data when no end timestamp is passed and data is only
-          ' required for calculation on a single timestamp, as done in the
-          ' GetValue method. In this case, add one calculation interval to the
-          ' end timestamp in the PrepareData call, as the end timestamp itself
-          ' is excluded there.
-          DBM.PrepareData(InputPointDriver, CorrelationPoints,
-            Timestamp.LocalTime, NextInterval(Timestamp.LocalTime))
-        Else
-          ' Prepare data when both a calculation timestamp and an end timestamp
-          ' are passed, as done in the GetValues method.
-          DBM.PrepareData(InputPointDriver, CorrelationPoints,
-            Timestamp.LocalTime, EndTimestamp.LocalTime)
-        End If
+        If Not EndTimestamp.IsEmpty Then DBM.PrepareData(InputPointDriver,
+          CorrelationPoints, Timestamp.LocalTime, EndTimestamp.LocalTime)
 
         With DBM.Result(
           InputPointDriver, CorrelationPoints, Timestamp.LocalTime)
