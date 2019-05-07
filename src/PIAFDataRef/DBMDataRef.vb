@@ -202,7 +202,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       Try
 
         If PointsStale.IsStale Then UpdatePoints ' Update points periodically
-
         If Not EndTimestamp.IsEmpty Then DBM.PrepareData(InputPointDriver,
           CorrelationPoints, Timestamp.LocalTime, EndTimestamp.LocalTime)
 
@@ -290,8 +289,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         StartTime.UtcSeconds)/CalculationInterval-1)/(numberOfValues-1))*
         CalculationInterval ' Required interval, first and last interv inclusive
       Do While timeContext.EndTime > timeContext.StartTime
-        GetValues.Add(
-          DBMResult(SharedDBM, timeContext.StartTime, timeContext.EndTime))
+        GetValues.Add(DBMResult(timeContext.StartTime, timeContext.EndTime))
         timeContext.StartTime = New AFTime(
           timeContext.StartTime.UtcSeconds+IntervalSeconds)
       Loop
