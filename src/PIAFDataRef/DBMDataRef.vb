@@ -36,7 +36,6 @@ Imports OSIsoft.AF.Asset.AFValue
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Time
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
-Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
@@ -259,15 +258,14 @@ Namespace Vitens.DynamicBandwidthMonitor
         Return DBMResult(Now)
       Else
         Timestamp = DirectCast(timeContext, AFTime)
-        If AlignTimestamp(Timestamp.LocalTime, CalculationInterval).
-          Equals(AlignTimestamp(Now, CalculationInterval)) Then
+        If (Now - Timestamp.LocalTime).TotalDays >= 0 And
+          (Now - Timestamp.LocalTime).TotalDays < 1 Then
           Return DBMResult(Timestamp)
         Else
-          ' Never return historic values older than one calculation interval.
-          ' This is done so that backfilling or recalculating with the PI
-          ' Analysis Service does not slow down the system. For analysis of
-          ' historic timestamps over a time range, the GetValues method should
-          ' be used.
+          ' Never calculate historic values older than one day. This is done so
+          ' that backfilling or recalculating with the PI Analysis Service does
+          ' not slow down the system. For analysis of historic timestamps over
+          ' a time range, the GetValues method should be used.
           Return CreateSystemStateValue(NoSample, Timestamp) ' Return No Sample
         End If
       End If
