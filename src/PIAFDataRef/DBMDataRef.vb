@@ -81,7 +81,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private InputPointDriver As DBMPointDriver
     Private CorrelationPoints As List(Of DBMCorrelationPoint)
     Private PointsStale As New DBMStale
-    Private Shared DBM As New DBM
+    Private Shared SharedDBM As New DBM
 
 
     Public Overrides Readonly Property SupportedContexts _
@@ -187,7 +187,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Private Function DBMResult(Timestamp As AFTime,
+    Private Function DBMResult(ByRef DBM As DBM, Timestamp As AFTime,
       Optional EndTimestamp As AFTime = Nothing) As AFValue
 
       ' Return DBM result parameter based on applied property/trait.
@@ -201,7 +201,16 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' then use these cached values for faster calculation execution.
       Try
 
-        If PointsStale.IsStale Then UpdatePoints ' Update points periodically
+        Monitor.Enter(PointsStale) ' Request the lock, and block until obtained.
+        ' We lock the PointsStale object so that points are only updated once
+        ' every calculation interval. Because multiple instances of the DBM
+        ' object might exist and be active, we have to apply an additional lock
+        ' here after already locking the DBM object before.
+        Try
+          If PointsStale.IsStale Then UpdatePoints ' Update points periodically
+        Finally
+          Monitor.Exit(PointsStale) ' Ensure that the lock is released.
+        End Try
 
         If Not EndTimestamp.IsEmpty Then DBM.PrepareData(InputPointDriver,
           CorrelationPoints, Timestamp.LocalTime, EndTimestamp.LocalTime)
@@ -257,12 +266,17 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Timestamp As AFTime
 
       If timeContext Is Nothing Then
-        Return DBMResult(Now)
+        ' Create a new DBM object for each call to the GetValue method. This is
+        ' done so that multiple parallel calls for a single value do not block
+        ' execution (for example when performing real-time calculations using
+        ' the PI Analysis Service). The downside to this is that caching is not
+        ' available.
+        Return DBMResult(New DBM, Now)
       Else
         Timestamp = DirectCast(timeContext, AFTime)
         If AlignTimestamp(Timestamp.LocalTime, CalculationInterval).
           Equals(AlignTimestamp(Now, CalculationInterval)) Then
-          Return DBMResult(Timestamp)
+          Return DBMResult(New DBM, Timestamp)
         Else
           ' Never return historic values older than one calculation interval.
           ' This is done so that backfilling or recalculating with the PI
@@ -290,6 +304,11 @@ Namespace Vitens.DynamicBandwidthMonitor
         StartTime.UtcSeconds)/CalculationInterval-1)/(numberOfValues-1))*
         CalculationInterval ' Required interval, first and last interv inclusive
       Do While timeContext.EndTime > timeContext.StartTime
+        ' Use the shared DBM object for each call to the GetValues method. This
+        ' is done so that caching is enabled when retrieving multiple values
+        ' over a period of time. A parallel call is blocked and executed after
+        ' the data has been cached for faster execution and only a single call
+        ' to the PI Data Archive server.
         GetValues.Add(
           DBMResult(SharedDBM, timeContext.StartTime, timeContext.EndTime))
         timeContext.StartTime = New AFTime(
