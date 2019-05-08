@@ -80,8 +80,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private InputPointDriver As DBMPointDriver
     Private CorrelationPoints As List(Of DBMCorrelationPoint)
     Private PointsStale As New DBMStale
-    Private Shared SharedDBM As New DBM
     Private NonsharedDBM As New DBM
+    Private Shared SharedDBM As New DBM
 
 
     Public Overrides Readonly Property SupportedContexts _
