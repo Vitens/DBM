@@ -75,6 +75,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const CategoryNoCorrelation As String = "NoCorrelation"
     Const pValueLoHi As Double = 0.95 ' Confidence interval for Lo and Hi
     Const pValueMinMax As Double = 0.9999 ' CI for Minimum and Maximum
+    Const AllowedGetValueOffsetDays As Double = 1 ' Allowed GetValue offset
 
 
     Private InputPointDriver As DBMPointDriver
@@ -275,13 +276,15 @@ Namespace Vitens.DynamicBandwidthMonitor
         Return DBMResult(NonsharedDBM, Now)
       Else
         Timestamp = DirectCast(timeContext, AFTime)
-        If Abs((Now - Timestamp.LocalTime).TotalDays) < 1 Then
+        If Abs((Now - Timestamp.LocalTime).TotalDays) <
+          AllowedGetValueOffsetDays Then
           Return DBMResult(NonsharedDBM, Timestamp)
         Else
-          ' Never calculate historic values older or newer than one day. This is
-          ' done so that backfilling or recalculating with the PI Analysis
-          ' Service does not slow down the system. For analysis of historic
-          ' timestamps over a time range, the GetValues method should be used.
+          ' Never calculate historic values older or newer than the specified
+          ' number of days. This is done so that backfilling or recalculating
+          ' with the PI Analysis Service does not slow down the system. For
+          ' analysis of historic timestamps over a time range, the GetValues
+          ' method should be used.
           Return CreateSystemStateValue(NoSample, Timestamp) ' Return No Sample
         End If
       End If
