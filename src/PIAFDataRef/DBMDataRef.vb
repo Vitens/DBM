@@ -81,6 +81,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private CorrelationPoints As List(Of DBMCorrelationPoint)
     Private PointsStale As New DBMStale
     Private Shared SharedDBM As New DBM
+    Private NonsharedDBM As New DBM
 
 
     Public Overrides Readonly Property SupportedContexts _
@@ -265,22 +266,21 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Timestamp As AFTime
 
       If timeContext Is Nothing Then
-        ' Create a new DBM object for each call to the GetValue method. This is
-        ' done so that multiple parallel calls for a single value do not block
-        ' execution (for example when performing real-time calculations using
-        ' the PI Analysis Service). The downside to this is that caching is not
-        ' available.
-        Return DBMResult(New DBM, Now)
+        ' Use the nonshared DBM object for each call to the GetValue method.
+        ' This is done so that multiple parallel calls for a single value do not
+        ' block execution on the locked shared DBM object (for example when
+        ' performing real-time calculations using the PI Analysis Service). The
+        ' downside to this is that caching is not available.
+        Return DBMResult(NonsharedDBM, Now)
       Else
         Timestamp = DirectCast(timeContext, AFTime)
-        If (Now - Timestamp.LocalTime).TotalDays >= 0 And
-          (Now - Timestamp.LocalTime).TotalDays < 1 Then
-          Return DBMResult(New DBM, Timestamp)
+        If Abs((Now - Timestamp.LocalTime).TotalDays) < 1 Then
+          Return DBMResult(NonsharedDBM, Timestamp)
         Else
-          ' Never calculate historic values older than one day. This is done so
-          ' that backfilling or recalculating with the PI Analysis Service does
-          ' not slow down the system. For analysis of historic timestamps over
-          ' a time range, the GetValues method should be used.
+          ' Never calculate historic values older or newer than one day. This is
+          ' done so that backfilling or recalculating with the PI Analysis
+          ' Service does not slow down the system. For analysis of historic
+          ' timestamps over a time range, the GetValues method should be used.
           Return CreateSystemStateValue(NoSample, Timestamp) ' Return No Sample
         End If
       End If
