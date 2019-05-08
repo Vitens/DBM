@@ -268,9 +268,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       If timeContext Is Nothing Then
         ' Use the nonshared DBM object for each call to the GetValue method.
         ' This is done so that multiple parallel calls for a single value do not
-        ' block execution on the locked shared DBM object (for example when
-        ' performing real-time calculations using the PI Analysis Service). The
-        ' downside to this is that caching is not available.
+        ' block execution on the locked DBM object shared with all AF attributes
+        ' (for example when performing real-time calculations using the PI
+        ' Analysis Service). The downside to this is that caching is only
+        ' available per AF attribute.
         Return DBMResult(NonsharedDBM, Now)
       Else
         Timestamp = DirectCast(timeContext, AFTime)
@@ -303,10 +304,11 @@ Namespace Vitens.DynamicBandwidthMonitor
         CalculationInterval ' Required interval, first and last interv inclusive
       Do While timeContext.EndTime > timeContext.StartTime
         ' Use the shared DBM object for each call to the GetValues method. This
-        ' is done so that caching is enabled when retrieving multiple values
-        ' over a period of time. A parallel call is blocked and executed after
-        ' the data has been cached for faster execution and only a single call
-        ' to the PI Data Archive server.
+        ' is done so that caching is enabled for all AF attributes when
+        ' retrieving multiple values over a period of time. A parallel call
+        ' to any AF attribute is blocked and executed after the data has been
+        ' cached for faster execution and only a single call to the PI Data
+        ' Archive server.
         GetValues.Add(
           DBMResult(SharedDBM, timeContext.StartTime, timeContext.EndTime))
         timeContext.StartTime = New AFTime(
