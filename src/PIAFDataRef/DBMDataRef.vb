@@ -252,13 +252,13 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Timestamp As AFTime
 
       If timeContext Is Nothing Then
-        Return DBMResult(NonsharedDBM, Now)
+        Return DBMResult(Now)
       Else
         Timestamp = DirectCast(timeContext, AFTime)
         If Timestamp.IsEmpty Then
           Return CreateSystemStateValue(NoSample, Timestamp) ' Return No Sample
         Else
-          Return DBMResult(NonsharedDBM, Timestamp)
+          Return DBMResult(Timestamp)
         End If
       End If
 
