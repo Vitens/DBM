@@ -75,14 +75,12 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const CategoryNoCorrelation As String = "NoCorrelation"
     Const pValueLoHi As Double = 0.95 ' Confidence interval for Lo and Hi
     Const pValueMinMax As Double = 0.9999 ' CI for Minimum and Maximum
-    Const AllowedGetValueOffsetDays As Double = 1 ' Allowed GetValue offset
 
 
     Private InputPointDriver As DBMPointDriver
     Private CorrelationPoints As List(Of DBMCorrelationPoint)
     Private PointsStale As New DBMStale
-    Private NonsharedDBM As New DBM
-    Private Shared SharedDBM As New DBM
+    Private Shared DBM As New DBM
 
 
     Public Overrides Readonly Property SupportedContexts _
@@ -188,7 +186,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Private Function DBMResult(ByRef DBM As DBM, Timestamp As AFTime,
+    Private Function DBMResult(Timestamp As AFTime,
       Optional EndTimestamp As AFTime = Nothing) As AFValue
 
       ' Return DBM result parameter based on applied property/trait.
@@ -197,22 +195,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Value As New AFValue
 
       Monitor.Enter(DBM) ' Request the lock, and block until it is obtained.
-      ' We lock the DBM object so that when there are parallel calls, data will
-      ' be retrieved and cached only for the first call. Subsequent calls can
-      ' then use these cached values for faster calculation execution.
       Try
 
-        Monitor.Enter(PointsStale) ' Request the lock, and block until obtained.
-        ' We lock the PointsStale object so that points are only updated once
-        ' every calculation interval. Because multiple instances of the DBM
-        ' object might exist and be active, we have to apply an additional lock
-        ' here after already locking the DBM object before.
-        Try
-          If PointsStale.IsStale Then UpdatePoints ' Update points periodically
-        Finally
-          Monitor.Exit(PointsStale) ' Ensure that the lock is released.
-        End Try
-
+        If PointsStale.IsStale Then UpdatePoints ' Update points periodically
         If Not EndTimestamp.IsEmpty Then DBM.PrepareData(InputPointDriver,
           CorrelationPoints, Timestamp.LocalTime, EndTimestamp.LocalTime)
 
@@ -267,25 +252,13 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Timestamp As AFTime
 
       If timeContext Is Nothing Then
-        ' Use the nonshared DBM object for each call to the GetValue method.
-        ' This is done so that multiple parallel calls for a single value do not
-        ' block execution on the locked DBM object shared with all AF attributes
-        ' (for example when performing real-time calculations using the PI
-        ' Analysis Service). The downside to this is that caching is only
-        ' available per AF attribute.
         Return DBMResult(NonsharedDBM, Now)
       Else
         Timestamp = DirectCast(timeContext, AFTime)
-        If Abs((Now - Timestamp.LocalTime).TotalDays) <
-          AllowedGetValueOffsetDays Then
-          Return DBMResult(NonsharedDBM, Timestamp)
-        Else
-          ' Never calculate historic values older or newer than the specified
-          ' number of days. This is done so that backfilling or recalculating
-          ' with the PI Analysis Service does not slow down the system. For
-          ' analysis of historic timestamps over a time range, the GetValues
-          ' method should be used.
+        If Timestamp.IsEmpty Then
           Return CreateSystemStateValue(NoSample, Timestamp) ' Return No Sample
+        Else
+          Return DBMResult(NonsharedDBM, Timestamp)
         End If
       End If
 
@@ -306,14 +279,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         StartTime.UtcSeconds)/CalculationInterval-1)/(numberOfValues-1))*
         CalculationInterval ' Required interval, first and last interv inclusive
       Do While timeContext.EndTime > timeContext.StartTime
-        ' Use the shared DBM object for each call to the GetValues method. This
-        ' is done so that caching is enabled for all AF attributes when
-        ' retrieving multiple values over a period of time. A parallel call
-        ' to any AF attribute is blocked and executed after the data has been
-        ' cached for faster execution and only a single call to the PI Data
-        ' Archive server.
-        GetValues.Add(
-          DBMResult(SharedDBM, timeContext.StartTime, timeContext.EndTime))
+        GetValues.Add(DBMResult(timeContext.StartTime, timeContext.EndTime))
         timeContext.StartTime = New AFTime(
           timeContext.StartTime.UtcSeconds+IntervalSeconds)
       Loop
