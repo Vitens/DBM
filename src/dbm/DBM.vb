@@ -74,7 +74,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' distribution processes.
 
 
-    Private PointsCache As New DBMCache(CInt(4^(CacheSizeFactor-1))) ' 64 items
+    Private PointsCache As New DBMCache(CInt((4^CacheSizeFactor)/4)) ' 1024 itms
 
 
     Private Function Point(PointDriver As DBMPointDriverAbstract) As DBMPoint
