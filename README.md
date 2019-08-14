@@ -1,4 +1,4 @@
-﻿![Logo](img/dbmlogo.png)
+![Logo](img/dbmlogo.png)
 
 # DBM
 Dynamic Bandwidth Monitor  
@@ -117,7 +117,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ## About Vitens
-Vitens is the largest drinking water company in The Netherlands. We deliver top quality drinking water to 6 million people and companies in the provinces Flevoland, Fryslan, Gelderland, Utrecht and Overijssel and some municipalities in Drenthe and Noord-Holland. Annually we deliver 350 million m3 water with 1,400 employees, 100 water treatment works and 50,000 kilometres of water mains.
+Vitens is the largest drinking water company in The Netherlands. We deliver top quality drinking water to 5.7 million people and companies in the provinces Flevoland, Fryslan, Gelderland, Utrecht and Overijssel and some municipalities in Drenthe and Noord-Holland. Annually we deliver 350 million m3 water with 1,400 employees, 100 water treatment works and 50,000 kilometres of water mains.
 
 One of our main focus points is using advanced water quality, quantity and hydraulics models to further improve and optimize our treatment and distribution processes.
 
