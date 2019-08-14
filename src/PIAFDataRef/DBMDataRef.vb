@@ -111,7 +111,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
-    Public Overrides Property [Step] As Boolean
+    Public Overrides Readonly Property [Step] As Boolean
 
       Get
         ' Values are treated discretely and adjacent values are not
