@@ -111,6 +111,17 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
+    Public Overrides Property Step As Boolean
+
+      Get
+        ' Values are treated discretely and adjacent values are not
+        ' interpolated.
+        Return True
+      End Get
+
+    End Property
+
+
     Public Overrides Property ConfigString As String
 
       Get
