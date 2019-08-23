@@ -441,14 +441,16 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function Easter(Year As Integer) As DateTime
 
-      ' Returns Easter Sunday for years 1900-2099 (Gregorian calendar).
+      ' Returns the date of Easter Sunday for the given year.
 
-      Dim H, I, J, L, m, d As Integer
+      Dim G, C, H, i, J, L, m, d As Integer
 
-      H = (24+19*(Year Mod 19)) Mod 30
-      I = H-H\28
-      J = (Year+Year\4+I-13) Mod 7
-      L = I-J
+      G = Year Mod 19
+      C = Year\100
+      H = (C-C\4-(8*C+13)\25+19*G+15) Mod 30
+      i = H-H\28*1-(H\28)*(29\H+1)*(21-G)\11
+      J = (Year+Year\4+i+2-C+C\4) Mod 7
+      L = i-J
       m = 3+(L+40)\44
       d = L+28-31*(m\4)
 
@@ -475,7 +477,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         With Timestamp
           Return (.Month = 1 And .Day = 1) Or
             DaysSinceEaster = 1 Or
-            (.Year < 2014 And .Month = 4 And .Day = 30) Or
+            (.Year >= 1980 And .Year < 2014 And .Month = 4 And .Day = 30) Or
             (.Year >= 2014 And .Month = 4 And .Day = 27) Or
             DaysSinceEaster = 39 Or
             DaysSinceEaster = 50 Or
