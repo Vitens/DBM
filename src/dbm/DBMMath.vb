@@ -460,9 +460,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function IsHoliday(Timestamp As DateTime,
       Optional Culture As CultureInfo = Nothing) As Boolean
 
-      ' Returns True if the passed date is a holiday.
+      ' Returns True if the passed date is a non-Sunday holiday.
 
-      Dim e As DateTime = Easter(Timestamp.Year)
+      Dim DaysSinceEaster As Integer
 
       If Culture Is Nothing Then
         Return False
@@ -470,13 +470,15 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' For the Netherlands, consider the following days as holidays:
         ' New Year's Day, 2nd day of Easter, Royal day, Ascension Day, 2nd day
         ' of Pentecost, Christmas Day, Boxing Day and New Year's Eve.
+        DaysSinceEaster =
+          CInt(Timestamp.Subtract(Easter(Timestamp.Year)).Days)
         With Timestamp
           Return (.Month = 1 And .Day = 1) Or
-            (.Month = e.AddDays(1).Month And .Day = e.AddDays(1).Day) Or
+            DaysSinceEaster = 1 Or
             (.Year < 2014 And .Month = 4 And .Day = 30) Or
             (.Year >= 2014 And .Month = 4 And .Day = 27) Or
-            (.Month = e.AddDays(39).Month And .Day = e.AddDays(39).Day) Or
-            (.Month = e.AddDays(50).Month And .Day = e.AddDays(50).Day) Or
+            DaysSinceEaster = 39 Or
+            DaysSinceEaster = 50 Or
             (.Month = 12 And (.Day = 25 Or .Day = 26 Or .Day = 31))
         End With
       Else
