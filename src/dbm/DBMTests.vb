@@ -785,6 +785,28 @@ Namespace Vitens.DynamicBandwidthMonitor
         PreviousSunday(New DateTime(2016, 2, 11, 0, 44, 7)) = 
         New DateTime(2016, 2, 7, 0, 0, 0)
 
+      UnitTestsPassed = UnitTestsPassed And
+        Easter(1900) = New DateTime(1900, 4, 15) And
+        Easter(1999) = New DateTime(1999, 4, 4) And
+        Easter(2001) = New DateTime(2001, 4, 15) And
+        Easter(2003) = New DateTime(2003, 4, 20) And
+        Easter(2005) = New DateTime(2005, 3, 27) And
+        Easter(2007) = New DateTime(2007, 4, 8) And
+        Easter(2011) = New DateTime(2011, 4, 24) And
+        Easter(2013) = New DateTime(2013, 3, 31) And
+        Easter(2015) = New DateTime(2015, 4, 5) And
+        Easter(2017) = New DateTime(2017, 4, 16) And
+        Easter(2019) = New DateTime(2019, 4, 21) And
+        Easter(2021) = New DateTime(2021, 4, 4) And
+        Easter(2023) = New DateTime(2023, 4, 9) And
+        Easter(2025) = New DateTime(2025, 4, 20) And
+        Easter(2027) = New DateTime(2027, 3, 28) And
+        Easter(2031) = New DateTime(2031, 4, 13) And
+        Easter(2033) = New DateTime(2033, 4, 17) And
+        Easter(2035) = New DateTime(2035, 3, 25) And
+        Easter(2037) = New DateTime(2037, 4, 5) And
+        Easter(2099) = New DateTime(2099, 4, 12)
+
       For i = 0 To 19
         If i = 0 Then
           StatisticsItem = Statistics({3411, 3067, 3159, 2579, 2604, 3549,

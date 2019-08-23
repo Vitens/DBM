@@ -25,6 +25,7 @@ Option Strict
 Imports System
 Imports System.Double
 Imports System.Math
+Imports System.Threading
 Imports System.TimeSpan
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
@@ -434,6 +435,24 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Return New DateTime(Timestamp.Year, Timestamp.Month, Timestamp.Day).
         AddDays(-Timestamp.DayOfWeek)
+
+    End Function
+
+
+    Public Shared Function Easter(Year As Integer) As DateTime
+
+      ' Returns Easter Sunday for years 1900-2099 (Gregorian calendar).
+
+      Dim H, I, J, L, m, d As Integer
+
+      H = (24+19*(Year Mod 19)) Mod 30
+      I = H-H\28
+      J = (Year+Year\4+I-13) Mod 7
+      L = I-J
+      m = 3+(L+40)\44
+      d = L+28-31*(m\4)
+
+      Return New DateTime(Year, m, d)
 
     End Function
 
