@@ -24,8 +24,8 @@ Option Strict
 
 Imports System
 Imports System.Double
+Imports System.Globalization
 Imports System.Math
-Imports System.Threading
 Imports System.TimeSpan
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
@@ -453,6 +453,35 @@ Namespace Vitens.DynamicBandwidthMonitor
       d = L+28-31*(m\4)
 
       Return New DateTime(Year, m, d)
+
+    End Function
+
+
+    Public Shared Function IsHoliday(Timestamp As DateTime,
+      Optional Culture As CultureInfo = Nothing) As Boolean
+
+      ' Returns True if the passed date is a holiday.
+
+      Dim e As DateTime = Easter(Timestamp.Year)
+
+      If Culture Is Nothing Then
+        Return False
+      ElseIf Culture.Name.Equals("nl-NL") Then
+        ' For the Netherlands, consider the following days as holidays:
+        ' New Year's Day, 2nd day of Easter, Royal day, Ascension Day, 2nd day
+        ' of Pentecost, Christmas Day, Boxing Day and New Year's Eve.
+        With Timestamp
+          Return (.Month = 1 And .Day = 1) Or
+            (.Month = e.AddDays(1).Month And .Day = e.AddDays(1).Day) Or
+            (.Year < 2014 And .Month = 4 And .Day = 30) Or
+            (.Year >= 2014 And .Month = 4 And .Day = 27) Or
+            (.Month = e.AddDays(39).Month And .Day = e.AddDays(39).Day) Or
+            (.Month = e.AddDays(50).Month And .Day = e.AddDays(50).Day) Or
+            (.Month = 12 And (.Day = 25 Or .Day = 26 Or .Day = 31))
+        End With
+      Else
+        Return False
+      End If
 
     End Function
 

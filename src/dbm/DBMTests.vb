@@ -26,6 +26,7 @@ Imports System
 Imports System.Collections.Generic
 Imports System.DateTime
 Imports System.Double
+Imports System.Globalization
 Imports System.Math
 Imports System.String
 Imports System.TimeSpan
@@ -806,6 +807,28 @@ Namespace Vitens.DynamicBandwidthMonitor
         Easter(2035) = New DateTime(2035, 3, 25) And
         Easter(2037) = New DateTime(2037, 4, 5) And
         Easter(2099) = New DateTime(2099, 4, 12)
+
+      UnitTestsPassed = UnitTestsPassed And
+        Not IsHoliday(New DateTime(2015, 1, 1)) And
+        Not IsHoliday(New DateTime(2021, 12, 25)) And
+        Not IsHoliday(New DateTime(2020, 10, 12)) And
+        Not IsHoliday(New DateTime(2014, 5, 29)) And
+        IsHoliday(New DateTime(2012, 1, 1), new CultureInfo("nl-NL")) And
+        IsHoliday(New DateTime(2016, 3, 28), new CultureInfo("nl-NL")) And
+        IsHoliday(New DateTime(2012, 4, 30), new CultureInfo("nl-NL")) And
+        IsHoliday(New DateTime(2018, 4, 27), new CultureInfo("nl-NL")) And
+        IsHoliday(New DateTime(2014, 5, 29), new CultureInfo("nl-NL")) And
+        IsHoliday(New DateTime(2020, 6, 1), new CultureInfo("nl-NL")) And
+        IsHoliday(New DateTime(2009, 12, 25), new CultureInfo("nl-NL")) And
+        IsHoliday(New DateTime(2011, 12, 26), new CultureInfo("nl-NL")) And
+        IsHoliday(New DateTime(2010, 12, 31), new CultureInfo("nl-NL")) And
+        Not IsHoliday(New DateTime(2014, 11, 19), new CultureInfo("nl-NL")) And
+        Not IsHoliday(New DateTime(2009, 2, 23), new CultureInfo("nl-NL")) And
+        Not IsHoliday(New DateTime(2014, 4, 12), new CultureInfo("nl-NL")) And
+        Not IsHoliday(New DateTime(2012, 6, 11), new CultureInfo("nl-NL")) And
+        Not IsHoliday(New DateTime(2011, 4, 11), new CultureInfo("nl-NL")) And
+        Not IsHoliday(New DateTime(2022, 4, 17), new CultureInfo("en-US")) And
+        Not IsHoliday(New DateTime(2020, 6, 1), new CultureInfo("en-US"))
 
       For i = 0 To 19
         If i = 0 Then
