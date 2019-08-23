@@ -439,22 +439,17 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function Easter(Year As Integer) As DateTime
+    Public Shared Function Computus(Year As Integer) As DateTime
 
       ' Returns the date of Easter Sunday for the given year.
 
-      Dim G, C, H, i, J, L, m, d As Integer
+      Dim H, i, L As Integer
 
-      G = Year Mod 19
-      C = Year\100
-      H = (C-C\4-(8*C+13)\25+19*G+15) Mod 30
-      i = H-H\28*1-(H\28)*(29\H+1)*(21-G)\11
-      J = (Year+Year\4+i+2-C+C\4) Mod 7
-      L = i-J
-      m = 3+(L+40)\44
-      d = L+28-31*(m\4)
+      H = (Year\100-Year\400-(8*(Year\100)+13)\25+19*(Year Mod 19)+15) Mod 30
+      i = H-H\28-(H\28)*(29\H+1)*(21-Year Mod 19)\11
+      L = i-(Year+Year\4+i+2-Year\100+Year\400) Mod 7
 
-      Return New DateTime(Year, m, d)
+      Return New DateTime(Year, 3+(L+40)\44, L+28-31*((172+L)\176))
 
     End Function
 
@@ -464,7 +459,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Returns True if the passed date is a non-Sunday holiday.
 
-      Dim DaysSinceEaster As Integer
+      Dim DaysSinceEaster As Integer =
+        Timestamp.Subtract(Computus(Timestamp.Year)).Days
 
       If Culture Is Nothing Then
         Return False
@@ -472,16 +468,12 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' For the Netherlands, consider the following days as holidays:
         ' New Year's Day, 2nd day of Easter, Royal day, Ascension Day, 2nd day
         ' of Pentecost, Christmas Day, Boxing Day and New Year's Eve.
-        DaysSinceEaster =
-          CInt(Timestamp.Subtract(Easter(Timestamp.Year)).Days)
         With Timestamp
           Return (.Month = 1 And .Day = 1) Or
-            DaysSinceEaster = 1 Or
+            {1, 39, 50}.Contains(DaysSinceEaster) Or
             (.Year >= 1980 And .Year < 2014 And .Month = 4 And .Day = 30) Or
             (.Year >= 2014 And .Month = 4 And .Day = 27) Or
-            DaysSinceEaster = 39 Or
-            DaysSinceEaster = 50 Or
-            (.Month = 12 And (.Day = 25 Or .Day = 26 Or .Day = 31))
+            (.Month = 12 And {25, 26, 31}.Contains(.Day))
         End With
       Else
         Return False

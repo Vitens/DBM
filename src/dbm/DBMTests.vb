@@ -787,26 +787,26 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2016, 2, 7, 0, 0, 0)
 
       UnitTestsPassed = UnitTestsPassed And
-        Easter(1900) = New DateTime(1900, 4, 15) And
-        Easter(1999) = New DateTime(1999, 4, 4) And
-        Easter(2001) = New DateTime(2001, 4, 15) And
-        Easter(2003) = New DateTime(2003, 4, 20) And
-        Easter(2005) = New DateTime(2005, 3, 27) And
-        Easter(2007) = New DateTime(2007, 4, 8) And
-        Easter(2011) = New DateTime(2011, 4, 24) And
-        Easter(2013) = New DateTime(2013, 3, 31) And
-        Easter(2015) = New DateTime(2015, 4, 5) And
-        Easter(2017) = New DateTime(2017, 4, 16) And
-        Easter(2019) = New DateTime(2019, 4, 21) And
-        Easter(2021) = New DateTime(2021, 4, 4) And
-        Easter(2023) = New DateTime(2023, 4, 9) And
-        Easter(2025) = New DateTime(2025, 4, 20) And
-        Easter(2027) = New DateTime(2027, 3, 28) And
-        Easter(2031) = New DateTime(2031, 4, 13) And
-        Easter(2033) = New DateTime(2033, 4, 17) And
-        Easter(2035) = New DateTime(2035, 3, 25) And
-        Easter(2037) = New DateTime(2037, 4, 5) And
-        Easter(2099) = New DateTime(2099, 4, 12)
+        Computus(1864) = New DateTime(1864, 3, 27) And
+        Computus(1900) = New DateTime(1900, 4, 15) And
+        Computus(1933) = New DateTime(1933, 4, 16) And
+        Computus(1999) = New DateTime(1999, 4, 4) And
+        Computus(2001) = New DateTime(2001, 4, 15) And
+        Computus(2003) = New DateTime(2003, 4, 20) And
+        Computus(2005) = New DateTime(2005, 3, 27) And
+        Computus(2007) = New DateTime(2007, 4, 8) And
+        Computus(2013) = New DateTime(2013, 3, 31) And
+        Computus(2017) = New DateTime(2017, 4, 16) And
+        Computus(2019) = New DateTime(2019, 4, 21) And
+        Computus(2021) = New DateTime(2021, 4, 4) And
+        Computus(2023) = New DateTime(2023, 4, 9) And
+        Computus(2027) = New DateTime(2027, 3, 28) And
+        Computus(2031) = New DateTime(2031, 4, 13) And
+        Computus(2033) = New DateTime(2033, 4, 17) And
+        Computus(2037) = New DateTime(2037, 4, 5) And
+        Computus(2099) = New DateTime(2099, 4, 12) And
+        Computus(2172) = New DateTime(2172, 4, 12) And
+        Computus(2292) = New DateTime(2292, 4, 10)
 
       UnitTestsPassed = UnitTestsPassed And
         Not IsHoliday(New DateTime(2021, 12, 25)) And
