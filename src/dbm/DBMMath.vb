@@ -409,11 +409,11 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function AlignTimestamp(Timestamp As DateTime,
       Seconds As Integer) As DateTime
 
-       ' Returns a DateTime for the passed timestamp aligned on the
-       ' previous interval (in seconds).
+      ' Returns a DateTime for the passed timestamp aligned on the
+      ' previous interval (in seconds).
 
-       Return New DateTime(Timestamp.Ticks-Timestamp.Ticks Mod
-         Seconds*TicksPerSecond, Timestamp.Kind)
+      Return New DateTime(Timestamp.Ticks-Timestamp.Ticks Mod
+        Seconds*TicksPerSecond, Timestamp.Kind)
 
     End Function
 
@@ -421,8 +421,19 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function NextInterval(Timestamp As DateTime,
       Optional Intervals As Integer = 1) As DateTime
 
-       Return AlignTimestamp(Timestamp, CalculationInterval).
-            AddSeconds(Intervals*CalculationInterval)
+      Return AlignTimestamp(Timestamp, CalculationInterval).
+        AddSeconds(Intervals*CalculationInterval)
+
+    End Function
+
+
+    Public Shared Function PreviousSunday(Timestamp As DateTime) As DateTime
+
+      ' Returns a DateTime for the beginning of the Sunday preceding the
+	  ' timestamp passed.
+
+      Return New DateTime(Timestamp.Year, Timestamp.Month, Timestamp.Day).
+	    AddDays(-Timestamp.DayOfWeek)
 
     End Function
 
