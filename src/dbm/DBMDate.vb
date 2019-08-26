@@ -132,7 +132,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Optional Culture As CultureInfo = Nothing) As DateTime
 
       If UseSundayForHolidays And IsHoliday(Timestamp, Culture) Then
-        Return Timestamp.AddDays(-DaysSinceSunday(Timestamp)) ' Offset holidays
+        Return PreviousSunday(Timestamp) ' Offset holidays
       Else
         Return Timestamp
       End If
