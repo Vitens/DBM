@@ -107,6 +107,8 @@ Namespace Vitens.DynamicBandwidthMonitor
                 New DBMCorrelationPoint(New DBMPointDriver(Value), True))
             ElseIf Parameter.Equals("iv") Then
               CalculationInterval = Convert.ToInt32(Value)
+            ElseIf Parameter.Equals("us") Then
+              UseSundayForHolidays = Convert.ToBoolean(Value)
             ElseIf Parameter.Equals("p") Then
               ComparePatterns = Convert.ToInt32(Value)
             ElseIf Parameter.Equals("ep") Then
