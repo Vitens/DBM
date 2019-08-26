@@ -23,6 +23,7 @@ Option Strict
 
 
 Imports System
+Imports System.Globalization
 Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
@@ -50,7 +51,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Function Result(Timestamp As DateTime, IsInputDBMPoint As Boolean,
       HasCorrelationDBMPoint As Boolean,
-      Optional SubtractPoint As DBMPoint = Nothing) As DBMResult
+      Optional SubtractPoint As DBMPoint = Nothing,
+      Optional Culture As CultureInfo = Nothing) As DBMResult
 
       ' Retrieves data and calculates forecast and control limits for
       ' this point. Also calculates and stores (historic) forecast errors for
@@ -104,7 +106,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
               For PatternCounter = 0 To ComparePatterns ' Data for regression.
 
-                PatternTimestamp = ForecastTimestamp.
+                PatternTimestamp =
+                  HolidayOffsetDate(ForecastTimestamp, Culture).
                   AddDays(-(ComparePatterns-PatternCounter)*7) ' Timestamp
                 Patterns(PatternCounter) =
                   PointDriver.TryGetData(PatternTimestamp) ' Get data

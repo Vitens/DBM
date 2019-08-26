@@ -1032,41 +1032,42 @@ Namespace Vitens.DynamicBandwidthMonitor
       Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
 
       For i = 0 To 19
-        Result = DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
+        Result = DBM.Result(InputPointDriver, CorrelationPoints, Timestamp,
+          New CultureInfo("nl-NL")) ' Use Dutch locale for New Year's Day test
         With Result
           IntegrationTestsPassed = IntegrationTestsPassed And
-            Round(.Factor, 4) = {-1.7572, 0, 0, 0, 0, 0, -11.8493, -22.9119,
-            0, 0, 0, 0, 1.1375, 0, 0, 0, 0, 0, 0, 0}(i) And
-            .HasEvent = {True, False, False, False, False, False, True,
+            Round(.Factor, 4) = {0, 0, 0, 0, 0, 0, -11.8493, -22.9119, 0, 0, 0,
+            0, 1.1375, 0, 0, 0, 0, 0, 0, 0}(i) And
+            .HasEvent = {False, False, False, False, False, False, True,
             True, False, False, False, False, True, False, False, False,
             False, False, False, False}(i) And
             .HasSuppressedEvent = {False, False, False, False, False,
             True, False, False, False, False, False, False, False, False,
             True, False, False, False, False, False}(i) And
-            Round(.ForecastItem.Measurement, 4) = {527.5796, 687.0052,
+            Round(.ForecastItem.Measurement, 4) = {513.1048, 687.0052,
             1097.1504, 950.9752, 496.1124, 673.6569, 1139.1957, 867.4313,
             504.9407, 656.4434, 1065.7651, 898.9191, 471.2433, 668.1,
             1103.9689, 897.7268, 525.3563, 676.7206, 1183.0887,
             975.8324}(i) And
-            Round(.ForecastItem.ForecastValue, 4) = {548.7285, 716.9982,
+            Round(.ForecastItem.ForecastValue, 4) = {517.2028, 716.9982,
             1059.0551, 919.4719, 488.6181, 683.6728, 1155.5986, 895.6872,
             503.2566, 655.7115, 1061.2282, 893.3488, 464.4957, 666.2928,
             1084.1527, 901.6546, 523.8671, 666.1729, 1190.3511,
             975.4264}(i) And
-            Round(.ForecastItem.Range(0.95), 4) = {7.952, 43.4768, 57.5299,
+            Round(.ForecastItem.Range(0.95), 4) = {7.3871, 43.4768, 57.5299,
             51.6959, 28.3939, 0.5641, 0.9146, 0.8148, 5.6816, 7.3282, 11.0143,
             9.3649, 3.9192, 4.4945, 6.9199, 9.2247, 8.3518, 9.6103, 20.3862,
             15.9607}(i) And
-            Round(.ForecastItem.Range(BandwidthCI), 4) = {12.0353, 65.8024,
+            Round(.ForecastItem.Range(BandwidthCI), 4) = {11.1804, 65.8024,
             87.0718, 78.2419, 42.9743, 0.8537, 1.3843, 1.2332, 8.5991, 11.0913,
             16.6702, 14.1738, 5.9317, 6.8025, 10.4733, 13.9616, 12.6405,
             14.5453, 30.8546, 24.1566}(i) And
-            Round(.ForecastItem.LowerControlLimit, 4) = {536.6932, 651.1959,
+            Round(.ForecastItem.LowerControlLimit, 4) = {506.0224, 651.1959,
             971.9833, 841.23, 445.6438, 682.8191, 1154.2143, 894.454,
             494.6574, 644.6202, 1044.558, 879.175, 458.564, 659.4903,
             1073.6794, 887.693, 511.2267, 651.6276, 1159.4964,
             951.2698}(i) And
-            Round(.ForecastItem.UpperControlLimit, 4) = {560.7638, 782.8006,
+            Round(.ForecastItem.UpperControlLimit, 4) = {528.3832, 782.8006,
             1146.127, 997.7138, 531.5924, 684.5266, 1156.9829, 896.9205,
             511.8557, 666.8028, 1077.8984, 907.5226, 470.4274, 673.0952,
             1094.626, 915.6163, 536.5076, 680.7182, 1221.2057, 999.583}(i)
