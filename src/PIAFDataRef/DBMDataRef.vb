@@ -29,6 +29,7 @@ Imports System.DateTime
 Imports System.Math
 Imports System.Runtime.InteropServices
 Imports System.Threading
+Imports System.Threading.Thread
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Asset.AFAttributeTrait
 Imports OSIsoft.AF.Data
@@ -210,8 +211,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         If Not EndTimestamp.IsEmpty Then DBM.PrepareData(InputPointDriver,
           CorrelationPoints, Timestamp.LocalTime, EndTimestamp.LocalTime)
 
-        With DBM.Result(
-          InputPointDriver, CorrelationPoints, Timestamp.LocalTime)
+        With DBM.Result(InputPointDriver, CorrelationPoints,
+          Timestamp.LocalTime, CurrentThread.CurrentCulture)
 
           AlignedTimestamp = New AFTime(Timestamp.UtcSeconds-
             Timestamp.UtcSeconds Mod CalculationInterval) ' Align prev interval

@@ -27,7 +27,7 @@ Imports System.Collections.Generic
 Imports System.Environment
 Imports System.Globalization.CultureInfo
 Imports System.Text.RegularExpressions
-Imports System.Threading
+Imports System.Threading.Thread
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
@@ -128,7 +128,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                 InternationalFormat = False
               ElseIf Value.ToLower.Equals("intl") Then
                 InternationalFormat = True
-                Thread.CurrentThread.CurrentCulture = InvariantCulture
+                CurrentThread.CurrentCulture = InvariantCulture
               End If
             End If
           Catch ex As Exception
@@ -154,7 +154,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         Do While StartTimestamp <= EndTimestamp
 
-          With DBM.Result(InputPointDriver, CorrelationPoints, StartTimestamp)
+          With DBM.Result(InputPointDriver, CorrelationPoints,
+            StartTimestamp, CurrentThread.CurrentCulture)
             Console.WriteLine(FormatDateTime(.Timestamp) & Separator &
             FormatNumber(.Factor) & Separator &
             FormatNumber(.ForecastItem.Measurement) & Separator &
