@@ -65,6 +65,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
       Dim ForecastTimestamp, PatternTimestamp As DateTime
       Dim ForecastItem As DBMForecastItem = Nothing
+      Dim OffsetTimeSpan As TimeSpan
       Dim Patterns(ComparePatterns), Measurements(EMAPreviousPeriods),
         ForecastValues(EMAPreviousPeriods),
         LowerControlLimits(EMAPreviousPeriods),
@@ -104,11 +105,18 @@ Namespace Vitens.DynamicBandwidthMonitor
 
             If ForecastItem Is Nothing Then ' Not cached
 
+              OffsetTimeSpan = ForecastTimestamp-
+                HolidayOffsetDate(ForecastTimestamp, Culture) ' Offset for hist.
+
               For PatternCounter = 0 To ComparePatterns ' Data for regression.
 
-                PatternTimestamp =
-                  HolidayOffsetDate(ForecastTimestamp, Culture).
-                  AddDays(-(ComparePatterns-PatternCounter)*7) ' Timestamp
+                If PatternCounter = ComparePatterns Then
+                  PatternTimestamp = ForecastTimestamp ' Last item: Measurement
+                Else
+                  PatternTimestamp = ForecastTimestamp.Add(-OffsetTimeSpan).
+                    AddDays(-(ComparePatterns-PatternCounter)*7) ' History
+                End If
+
                 Patterns(PatternCounter) =
                   PointDriver.TryGetData(PatternTimestamp) ' Get data
                 If SubtractPoint IsNot Nothing Then ' Subtract input if req'd

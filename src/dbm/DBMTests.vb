@@ -1044,7 +1044,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             .HasSuppressedEvent = {False, False, False, False, False,
             True, False, False, False, False, False, False, False, False,
             True, False, False, False, False, False}(i) And
-            Round(.ForecastItem.Measurement, 4) = {513.1048, 687.0052,
+            Round(.ForecastItem.Measurement, 4) = {527.5796, 687.0052,
             1097.1504, 950.9752, 496.1124, 673.6569, 1139.1957, 867.4313,
             504.9407, 656.4434, 1065.7651, 898.9191, 471.2433, 668.1,
             1103.9689, 897.7268, 525.3563, 676.7206, 1183.0887,
