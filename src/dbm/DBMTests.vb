@@ -1104,7 +1104,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Timer = Now
       Do While Now.Ticks-Timer.Ticks < DurationTicks
-        Result = DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
+        Result = DBM.Result(InputPointDriver, CorrelationPoints,
+          Timestamp, New CultureInfo("nl-NL")) ' Use Dutch locale for holidays
         Count += 1
         Timestamp = Timestamp.AddSeconds(CalculationInterval)
       Loop
