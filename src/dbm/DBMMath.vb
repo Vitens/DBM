@@ -496,14 +496,11 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function HolidayOffsetDate(Timestamp As DateTime,
+    Public Shared Function OffsetDate(Timestamp As DateTime,
       Optional Culture As CultureInfo = Nothing) As DateTime
 
-      ' If the passed date is a holiday, then offset the date part of the
-      ' timestamp to the date of the previous Sunday.
-
       If UseSundayForHolidays And IsHoliday(Timestamp, Culture) Then
-        Return Timestamp.AddDays(-DaysSinceSunday(Timestamp))
+        Return Timestamp.AddDays(-DaysSinceSunday(Timestamp)) ' Offset holidays
       Else
         Return Timestamp
       End If
