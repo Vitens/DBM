@@ -42,7 +42,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Time interval at which the calculation is run.
     Public Shared CalculationInterval As Integer = 300 ' seconds, 5 minutes
 
-    ' Use prediction of the previous Sunday for holidays.
+    ' Use forecast of the previous Sunday for holidays.
     Public Shared UseSundayForHolidays As Boolean = True
 
     ' Number of weeks to look back to forecast the current value and
