@@ -104,13 +104,13 @@ Namespace Vitens.DynamicBandwidthMonitor
         Timestamp.Subtract(Computus(Timestamp.Year)).Days
 
       With Timestamp
-        ' Worldwide, consider the following days a holiday:
-        ' New Year's Day, Easter, 2nd day of Easter, Ascension Day, Pentecost,
-        ' 2nd day of Pentecost, Christmas Day, Boxing Day and New Year's Eve.
-        IsHoliday = (.Month = 1 And .Day = 1) Or
-          {0, 1, 39, 49, 50}.Contains(DaysSinceEaster) Or
-          (.Month = 12 And {25, 26, 31}.Contains(.Day))
         If Culture IsNot Nothing Then
+          ' For any culture, consider the following days a holiday:
+          ' New Year's Day, Easter, 2nd day of Easter, Ascension Day, Pentecost,
+          ' 2nd day of Pentecost, Christmas Day, Boxing Day and New Year's Eve.
+          IsHoliday = (.Month = 1 And .Day = 1) Or
+            {0, 1, 39, 49, 50}.Contains(DaysSinceEaster) Or
+            (.Month = 12 And {25, 26, 31}.Contains(.Day))
           If Culture.Name.Equals("nl-NL") Then
             ' For the Netherlands, consider the following days a holiday:
             ' Royal day.

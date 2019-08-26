@@ -832,7 +832,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Computus(2292) = New DateTime(2292, 4, 10)
 
       UnitTestsPassed = UnitTestsPassed And
-        IsHoliday(New DateTime(2021, 12, 25)) And
+        Not IsHoliday(New DateTime(2021, 12, 25)) And
         Not IsHoliday(New DateTime(2020, 10, 12)) And
         IsHoliday(New DateTime(2012, 1, 1), New CultureInfo("nl-NL")) And
         Not IsHoliday(New DateTime(2016, 3, 26), New CultureInfo("nl-NL")) And
@@ -856,7 +856,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         IsHoliday(New DateTime(2020, 6, 1), New CultureInfo("en-US"))
 
       UnitTestsPassed = UnitTestsPassed And
-        OffsetDate(New DateTime(2021, 12, 25)) = New DateTime(2021, 12, 19) And
+        OffsetDate(New DateTime(2021, 12, 25)) = New DateTime(2021, 12, 25) And
         OffsetDate(New DateTime(2020, 10, 12)) = New DateTime(2020, 10, 12) And
         OffsetDate(New DateTime(2012, 1, 1), New CultureInfo("nl-NL")) =
         New DateTime(2012, 1, 1) And
