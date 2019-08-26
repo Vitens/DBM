@@ -153,6 +153,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       StartTimestamp = NextInterval(StartTimestamp,
         -EMAPreviousPeriods-CorrelationPreviousPeriods).
         AddDays(ComparePatterns*-7)
+      If UseSundayForHolidays Then StartTimestamp =
+        PreviousSunday(StartTimestamp)
       EndTimestamp = AlignTimestamp(EndTimestamp, CalculationInterval)
 
       Point(InputPointDriver).PointDriver.

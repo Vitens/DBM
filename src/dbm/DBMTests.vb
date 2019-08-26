@@ -768,45 +768,45 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       UnitTestsPassed = UnitTestsPassed And
         PreviousSunday(New DateTime(2016, 4, 4, 16, 33, 2)) =
-        New DateTime(2016, 4, 3, 0, 0, 0) And
+        New DateTime(2016, 4, 3, 16, 33, 2) And
         PreviousSunday(New DateTime(2015, 7, 15, 2, 29, 58)) = 
-        New DateTime(2015, 7, 12, 0, 0, 0) And
+        New DateTime(2015, 7, 12, 2, 29, 58) And
         PreviousSunday(New DateTime(2016, 4, 1, 22, 5, 17)) = 
-        New DateTime(2016, 3, 27, 0, 0, 0) And
+        New DateTime(2016, 3, 27, 22, 5, 17) And
         PreviousSunday(New DateTime(2013, 12, 1, 21, 47, 35)) = 
-        New DateTime(2013, 12, 1, 0, 0, 0) And
+        New DateTime(2013, 12, 1, 21, 47, 35) And
         PreviousSunday(New DateTime(2016, 11, 22, 0, 22, 17)) = 
-        New DateTime(2016, 11, 20, 0, 0, 0) And
+        New DateTime(2016, 11, 20, 0, 22, 17) And
         PreviousSunday(New DateTime(2016, 10, 11, 19, 11, 41)) = 
-        New DateTime(2016, 10, 9, 0, 0, 0) And
+        New DateTime(2016, 10, 9, 19, 11, 41) And
         PreviousSunday(New DateTime(2013, 10, 26, 4, 24, 53)) = 
-        New DateTime(2013, 10, 20, 0, 0, 0) And
+        New DateTime(2013, 10, 20, 4, 24, 53) And
         PreviousSunday(New DateTime(2014, 5, 2, 2, 52, 41)) = 
-        New DateTime(2014, 4, 27, 0, 0, 0) And
+        New DateTime(2014, 4, 27, 2, 52, 41) And
         PreviousSunday(New DateTime(2014, 8, 16, 13, 11, 10)) = 
-        New DateTime(2014, 8, 10, 0, 0, 0) And
+        New DateTime(2014, 8, 10, 13, 11, 10) And
         PreviousSunday(New DateTime(2014, 10, 25, 8, 26, 4)) = 
-        New DateTime(2014, 10, 19, 0, 0, 0) And
+        New DateTime(2014, 10, 19, 8, 26, 4) And
         PreviousSunday(New DateTime(2015, 6, 2, 18, 36, 24)) = 
-        New DateTime(2015, 5, 31, 0, 0, 0) And
+        New DateTime(2015, 5, 31, 18, 36, 24) And
         PreviousSunday(New DateTime(2016, 11, 21, 16, 24, 27)) = 
-        New DateTime(2016, 11, 20, 0, 0, 0) And
+        New DateTime(2016, 11, 20, 16, 24, 27) And
         PreviousSunday(New DateTime(2014, 4, 4, 8, 42, 10)) = 
-        New DateTime(2014, 3, 30, 0, 0, 0) And
+        New DateTime(2014, 3, 30, 8, 42, 10) And
         PreviousSunday(New DateTime(2016, 2, 22, 19, 8, 41)) = 
-        New DateTime(2016, 2, 21, 0, 0, 0) And
+        New DateTime(2016, 2, 21, 19, 8, 41) And
         PreviousSunday(New DateTime(2015, 9, 13, 22, 48, 17)) = 
-        New DateTime(2015, 9, 13, 0, 0, 0) And
+        New DateTime(2015, 9, 13, 22, 48, 17) And
         PreviousSunday(New DateTime(2016, 10, 20, 2, 47, 48)) = 
-        New DateTime(2016, 10, 16, 0, 0, 0) And
+        New DateTime(2016, 10, 16, 2, 47, 48) And
         PreviousSunday(New DateTime(2014, 2, 8, 23, 12, 34)) = 
-        New DateTime(2014, 2, 2, 0, 0, 0) And
+        New DateTime(2014, 2, 2, 23, 12, 34) And
         PreviousSunday(New DateTime(2016, 2, 27, 23, 40, 39)) = 
-        New DateTime(2016, 2, 21, 0, 0, 0) And
-        PreviousSunday(New DateTime(2015, 8, 26, 9, 35, 55)) = 
-        New DateTime(2015, 8, 23, 0, 0, 0) And
-        PreviousSunday(New DateTime(2016, 2, 11, 0, 44, 7)) = 
-        New DateTime(2016, 2, 7, 0, 0, 0)
+        New DateTime(2016, 2, 21, 23, 40, 39) And
+        PreviousSunday(New DateTime(2018, 3, 26, 2, 44, 7)) = 
+        New DateTime(2018, 3, 25, 2, 44, 7) And
+        PreviousSunday(New DateTime(2018, 10, 29, 2, 12, 19)) = 
+        New DateTime(2018, 10, 28, 2, 12, 19)
 
       UnitTestsPassed = UnitTestsPassed And
         Computus(1864) = New DateTime(1864, 3, 27) And

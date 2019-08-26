@@ -440,11 +440,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function PreviousSunday(Timestamp As DateTime) As DateTime
 
-      ' Returns a DateTime for the beginning of the Sunday preceding the
-      ' timestamp passed.
+      ' Returns a DateTime for the Sunday preceding the timestamp passed.
 
-      Return New DateTime(Timestamp.Year, Timestamp.Month, Timestamp.Day).
-        AddDays(-DaysSinceSunday(Timestamp))
+      Return Timestamp.AddDays(-DaysSinceSunday(Timestamp))
 
     End Function
 
