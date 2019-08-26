@@ -428,13 +428,23 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Shared Function DaysSinceSunday(Timestamp As DateTime) As Integer
+
+      ' Return the number of days between the passed timestamp and the
+      ' preceding Sunday.
+
+      Return Timestamp.DayOfWeek ' 0=Sunday, 6=Saturday
+
+    End Function
+
+
     Public Shared Function PreviousSunday(Timestamp As DateTime) As DateTime
 
       ' Returns a DateTime for the beginning of the Sunday preceding the
       ' timestamp passed.
 
       Return New DateTime(Timestamp.Year, Timestamp.Month, Timestamp.Day).
-        AddDays(-Timestamp.DayOfWeek)
+        AddDays(-DaysSinceSunday(Timestamp))
 
     End Function
 
