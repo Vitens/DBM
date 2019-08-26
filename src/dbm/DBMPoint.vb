@@ -25,6 +25,7 @@ Option Strict
 Imports System
 Imports System.Globalization
 Imports System.Math
+Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMForecast

@@ -26,6 +26,7 @@ Imports System
 Imports System.Collections.Generic
 Imports System.Globalization
 Imports System.Math
+Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMStatistics

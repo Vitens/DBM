@@ -31,6 +31,7 @@ Imports System.Math
 Imports System.String
 Imports System.TimeSpan
 Imports Vitens.DynamicBandwidthMonitor.DBM
+Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
