@@ -63,7 +63,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim ForecastItemsCache As DBMCache ' Cached forecast results for subtr.pt.
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
-      Dim ForecastTimestamp, PatternTimestamp, OffsetTimestamp As DateTime
+      Dim ForecastTimestamp, OffsetTimestamp, PatternTimestamp As DateTime
       Dim ForecastItem As DBMForecastItem = Nothing
       Dim Patterns(ComparePatterns), Measurements(EMAPreviousPeriods),
         ForecastValues(EMAPreviousPeriods),
