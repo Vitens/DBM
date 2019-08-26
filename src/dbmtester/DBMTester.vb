@@ -72,11 +72,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Shared Function FormatNumber(Value As Double) As String
 
-      If InternationalFormat Then
-        Return Value.ToString("0.####", InvariantCulture)
-      Else
-        Return Value.ToString("0.####")
-      End If
+      Return Value.ToString("0.####")
 
     End Function
 
