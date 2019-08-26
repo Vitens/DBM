@@ -451,7 +451,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function Computus(Year As Integer) As DateTime
 
-      ' Returns the date of Easter Sunday for the given year.
+      ' Computus (Latin for computation) is the calculation of the date of
+      ' Easter in the Christian calendar. The computus is used to set the time
+      ' for ecclesiastical purposes, in particular to calculate the date of
+      ' Easter.
 
       Dim H, i, L As Integer
 
