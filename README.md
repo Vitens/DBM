@@ -66,7 +66,7 @@ DBM can be configured using several parameters. The values for these parameters 
 | Parameter                    | Default value | Units         | Description                                                                                           |
 | ---------------------------- | ------------- | ------------- | ----------------------------------------------------------------------------------------------------- |
 | `CalculationInterval`        | 300           | seconds       | Time interval at which the calculation is run.                                                        |
-| `UseSundayForHolidays`       | True          |               | Use prediction of the previous Sunday for holidays.                                                   |
+| `UseSundayForHolidays`       | True          |               | Use forecast of the previous Sunday for holidays.                                                     |
 | `ComparePatterns`            | 12            | weeks         | Number of weeks to look back to forecast the current value and control limits.                        |
 | `EMAPreviousPeriods`         | 5             | intervals     | Number of previous intervals used to smooth the data.                                                 |
 | `OutlierCI`                  | 0.99          | ratio         | Confidence interval used for removing outliers.                                                       |
