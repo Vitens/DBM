@@ -63,7 +63,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim ForecastItemsCache As DBMCache ' Cached forecast results for subtr.pt.
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
-      Dim ForecastTimestamp, OffsetTimestamp, PatternTimestamp As DateTime
+      Dim ForecastTimestamp, HistoryTimestamp, PatternTimestamp As DateTime
       Dim ForecastItem As DBMForecastItem = Nothing
       Dim Patterns(ComparePatterns), Measurements(EMAPreviousPeriods),
         ForecastValues(EMAPreviousPeriods),
@@ -104,14 +104,14 @@ Namespace Vitens.DynamicBandwidthMonitor
 
             If ForecastItem Is Nothing Then ' Not cached
 
-              OffsetTimestamp = OffsetDate(ForecastTimestamp, Culture)
+              HistoryTimestamp = OffsetDate(ForecastTimestamp, Culture)
 
               For PatternCounter = 0 To ComparePatterns ' Data for regression.
 
                 If PatternCounter = ComparePatterns Then
                   PatternTimestamp = ForecastTimestamp ' Last item: Measurement
                 Else
-                  PatternTimestamp = OffsetTimestamp.
+                  PatternTimestamp = HistoryTimestamp.
                     AddDays(-(ComparePatterns-PatternCounter)*7) ' History
                 End If
 
