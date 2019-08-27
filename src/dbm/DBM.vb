@@ -26,6 +26,7 @@ Imports System
 Imports System.Collections.Generic
 Imports System.Globalization
 Imports System.Math
+Imports System.Threading.Thread
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
@@ -183,6 +184,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim CorrelationResult As DBMResult
       Dim AbsoluteErrorStatsItem,
         RelativeErrorStatsItem As New DBMStatisticsItem
+
+      ' Use culture used by the current thread if no culture was passed.
+      If Culture Is Nothing Then Culture = CurrentThread.CurrentCulture
 
       If CorrelationPoints Is Nothing Then ' Empty list if Nothing was passed.
         CorrelationPoints = New List(Of DBMCorrelationPoint)

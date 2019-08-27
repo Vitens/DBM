@@ -154,8 +154,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         Do While StartTimestamp <= EndTimestamp
 
-          With DBM.Result(InputPointDriver, CorrelationPoints,
-            StartTimestamp, CurrentThread.CurrentCulture)
+          With DBM.Result(InputPointDriver, CorrelationPoints, StartTimestamp)
             Console.WriteLine(FormatDateTime(.Timestamp) & Separator &
             FormatNumber(.Factor) & Separator &
             FormatNumber(.ForecastItem.Measurement) & Separator &
