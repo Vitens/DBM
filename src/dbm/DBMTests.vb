@@ -27,6 +27,7 @@ Imports System.Collections.Generic
 Imports System.DateTime
 Imports System.Double
 Imports System.Globalization
+Imports System.Globalization.CultureInfo
 Imports System.Math
 Imports System.String
 Imports System.TimeSpan
@@ -832,8 +833,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         Computus(2292) = New DateTime(2292, 4, 10)
 
       UnitTestsPassed = UnitTestsPassed And
-        Not IsHoliday(New DateTime(2021, 12, 25)) And
-        Not IsHoliday(New DateTime(2020, 10, 12)) And
+        IsHoliday(New DateTime(2021, 12, 25), InvariantCulture) And
+        Not IsHoliday(New DateTime(2020, 10, 12), InvariantCulture) And
         IsHoliday(New DateTime(2012, 1, 1), New CultureInfo("nl-NL")) And
         Not IsHoliday(New DateTime(2016, 3, 26), New CultureInfo("nl-NL")) And
         IsHoliday(New DateTime(2016, 3, 28), New CultureInfo("nl-NL")) And
@@ -856,8 +857,10 @@ Namespace Vitens.DynamicBandwidthMonitor
         IsHoliday(New DateTime(2020, 6, 1), New CultureInfo("en-US"))
 
       UnitTestsPassed = UnitTestsPassed And
-        OffsetDate(New DateTime(2021, 12, 25)) = New DateTime(2021, 12, 25) And
-        OffsetDate(New DateTime(2020, 10, 12)) = New DateTime(2020, 10, 12) And
+        OffsetDate(New DateTime(2021, 12, 25), InvariantCulture) =
+        New DateTime(2021, 12, 19) And
+        OffsetDate(New DateTime(2020, 10, 12), InvariantCulture) =
+        New DateTime(2020, 10, 12) And
         OffsetDate(New DateTime(2012, 1, 1), New CultureInfo("nl-NL")) =
         New DateTime(2012, 1, 1) And
         OffsetDate(New DateTime(2016, 3, 26), New CultureInfo("nl-NL")) =

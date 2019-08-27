@@ -96,7 +96,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Shared Function IsHoliday(Timestamp As DateTime,
-      Optional Culture As CultureInfo = Nothing) As Boolean
+      Culture As CultureInfo) As Boolean
 
       ' Returns True if the passed date is a holiday.
 
@@ -104,22 +104,20 @@ Namespace Vitens.DynamicBandwidthMonitor
         Timestamp.Subtract(Computus(Timestamp.Year)).Days
 
       With Timestamp
-        If Culture IsNot Nothing Then
-          ' For any culture, consider the following days a holiday:
-          ' New Year's Day, Easter, 2nd day of Easter, Ascension Day, Pentecost,
-          ' 2nd day of Pentecost, Christmas Day, Boxing Day and New Year's Eve.
-          IsHoliday = (.Month = 1 And .Day = 1) Or
-            {0, 1, 39, 49, 50}.Contains(DaysSinceEaster) Or
-            (.Month = 12 And {25, 26, 31}.Contains(.Day))
-          If Culture.Name.Equals("nl-NL") Then
-            ' For the Netherlands, consider the following days a holiday:
-            ' Royal day.
-            ' Liberation Day and Good Friday are not included as they are not
-            ' public holidays in the Netherlands.
-            IsHoliday = IsHoliday Or
-              (.Year >= 1980 And .Year < 2014 And .Month = 4 And .Day = 30) Or
-              (.Year >= 2014 And .Month = 4 And .Day = 27)
-          End If
+        ' For any culture, consider the following days a holiday:
+        ' New Year's Day, Easter, 2nd day of Easter, Ascension Day, Pentecost,
+        ' 2nd day of Pentecost, Christmas Day, Boxing Day and New Year's Eve.
+        IsHoliday = (.Month = 1 And .Day = 1) Or
+          {0, 1, 39, 49, 50}.Contains(DaysSinceEaster) Or
+          (.Month = 12 And {25, 26, 31}.Contains(.Day))
+        If Culture.Name.Equals("nl-NL") Then
+          ' For the Netherlands, consider the following days a holiday:
+          ' Royal day.
+          ' Liberation Day and Good Friday are not included as they are not
+          ' public holidays in the Netherlands.
+          IsHoliday = IsHoliday Or
+            (.Year >= 1980 And .Year < 2014 And .Month = 4 And .Day = 30) Or
+            (.Year >= 2014 And .Month = 4 And .Day = 27)
         End If
       End With
 
@@ -129,7 +127,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Shared Function OffsetDate(Timestamp As DateTime,
-      Optional Culture As CultureInfo = Nothing) As DateTime
+      Culture As CultureInfo) As DateTime
 
       If UseSundayForHolidays And IsHoliday(Timestamp, Culture) Then
         Return PreviousSunday(Timestamp) ' Offset holidays

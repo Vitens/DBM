@@ -51,9 +51,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Function Result(Timestamp As DateTime, IsInputDBMPoint As Boolean,
-      HasCorrelationDBMPoint As Boolean,
-      Optional SubtractPoint As DBMPoint = Nothing,
-      Optional Culture As CultureInfo = Nothing) As DBMResult
+      HasCorrelationDBMPoint As Boolean, SubtractPoint As DBMPoint,
+      Culture As CultureInfo) As DBMResult
 
       ' Retrieves data and calculates forecast and control limits for
       ' this point. Also calculates and stores (historic) forecast errors for
