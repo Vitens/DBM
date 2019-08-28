@@ -850,11 +850,11 @@ Namespace Vitens.DynamicBandwidthMonitor
         Not IsHoliday(New DateTime(2014, 2, 1, 0, 0, 1),
         New CultureInfo("nl-NL")) And
         Not IsHoliday(New DateTime(2009, 2, 23), New CultureInfo("nl-NL")) And
-        Not IsHoliday(New DateTime(2014, 4, 12), New CultureInfo("nl-NL")) And
-        Not IsHoliday(New DateTime(2012, 6, 11), New CultureInfo("nl-NL")) And
+        Not IsHoliday(New DateTime(2014, 5, 5), New CultureInfo("nl-NL")) And
+        IsHoliday(New DateTime(2015, 5, 5), New CultureInfo("nl-NL")) And
         Not IsHoliday(New DateTime(2011, 4, 11), New CultureInfo("nl-NL")) And
         IsHoliday(New DateTime(2022, 4, 17), New CultureInfo("en-US")) And
-        IsHoliday(New DateTime(2020, 6, 1), New CultureInfo("en-US"))
+        Not IsHoliday(New DateTime(2020, 6, 1), New CultureInfo("en-US"))
 
       UnitTestsPassed = UnitTestsPassed And
         OffsetDate(New DateTime(2021, 12, 25), InvariantCulture) =
@@ -887,16 +887,16 @@ Namespace Vitens.DynamicBandwidthMonitor
         New CultureInfo("nl-NL")) = New DateTime(2014, 2, 1, 0, 0, 1) And
         OffsetDate(New DateTime(2009, 2, 23), New CultureInfo("nl-NL")) =
         New DateTime(2009, 2, 23) And
-        OffsetDate(New DateTime(2014, 4, 12), New CultureInfo("nl-NL")) =
-        New DateTime(2014, 4, 12) And
-        OffsetDate(New DateTime(2012, 6, 11), New CultureInfo("nl-NL")) =
-        New DateTime(2012, 6, 11) And
+        OffsetDate(New DateTime(2014, 5, 5), New CultureInfo("nl-NL")) =
+        New DateTime(2014, 5, 5) And
+        OffsetDate(New DateTime(2015, 5, 5), New CultureInfo("nl-NL")) =
+        New DateTime(2015, 5, 3) And
         OffsetDate(New DateTime(2011, 4, 11), New CultureInfo("nl-NL")) =
         New DateTime(2011, 4, 11) And
         OffsetDate(New DateTime(2022, 4, 17), New CultureInfo("en-US")) =
         New DateTime(2022, 4, 17) And
         OffsetDate(New DateTime(2020, 6, 1), New CultureInfo("en-US")) =
-        New DateTime(2020, 5, 31)
+        New DateTime(2020, 6, 1)
 
       For i = 0 To 19
         If i = 0 Then
