@@ -26,10 +26,13 @@ Imports System
 Imports System.Collections.Generic
 Imports System.DateTime
 Imports System.Double
+Imports System.Globalization
+Imports System.Globalization.CultureInfo
 Imports System.Math
 Imports System.String
 Imports System.TimeSpan
 Imports Vitens.DynamicBandwidthMonitor.DBM
+Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
@@ -743,6 +746,158 @@ Namespace Vitens.DynamicBandwidthMonitor
         NextInterval(New DateTime(2016, 2, 11, 0, 44, 7), 0) = 
         New DateTime(2016, 2, 11, 0, 40, 0)
 
+      UnitTestsPassed = UnitTestsPassed And
+        Computus(1864) = New DateTime(1864, 3, 27) And
+        Computus(1900) = New DateTime(1900, 4, 15) And
+        Computus(1933) = New DateTime(1933, 4, 16) And
+        Computus(1999) = New DateTime(1999, 4, 4) And
+        Computus(2001) = New DateTime(2001, 4, 15) And
+        Computus(2003) = New DateTime(2003, 4, 20) And
+        Computus(2005) = New DateTime(2005, 3, 27) And
+        Computus(2007) = New DateTime(2007, 4, 8) And
+        Computus(2013) = New DateTime(2013, 3, 31) And
+        Computus(2017) = New DateTime(2017, 4, 16) And
+        Computus(2019) = New DateTime(2019, 4, 21) And
+        Computus(2021) = New DateTime(2021, 4, 4) And
+        Computus(2023) = New DateTime(2023, 4, 9) And
+        Computus(2027) = New DateTime(2027, 3, 28) And
+        Computus(2031) = New DateTime(2031, 4, 13) And
+        Computus(2033) = New DateTime(2033, 4, 17) And
+        Computus(2037) = New DateTime(2037, 4, 5) And
+        Computus(2099) = New DateTime(2099, 4, 12) And
+        Computus(2172) = New DateTime(2172, 4, 12) And
+        Computus(2292) = New DateTime(2292, 4, 10)
+
+      UnitTestsPassed = UnitTestsPassed And
+        IsHoliday(New DateTime(2021, 12, 25), InvariantCulture) And
+        Not IsHoliday(New DateTime(2020, 10, 12), InvariantCulture) And
+        IsHoliday(New DateTime(2012, 1, 1), New CultureInfo("nl-NL")) And
+        Not IsHoliday(New DateTime(2016, 3, 26), New CultureInfo("nl-NL")) And
+        IsHoliday(New DateTime(2016, 3, 28), New CultureInfo("nl-NL")) And
+        Not IsHoliday(New DateTime(2016, 3, 29), New CultureInfo("nl-NL")) And
+        IsHoliday(New DateTime(2012, 4, 30), New CultureInfo("nl-NL")) And
+        IsHoliday(New DateTime(2018, 4, 27, 23, 59, 59),
+        New CultureInfo("nl-NL")) And
+        IsHoliday(New DateTime(2014, 5, 29), New CultureInfo("nl-NL")) And
+        IsHoliday(New DateTime(2020, 6, 1), New CultureInfo("nl-NL")) And
+        IsHoliday(New DateTime(2009, 12, 25), New CultureInfo("nl-NL")) And
+        IsHoliday(New DateTime(2011, 12, 26), New CultureInfo("nl-NL")) And
+        IsHoliday(New DateTime(2010, 12, 31), New CultureInfo("nl-NL")) And
+        Not IsHoliday(New DateTime(2014, 2, 1, 0, 0, 1),
+        New CultureInfo("nl-NL")) And
+        Not IsHoliday(New DateTime(2009, 2, 23), New CultureInfo("nl-NL")) And
+        Not IsHoliday(New DateTime(2014, 5, 5), New CultureInfo("nl-NL")) And
+        IsHoliday(New DateTime(2015, 5, 5), New CultureInfo("nl-NL")) And
+        Not IsHoliday(New DateTime(2011, 4, 11), New CultureInfo("nl-NL")) And
+        IsHoliday(New DateTime(2022, 4, 17), New CultureInfo("en-US")) And
+        Not IsHoliday(New DateTime(2020, 6, 1), New CultureInfo("en-US"))
+
+      UnitTestsPassed = UnitTestsPassed And
+        DaysSinceSunday(New DateTime(2016, 4, 4, 16, 33, 2)) = 1 And
+        DaysSinceSunday(New DateTime(2015, 7, 15, 2, 29, 58)) = 3 And
+        DaysSinceSunday(New DateTime(2016, 4, 1, 22, 5, 17)) = 5 And
+        DaysSinceSunday(New DateTime(2013, 12, 1, 21, 47, 35)) = 0 And
+        DaysSinceSunday(New DateTime(2016, 11, 22, 0, 22, 17)) = 2 And
+        DaysSinceSunday(New DateTime(2016, 10, 11, 19, 11, 41)) = 2 And
+        DaysSinceSunday(New DateTime(2013, 10, 26, 4, 24, 53)) = 6 And
+        DaysSinceSunday(New DateTime(2014, 5, 2, 2, 52, 41)) = 5 And
+        DaysSinceSunday(New DateTime(2014, 8, 16, 13, 11, 10)) = 6 And
+        DaysSinceSunday(New DateTime(2014, 10, 25, 8, 26, 4)) = 6 And
+        DaysSinceSunday(New DateTime(2015, 6, 2, 18, 36, 24)) = 2 And
+        DaysSinceSunday(New DateTime(2016, 11, 21, 16, 24, 27)) = 1 And
+        DaysSinceSunday(New DateTime(2014, 4, 4, 8, 42, 10)) = 5 And
+        DaysSinceSunday(New DateTime(2016, 2, 22, 19, 8, 41)) = 1 And
+        DaysSinceSunday(New DateTime(2015, 9, 13, 22, 48, 17)) = 0 And
+        DaysSinceSunday(New DateTime(2016, 10, 20, 2, 47, 48)) = 4 And
+        DaysSinceSunday(New DateTime(2014, 2, 8, 23, 12, 34)) = 6 And
+        DaysSinceSunday(New DateTime(2016, 2, 27, 23, 40, 39)) = 6 And
+        DaysSinceSunday(New DateTime(2015, 8, 26, 9, 35, 55)) = 3 And
+        DaysSinceSunday(New DateTime(2016, 2, 11, 0, 44, 7)) = 4
+
+      UnitTestsPassed = UnitTestsPassed And
+        PreviousSunday(New DateTime(2016, 4, 4, 16, 33, 2)) =
+        New DateTime(2016, 4, 3, 16, 33, 2) And
+        PreviousSunday(New DateTime(2015, 7, 15, 2, 29, 58)) =
+        New DateTime(2015, 7, 12, 2, 29, 58) And
+        PreviousSunday(New DateTime(2016, 4, 1, 22, 5, 17)) =
+        New DateTime(2016, 3, 27, 22, 5, 17) And
+        PreviousSunday(New DateTime(2013, 12, 1, 21, 47, 35)) =
+        New DateTime(2013, 12, 1, 21, 47, 35) And
+        PreviousSunday(New DateTime(2016, 11, 22, 0, 22, 17)) =
+        New DateTime(2016, 11, 20, 0, 22, 17) And
+        PreviousSunday(New DateTime(2016, 10, 11, 19, 11, 41)) =
+        New DateTime(2016, 10, 9, 19, 11, 41) And
+        PreviousSunday(New DateTime(2013, 10, 26, 4, 24, 53)) =
+        New DateTime(2013, 10, 20, 4, 24, 53) And
+        PreviousSunday(New DateTime(2014, 5, 2, 2, 52, 41)) =
+        New DateTime(2014, 4, 27, 2, 52, 41) And
+        PreviousSunday(New DateTime(2014, 8, 16, 13, 11, 10)) =
+        New DateTime(2014, 8, 10, 13, 11, 10) And
+        PreviousSunday(New DateTime(2014, 10, 25, 8, 26, 4)) =
+        New DateTime(2014, 10, 19, 8, 26, 4) And
+        PreviousSunday(New DateTime(2015, 6, 2, 18, 36, 24)) =
+        New DateTime(2015, 5, 31, 18, 36, 24) And
+        PreviousSunday(New DateTime(2016, 11, 21, 16, 24, 27)) =
+        New DateTime(2016, 11, 20, 16, 24, 27) And
+        PreviousSunday(New DateTime(2014, 4, 4, 8, 42, 10)) =
+        New DateTime(2014, 3, 30, 8, 42, 10) And
+        PreviousSunday(New DateTime(2016, 2, 22, 19, 8, 41)) =
+        New DateTime(2016, 2, 21, 19, 8, 41) And
+        PreviousSunday(New DateTime(2015, 9, 13, 22, 48, 17)) =
+        New DateTime(2015, 9, 13, 22, 48, 17) And
+        PreviousSunday(New DateTime(2016, 10, 20, 2, 47, 48)) =
+        New DateTime(2016, 10, 16, 2, 47, 48) And
+        PreviousSunday(New DateTime(2014, 2, 8, 23, 12, 34)) =
+        New DateTime(2014, 2, 2, 23, 12, 34) And
+        PreviousSunday(New DateTime(2016, 2, 27, 23, 40, 39)) =
+        New DateTime(2016, 2, 21, 23, 40, 39) And
+        PreviousSunday(New DateTime(2018, 3, 26, 2, 44, 7)) =
+        New DateTime(2018, 3, 25, 2, 44, 7) And
+        PreviousSunday(New DateTime(2018, 10, 29, 2, 12, 19)) =
+        New DateTime(2018, 10, 28, 2, 12, 19)
+
+      UnitTestsPassed = UnitTestsPassed And
+        OffsetHoliday(New DateTime(2021, 12, 25), InvariantCulture) =
+        New DateTime(2021, 12, 19) And
+        OffsetHoliday(New DateTime(2020, 10, 12), InvariantCulture) =
+        New DateTime(2020, 10, 12) And
+        OffsetHoliday(New DateTime(2012, 1, 1), New CultureInfo("nl-NL")) =
+        New DateTime(2012, 1, 1) And
+        OffsetHoliday(New DateTime(2016, 3, 26), New CultureInfo("nl-NL")) =
+        New DateTime(2016, 3, 26) And
+        OffsetHoliday(New DateTime(2016, 3, 28), New CultureInfo("nl-NL")) =
+        New DateTime(2016, 3, 27) And
+        OffsetHoliday(New DateTime(2016, 3, 29), New CultureInfo("nl-NL")) =
+        New DateTime(2016, 3, 29) And
+        OffsetHoliday(New DateTime(2012, 4, 30), New CultureInfo("nl-NL")) =
+        New DateTime(2012, 4, 29) And
+        OffsetHoliday(New DateTime(2018, 4, 27, 23, 59, 59),
+        New CultureInfo("nl-NL")) = New DateTime(2018, 4, 22, 23, 59, 59) And
+        OffsetHoliday(New DateTime(2014, 5, 29), New CultureInfo("nl-NL")) =
+        New DateTime(2014, 5, 25) And
+        OffsetHoliday(New DateTime(2020, 6, 1), New CultureInfo("nl-NL")) =
+        New DateTime(2020, 5, 31) And
+        OffsetHoliday(New DateTime(2009, 12, 25), New CultureInfo("nl-NL")) =
+        New DateTime(2009, 12, 20) And
+        OffsetHoliday(New DateTime(2011, 12, 26), New CultureInfo("nl-NL")) =
+        New DateTime(2011, 12, 25) And
+        OffsetHoliday(New DateTime(2010, 12, 31), New CultureInfo("nl-NL")) =
+        New DateTime(2010, 12, 26) And
+        OffsetHoliday(New DateTime(2014, 2, 1, 0, 0, 1),
+        New CultureInfo("nl-NL")) = New DateTime(2014, 2, 1, 0, 0, 1) And
+        OffsetHoliday(New DateTime(2009, 2, 23), New CultureInfo("nl-NL")) =
+        New DateTime(2009, 2, 23) And
+        OffsetHoliday(New DateTime(2014, 5, 5), New CultureInfo("nl-NL")) =
+        New DateTime(2014, 5, 5) And
+        OffsetHoliday(New DateTime(2015, 5, 5), New CultureInfo("nl-NL")) =
+        New DateTime(2015, 5, 3) And
+        OffsetHoliday(New DateTime(2011, 4, 11), New CultureInfo("nl-NL")) =
+        New DateTime(2011, 4, 11) And
+        OffsetHoliday(New DateTime(2022, 4, 17), New CultureInfo("en-US")) =
+        New DateTime(2022, 4, 17) And
+        OffsetHoliday(New DateTime(2020, 6, 1), New CultureInfo("en-US")) =
+        New DateTime(2020, 6, 1)
+
       For i = 0 To 19
         If i = 0 Then
           StatisticsItem = Statistics({3411, 3067, 3159, 2579, 2604, 3549,
@@ -879,12 +1034,13 @@ Namespace Vitens.DynamicBandwidthMonitor
       Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
 
       For i = 0 To 19
-        Result = DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
+        Result = DBM.Result(InputPointDriver, CorrelationPoints, Timestamp,
+          New CultureInfo("nl-NL")) ' Use Dutch locale for New Year's Day test
         With Result
           IntegrationTestsPassed = IntegrationTestsPassed And
-            Round(.Factor, 4) = {-1.7572, 0, 0, 0, 0, 0, -11.8493, -22.9119,
-            0, 0, 0, 0, 1.1375, 0, 0, 0, 0, 0, 0, 0}(i) And
-            .HasEvent = {True, False, False, False, False, False, True,
+            Round(.Factor, 4) = {0, 0, 0, 0, 0, 0, -11.8493, -22.9119, 0, 0, 0,
+            0, 1.1375, 0, 0, 0, 0, 0, 0, 0}(i) And
+            .HasEvent = {False, False, False, False, False, False, True,
             True, False, False, False, False, True, False, False, False,
             False, False, False, False}(i) And
             .HasSuppressedEvent = {False, False, False, False, False,
@@ -895,25 +1051,25 @@ Namespace Vitens.DynamicBandwidthMonitor
             504.9407, 656.4434, 1065.7651, 898.9191, 471.2433, 668.1,
             1103.9689, 897.7268, 525.3563, 676.7206, 1183.0887,
             975.8324}(i) And
-            Round(.ForecastItem.ForecastValue, 4) = {548.7285, 716.9982,
+            Round(.ForecastItem.ForecastValue, 4) = {517.2028, 716.9982,
             1059.0551, 919.4719, 488.6181, 683.6728, 1155.5986, 895.6872,
             503.2566, 655.7115, 1061.2282, 893.3488, 464.4957, 666.2928,
             1084.1527, 901.6546, 523.8671, 666.1729, 1190.3511,
             975.4264}(i) And
-            Round(.ForecastItem.Range(0.95), 4) = {7.952, 43.4768, 57.5299,
+            Round(.ForecastItem.Range(0.95), 4) = {7.3871, 43.4768, 57.5299,
             51.6959, 28.3939, 0.5641, 0.9146, 0.8148, 5.6816, 7.3282, 11.0143,
             9.3649, 3.9192, 4.4945, 6.9199, 9.2247, 8.3518, 9.6103, 20.3862,
             15.9607}(i) And
-            Round(.ForecastItem.Range(BandwidthCI), 4) = {12.0353, 65.8024,
+            Round(.ForecastItem.Range(BandwidthCI), 4) = {11.1804, 65.8024,
             87.0718, 78.2419, 42.9743, 0.8537, 1.3843, 1.2332, 8.5991, 11.0913,
             16.6702, 14.1738, 5.9317, 6.8025, 10.4733, 13.9616, 12.6405,
             14.5453, 30.8546, 24.1566}(i) And
-            Round(.ForecastItem.LowerControlLimit, 4) = {536.6932, 651.1959,
+            Round(.ForecastItem.LowerControlLimit, 4) = {506.0224, 651.1959,
             971.9833, 841.23, 445.6438, 682.8191, 1154.2143, 894.454,
             494.6574, 644.6202, 1044.558, 879.175, 458.564, 659.4903,
             1073.6794, 887.693, 511.2267, 651.6276, 1159.4964,
             951.2698}(i) And
-            Round(.ForecastItem.UpperControlLimit, 4) = {560.7638, 782.8006,
+            Round(.ForecastItem.UpperControlLimit, 4) = {528.3832, 782.8006,
             1146.127, 997.7138, 531.5924, 684.5266, 1156.9829, 896.9205,
             511.8557, 666.8028, 1077.8984, 907.5226, 470.4274, 673.0952,
             1094.626, 915.6163, 536.5076, 680.7182, 1221.2057, 999.583}(i)
@@ -950,7 +1106,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Timer = Now
       Do While Now.Ticks-Timer.Ticks < DurationTicks
-        Result = DBM.Result(InputPointDriver, CorrelationPoints, Timestamp)
+        Result = DBM.Result(InputPointDriver, CorrelationPoints, Timestamp,
+          New CultureInfo("nl-NL")) ' Use Dutch locale for holidays
         Count += 1
         Timestamp = Timestamp.AddSeconds(CalculationInterval)
       Loop

@@ -23,7 +23,9 @@ Option Strict
 
 
 Imports System
+Imports System.Globalization
 Imports System.Math
+Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMForecast
@@ -49,8 +51,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Function Result(Timestamp As DateTime, IsInputDBMPoint As Boolean,
-      HasCorrelationDBMPoint As Boolean,
-      Optional SubtractPoint As DBMPoint = Nothing) As DBMResult
+      HasCorrelationDBMPoint As Boolean, SubtractPoint As DBMPoint,
+      Culture As CultureInfo) As DBMResult
 
       ' Retrieves data and calculates forecast and control limits for
       ' this point. Also calculates and stores (historic) forecast errors for
@@ -61,7 +63,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim ForecastItemsCache As DBMCache ' Cached forecast results for subtr.pt.
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
-      Dim ForecastTimestamp, PatternTimestamp As DateTime
+      Dim ForecastTimestamp, HistoryTimestamp, PatternTimestamp As DateTime
       Dim ForecastItem As DBMForecastItem = Nothing
       Dim Patterns(ComparePatterns), Measurements(EMAPreviousPeriods),
         ForecastValues(EMAPreviousPeriods),
@@ -102,10 +104,17 @@ Namespace Vitens.DynamicBandwidthMonitor
 
             If ForecastItem Is Nothing Then ' Not cached
 
+              HistoryTimestamp = OffsetHoliday(ForecastTimestamp, Culture)
+
               For PatternCounter = 0 To ComparePatterns ' Data for regression.
 
-                PatternTimestamp = ForecastTimestamp.
-                  AddDays(-(ComparePatterns-PatternCounter)*7) ' Timestamp
+                If PatternCounter = ComparePatterns Then
+                  PatternTimestamp = ForecastTimestamp ' Last item: Measurement
+                Else
+                  PatternTimestamp = HistoryTimestamp.
+                    AddDays(-(ComparePatterns-PatternCounter)*7) ' History
+                End If
+
                 Patterns(PatternCounter) =
                   PointDriver.TryGetData(PatternTimestamp) ' Get data
                 If SubtractPoint IsNot Nothing Then ' Subtract input if req'd

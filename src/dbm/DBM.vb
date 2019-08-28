@@ -24,7 +24,10 @@ Option Strict
 
 Imports System
 Imports System.Collections.Generic
+Imports System.Globalization
 Imports System.Math
+Imports System.Threading.Thread
+Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
@@ -153,6 +156,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       StartTimestamp = NextInterval(StartTimestamp,
         -EMAPreviousPeriods-CorrelationPreviousPeriods).
         AddDays(ComparePatterns*-7)
+      If UseSundayForHolidays Then StartTimestamp =
+        PreviousSunday(StartTimestamp)
       EndTimestamp = AlignTimestamp(EndTimestamp, CalculationInterval)
 
       Point(InputPointDriver).PointDriver.
@@ -168,8 +173,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Function Result(InputPointDriver As DBMPointDriverAbstract,
-      CorrelationPoints As List(Of DBMCorrelationPoint),
-      Timestamp As DateTime) As DBMResult
+      CorrelationPoints As List(Of DBMCorrelationPoint), Timestamp As DateTime,
+      Optional Culture As CultureInfo = Nothing) As DBMResult
 
       ' This is the main function to call to retrieve results for a specific
       ' timestamp. If a list of DBMCorrelationPoints is passed, events can be
@@ -180,13 +185,16 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim AbsoluteErrorStatsItem,
         RelativeErrorStatsItem As New DBMStatisticsItem
 
+      ' Use culture used by the current thread if no culture was passed.
+      If Culture Is Nothing Then Culture = CurrentThread.CurrentCulture
+
       If CorrelationPoints Is Nothing Then ' Empty list if Nothing was passed.
         CorrelationPoints = New List(Of DBMCorrelationPoint)
       End If
 
       ' Calculate for input point
       Result = Point(InputPointDriver).Result(
-        Timestamp, True, CorrelationPoints.Count > 0)
+        Timestamp, True, CorrelationPoints.Count > 0, Nothing, Culture)
 
       ' If an event is found and a correlation point is available
       If CorrelationPoints.Count > 0 Then
@@ -197,11 +205,11 @@ Namespace Vitens.DynamicBandwidthMonitor
             If CorrelationPoint.SubtractSelf Then
               ' Calculate result for correlation point, subtract input point
               CorrelationResult = Point(CorrelationPoint.PointDriver).Result(
-                Timestamp, False, True, Point(InputPointDriver))
+                Timestamp, False, True, Point(InputPointDriver), Culture)
             Else
               ' Calculate result for correlation point
               CorrelationResult = Point(CorrelationPoint.PointDriver).Result(
-                Timestamp, False, True)
+                Timestamp, False, True, Nothing, Culture)
             End If
 
             ' Calculate statistics of error compared to forecast

@@ -27,7 +27,7 @@ Imports System.Collections.Generic
 Imports System.Environment
 Imports System.Globalization.CultureInfo
 Imports System.Text.RegularExpressions
-Imports System.Threading
+Imports System.Threading.Thread
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
@@ -72,11 +72,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Shared Function FormatNumber(Value As Double) As String
 
-      If InternationalFormat Then
-        Return Value.ToString("0.####", InvariantCulture)
-      Else
-        Return Value.ToString("0.####")
-      End If
+      Return Value.ToString("0.####")
 
     End Function
 
@@ -107,6 +103,8 @@ Namespace Vitens.DynamicBandwidthMonitor
                 New DBMCorrelationPoint(New DBMPointDriver(Value), True))
             ElseIf Parameter.Equals("iv") Then
               CalculationInterval = Convert.ToInt32(Value)
+            ElseIf Parameter.Equals("us") Then
+              UseSundayForHolidays = Convert.ToBoolean(Value)
             ElseIf Parameter.Equals("p") Then
               ComparePatterns = Convert.ToInt32(Value)
             ElseIf Parameter.Equals("ep") Then
@@ -130,7 +128,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                 InternationalFormat = False
               ElseIf Value.ToLower.Equals("intl") Then
                 InternationalFormat = True
-                Thread.CurrentThread.CurrentCulture = InvariantCulture
+                CurrentThread.CurrentCulture = InvariantCulture
               End If
             End If
           Catch ex As Exception

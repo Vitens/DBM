@@ -25,7 +25,6 @@ Option Strict
 Imports System
 Imports System.Double
 Imports System.Math
-Imports System.TimeSpan
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
@@ -402,27 +401,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns a random number between Min (inclusive) and Max (inclusive).
 
       Return Random.Next(Min, Max+1)
-
-    End Function
-
-
-    Public Shared Function AlignTimestamp(Timestamp As DateTime,
-      Seconds As Integer) As DateTime
-
-       ' Returns a DateTime for the passed timestamp aligned on the
-       ' previous interval (in seconds).
-
-       Return New DateTime(Timestamp.Ticks-Timestamp.Ticks Mod
-         Seconds*TicksPerSecond, Timestamp.Kind)
-
-    End Function
-
-
-    Public Shared Function NextInterval(Timestamp As DateTime,
-      Optional Intervals As Integer = 1) As DateTime
-
-       Return AlignTimestamp(Timestamp, CalculationInterval).
-            AddSeconds(Intervals*CalculationInterval)
 
     End Function
 
