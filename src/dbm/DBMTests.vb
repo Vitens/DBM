@@ -665,85 +665,85 @@ Namespace Vitens.DynamicBandwidthMonitor
       UnitTestsPassed = UnitTestsPassed And
         AlignTimestamp(New DateTime(2016, 4, 4, 16, 33, 2), 60) =
         New DateTime(2016, 4, 4, 16, 33, 0) And
-        AlignTimestamp(New DateTime(2015, 7, 15, 2, 29, 58), 60) =
+        AlignTimestamp(New DateTime(2015, 7, 15, 2, 29, 58), 60) = 
         New DateTime(2015, 7, 15, 2, 29, 0) And
-        AlignTimestamp(New DateTime(2016, 4, 1, 22, 5, 17), 60) =
+        AlignTimestamp(New DateTime(2016, 4, 1, 22, 5, 17), 60) = 
         New DateTime(2016, 4, 1, 22, 5, 0) And
-        AlignTimestamp(New DateTime(2013, 12, 1, 21, 47, 35), 60) =
+        AlignTimestamp(New DateTime(2013, 12, 1, 21, 47, 35), 60) = 
         New DateTime(2013, 12, 1, 21, 47, 0) And
-        AlignTimestamp(New DateTime(2016, 11, 22, 0, 22, 17), 60) =
+        AlignTimestamp(New DateTime(2016, 11, 22, 0, 22, 17), 60) = 
         New DateTime(2016, 11, 22, 0, 22, 0) And
-        AlignTimestamp(New DateTime(2016, 10, 11, 19, 11, 41), 300) =
+        AlignTimestamp(New DateTime(2016, 10, 11, 19, 11, 41), 300) = 
         New DateTime(2016, 10, 11, 19, 10, 0) And
-        AlignTimestamp(New DateTime(2013, 10, 26, 4, 24, 53), 300) =
+        AlignTimestamp(New DateTime(2013, 10, 26, 4, 24, 53), 300) = 
         New DateTime(2013, 10, 26, 4, 20, 0) And
-        AlignTimestamp(New DateTime(2014, 5, 2, 2, 52, 41), 300) =
+        AlignTimestamp(New DateTime(2014, 5, 2, 2, 52, 41), 300) = 
         New DateTime(2014, 5, 2, 2, 50, 0) And
-        AlignTimestamp(New DateTime(2014, 8, 16, 13, 11, 10), 300) =
+        AlignTimestamp(New DateTime(2014, 8, 16, 13, 11, 10), 300) = 
         New DateTime(2014, 8, 16, 13, 10, 0) And
-        AlignTimestamp(New DateTime(2014, 10, 25, 8, 26, 4), 300) =
+        AlignTimestamp(New DateTime(2014, 10, 25, 8, 26, 4), 300) = 
         New DateTime(2014, 10, 25, 8, 25, 0) And
-        AlignTimestamp(New DateTime(2015, 6, 2, 18, 36, 24), 3600) =
+        AlignTimestamp(New DateTime(2015, 6, 2, 18, 36, 24), 3600) = 
         New DateTime(2015, 6, 2, 18, 0, 0) And
-        AlignTimestamp(New DateTime(2016, 11, 21, 16, 24, 27), 3600) =
+        AlignTimestamp(New DateTime(2016, 11, 21, 16, 24, 27), 3600) = 
         New DateTime(2016, 11, 21, 16, 0, 0) And
-        AlignTimestamp(New DateTime(2014, 4, 4, 8, 42, 10), 3600) =
+        AlignTimestamp(New DateTime(2014, 4, 4, 8, 42, 10), 3600) = 
         New DateTime(2014, 4, 4, 8, 0, 0) And
-        AlignTimestamp(New DateTime(2016, 2, 22, 19, 8, 41), 3600) =
+        AlignTimestamp(New DateTime(2016, 2, 22, 19, 8, 41), 3600) = 
         New DateTime(2016, 2, 22, 19, 0, 0) And
-        AlignTimestamp(New DateTime(2015, 9, 13, 22, 48, 17), 3600) =
+        AlignTimestamp(New DateTime(2015, 9, 13, 22, 48, 17), 3600) = 
         New DateTime(2015, 9, 13, 22, 0, 0) And
-        AlignTimestamp(New DateTime(2016, 10, 20, 2, 47, 48), 86400) =
+        AlignTimestamp(New DateTime(2016, 10, 20, 2, 47, 48), 86400) = 
         New DateTime(2016, 10, 20, 0, 0, 0) And
-        AlignTimestamp(New DateTime(2014, 2, 8, 23, 12, 34), 86400) =
+        AlignTimestamp(New DateTime(2014, 2, 8, 23, 12, 34), 86400) = 
         New DateTime(2014, 2, 8, 0, 0, 0) And
-        AlignTimestamp(New DateTime(2016, 2, 27, 23, 40, 39), 86400) =
+        AlignTimestamp(New DateTime(2016, 2, 27, 23, 40, 39), 86400) = 
         New DateTime(2016, 2, 27, 0, 0, 0) And
-        AlignTimestamp(New DateTime(2015, 8, 26, 9, 35, 55), 86400) =
+        AlignTimestamp(New DateTime(2015, 8, 26, 9, 35, 55), 86400) = 
         New DateTime(2015, 8, 26, 0, 0, 0) And
-        AlignTimestamp(New DateTime(2016, 2, 11, 0, 44, 7), 86400) =
+        AlignTimestamp(New DateTime(2016, 2, 11, 0, 44, 7), 86400) = 
         New DateTime(2016, 2, 11, 0, 0, 0)
 
       UnitTestsPassed = UnitTestsPassed And
         NextInterval(New DateTime(2016, 4, 4, 16, 33, 2)) =
         New DateTime(2016, 4, 4, 16, 35, 0) And
-        NextInterval(New DateTime(2015, 7, 15, 2, 29, 58)) =
+        NextInterval(New DateTime(2015, 7, 15, 2, 29, 58)) = 
         New DateTime(2015, 7, 15, 2, 30, 0) And
-        NextInterval(New DateTime(2016, 4, 1, 22, 5, 17)) =
+        NextInterval(New DateTime(2016, 4, 1, 22, 5, 17)) = 
         New DateTime(2016, 4, 1, 22, 10, 0) And
-        NextInterval(New DateTime(2013, 12, 1, 21, 47, 35)) =
+        NextInterval(New DateTime(2013, 12, 1, 21, 47, 35)) = 
         New DateTime(2013, 12, 1, 21, 50, 0) And
-        NextInterval(New DateTime(2016, 11, 22, 0, 22, 17)) =
+        NextInterval(New DateTime(2016, 11, 22, 0, 22, 17)) = 
         New DateTime(2016, 11, 22, 0, 25, 0) And
-        NextInterval(New DateTime(2016, 10, 11, 19, 11, 41)) =
+        NextInterval(New DateTime(2016, 10, 11, 19, 11, 41)) = 
         New DateTime(2016, 10, 11, 19, 15, 0) And
-        NextInterval(New DateTime(2013, 10, 26, 4, 24, 53)) =
+        NextInterval(New DateTime(2013, 10, 26, 4, 24, 53)) = 
         New DateTime(2013, 10, 26, 4, 25, 0) And
-        NextInterval(New DateTime(2014, 5, 2, 2, 52, 41)) =
+        NextInterval(New DateTime(2014, 5, 2, 2, 52, 41)) = 
         New DateTime(2014, 5, 2, 2, 55, 0) And
-        NextInterval(New DateTime(2014, 8, 16, 13, 11, 10)) =
+        NextInterval(New DateTime(2014, 8, 16, 13, 11, 10)) = 
         New DateTime(2014, 8, 16, 13, 15, 0) And
-        NextInterval(New DateTime(2014, 10, 25, 8, 26, 4)) =
+        NextInterval(New DateTime(2014, 10, 25, 8, 26, 4)) = 
         New DateTime(2014, 10, 25, 8, 30, 0) And
-        NextInterval(New DateTime(2015, 6, 2, 18, 36, 24), 1) =
+        NextInterval(New DateTime(2015, 6, 2, 18, 36, 24), 1) = 
         New DateTime(2015, 6, 2, 18, 40, 0) And
-        NextInterval(New DateTime(2016, 11, 21, 16, 24, 27), 2) =
+        NextInterval(New DateTime(2016, 11, 21, 16, 24, 27), 2) = 
         New DateTime(2016, 11, 21, 16, 30, 0) And
-        NextInterval(New DateTime(2014, 4, 4, 8, 42, 10), 3) =
+        NextInterval(New DateTime(2014, 4, 4, 8, 42, 10), 3) = 
         New DateTime(2014, 4, 4, 8, 55, 0) And
-        NextInterval(New DateTime(2016, 2, 22, 19, 8, 41), 4) =
+        NextInterval(New DateTime(2016, 2, 22, 19, 8, 41), 4) = 
         New DateTime(2016, 2, 22, 19, 25, 0) And
-        NextInterval(New DateTime(2015, 9, 13, 22, 48, 17), 5) =
+        NextInterval(New DateTime(2015, 9, 13, 22, 48, 17), 5) = 
         New DateTime(2015, 9, 13, 23, 10, 0) And
-        NextInterval(New DateTime(2016, 10, 20, 2, 47, 48), 6) =
+        NextInterval(New DateTime(2016, 10, 20, 2, 47, 48), 6) = 
         New DateTime(2016, 10, 20, 3, 15, 0) And
-        NextInterval(New DateTime(2014, 2, 8, 23, 12, 34), 7) =
+        NextInterval(New DateTime(2014, 2, 8, 23, 12, 34), 7) = 
         New DateTime(2014, 2, 8, 23, 45, 0) And
-        NextInterval(New DateTime(2016, 2, 27, 23, 40, 39), 8) =
+        NextInterval(New DateTime(2016, 2, 27, 23, 40, 39), 8) = 
         New DateTime(2016, 2, 28, 0, 20, 0) And
-        NextInterval(New DateTime(2015, 8, 26, 9, 35, 55), -12) =
+        NextInterval(New DateTime(2015, 8, 26, 9, 35, 55), -12) = 
         New DateTime(2015, 8, 26, 8, 35, 0) And
-        NextInterval(New DateTime(2016, 2, 11, 0, 44, 7), 0) =
+        NextInterval(New DateTime(2016, 2, 11, 0, 44, 7), 0) = 
         New DateTime(2016, 2, 11, 0, 40, 0)
 
       UnitTestsPassed = UnitTestsPassed And
