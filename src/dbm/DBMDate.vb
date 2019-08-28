@@ -105,15 +105,15 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       With Timestamp
         ' For any culture, consider the following days a holiday:
-        ' New Year's Day, Easter, Ascension Day, Pentecost,
-        ' Christmas Day, and New Year's Eve.
+        '  New Year's Day, Easter, Ascension Day, Pentecost,
+        '  Christmas Day, and New Year's Eve.
         IsHoliday = (.Month = 1 And .Day = 1) Or
           {0, 39, 49}.Contains(DaysSinceEaster) Or
           (.Month = 12 And {25, 31}.Contains(.Day))
         If Culture.Name.Equals("nl-NL") Then
           ' For the Netherlands, consider the following days a holiday:
-          ' 2nd day of Easter, Royal day, Liberation Day (lustrum),
-          ' 2nd day of Pentecost, and Boxing Day
+          '  2nd day of Easter, Royal day, Liberation Day (lustrum),
+          '  2nd day of Pentecost, and Boxing Day
           IsHoliday = IsHoliday Or
             {1, 50}.Contains(DaysSinceEaster) Or
             (.Year >= 1980 And .Year < 2014 And .Month = 4 And .Day = 30) Or
@@ -128,7 +128,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function OffsetDate(Timestamp As DateTime,
+    Public Shared Function OffsetHoliday(Timestamp As DateTime,
       Culture As CultureInfo) As DateTime
 
       If UseSundayForHolidays And IsHoliday(Timestamp, Culture) Then

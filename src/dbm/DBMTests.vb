@@ -857,45 +857,45 @@ Namespace Vitens.DynamicBandwidthMonitor
         Not IsHoliday(New DateTime(2020, 6, 1), New CultureInfo("en-US"))
 
       UnitTestsPassed = UnitTestsPassed And
-        OffsetDate(New DateTime(2021, 12, 25), InvariantCulture) =
+        OffsetHoliday(New DateTime(2021, 12, 25), InvariantCulture) =
         New DateTime(2021, 12, 19) And
-        OffsetDate(New DateTime(2020, 10, 12), InvariantCulture) =
+        OffsetHoliday(New DateTime(2020, 10, 12), InvariantCulture) =
         New DateTime(2020, 10, 12) And
-        OffsetDate(New DateTime(2012, 1, 1), New CultureInfo("nl-NL")) =
+        OffsetHoliday(New DateTime(2012, 1, 1), New CultureInfo("nl-NL")) =
         New DateTime(2012, 1, 1) And
-        OffsetDate(New DateTime(2016, 3, 26), New CultureInfo("nl-NL")) =
+        OffsetHoliday(New DateTime(2016, 3, 26), New CultureInfo("nl-NL")) =
         New DateTime(2016, 3, 26) And
-        OffsetDate(New DateTime(2016, 3, 28), New CultureInfo("nl-NL")) =
+        OffsetHoliday(New DateTime(2016, 3, 28), New CultureInfo("nl-NL")) =
         New DateTime(2016, 3, 27) And
-        OffsetDate(New DateTime(2016, 3, 29), New CultureInfo("nl-NL")) =
+        OffsetHoliday(New DateTime(2016, 3, 29), New CultureInfo("nl-NL")) =
         New DateTime(2016, 3, 29) And
-        OffsetDate(New DateTime(2012, 4, 30), New CultureInfo("nl-NL")) =
+        OffsetHoliday(New DateTime(2012, 4, 30), New CultureInfo("nl-NL")) =
         New DateTime(2012, 4, 29) And
-        OffsetDate(New DateTime(2018, 4, 27, 23, 59, 59),
+        OffsetHoliday(New DateTime(2018, 4, 27, 23, 59, 59),
         New CultureInfo("nl-NL")) = New DateTime(2018, 4, 22, 23, 59, 59) And
-        OffsetDate(New DateTime(2014, 5, 29), New CultureInfo("nl-NL")) =
+        OffsetHoliday(New DateTime(2014, 5, 29), New CultureInfo("nl-NL")) =
         New DateTime(2014, 5, 25) And
-        OffsetDate(New DateTime(2020, 6, 1), New CultureInfo("nl-NL")) =
+        OffsetHoliday(New DateTime(2020, 6, 1), New CultureInfo("nl-NL")) =
         New DateTime(2020, 5, 31) And
-        OffsetDate(New DateTime(2009, 12, 25), New CultureInfo("nl-NL")) =
+        OffsetHoliday(New DateTime(2009, 12, 25), New CultureInfo("nl-NL")) =
         New DateTime(2009, 12, 20) And
-        OffsetDate(New DateTime(2011, 12, 26), New CultureInfo("nl-NL")) =
+        OffsetHoliday(New DateTime(2011, 12, 26), New CultureInfo("nl-NL")) =
         New DateTime(2011, 12, 25) And
-        OffsetDate(New DateTime(2010, 12, 31), New CultureInfo("nl-NL")) =
+        OffsetHoliday(New DateTime(2010, 12, 31), New CultureInfo("nl-NL")) =
         New DateTime(2010, 12, 26) And
-        OffsetDate(New DateTime(2014, 2, 1, 0, 0, 1),
+        OffsetHoliday(New DateTime(2014, 2, 1, 0, 0, 1),
         New CultureInfo("nl-NL")) = New DateTime(2014, 2, 1, 0, 0, 1) And
-        OffsetDate(New DateTime(2009, 2, 23), New CultureInfo("nl-NL")) =
+        OffsetHoliday(New DateTime(2009, 2, 23), New CultureInfo("nl-NL")) =
         New DateTime(2009, 2, 23) And
-        OffsetDate(New DateTime(2014, 5, 5), New CultureInfo("nl-NL")) =
+        OffsetHoliday(New DateTime(2014, 5, 5), New CultureInfo("nl-NL")) =
         New DateTime(2014, 5, 5) And
-        OffsetDate(New DateTime(2015, 5, 5), New CultureInfo("nl-NL")) =
+        OffsetHoliday(New DateTime(2015, 5, 5), New CultureInfo("nl-NL")) =
         New DateTime(2015, 5, 3) And
-        OffsetDate(New DateTime(2011, 4, 11), New CultureInfo("nl-NL")) =
+        OffsetHoliday(New DateTime(2011, 4, 11), New CultureInfo("nl-NL")) =
         New DateTime(2011, 4, 11) And
-        OffsetDate(New DateTime(2022, 4, 17), New CultureInfo("en-US")) =
+        OffsetHoliday(New DateTime(2022, 4, 17), New CultureInfo("en-US")) =
         New DateTime(2022, 4, 17) And
-        OffsetDate(New DateTime(2020, 6, 1), New CultureInfo("en-US")) =
+        OffsetHoliday(New DateTime(2020, 6, 1), New CultureInfo("en-US")) =
         New DateTime(2020, 6, 1)
 
       For i = 0 To 19

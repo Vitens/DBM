@@ -104,7 +104,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
             If ForecastItem Is Nothing Then ' Not cached
 
-              HistoryTimestamp = OffsetDate(ForecastTimestamp, Culture)
+              HistoryTimestamp = OffsetHoliday(ForecastTimestamp, Culture)
 
               For PatternCounter = 0 To ComparePatterns ' Data for regression.
 
