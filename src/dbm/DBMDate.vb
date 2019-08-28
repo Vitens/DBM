@@ -58,25 +58,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function DaysSinceSunday(Timestamp As DateTime) As Integer
-
-      ' Return the number of days between the passed timestamp and the
-      ' preceding Sunday.
-
-      Return Timestamp.DayOfWeek ' 0=Sunday, 6=Saturday
-
-    End Function
-
-
-    Public Shared Function PreviousSunday(Timestamp As DateTime) As DateTime
-
-      ' Returns a DateTime for the Sunday preceding the timestamp passed.
-
-      Return Timestamp.AddDays(-DaysSinceSunday(Timestamp))
-
-    End Function
-
-
     Public Shared Function Computus(Year As Integer) As DateTime
 
       ' Computus (Latin for computation) is the calculation of the date of
@@ -124,6 +105,25 @@ Namespace Vitens.DynamicBandwidthMonitor
       End With
 
       Return IsHoliday
+
+    End Function
+
+
+    Public Shared Function DaysSinceSunday(Timestamp As DateTime) As Integer
+
+      ' Return the number of days between the passed timestamp and the
+      ' preceding Sunday.
+
+      Return Timestamp.DayOfWeek ' 0=Sunday, 6=Saturday
+
+    End Function
+
+
+    Public Shared Function PreviousSunday(Timestamp As DateTime) As DateTime
+
+      ' Returns a DateTime for the Sunday preceding the timestamp passed.
+
+      Return Timestamp.AddDays(-DaysSinceSunday(Timestamp))
 
     End Function
 
