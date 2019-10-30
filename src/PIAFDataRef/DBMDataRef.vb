@@ -281,12 +281,11 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns values for each interval in a time range. The (aligned) end time
       ' itself is excluded.
 
-      Dim IntervalSeconds As Double
+      Dim IntervalSeconds As Double = Max(1, ((timeContext.EndTime.UtcSeconds-
+        timeContext.StartTime.UtcSeconds)/CalculationInterval-1)/
+        (numberOfValues-1))*CalculationInterval ' Required interval
 
       GetValues = New AFValues
-      IntervalSeconds = Max(1, ((timeContext.EndTime.UtcSeconds-timeContext.
-        StartTime.UtcSeconds)/CalculationInterval-1)/(numberOfValues-1))*
-        CalculationInterval ' Required interval, first and last interv inclusive
 
       ' SyncLock here so that when multiple parallel threads call the GetValues
       ' method, the DBMResult method only executes in one thread at a time for
