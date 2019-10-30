@@ -201,7 +201,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Return DBM result parameter based on applied property/trait.
 
       Dim AlignedTimestamp As AFTime ' DST issue with DateTime obj in DBMResult
-      Dim Value As New AFValue
+      Dim Value As AFValue
 
       Monitor.Enter(DBM) ' Request the lock, and block until it is obtained.
       Try
@@ -215,11 +215,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
           AlignedTimestamp = New AFTime(Timestamp.UtcSeconds-
             Timestamp.UtcSeconds Mod CalculationInterval) ' Align prev interval
-          If Attribute.Trait Is Nothing Then
-            Value = New AFValue(.Factor, AlignedTimestamp)
-            Value.Questionable = .HasEvent
-            Value.Substituted = .HasSuppressedEvent
-          ElseIf Attribute.Trait Is LimitTarget Then
+          If Attribute.Trait Is LimitTarget Then
             Value = New AFValue(.ForecastItem.Measurement, AlignedTimestamp)
           ElseIf Attribute.Trait Is Forecast Then
             Value = New AFValue(.ForecastItem.ForecastValue, AlignedTimestamp)
@@ -241,6 +237,10 @@ Namespace Vitens.DynamicBandwidthMonitor
           ElseIf Attribute.Trait Is LimitMaximum Then
             Value = New AFValue(.ForecastItem.ForecastValue+
               .ForecastItem.Range(pValueMinMax), AlignedTimestamp)
+          Else
+            Value = New AFValue(.Factor, AlignedTimestamp)
+            Value.Questionable = .HasEvent
+            Value.Substituted = .HasSuppressedEvent
           End If
 
         End With
