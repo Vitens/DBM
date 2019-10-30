@@ -200,7 +200,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Return DBM result parameter based on applied property/trait.
 
-      Dim AlignedTimestamp As AFTime ' DST issue with DateTime obj in DBMResult
+      Dim AlignedTimestamp As AFTime = New AFTime(Timestamp.UtcSeconds-
+        Timestamp.UtcSeconds Mod CalculationInterval) ' Align prev interval
       Dim Value As AFValue
 
       Monitor.Enter(DBM) ' Request the lock, and block until it is obtained.
@@ -213,8 +214,6 @@ Namespace Vitens.DynamicBandwidthMonitor
         With DBM.Result(
           InputPointDriver, CorrelationPoints, Timestamp.LocalTime)
 
-          AlignedTimestamp = New AFTime(Timestamp.UtcSeconds-
-            Timestamp.UtcSeconds Mod CalculationInterval) ' Align prev interval
           If Attribute.Trait Is LimitTarget Then
             Value = New AFValue(.ForecastItem.Measurement, AlignedTimestamp)
           ElseIf Attribute.Trait Is Forecast Then
