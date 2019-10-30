@@ -291,19 +291,21 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' method, the DBMResult method only executes in one thread at a time for
       ' all timestamps sequentially. This ensures that the cache is used
       ' optimally and prevents reloading data for each thread after each call to
-      ' GetValue.
-      Monitor.Enter(DBM) ' Request the lock, and block until it is obtained.
-      Try
+      ' GetValue. Request the lock, and block until it is obtained. If this
+      ' takes longer than one calculation interval, return no values.
+      If Monitor.TryEnter(DBM, TimeSpan.FromSeconds(CalculationInterval)) Then
+        Try
 
-        Do While timeContext.EndTime > timeContext.StartTime
-          GetValues.Add(DBMResult(timeContext.StartTime, timeContext.EndTime))
-          timeContext.StartTime = New AFTime(
-            timeContext.StartTime.UtcSeconds+IntervalSeconds)
-        Loop
+          Do While timeContext.EndTime > timeContext.StartTime
+            GetValues.Add(DBMResult(timeContext.StartTime, timeContext.EndTime))
+            timeContext.StartTime = New AFTime(
+              timeContext.StartTime.UtcSeconds+IntervalSeconds)
+          Loop
 
-      Finally
-        Monitor.Exit(DBM) ' Ensure that the lock is released.
-      End Try
+        Finally
+          Monitor.Exit(DBM) ' Ensure that the lock is released.
+        End Try
+      End If
 
       Return GetValues
 
