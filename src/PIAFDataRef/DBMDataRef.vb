@@ -211,8 +211,21 @@ Namespace Vitens.DynamicBandwidthMonitor
         Try
 
           If PointsStale.IsStale Then UpdatePoints ' Update points periodically
-          If Not EndTimestamp.IsEmpty Then DBM.PrepareData(InputPointDriver,
-            CorrelationPoints, Timestamp.LocalTime, EndTimestamp.LocalTime)
+
+          If EndTimestamp.IsEmpty Then
+            ' Using PrepareData for a single timestamp makes sense as this
+            ' greatly decreases the number of calls to the PI Data Archive for
+            ' each individual value required in the calculation. Preparing the
+            ' dataset returns many values which remain unused, but the single
+            ' call to the Data Archive is much faster and results in a better
+            ' overall performance.
+            DBM.PrepareData(InputPointDriver, CorrelationPoints,
+              Timestamp.LocalTime,
+              Timestamp.LocalTime.AddSeconds(CalculationInterval)) ' Timestamp
+          Else
+            DBM.PrepareData(InputPointDriver, CorrelationPoints,
+              Timestamp.LocalTime, EndTimestamp.LocalTime) ' Time range
+          End If
 
           With DBM.Result(
             InputPointDriver, CorrelationPoints, Timestamp.LocalTime)
