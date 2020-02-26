@@ -238,7 +238,8 @@ Namespace Vitens.DynamicBandwidthMonitor
           Try
 
             If PointsStale.IsStale Then UpdatePoints ' Update points if stale
-            If Not numberOfValues = 2 Then DBM.PrepareData(
+            If timeContext.EndTime.UtcSeconds-timeContext.StartTime.
+              UtcSeconds >= 2*CalculationInterval Then DBM.PrepareData(
               InputPointDriver, CorrelationPoints,
               timeContext.StartTime.LocalTime, timeContext.EndTime.LocalTime)
 
