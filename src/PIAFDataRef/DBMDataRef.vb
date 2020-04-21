@@ -239,9 +239,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
             Monitor.Enter(PointsStale)
             Try
-              If PointsStale.IsStale Then
-                UpdatePoints ' Update points if stale
-              End If
+              If PointsStale.IsStale Then UpdatePoints ' Update points if stale
             Finally
               Monitor.Exit(PointsStale)
             End Try
