@@ -239,8 +239,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
             Monitor.Enter(PointsStale)
             Try
-              If InputPointDriver Is Nothing Or
-                PointsStale.IsStale Then UpdatePoints
+              If PointsStale.IsStale Then UpdatePoints ' Update points if stale
             Finally
               Monitor.Exit(PointsStale)
             End Try
