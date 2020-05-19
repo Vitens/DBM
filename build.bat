@@ -42,8 +42,10 @@ rem Build
 if exist "%PIAFRef%" (
  %vbc% /reference:"%PIAFRef%",build\DBM.dll /target:library /out:build\DBMPointDriverOSIsoftPIAF.dll src\dbm\DBMManifest.vb src\dbm\driver\DBMPointDriverOSIsoftPIAF.vb
  %vbc% /reference:"%PIAFRef%",build\DBM.dll,build\DBMPointDriverOSIsoftPIAF.dll /target:library /out:build\DBMDataRef.dll src\dbm\DBMManifest.vb src\PIAFDataRef\*.vb
- "%ProgramFiles(x86)%\Windows Kits\10\bin\10.0.18362.0\x64\signtool.exe" sign /f src\res\vitensdev.pfx /p vitensdev build\DBMDataRef.dll
 )
+
+rem Sign
+for %%f in (build\*.dll build\*.exe) do "%ProgramFiles(x86)%\Windows Kits\10\bin\10.0.18362.0\x64\signtool.exe" sign /f src\res\vitensdev.pfx /p vitensdev %%f
 
 rem Output version, copyright and license information and unit and integration test results
 build\DBMAbout.exe
