@@ -21,14 +21,11 @@ rem along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 cd /d %~dp0
 
-rem Variables
-set PIAFDir=%PIHOME%\AF
-
 rem Register PI AF Data Reference on AF server
 tasklist | find "AFService.exe" && (
  cd build
- "%PIAFDir%\regplugin.exe" /Unregister DBMDataRef.dll
- "%PIAFDir%\regplugin.exe" DBMDataRef.dll
- "%PIAFDir%\regplugin.exe" /Owner:DBMDataRef.dll * /Exclude:DBMDataRef.dll
+ "%PIHOME%\AF\regplugin.exe" /Unregister DBMDataRef.dll
+ "%PIHOME%\AF\regplugin.exe" DBMDataRef.dll
+ "%PIHOME%\AF\regplugin.exe" /Owner:DBMDataRef.dll * /Exclude:DBMDataRef.dll
  cd ..
 )
