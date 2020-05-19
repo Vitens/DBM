@@ -45,7 +45,7 @@ if exist "%PIAFRef%" (
 )
 
 rem Sign
-for %%f in (build\*.dll build\*.exe) do "%ProgramFiles(x86)%\Windows Kits\10\bin\10.0.18362.0\x64\signtool.exe" sign /f src\res\vitensdev.pfx /p vitensdev %%f
+for %%f in (build\*.dll build\*.exe) do "%ProgramFiles(x86)%\Windows Kits\10\bin\10.0.18362.0\x64\signtool.exe" sign /f src\res\vitensdev.pfx /p vitensdev /t http://timestamp.digicert.com %%f
 
 rem Output version, copyright and license information and unit and integration test results
 build\DBMAbout.exe
