@@ -24,7 +24,7 @@ DisableReadyPage=yes
 UninstallDisplayIcon={app}\src\res\dbm.ico
 
 [Files]
-Source: "..\..\*"; Excludes: "\.git,\build"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
+Source: "..\..\*"; Excludes: "\.git"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
 
 [Icons]
 Name: "{group}\Files"; Filename: "{app}"; IconFilename: "{app}\src\res\dbm.ico"
