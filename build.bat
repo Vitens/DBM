@@ -56,3 +56,10 @@ if exist "%PIAFRef%" (
 
 rem Output version, copyright and license information and unit and integration test results
 build\DBMAbout.exe
+
+rem TEST CI
+cd \
+echo Find Signtool
+dir signtool.exe /s/a/b/o-d
+echo Done
+rem /TEST CI
