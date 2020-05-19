@@ -43,7 +43,6 @@ rem Build
 if exist "%PIAFRef%" (
  %vbc% /reference:"%PIAFRef%",build\DBM.dll /target:library /out:build\DBMPointDriverOSIsoftPIAF.dll src\dbm\DBMManifest.vb src\dbm\driver\DBMPointDriverOSIsoftPIAF.vb
  "%ProgramFiles(x86)%\Windows Kits\10\bin\10.0.18362.0\x64\signtool.exe" sign /f src\res\vitensdev.pfx /p vitensdev build\DBMPointDriverOSIsoftPIAF.dll
- "%ProgramFiles(x86)%\Windows Kits\10\bin\10.0.18362.0\x64\signtool.exe" verify build\DBMPointDriverOSIsoftPIAF.dll
  %vbc% /reference:"%PIAFRef%",build\DBM.dll,build\DBMPointDriverOSIsoftPIAF.dll /target:library /out:build\DBMDataRef.dll src\dbm\DBMManifest.vb src\PIAFDataRef\*.vb
  rem Register PI AF Data Reference on AF server
  tasklist | find "AFService.exe" && (
