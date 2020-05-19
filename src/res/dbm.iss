@@ -32,7 +32,7 @@ Name: "{group}\About"; Filename: "{cmd}"; Parameters: "/k DBMAbout.exe"; Working
 Name: "{group}\Uninstall"; Filename: "{uninstallexe}"
 
 [Run]
-Filename: "{app}\registercdr.bat"; StatusMsg: "Register {#Product}..."; Flags: runhidden
+Filename: "{app}\registercdr.bat"; StatusMsg: "Registering {#Product}..."; Flags: runhidden
 
 [UninstallDelete]
 Type: files; Name: "{app}\samples\sample?.csv"
