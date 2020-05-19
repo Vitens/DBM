@@ -4,7 +4,6 @@ before_build:
     cmd: |-
         mkdir "%TEMP%\AF\PublicAssemblies\4.0"
         curl -s -L -o "%TEMP%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll" "https://github.com/Vitens/DBM/raw/libs/OSIsoft.AFSDK.dll"
-        dir "%TEMP%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll"
         set PIHOME=%TEMP%
 build_script:
   -
