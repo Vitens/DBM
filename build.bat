@@ -2,7 +2,7 @@
 
 rem Dynamic Bandwidth Monitor
 rem Leak detection method implemented in a real-time data historian
-rem Copyright (C) 2014-2019  J.H. Fitié, Vitens N.V.
+rem Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
 rem
 rem This file is part of DBM.
 rem
@@ -44,14 +44,6 @@ if exist "%PIAFRef%" (
  %vbc% /reference:"%PIAFRef%",build\DBM.dll /target:library /out:build\DBMPointDriverOSIsoftPIAF.dll src\dbm\DBMManifest.vb src\dbm\driver\DBMPointDriverOSIsoftPIAF.vb
  %vbc% /reference:"%PIAFRef%",build\DBM.dll,build\DBMPointDriverOSIsoftPIAF.dll /target:library /out:build\DBMDataRef.dll src\dbm\DBMManifest.vb src\PIAFDataRef\*.vb
  "%ProgramFiles(x86)%\Windows Kits\10\bin\10.0.18362.0\x64\signtool.exe" sign /f src\res\vitensdev.pfx /p vitensdev build\DBMDataRef.dll
- rem Register PI AF Data Reference on AF server
- tasklist | find "AFService.exe" && (
-  cd build
-  "%PIAFDir%\regplugin.exe" /Unregister DBMDataRef.dll
-  "%PIAFDir%\regplugin.exe" DBMDataRef.dll
-  "%PIAFDir%\regplugin.exe" /Owner:DBMDataRef.dll * /Exclude:DBMDataRef.dll
-  cd ..
- )
 )
 
 rem Output version, copyright and license information and unit and integration test results
