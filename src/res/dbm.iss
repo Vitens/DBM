@@ -31,5 +31,8 @@ Name: "{group}\Files"; Filename: "{app}"; IconFilename: "{app}\src\res\dbm.ico"
 Name: "{group}\About"; Filename: "{cmd}"; Parameters: "/k DBMAbout.exe"; WorkingDir: "{app}\build"; IconFilename: "{app}\src\res\dbm.ico"
 Name: "{group}\Uninstall"; Filename: "{uninstallexe}"
 
+[Run]
+Filename: "{app}\registercdr.bat"; StatusMsg: "Register {#Product} PI AF Data Reference on AF server..."; Flags: runhidden
+
 [UninstallDelete]
 Type: files; Name: "{app}\samples\sample?.csv"
