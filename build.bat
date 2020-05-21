@@ -30,10 +30,6 @@ if not exist build mkdir build
 del /Q build\*
 copy LICENSE build > NUL
 
-rem Apply patches
-if "%CI%" == "True" for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
-if "%CI%" == "True" powershell -Command "(Get-Content src\dbm\DBMInfo.vb) -replace 'Const GITHASH As String = \".*?\"', 'Const GITHASH As String = \"%commit%\"' | Set-Content src\dbm\DBMInfo.vb"
-
 rem Build
 %vbc% /target:library /out:build\DBM.dll src\dbm\*.vb
 %vbc% /reference:build\DBM.dll /out:build\DBMAbout.exe src\dbm\DBMManifest.vb src\dbmabout\*.vb
@@ -42,13 +38,6 @@ rem Build
 if exist "%PIAFRef%" (
  %vbc% /reference:"%PIAFRef%",build\DBM.dll /target:library /out:build\DBMPointDriverOSIsoftPIAF.dll src\dbm\DBMManifest.vb src\dbm\driver\DBMPointDriverOSIsoftPIAF.vb
  %vbc% /reference:"%PIAFRef%",build\DBM.dll,build\DBMPointDriverOSIsoftPIAF.dll /target:library /out:build\DBMDataRef.dll src\dbm\DBMManifest.vb src\PIAFDataRef\*.vb
-)
-
-rem Sign
-if "%CI%" == "True" (
- for %%f in (build\*.dll build\*.exe) do (
-  "%ProgramFiles(x86)%\Windows Kits\10\bin\10.0.18362.0\x64\signtool.exe" sign /f "%TEMP%\vitensdev.pfx" /p %certpw% /tr http://timestamp.digicert.com /td sha256 /fd sha256 %%f
- )
 )
 
 rem Output version, copyright and license information and unit and integration test results
