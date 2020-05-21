@@ -47,7 +47,7 @@ if exist "%PIAFRef%" (
 rem Sign
 if "%CI%" == "True" (
  for %%f in (build\*.dll build\*.exe) do (
-  "%ProgramFiles(x86)%\Windows Kits\10\bin\10.0.18362.0\x64\signtool.exe" sign /f "%TEMP%\vitensdev.pfx" /p %certpw% /tr http://timestamp.digicert.com /td sha256 /fd sha256 /a %%f
+  "%ProgramFiles(x86)%\Windows Kits\10\bin\10.0.18362.0\x64\signtool.exe" sign /f "%TEMP%\vitensdev.pfx" /p %certpw% /tr http://timestamp.digicert.com /td sha256 /fd sha256 %%f
  )
 )
 
