@@ -32,7 +32,7 @@ Name: "{group}\About"; Filename: "{cmd}"; Parameters: "/k DBMAbout.exe"; Working
 Name: "{group}\Uninstall"; Filename: "{uninstallexe}"
 
 [Run]
-Filename: "{app}\registerpiafdr.bat"; StatusMsg: "Registering PI AF Data Reference on AF server ..."; Flags: runhidden
+Filename: "{app}\register.bat"; StatusMsg: "Registering PI AF Data Reference on AF server ..."; Flags: runhidden
 
 [UninstallDelete]
 Type: files; Name: "{app}\samples\sample?.csv"
