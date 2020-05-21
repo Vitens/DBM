@@ -31,10 +31,8 @@ del /Q build\*
 copy LICENSE build > NUL
 
 rem Apply patches
-if "%CI%" == "True" (
- for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
- powershell -Command "(Get-Content src\dbm\DBMInfo.vb) -replace 'Const GITHASH As String = \".*?\"', 'Const GITHASH As String = \"%commit%\"' | Set-Content src\dbm\DBMInfo.vb"
-)
+if "%CI%" == "True" for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
+if "%CI%" == "True" powershell -Command "(Get-Content src\dbm\DBMInfo.vb) -replace 'Const GITHASH As String = \".*?\"', 'Const GITHASH As String = \"%commit%\"' | Set-Content src\dbm\DBMInfo.vb"
 
 rem Build
 %vbc% /target:library /out:build\DBM.dll src\dbm\*.vb
@@ -49,7 +47,9 @@ if exist "%PIAFRef%" (
 rem Sign
 if "%CI%" == "True" (
  for %%f in (build\*.dll build\*.exe) do (
-  "%ProgramFiles(x86)%\Windows Kits\10\bin\10.0.18362.0\x64\signtool.exe" sign /f "%TEMP%\vitensdev.pfx" /p $certpw /tr http://timestamp.digicert.com /td sha256 /fd sha256 /a %%f
+  echo %certpw%
+  echo %certpw:0,6%
+  "%ProgramFiles(x86)%\Windows Kits\10\bin\10.0.18362.0\x64\signtool.exe" sign /f "%TEMP%\vitensdev.pfx" /p %certpw% /tr http://timestamp.digicert.com /td sha256 /fd sha256 /a %%f
  )
 )
 
