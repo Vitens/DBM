@@ -22,4 +22,4 @@ rem along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 cd /d %~dp0
 
 rem Sign
-"%ProgramFiles(x86)%\Windows Kits\10\bin\10.0.18362.0\x64\signtool.exe" sign /f %2 /p %3 /tr http://timestamp.digicert.com /td sha256 /fd sha256 %1
+powershell -Command "Set-AuthenticodeSignature -Certificate (New-Object System.Security.Cryptography.X509Certificates.X509Certificate2(%2, '%3')) -TimestampServer http://timestamp.digicert.com -HashAlgorithm SHA256 -FilePath %1"
