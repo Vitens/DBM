@@ -23,4 +23,4 @@ cd /d %~dp0
 
 rem Sign
 powershell -Command "Try {Set-AuthenticodeSignature -Certificate (New-Object System.Security.Cryptography.X509Certificates.X509Certificate2('%2', '%3')) -TimestampServer http://timestamp.digicert.com -HashAlgorithm SHA256 -FilePath '%1' | Out-Null; Write-Host ((Split-Path '%1' -Leaf) + ' signed by ' + (Get-AuthenticodeSignature -FilePath '%1').SignerCertificate.Subject)} Catch {Write-Host $_; Exit 1}"
-exit %ERRORLEVEL%
+if %ERRORLEVEL% neq 0 exit %ERRORLEVEL%
