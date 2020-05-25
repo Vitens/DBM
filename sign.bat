@@ -22,5 +22,5 @@ rem along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 cd /d %~dp0
 
 rem Sign
-powershell -Command "Set-AuthenticodeSignature -Certificate (New-Object System.Security.Cryptography.X509Certificates.X509Certificate2('%2', '%3')) -TimestampServer http://timestamp.digicert.com -HashAlgorithm SHA256 -FilePath '%1'" > NUL
-powershell -Command "'🔑 ' + (Split-Path '%1' -Leaf) + ' signed by ' + (Get-AuthenticodeSignature -FilePath '%1').SignerCertificate.Subject"
+powershell -Command "Set-AuthenticodeSignature -Certificate (New-Object System.Security.Cryptography.X509Certificates.X509Certificate2('%2', '%3')) -TimestampServer http://timestamp.digicert.com -HashAlgorithm SHA256 -FilePath '%1' | Out-Null"
+powershell -Command "Write-Host ((Split-Path '%1' -Leaf) + ' signed by ' + (Get-AuthenticodeSignature -FilePath '%1').SignerCertificate.Subject)"
