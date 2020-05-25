@@ -21,7 +21,7 @@ rem along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 cd /d %~dp0
 
-rem Register PI AF Data Reference on AF server
+rem Register PI AF Data Reference on local AF server
 tasklist | find "AFService.exe" && (
  cd build
  "%PIHOME%\AF\regplugin.exe" /Unregister DBMDataRef.dll
