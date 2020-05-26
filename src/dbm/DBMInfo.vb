@@ -59,11 +59,11 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns a string containing the full version number including, if set,
       ' Git hash. Use Semantic Versioning Specification (SemVer).
 
-      Const GITHASH As String = "" ' Updated by CI build script (appveyor.yml).
+      Const GITHASH As String = "#######" ' Updated by CI script (appveyor.yml).
 
       With GetFileVersionInfo
         Return .FileMajorPart.ToString & "." & .FileMinorPart.ToString & ".0+" &
-          BuildDate.ToString("yyMMdd") & If(GITHASH = "", "", "." & GITHASH)
+          BuildDate.ToString("yyMMdd") & "." & GITHASH
       End With
 
     End Function
