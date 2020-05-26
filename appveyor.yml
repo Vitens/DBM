@@ -21,14 +21,14 @@ skip_tags: true
 
 environment:
   certpw:
-    secure: x1A3Bd0ABdiA1g53zAHzGg==
+    secure: pjPagmyZRS7Oq/HtNJQMFQ==
 
 before_build:
   cmd: |-
     set PIHOME=%TEMP%
     mkdir "%PIHOME%\AF\PublicAssemblies\4.0"
     git show 635d59fdc8fb7f0de98d57b40ae83d5ebb37c683:OSIsoft.AFSDK.dll > "%PIHOME%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll"
-    git show e6780c1a7ec7d1dbcdd6810266ecc4f953b6f901:vitensdev.pfx > "%TEMP%\vitensdev.pfx"
+    git show c09013debfeb557193e19b9637d652b40f924172:vitensdev.pfx > "%TEMP%\vitensdev.pfx"
     for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
     powershell -Command "(Get-Content src\dbm\DBMInfo.vb) -replace 'Const GITHASH As String = \".*?\"', 'Const GITHASH As String = \"%commit%\"' | Set-Content src\dbm\DBMInfo.vb"
 
