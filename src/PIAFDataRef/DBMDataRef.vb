@@ -237,7 +237,13 @@ Namespace Vitens.DynamicBandwidthMonitor
           TimeSpan.FromSeconds(Sqrt(CalculationInterval)/2)) Then
           Try
 
-            If PointsStale.IsStale Then UpdatePoints ' Update points if stale
+            Monitor.Enter(PointsStale)
+            Try
+              If PointsStale.IsStale Then UpdatePoints ' Update points if stale
+            Finally
+              Monitor.Exit(PointsStale)
+            End Try
+
             If timeContext.EndTime.UtcSeconds-timeContext.StartTime.
               UtcSeconds >= 2*CalculationInterval Then DBM.PrepareData(
               InputPointDriver, CorrelationPoints,
