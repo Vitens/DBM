@@ -1,30 +1,57 @@
+# Dynamic Bandwidth Monitor
+# Leak detection method implemented in a real-time data historian
+# Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
+#
+# This file is part of DBM.
+#
+# DBM is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# DBM is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with DBM.  If not, see <http://www.gnu.org/licenses/>.
+
 skip_tags: true
-cache: '%TEMP%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll'
+
+environment:
+  certpw:
+    secure: pjPagmyZRS7Oq/HtNJQMFQ==
+
 before_build:
-  -
-    cmd: |-
-        if not exist "%TEMP%\AF\PublicAssemblies\4.0" mkdir "%TEMP%\AF\PublicAssemblies\4.0"
-        if not exist "%TEMP%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll" curl -s -L -o "%TEMP%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll" "https://drive.google.com/uc?export=download&id=1KCnqzwyv3K2sShy-qSfm-21IZbJ97Kw1"
-        set PIHOME=%TEMP%
+  cmd: |-
+    set PIHOME=%TEMP%
+    mkdir "%PIHOME%\AF\PublicAssemblies\4.0"
+    git show 635d59fdc8fb7f0de98d57b40ae83d5ebb37c683:OSIsoft.AFSDK.dll > "%PIHOME%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll"
+    git show c09013debfeb557193e19b9637d652b40f924172:vitensdev.pfx > "%TEMP%\vitensdev.pfx"
+    for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
+    powershell -Command "(Get-Content src\dbm\DBMInfo.vb) -replace 'Const GITHASH As String = \".*?\"', 'Const GITHASH As String = \"%commit%\"' | Set-Content src\dbm\DBMInfo.vb"
+
 build_script:
-  -
-    cmd: |-
-        build.bat
+  cmd: |-
+    build.bat
+
 after_build:
-  -
-    cmd: |-
-        set product=DBM
-        for /f "delims=" %%i in ('powershell -Command "(Get-Item build\DBM.dll).VersionInfo.ProductVersion"') do set version=%%i
-        for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
-        for /f "delims=" %%i in ('powershell -Command "(Get-Item build\DBM.dll).VersionInfo.CompanyName"') do set company=%%i
-        "%ProgramFiles(x86)%\Inno Setup 5\ISCC.exe" /O"%TEMP%" /FSetup_%product%_v%version%+%commit% /Q src\res\dbm.iss
-        "%TEMP%\Setup_%product%_v%version%+%commit%.exe" /VERYSILENT /NORESTART
-        appveyor PushArtifact "%TEMP%\Setup_%product%_v%version%+%commit%.exe"
+  cmd: |-
+    if defined certpw for %%f in (build\*.dll build\*.exe) do @sign.bat %%f "%TEMP%\vitensdev.pfx" %certpw%
+    set product=DBM
+    for /f "delims=" %%i in ('powershell -Command "(Get-Item build\DBM.dll).VersionInfo.ProductVersion"') do set version=%%i
+    for /f "delims=" %%i in ('powershell -Command "(Get-Item build\DBM.dll).VersionInfo.CompanyName"') do set company=%%i
+    "%ProgramFiles(x86)%\Inno Setup 5\ISCC.exe" /O"%TEMP%" /FSetup_%product%_v%version%+%commit% /Q src\res\dbm.iss
+    if defined certpw sign.bat "%TEMP%\Setup_%product%_v%version%+%commit%.exe" "%TEMP%\vitensdev.pfx" %certpw%
+    appveyor PushArtifact "%TEMP%\Setup_%product%_v%version%+%commit%.exe"
+
 test_script:
-  -
-    cmd: |-
-        build\DBMAbout.exe|find "FAILED">NUL&&exit 1||exit 0
-        if not exist "%ProgramFiles(x86)%\%company%\%product%\build\DBM.dll" exit 1
+  cmd: |-
+    build\DBMAbout.exe | find "FAILED" > NUL && exit 1 || exit 0
+    "%TEMP%\Setup_%product%_v%version%+%commit%.exe" /VERYSILENT /NORESTART
+    if not exist "%ProgramFiles(x86)%\%company%\%product%\build\DBM.dll" exit 1
+
 deploy:
   tag: 'v$(version)+$(commit)'
   release: '$(product) v$(version)+$(commit)'

@@ -3,7 +3,7 @@
 # DBM
 Dynamic Bandwidth Monitor  
 Leak detection method implemented in a real-time data historian  
-Copyright (C) 2014-2019  J.H. Fitié, Vitens N.V.
+Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
 
 ## Continuous integration
 | Build status                                                                                                                                                              | Downloads                                                                 |
@@ -110,6 +110,8 @@ DBMDataRef is a custom OSIsoft PI Asset Framework data reference which integrate
 | `Hi`           | Upper control limit (p = 0.95)   |
 | `HiHi`         | Upper control limit (default)    |
 | `Maximum`      | Upper control limit (p = 0.9999) |
+
+Beginning with PI AF 2018 SP3 Patch 2, all AF plugins must be signed with a valid certificate. Users must ensure any 3rd party or custom plugins are signed with a valid certificate. Digitally signing plugins increases the users' confidence that it is from a trusted entity. AF data references that are not signed could have been tampered with and are potentially dangerous. Therefore, in order to protect its users, OSIsoft software enforces that all AF 2.x data reference plugins be signed.
 
 ### License
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.

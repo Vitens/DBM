@@ -2,7 +2,7 @@
 
 rem Dynamic Bandwidth Monitor
 rem Leak detection method implemented in a real-time data historian
-rem Copyright (C) 2014-2019  J.H. Fitié, Vitens N.V.
+rem Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
 rem
 rem This file is part of DBM.
 rem
@@ -23,17 +23,12 @@ cd /d %~dp0
 
 rem Variables
 set vbc="%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\Vbc.exe" /win32icon:src\res\dbm.ico /optimize+ /nologo /novbruntimeref
-set PIAFDir=%PIHOME%\AF
-set PIAFRef=%PIAFDir%\PublicAssemblies\4.0\OSIsoft.AFSDK.dll
+set PIAFRef=%PIHOME%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll
 
 rem Set up build directory
 if not exist build mkdir build
 del /Q build\*
 copy LICENSE build > NUL
-
-rem Apply patches
-if "%CI%" == "True" for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
-if "%CI%" == "True" powershell -Command "(Get-Content src\dbm\DBMInfo.vb) -replace 'Const GITHASH As String = \".*?\"', 'Const GITHASH As String = \"%commit%\"' | Set-Content src\dbm\DBMInfo.vb"
 
 rem Build
 %vbc% /target:library /out:build\DBM.dll src\dbm\*.vb
@@ -43,14 +38,6 @@ rem Build
 if exist "%PIAFRef%" (
  %vbc% /reference:"%PIAFRef%",build\DBM.dll /target:library /out:build\DBMPointDriverOSIsoftPIAF.dll src\dbm\DBMManifest.vb src\dbm\driver\DBMPointDriverOSIsoftPIAF.vb
  %vbc% /reference:"%PIAFRef%",build\DBM.dll,build\DBMPointDriverOSIsoftPIAF.dll /target:library /out:build\DBMDataRef.dll src\dbm\DBMManifest.vb src\PIAFDataRef\*.vb
- rem Register PI AF Data Reference on AF server
- tasklist | find "AFService.exe" && (
-  cd build
-  "%PIAFDir%\regplugin.exe" /Unregister DBMDataRef.dll
-  "%PIAFDir%\regplugin.exe" DBMDataRef.dll
-  "%PIAFDir%\regplugin.exe" /Owner:DBMDataRef.dll * /Exclude:DBMDataRef.dll
-  cd ..
- )
 )
 
 rem Output version, copyright and license information and unit and integration test results

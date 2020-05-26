@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2019  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -59,11 +59,11 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns a string containing the full version number including, if set,
       ' Git hash. Use Semantic Versioning Specification (SemVer).
 
-      Const GITHASH As String = "" ' Updated by the build script.
+      Const GITHASH As String = "#######" ' Updated by CI script (appveyor.yml).
 
       With GetFileVersionInfo
         Return .FileMajorPart.ToString & "." & .FileMinorPart.ToString & ".0+" &
-          BuildDate.ToString("yyMMdd") & If(GITHASH = "", "", "." & GITHASH)
+          BuildDate.ToString("yyMMdd") & "." & GITHASH
       End With
 
     End Function
