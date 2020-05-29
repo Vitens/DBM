@@ -308,9 +308,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Next DBM
 
-      Do While timeContext.EndTime > timeContext.StartTime ' Appnd missing rslts
+      Do While timeContext.EndTime > timeContext.StartTime ' Missing results
         GetValues.Add(AFValue.CreateSystemStateValue(AFSystemStateCode.NoSample,
-          timeContext.StartTime.LocalTime)) ' Return NoSample for no result
+          timeContext.StartTime.LocalTime)) ' Return NoSample
         timeContext.StartTime = New AFTime(
           timeContext.StartTime.UtcSeconds+IntervalSeconds) ' Next interval
       Loop
