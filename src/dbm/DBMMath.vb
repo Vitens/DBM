@@ -411,6 +411,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Align a value to the previous interval. Use a negative interval for
       ' aligning to the next interval.
 
+      If Interval = 0 Then Return NaN
+
       If Value > 0 And Interval < 0 Then
         Value = Value - Interval
         Interval = Abs(Interval)
@@ -419,8 +421,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       If Value < 0 And Interval > 0 Then
         Value = Value - Interval
       End If
-
-console.writeline(Value-Value Mod Interval) ' debug
 
       Return (Value-Value Mod Interval)
 
