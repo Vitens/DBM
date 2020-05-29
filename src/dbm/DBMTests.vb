@@ -663,9 +663,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       Next i
 
       UnitTestsPassed = UnitTestsPassed And
-        AlignPreviousInterval(-678, -56) = -672 And
-        AlignPreviousInterval(-437, -17) = -425 And
-        AlignPreviousInterval(491, -44) = 528 And
+        AlignPreviousInterval(0, 0) = 0 And
+        AlignPreviousInterval(0, 12) = 0 And
+        AlignPreviousInterval(0, -12) = 0 And
         AlignPreviousInterval(353, 84) = 336 And
         AlignPreviousInterval(512, 71) = 497 And
         AlignPreviousInterval(-651, 34) = -680 And

@@ -412,8 +412,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' aligning to the next interval.
 
       If Value > 0 And Interval < 0 Then
+        Value = Value - Interval
         Interval = Abs(Interval)
-        Value = Value + Interval
       End If
 
       If Value < 0 And Interval > 0 Then
