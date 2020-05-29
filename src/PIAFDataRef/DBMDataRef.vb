@@ -201,8 +201,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       timeContext As Object, inputAttributes As AFAttributeList,
       inputValues As AFValues) As AFValue
 
-      ' Returns a value for a single timestamp. Calls the GetValues method for
-      ' results. If no result is available, NoSample is returned.
+      ' Returns a value for a single timestamp. Calls the GetValues method with
+      ' aligned timestamps for results. If no result is available, NoSample is
+      ' returned.
 
       Dim Timestamp As AFTime = Now
 
@@ -214,7 +215,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Return GetValues(Nothing, New AFTimeRange(Timestamp,
         New AFTime(Timestamp.UtcSeconds+CalculationInterval)), 2,
-        Nothing, Nothing)(0)
+        Nothing, Nothing)(0) ' 2 numberOfValues to prevent division by zero.
 
     End Function
 
@@ -226,7 +227,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns values for each interval in a time range. The (aligned) end time
       ' itself is excluded. Make sure a value for every timestamp in the time
       ' range is returned by appending NoSample digital state values if
-      ' required.
+      ' required. A call from GetValue will always result in an IntervalSeconds
+      ' of 300, DBM.PrepareData will never be used, and a single value will be
+      ' returned.
 
       Dim IntervalSeconds As Double
 
