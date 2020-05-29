@@ -205,22 +205,16 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' results. If no result is available, NoSample is returned.
 
       Dim Timestamp As AFTime = Now
-      Dim Values As AFValues
 
       If timeContext IsNot Nothing Then
         Timestamp = DirectCast(timeContext, AFTime)
       End If
+      Timestamp = New AFTime(Timestamp.UtcSeconds-
+        Timestamp.UtcSeconds Mod CalculationInterval) ' Align
 
-      Values = GetValues(Nothing, New AFTimeRange(Timestamp,
+      Return GetValues(Nothing, New AFTimeRange(Timestamp,
         New AFTime(Timestamp.UtcSeconds+CalculationInterval)), 2,
-        Nothing, Nothing)
-
-      If Values.Count >= 1 Then
-        Return Values(0)
-      Else
-        Return AFValue.CreateSystemStateValue(
-          AFSystemStateCode.NoSample, Timestamp) ' Return NoSample for no result
-      End If
+        Nothing, Nothing)(0)
 
     End Function
 
@@ -314,7 +308,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Next DBM
 
-      Do While timeContext.EndTime > timeContext.StartTime ' No results
+      Do While timeContext.EndTime > timeContext.StartTime ' Appnd missing rslts
         GetValues.Add(AFValue.CreateSystemStateValue(AFSystemStateCode.NoSample,
           timeContext.StartTime.LocalTime)) ' Return NoSample for no result
         timeContext.StartTime = New AFTime(
