@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2019  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -661,6 +661,28 @@ Namespace Vitens.DynamicBandwidthMonitor
           RandomNumber(0, i+1) >= 0 And
           RandomNumber(0, i+1) <= i+1
       Next i
+
+      UnitTestsPassed = UnitTestsPassed And
+        AlignPreviousInterval(-678, -56) = -672 And
+        AlignPreviousInterval(-437, -17) = -425 And
+        AlignPreviousInterval(491, -44) = 528 And
+        AlignPreviousInterval(353, 84) = 336 And
+        AlignPreviousInterval(512, 71) = 497 And
+        AlignPreviousInterval(-651, 34) = -680 And
+        AlignPreviousInterval(-136, -20) = -120 And
+        AlignPreviousInterval(800, -118) = 826 And
+        AlignPreviousInterval(-671, 81) = -729 And
+        AlignPreviousInterval(-769, -124) = -744 And
+        AlignPreviousInterval(-676, -61) = -671 And
+        AlignPreviousInterval(627, -14) = 630 And
+        AlignPreviousInterval(337, -68) = 340 And
+        AlignPreviousInterval(661, 37) = 629 And
+        AlignPreviousInterval(228, 57) = 228 And
+        AlignPreviousInterval(686, -22) = 704 And
+        AlignPreviousInterval(846, -35) = 875 And
+        AlignPreviousInterval(571, 108) = 540 And
+        AlignPreviousInterval(-531, -56) = -504 And
+        AlignPreviousInterval(-880, 105) = -945
 
       UnitTestsPassed = UnitTestsPassed And
         AlignTimestamp(New DateTime(2016, 4, 4, 16, 33, 2), 60) =
