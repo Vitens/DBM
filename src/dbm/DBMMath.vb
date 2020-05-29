@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2019  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -401,6 +401,28 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns a random number between Min (inclusive) and Max (inclusive).
 
       Return Random.Next(Min, Max+1)
+
+    End Function
+
+
+    Public Shared Function AlignPreviousInterval(Value As Double,
+      Interval As Double) As Double
+
+      ' Align a value to the previous interval. Use a negative interval for
+      ' aligning to the next interval.
+
+      If Interval = 0 Then Return NaN
+
+      If Value > 0 And Interval < 0 Then
+        Value = Value - Interval
+        Interval = Abs(Interval)
+      End If
+
+      If Value < 0 And Interval > 0 Then
+        Value = Value - Interval
+      End If
+
+      Return (Value-Value Mod Interval)
 
     End Function
 
