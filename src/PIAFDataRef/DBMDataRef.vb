@@ -35,6 +35,7 @@ Imports OSIsoft.AF.Asset.AFAttributeTrait
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Time
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
+Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
@@ -210,8 +211,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       If timeContext IsNot Nothing Then
         Timestamp = DirectCast(timeContext, AFTime)
       End If
-      Timestamp = New AFTime(Timestamp.UtcSeconds-
-        Timestamp.UtcSeconds Mod CalculationInterval) ' Align
+      Timestamp = New AFTime(AlignPreviousInterval(Timestamp.UtcSeconds,
+        CalculationInterval)) ' Align
 
       Return GetValues(Nothing, New AFTimeRange(Timestamp,
         New AFTime(Timestamp.UtcSeconds+CalculationInterval)), 2,
@@ -235,8 +236,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       GetValues = New AFValues
 
-      timeContext.StartTime = New AFTime(timeContext.StartTime.UtcSeconds-
-        timeContext.StartTime.UtcSeconds Mod CalculationInterval) ' Align
+      timeContext.StartTime = New AFTime(AlignPreviousInterval(
+        timeContext.StartTime.UtcSeconds, CalculationInterval)) ' Align
       IntervalSeconds = Max(1, ((timeContext.EndTime.UtcSeconds-
         timeContext.StartTime.UtcSeconds)/CalculationInterval-1)/
         (numberOfValues-1))*CalculationInterval ' Required interval
