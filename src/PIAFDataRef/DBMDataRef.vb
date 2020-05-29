@@ -224,7 +224,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       inputAttributes As AFAttributeList, inputValues As AFValues()) As AFValues
 
       ' Returns values for each interval in a time range. The (aligned) end time
-      ' itself is excluded.
+      ' itself is excluded. Make sure a value for every timestamp in the time
+      ' range is returned by appending NoSample digital state values if
+      ' required.
 
       Dim IntervalSeconds As Double
 
