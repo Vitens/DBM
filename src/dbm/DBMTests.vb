@@ -663,7 +663,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Next i
 
       UnitTestsPassed = UnitTestsPassed And
-        AlignPreviousInterval(0, 0) = 0 And
+        IsNaN(AlignPreviousInterval(0, 0)) And
         AlignPreviousInterval(0, 12) = 0 And
         AlignPreviousInterval(0, -12) = 0 And
         AlignPreviousInterval(353, 84) = 336 And
