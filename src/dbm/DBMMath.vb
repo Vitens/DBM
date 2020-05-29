@@ -413,9 +413,13 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       If Interval = 0 Then Return NaN
 
-      If Sign(Value) <> Sign(Interval) Then ' Solve .Net modulo issue
+      If Value > 0 And Interval < 0 Then
         Value = Value - Interval
         Interval = Abs(Interval)
+      End If
+
+      If Value < 0 And Interval > 0 Then
+        Value = Value - Interval
       End If
 
       Return (Value-Value Mod Interval)
