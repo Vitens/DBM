@@ -244,8 +244,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       For Each DBM In {DBMShared, DBMNonShared, New DBM} ' Prefer shared object
 
-        If Monitor.TryEnter(DBM,
-          TimeSpan.FromSeconds(Sqrt(CalculationInterval)/2)) Then
+        If Monitor.TryEnter(DBM, TimeSpan.FromSeconds(
+          Sqrt(CalculationInterval)/2)*(1+RandomNumber(0, 1000)/1000)) Then
           Try
 
             If PointsStale.IsStale Then UpdatePoints ' Update points if stale
