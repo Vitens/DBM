@@ -683,6 +683,26 @@ Namespace Vitens.DynamicBandwidthMonitor
         AlignPreviousInterval(571, 108) = 540 And
         AlignPreviousInterval(-531, -56) = -504 And
         AlignPreviousInterval(-880, 105) = -945
+console.writeline(-678-(-678 Mod -56))
+console.writeline(-437-(-437 Mod -17))
+console.writeline(491-(491 Mod -44))
+console.writeline(353-(353 Mod 84))
+console.writeline(512-(512 Mod 71))
+console.writeline(-651-(-651 Mod 34))
+console.writeline(-136-(-136 Mod -20))
+console.writeline(800-(800 Mod -118))
+console.writeline(-671-(-671 Mod 81))
+console.writeline(-769-(-769 Mod -124))
+console.writeline(-676-(-676 Mod -61))
+console.writeline(627-(627 Mod -14))
+console.writeline(337-(337 Mod -68))
+console.writeline(661-(661 Mod 37))
+console.writeline(228-(228 Mod 57))
+console.writeline(686-(686 Mod -22))
+console.writeline(846-(846 Mod -35))
+console.writeline(571-(571 Mod 108))
+console.writeline(-531-(-531 Mod -56))
+console.writeline(-880-(-880 Mod 105))
 
       UnitTestsPassed = UnitTestsPassed And
         AlignTimestamp(New DateTime(2016, 4, 4, 16, 33, 2), 60) =
