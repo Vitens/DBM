@@ -43,8 +43,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns a DateTime for the passed timestamp aligned on the
       ' previous interval (in seconds).
 
-      Return New DateTime(Timestamp.Ticks-Timestamp.Ticks Mod
-        Seconds*TicksPerSecond, Timestamp.Kind)
+      Return New DateTime(AlignPreviousInterval(Timestamp.Ticks,
+        Seconds*TicksPerSecond), Timestamp.Kind)
 
     End Function
 
