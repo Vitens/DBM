@@ -416,6 +416,10 @@ Namespace Vitens.DynamicBandwidthMonitor
         Value = Value + Interval
       End If
 
+      If Value < 0 And Interval > 0 Then
+        Value = Value + Interval
+      End If
+
 console.writeline(Value-Value Mod Interval) ' debug
 
       Return (Value-Value Mod Interval)
