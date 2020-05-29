@@ -242,7 +242,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         timeContext.StartTime.UtcSeconds)/CalculationInterval-1)/
         (numberOfValues-1))*CalculationInterval ' Required interval
 
-      For Each DBM In {DBMShared, DBMNonShared} ' Prefer shared object
+      For Each DBM In {DBMShared, DBMNonShared, New DBM} ' Prefer shared object
 
         If Monitor.TryEnter(DBM,
           TimeSpan.FromSeconds(Sqrt(CalculationInterval)/2)) Then
