@@ -411,6 +411,13 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Align a value to the previous interval. Use a negative interval for
       ' aligning to the next interval.
 
+      If Interval < 0 Then
+        Interval = Abs(Interval)
+        Value = Value + Interval
+      End If
+
+console.writeline(Value-Value Mod Interval) ' debug
+
       Return (Value-Value Mod Interval)
 
     End Function
