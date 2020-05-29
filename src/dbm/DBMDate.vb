@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2019  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -25,7 +25,6 @@ Option Strict
 Imports System
 Imports System.Globalization
 Imports System.TimeSpan
-Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
@@ -44,8 +43,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns a DateTime for the passed timestamp aligned on the
       ' previous interval (in seconds).
 
-      Return New DateTime(AlignPreviousInterval(Timestamp.Ticks,
-        Seconds*TicksPerSecond), Timestamp.Kind)
+      Return New DateTime(Timestamp.Ticks-Timestamp.Ticks Mod
+        Seconds*TicksPerSecond, Timestamp.Kind)
 
     End Function
 
