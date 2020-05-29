@@ -201,15 +201,26 @@ Namespace Vitens.DynamicBandwidthMonitor
       timeContext As Object, inputAttributes As AFAttributeList,
       inputValues As AFValues) As AFValue
 
+      ' Returns a value for a single timestamp. Calls the GetValues method for
+      ' results. If no result is available, NoSample is returned.
+
       Dim Timestamp As AFTime = Now
+      Dim Values As AFValues
 
       If timeContext IsNot Nothing Then
         Timestamp = DirectCast(timeContext, AFTime)
       End If
 
-      Return GetValues(Nothing, New AFTimeRange(Timestamp,
+      Values = GetValues(Nothing, New AFTimeRange(Timestamp,
         New AFTime(Timestamp.UtcSeconds+CalculationInterval)), 2,
-        Nothing, Nothing)(0)
+        Nothing, Nothing)
+
+      If Values.Count >= 1 Then
+        Return Values(0)
+      Else
+        Return AFValue.CreateSystemStateValue(
+          AFSystemStateCode.NoSample, Timestamp) ' Return NoSample for no result
+      End If
 
     End Function
 
