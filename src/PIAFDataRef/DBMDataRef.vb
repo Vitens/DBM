@@ -151,8 +151,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         CalculationInterval)) ' Align
 
       Return GetValues(Nothing, New AFTimeRange(Timestamp,
-        New AFTime(Timestamp.UtcSeconds+CalculationInterval)), 2,
-        Nothing, Nothing)(0) ' 2 numberOfValues to prevent division by zero.
+        New AFTime(Timestamp.UtcSeconds+CalculationInterval)), 1,
+        Nothing, Nothing)(0) ' Request a single value
 
     End Function
 
@@ -177,9 +177,20 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       timeContext.StartTime = New AFTime(AlignPreviousInterval(
         timeContext.StartTime.UtcSeconds, CalculationInterval)) ' Align
-      IntervalSeconds = Max(1, ((timeContext.EndTime.UtcSeconds-
-        timeContext.StartTime.UtcSeconds)/CalculationInterval-1)/
-        (numberOfValues-1))*CalculationInterval ' Required interval
+
+      ' Number of values desired. If 0, all intervals will be returned. If >0,
+      ' that number of values will be returned. If <0, the absolute value + 1
+      ' number of values will be returned (f.ex. -25 over a 24 hour period will
+      ' return an hourly value)
+      If numberOfValues < 0 Then numberOfValues = Abs(numberOfValues+1) ' Negtv.
+      If numberOfValues = 1 Then
+        IntervalSeconds = timeContext.EndTime.UtcSeconds-
+          timeContext.StartTime.UtcSeconds ' Return a single value
+      Else
+        IntervalSeconds = Max(1, ((timeContext.EndTime.UtcSeconds-
+          timeContext.StartTime.UtcSeconds)/CalculationInterval-1)/
+          (numberOfValues-1))*CalculationInterval ' Required interval
+      End If
 
       ' Retrieve correlation PI points from AF hierarchy if owned by an
       ' attribute (element is an instance of an element template) and attribute
