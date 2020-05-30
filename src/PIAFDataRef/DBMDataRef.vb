@@ -36,6 +36,7 @@ Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Time
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
+Imports Vitens.DynamicBandwidthMonitor.DBMMisc
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
@@ -174,23 +175,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
 
       GetValues = New AFValues
-
       timeContext.StartTime = New AFTime(AlignPreviousInterval(
         timeContext.StartTime.UtcSeconds, CalculationInterval)) ' Align
-
-      ' Number of values desired. If 0, all intervals will be returned. If >0,
-      ' that number of values will be returned. If <0, the negative value
-      ' minus 1 number of values will be returned (f.ex. -25 over a 24 hour
-      ' period will return an hourly value).
-      If numberOfValues < 0 Then numberOfValues = -numberOfValues-1
-      If numberOfValues = 1 Then
-        IntervalSeconds = timeContext.EndTime.UtcSeconds-
-          timeContext.StartTime.UtcSeconds ' Return a single value
-      Else
-        IntervalSeconds = Max(1, ((timeContext.EndTime.UtcSeconds-
-          timeContext.StartTime.UtcSeconds)/CalculationInterval-1)/
-          (numberOfValues-1))*CalculationInterval ' Required interval
-      End If
+      IntervalSeconds = PIAFIntervalSeconds(numberOfValues,
+        timeContext.EndTime.UtcSeconds-timeContext.StartTime.UtcSeconds)
 
       ' Retrieve correlation PI points from AF hierarchy if owned by an
       ' attribute (element is an instance of an element template) and attribute
