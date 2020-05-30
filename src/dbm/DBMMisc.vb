@@ -61,7 +61,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' OSIsoft PI AF specific: Determine if the PrepareData method should be
       ' called. This only needs to be done if more than one value is requested.
       ' This means that it should only be called if the duration in seconds is
-      ' equal to or greater than two times the calculation interval.
+      ' equal to or greater than two times the calculation interval. Two are
+      ' required because the last value returned is one calculation interval
+      ' before the end timestamp.
 
       Return DurationSeconds >= 2*CalculationInterval
 
