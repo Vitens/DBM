@@ -321,6 +321,15 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Overrides Function PlotValues(timeRange As AFTimeRange,
+      intervals As Integer, inputAttributes As AFAttributeList,
+      inputValues As AFValues(), inputTimes As List(Of AFTime)) As AFValues
+
+      Return GetValues(Nothing, timeRange, intervals, Nothing, Nothing)
+
+    End Function
+
+
   End Class
 
 
