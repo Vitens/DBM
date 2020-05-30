@@ -179,10 +179,10 @@ Namespace Vitens.DynamicBandwidthMonitor
         timeContext.StartTime.UtcSeconds, CalculationInterval)) ' Align
 
       ' Number of values desired. If 0, all intervals will be returned. If >0,
-      ' that number of values will be returned. If <0, the absolute value + 1
-      ' number of values will be returned (f.ex. -25 over a 24 hour period will
-      ' return an hourly value).
-      If numberOfValues < 0 Then numberOfValues = Abs(numberOfValues+1)
+      ' that number of values will be returned. If <0, the negative value
+      ' minus 1 number of values will be returned (f.ex. -25 over a 24 hour
+      ' period will return an hourly value).
+      If numberOfValues < 0 Then numberOfValues = -numberOfValues-1
       If numberOfValues = 1 Then
         IntervalSeconds = timeContext.EndTime.UtcSeconds-
           timeContext.StartTime.UtcSeconds ' Return a single value
