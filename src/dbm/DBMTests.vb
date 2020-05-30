@@ -1075,7 +1075,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         PIAFShouldPrepareData(1201) And
         PIAFShouldPrepareData(1499) And
         PIAFShouldPrepareData(1500) And
-        PIAFShouldPrepareData(1501) And
+        PIAFShouldPrepareData(1501)
 
       Return UnitTestsPassed
 
