@@ -36,7 +36,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Shared Function PIAFIntervalSeconds(NumberOfValues As Integer,
-      DurationSeconds As Integer) As Double
+      DurationSeconds As Double) As Double
 
       ' OSIsoft PI AF specific: Number of values desired. If 0, all intervals
       ' will be returned. If >0, that number of values will be returned. If <0,
