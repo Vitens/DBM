@@ -1056,8 +1056,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         PIAFIntervalSeconds(14, 3600) = 300
 
       UnitTestsPassed = UnitTestsPassed And
-        Not PIAFShouldPrepareData(-300) And
-        Not PIAFShouldPrepareData(-299) And
+        Not PIAFShouldPrepareData(-600) And
+        Not PIAFShouldPrepareData(-599) And
         Not PIAFShouldPrepareData(-1) And
         Not PIAFShouldPrepareData(0) And
         Not PIAFShouldPrepareData(1) And
