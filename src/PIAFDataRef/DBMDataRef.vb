@@ -464,19 +464,23 @@ Namespace Vitens.DynamicBandwidthMonitor
       intervals As Integer, inputAttributes As AFAttributeList,
       inputValues As AFValues(), inputTimes As List(Of AFTime)) As AFValues
 
-      ' Returns a single AFValue whose value is interpolated at the passed time.
+      ' ## NOTE: There seems to be an issue with OSIsoft documentation for this
+      '          method. I have marked lines which I believe to be incorrect
+      '          with an asterisk.
+      ' * Returns a single AFValue whose value is interpolated at the passed
+      ' * time.
       ' timeRange
       '   The bounding time range for the plot values request.
       ' intervals
       '   The number of intervals to plot over. Typically, this would be the
       '   number of horizontal pixels in the trend.
-      ' To retrieve recorded values for multiple attributes, use the
-      ' AFListData.InterpolatedValue to achieve better performance.
+      ' * To retrieve recorded values for multiple attributes, use the
+      ' * AFListData.InterpolatedValue to achieve better performance.
 
-      ' Returns the AFValue for the attribute. If AFValue.IsGood returned by the
-      ' data reference is True, then the returned value is converted to the
-      ' proper UOM and Type. The timestamp of the value will be at the requested
-      ' time.
+      ' * Returns the AFValue for the attribute. If AFValue.IsGood returned by
+      ' * the data reference is True, then the returned value is converted to
+      ' * the proper UOM and Type. The timestamp of the value will be at the
+      ' * requested time.
       Return GetValues(Nothing, timeRange, intervals, Nothing, Nothing)
 
     End Function
