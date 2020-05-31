@@ -251,13 +251,13 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' numberOfValues
       '   The number of values desired. The behavior of GetValues varies based
       '   on the value of this parameter:
-      '   If 0, then all recorded values within the timeRange will be returned
+      '   If 0, then all recorded values within the timeContext will be returned
       '   with an interpolated value at the start and end time, if possible.
       '   If the number of values requested is less than zero, then if
       '   supported, the Data Reference will return evenly spaced interpolated
-      '   values across the timeRange, with a value returned at both end points
-      '   of the time range. For example, specifying -25 over a 24 hour period
-      '   will produce an hourly value.
+      '   values across the timeContext, with a value returned at both end
+      '   points of the time range. For example, specifying -25 over a 24 hour
+      '   period will produce an hourly value.
       '   If the number of values requested is greater than zero, the method
       '   will behave like the PlotValues method. This method is designed to
       '   return a set of values over a time period that will produce the most
