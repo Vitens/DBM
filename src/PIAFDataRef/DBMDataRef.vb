@@ -232,7 +232,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Overrides Function GetValues(context As Object,
-      timeContext As AFTimeRange, numberOfValues As Integer,
+      timeRange As AFTimeRange, numberOfValues As Integer,
       inputAttributes As AFAttributeList, inputValues As AFValues()) As AFValues
 
       ' Returns values for each interval in a time range. The (aligned) end time
@@ -245,17 +245,17 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' This method gets a collection of AFValue objects for an attribute based
       ' upon the data reference configuration within the specified AFTimeRange
       ' context.
-      ' timeContext
+      ' timeRange
       '   The time-range to be used when getting the attribute's collection of
       '   values.
       ' numberOfValues
       '   The number of values desired. The behavior of GetValues varies based
       '   on the value of this parameter:
-      '   If 0, then all recorded values within the timeContext will be returned
+      '   If 0, then all recorded values within the timeRange will be returned
       '   with an interpolated value at the start and end time, if possible.
       '   If the number of values requested is less than zero, then if
       '   supported, the Data Reference will return evenly spaced interpolated
-      '   values across the timeContext, with a value returned at both end
+      '   values across the timeRange, with a value returned at both end
       '   points of the time range. For example, specifying -25 over a 24 hour
       '   period will produce an hourly value.
       '   If the number of values requested is greater than zero, the method
@@ -286,10 +286,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
 
       GetValues = New AFValues
-      timeContext.StartTime = New AFTime(AlignPreviousInterval(
-        timeContext.StartTime.UtcSeconds, CalculationInterval)) ' Align
+      timeRange.StartTime = New AFTime(AlignPreviousInterval(
+        timeRange.StartTime.UtcSeconds, CalculationInterval)) ' Align
       IntervalSeconds = PIAFIntervalSeconds(numberOfValues,
-        timeContext.EndTime.UtcSeconds-timeContext.StartTime.UtcSeconds)
+        timeRange.EndTime.UtcSeconds-timeRange.StartTime.UtcSeconds)
 
       ' Retrieve correlation PI points from AF hierarchy if owned by an
       ' attribute (element is an instance of an element template) and attribute
@@ -347,53 +347,53 @@ Namespace Vitens.DynamicBandwidthMonitor
             Sqrt(CalculationInterval)/2*(1+RandomNumber(0, 1000)/1000))) Then
             Try
 
-              If PIAFShouldPrepareData(timeContext.EndTime.UtcSeconds-
-                timeContext.StartTime.UtcSeconds) Then DBM.PrepareData(
+              If PIAFShouldPrepareData(timeRange.EndTime.UtcSeconds-
+                timeRange.StartTime.UtcSeconds) Then DBM.PrepareData(
                 InputPointDriver, CorrelationPoints,
-                timeContext.StartTime.LocalTime, timeContext.EndTime.LocalTime)
+                timeRange.StartTime.LocalTime, timeRange.EndTime.LocalTime)
 
-              Do While timeContext.EndTime > timeContext.StartTime
+              Do While timeRange.EndTime > timeRange.StartTime
 
                 With DBM.Result(InputPointDriver, CorrelationPoints,
-                  timeContext.StartTime.LocalTime)
+                  timeRange.StartTime.LocalTime)
 
                   If Attribute.Trait Is LimitTarget Then
                     GetValues.Add(New AFValue(.ForecastItem.Measurement,
-                      timeContext.StartTime.LocalTime))
+                      timeRange.StartTime.LocalTime))
                   ElseIf Attribute.Trait Is Forecast Then
                     GetValues.Add(New AFValue(.ForecastItem.ForecastValue,
-                      timeContext.StartTime.LocalTime))
+                      timeRange.StartTime.LocalTime))
                   ElseIf Attribute.Trait Is LimitMinimum Then
                     GetValues.Add(New AFValue(.ForecastItem.ForecastValue-
                       .ForecastItem.Range(pValueMinMax),
-                      timeContext.StartTime.LocalTime))
+                      timeRange.StartTime.LocalTime))
                   ElseIf Attribute.Trait Is LimitLoLo Then
                     GetValues.Add(New AFValue(.ForecastItem.LowerControlLimit,
-                      timeContext.StartTime.LocalTime))
+                      timeRange.StartTime.LocalTime))
                   ElseIf Attribute.Trait Is LimitLo Then
                     GetValues.Add(New AFValue(.ForecastItem.ForecastValue-
                       .ForecastItem.Range(pValueLoHi),
-                      timeContext.StartTime.LocalTime))
+                      timeRange.StartTime.LocalTime))
                   ElseIf Attribute.Trait Is LimitHi Then
                     GetValues.Add(New AFValue(.ForecastItem.ForecastValue+
                       .ForecastItem.Range(pValueLoHi),
-                      timeContext.StartTime.LocalTime))
+                      timeRange.StartTime.LocalTime))
                   ElseIf Attribute.Trait Is LimitHiHi Then
                     GetValues.Add(New AFValue(.ForecastItem.UpperControlLimit,
-                      timeContext.StartTime.LocalTime))
+                      timeRange.StartTime.LocalTime))
                   ElseIf Attribute.Trait Is LimitMaximum Then
                     GetValues.Add(New AFValue(.ForecastItem.ForecastValue+
                       .ForecastItem.Range(pValueMinMax),
-                      timeContext.StartTime.LocalTime))
+                      timeRange.StartTime.LocalTime))
                   Else
                     GetValues.Add(New AFValue(.Factor,
-                      timeContext.StartTime.LocalTime))
+                      timeRange.StartTime.LocalTime))
                   End If
 
                 End With
 
-                timeContext.StartTime = New AFTime(
-                  timeContext.StartTime.UtcSeconds+IntervalSeconds) ' Next intv.
+                timeRange.StartTime = New AFTime(
+                  timeRange.StartTime.UtcSeconds+IntervalSeconds) ' Next intv.
 
               Loop
 
@@ -408,11 +408,11 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       End If
 
-      Do While timeContext.EndTime > timeContext.StartTime ' Missing results
+      Do While timeRange.EndTime > timeRange.StartTime ' Missing results
         GetValues.Add(AFValue.CreateSystemStateValue(AFSystemStateCode.NoSample,
-          timeContext.StartTime.LocalTime)) ' Return NoSample
-        timeContext.StartTime = New AFTime(
-          timeContext.StartTime.UtcSeconds+IntervalSeconds) ' Next interval
+          timeRange.StartTime.LocalTime)) ' Return NoSample
+        timeRange.StartTime = New AFTime(
+          timeRange.StartTime.UtcSeconds+IntervalSeconds) ' Next interval
       Loop
 
       ' Returns the collection of values for the attribute sorted in increasing
