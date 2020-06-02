@@ -1034,12 +1034,13 @@ Namespace Vitens.DynamicBandwidthMonitor
       Next i
 
       UnitTestsPassed = UnitTestsPassed And
+        PIAFIntervalSeconds(-25, 86400)*23 = 86100 And
+        PIAFIntervalSeconds(6, 3600)*5 = 3300 And
         PIAFIntervalSeconds(-14, 3600) = 300 And
         PIAFIntervalSeconds(-13, 3600) = 300 And
         PIAFIntervalSeconds(-12, 3600) = 330 And
         PIAFIntervalSeconds(-10, 3600) = 412.5 And
         PIAFIntervalSeconds(-7, 3600) = 660 And
-        PIAFIntervalSeconds(-5, 3600) = 1100 And
         PIAFIntervalSeconds(-3, 3600) = 3300 And
         PIAFIntervalSeconds(-2, 3600) = 3600 And
         PIAFIntervalSeconds(-1, 3600) = 300 And
@@ -1048,7 +1049,6 @@ Namespace Vitens.DynamicBandwidthMonitor
         PIAFIntervalSeconds(2, 3600) = 3300 And
         PIAFIntervalSeconds(3, 3600) = 1650 And
         PIAFIntervalSeconds(5, 3600) = 825 And
-        PIAFIntervalSeconds(7, 3600) = 550 And
         PIAFIntervalSeconds(9, 3600) = 412.5 And
         PIAFIntervalSeconds(11, 3600) = 330 And
         PIAFIntervalSeconds(12, 3600) = 300 And
