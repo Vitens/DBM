@@ -85,6 +85,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Readonly Property SupportedContexts _
       As AFDataReferenceContext
 
+      ' https://techsupport.osisoft.com/Documentation/PI-AF-SDK/html/P_OSIsoft_A
+      ' F_Asset_AFDataReference_SupportedContexts.htm
       ' This read-only property specifies which of the data reference contexts
       ' are supported when getting and/or setting values.
       ' The context normally applies to the GetValue, SetValue, and GetValues
@@ -104,6 +106,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Overrides Readonly Property SupportedDataMethods As AFDataMethods
 
+      ' https://techsupport.osisoft.com/Documentation/PI-AF-SDK/html/P_OSIsoft_A
+      ' F_Asset_AFDataReference_SupportedDataMethods.htm
       ' This read-only property specifies which of the data methods are
       ' supported by the data reference.
       ' If a data reference implementation supports any data methods, then it
@@ -126,6 +130,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Overrides Readonly Property SupportedMethods As AFDataReferenceMethod
 
+      ' https://techsupport.osisoft.com/Documentation/PI-AF-SDK/html/P_OSIsoft_A
+      ' F_Asset_AFDataReference_SupportedMethods.htm
       ' This read-only property specifies which of the data reference methods
       ' are supported.
       ' If a data reference is intended to be read-only, it should not support
@@ -149,6 +155,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Overrides Readonly Property [Step] As Boolean
 
+      ' https://techsupport.osisoft.com/Documentation/PI-AF-SDK/html/P_OSIsoft_A
+      ' F_Asset_AFDataReference_Step.htm
       ' This property returns True if the value returned for this
       ' AFDataReference is stepped.
       ' The step attribute defines how the values are to be interpolated. When
@@ -166,6 +174,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Overrides Property ConfigString As String
 
+      ' https://techsupport.osisoft.com/Documentation/PI-AF-SDK/html/P_OSIsoft_A
+      ' F_Asset_AFDataReference_ConfigString.htm
       ' This property represents the current configuration of the Data Reference
       ' as a string suitable for displaying to an end-user and/or setting its
       ' configuration.
@@ -194,6 +204,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' aligned timestamps for results. If no result is available, NoSample is
       ' returned.
 
+      ' https://techsupport.osisoft.com/Documentation/PI-AF-SDK/html/M_OSIsoft_A
+      ' F_Asset_AFDataReference_GetValue_1.htm
       ' This method gets the value based upon the data reference configuration
       ' within the specified context.
       ' timeContext
@@ -242,6 +254,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' of 300, DBM.PrepareData will never be used, and a single value will be
       ' returned.
 
+      ' https://techsupport.osisoft.com/Documentation/PI-AF-SDK/html/M_OSIsoft_A
+      ' F_Asset_AFDataReference_GetValues.htm
       ' This method gets a collection of AFValue objects for an attribute based
       ' upon the data reference configuration within the specified AFTimeRange
       ' context.
@@ -428,6 +442,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       inputValues As AFValues(), inputTimes As List(Of AFTime),
       Optional maxCount As Integer = 0) As AFValues
 
+      ' https://techsupport.osisoft.com/Documentation/PI-AF-SDK/html/M_OSIsoft_A
+      ' F_Asset_AFDataReference_RecordedValues.htm
       ' Returns a list of compressed values for the requested time range from
       ' the source provider.
       ' timeRange
@@ -467,6 +483,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' ## NOTE: There seems to be an issue with OSIsoft documentation for this
       '          method. I have marked lines which I believe to be incorrect
       '          with an asterisk.
+      ' https://techsupport.osisoft.com/Documentation/PI-AF-SDK/html/M_OSIsoft_A
+      ' F_Asset_AFDataReference_PlotValues.htm
       ' * Returns a single AFValue whose value is interpolated at the passed
       ' * time.
       ' timeRange
