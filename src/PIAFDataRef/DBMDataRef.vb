@@ -200,10 +200,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       timeContext As Object, inputAttributes As AFAttributeList,
       inputValues As AFValues) As AFValue
 
-      ' Returns a value for a single timestamp. Calls the GetValues method with
-      ' aligned timestamps for results. If no result is available, NoSample is
-      ' returned.
-
       ' https://techsupport.osisoft.com/Documentation/PI-AF-SDK/html/M_OSIsoft_A
       ' F_Asset_AFDataReference_GetValue_1.htm
       ' This method gets the value based upon the data reference configuration
@@ -248,11 +244,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       inputAttributes As AFAttributeList, inputValues As AFValues()) As AFValues
 
       ' Returns values for each interval in a time range. The (aligned) end time
-      ' itself is excluded. Make sure a value for every timestamp in the time
-      ' range is returned by appending NoSample digital state values if
-      ' required. A call from GetValue will always result in an IntervalSeconds
-      ' of 300, DBM.PrepareData will never be used, and a single value will be
-      ' returned.
+      ' itself is excluded.
 
       ' https://techsupport.osisoft.com/Documentation/PI-AF-SDK/html/M_OSIsoft_A
       ' F_Asset_AFDataReference_GetValues.htm
@@ -421,13 +413,6 @@ Namespace Vitens.DynamicBandwidthMonitor
         Next DBM
 
       End If
-
-      Do While timeRange.EndTime > timeRange.StartTime ' Missing results
-        GetValues.Add(AFValue.CreateSystemStateValue(AFSystemStateCode.NoSample,
-          timeRange.StartTime.LocalTime)) ' Return NoSample
-        timeRange.StartTime = New AFTime(
-          timeRange.StartTime.UtcSeconds+IntervalSeconds) ' Next interval
-      Loop
 
       ' Returns the collection of values for the attribute sorted in increasing
       ' time order.
