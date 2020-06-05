@@ -47,8 +47,7 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMTests
 
 
-    Private Shared Function Hash(Values() As Double,
-      Optional Digits As Integer = 15) As Double
+    Private Shared Function Hash(Values() As Double) As Double
 
       ' Simple hash function for checking array contents.
 
@@ -57,7 +56,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Hash = 1
       For Each Value In Values
         If Not IsNaN(Value) Then
-          Hash = (Hash+Round(Value, Digits)+1)/3
+          Hash = (Hash+Value+1)/3
         End If
       Next
 
@@ -92,7 +91,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private Shared Sub AssertAlmostEqual(a As Object, b As Object,
-      Optional Digits As Integer = 15)
+      Optional Digits As Integer = 4)
 
       AssertEqual(Round(ToDouble(a), Digits), Round(ToDouble(b), Digits))
 
@@ -135,6 +134,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertArrayEqual({-1.23, 4.56}, {-1.23, 4.56})
 
       AssertAlmostEqual(1.231, 1.232, 2)
+      AssertAlmostEqual(1.23123, 1.23124)
       AssertAlmostEqual(-2, -2)
 
       AssertTrue(True)
@@ -143,9 +143,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       AssertNaN(NaN)
 
-      AssertAlmostEqual(Hash({6, 4, 7, 1, 1, 4, 2, 4}), 2.2326, 4)
-      AssertAlmostEqual(Hash({8, 4, 7, 3, 2, 6, 5, 7}), 3.6609, 4)
-      AssertAlmostEqual(Hash({1, 5, 4, 7, 7, 8, 5, 1}), 1.8084, 4)
+      AssertAlmostEqual(Hash({6, 4, 7, 1, 1, 4, 2, 4}), 2.2326)
+      AssertAlmostEqual(Hash({8, 4, 7, 3, 2, 6, 5, 7}), 3.6609)
+      AssertAlmostEqual(Hash({1, 5, 4, 7, 7, 8, 5, 1}), 1.8084)
 
       AssertTrue(HasCorrelation(0.9, 45))
       AssertTrue(HasCorrelation(0.85, 45))
@@ -190,112 +190,112 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertEqual(Suppress(-0.98, -0.99, -1, 0, 0, False), -0.98)
       AssertEqual(Suppress(-0.98, -0.99, -45, 0, 0, False), 0)
 
-      AssertAlmostEqual(NormSInv(0.95), 1.6449, 4)
-      AssertAlmostEqual(NormSInv(0.99), 2.3263, 4)
-      AssertAlmostEqual(NormSInv(0.9999), 3.719, 4)
-      AssertAlmostEqual(NormSInv(0.8974), 1.2669, 4)
-      AssertAlmostEqual(NormSInv(0.7663), 0.7267, 4)
-      AssertAlmostEqual(NormSInv(0.2248), -0.7561, 4)
-      AssertAlmostEqual(NormSInv(0.9372), 1.5317, 4)
-      AssertAlmostEqual(NormSInv(0.4135), -0.2186, 4)
-      AssertAlmostEqual(NormSInv(0.2454), -0.689, 4)
-      AssertAlmostEqual(NormSInv(0.2711), -0.6095, 4)
-      AssertAlmostEqual(NormSInv(0.2287), -0.7431, 4)
-      AssertAlmostEqual(NormSInv(0.6517), 0.3899, 4)
-      AssertAlmostEqual(NormSInv(0.8663), 1.1091, 4)
-      AssertAlmostEqual(NormSInv(0.9275), 1.4574, 4)
-      AssertAlmostEqual(NormSInv(0.7089), 0.5502, 4)
-      AssertAlmostEqual(NormSInv(0.1234), -1.1582, 4)
-      AssertAlmostEqual(NormSInv(0.0837), -1.3806, 4)
-      AssertAlmostEqual(NormSInv(0.6243), 0.3168, 4)
-      AssertAlmostEqual(NormSInv(0.0353), -1.808, 4)
-      AssertAlmostEqual(NormSInv(0.9767), 1.9899, 4)
+      AssertAlmostEqual(NormSInv(0.95), 1.6449)
+      AssertAlmostEqual(NormSInv(0.99), 2.3263)
+      AssertAlmostEqual(NormSInv(0.9999), 3.719)
+      AssertAlmostEqual(NormSInv(0.8974), 1.2669)
+      AssertAlmostEqual(NormSInv(0.7663), 0.7267)
+      AssertAlmostEqual(NormSInv(0.2248), -0.7561)
+      AssertAlmostEqual(NormSInv(0.9372), 1.5317)
+      AssertAlmostEqual(NormSInv(0.4135), -0.2186)
+      AssertAlmostEqual(NormSInv(0.2454), -0.689)
+      AssertAlmostEqual(NormSInv(0.2711), -0.6095)
+      AssertAlmostEqual(NormSInv(0.2287), -0.7431)
+      AssertAlmostEqual(NormSInv(0.6517), 0.3899)
+      AssertAlmostEqual(NormSInv(0.8663), 1.1091)
+      AssertAlmostEqual(NormSInv(0.9275), 1.4574)
+      AssertAlmostEqual(NormSInv(0.7089), 0.5502)
+      AssertAlmostEqual(NormSInv(0.1234), -1.1582)
+      AssertAlmostEqual(NormSInv(0.0837), -1.3806)
+      AssertAlmostEqual(NormSInv(0.6243), 0.3168)
+      AssertAlmostEqual(NormSInv(0.0353), -1.808)
+      AssertAlmostEqual(NormSInv(0.9767), 1.9899)
 
-      AssertAlmostEqual(TInv2T(0.3353, 16), 0.9934, 4)
-      AssertAlmostEqual(TInv2T(0.4792, 12), 0.7303, 4)
-      AssertAlmostEqual(TInv2T(0.4384, 9), 0.8108, 4)
-      AssertAlmostEqual(TInv2T(0.0905, 6), 2.0152, 4)
-      AssertAlmostEqual(TInv2T(0.63, 16), 0.4911, 4)
-      AssertAlmostEqual(TInv2T(0.1533, 11), 1.5339, 4)
-      AssertAlmostEqual(TInv2T(0.6297, 12), 0.4948, 4)
-      AssertAlmostEqual(TInv2T(0.1512, 4), 1.7714, 4)
-      AssertAlmostEqual(TInv2T(0.4407, 18), 0.7884, 4)
-      AssertAlmostEqual(TInv2T(0.6169, 15), 0.5108, 4)
-      AssertAlmostEqual(TInv2T(0.6077, 18), 0.5225, 4)
-      AssertAlmostEqual(TInv2T(0.4076, 20), 0.8459, 4)
-      AssertAlmostEqual(TInv2T(0.1462, 18), 1.5187, 4)
-      AssertAlmostEqual(TInv2T(0.3421, 6), 1.0315, 4)
-      AssertAlmostEqual(TInv2T(0.6566, 6), 0.4676, 4)
-      AssertAlmostEqual(TInv2T(0.2986, 1), 1.9733, 4)
-      AssertAlmostEqual(TInv2T(0.2047, 14), 1.3303, 4)
-      AssertAlmostEqual(TInv2T(0.5546, 2), 0.7035, 4)
-      AssertAlmostEqual(TInv2T(0.0862, 6), 2.0504, 4)
-      AssertAlmostEqual(TInv2T(0.6041, 10), 0.5354, 4)
+      AssertAlmostEqual(TInv2T(0.3353, 16), 0.9934)
+      AssertAlmostEqual(TInv2T(0.4792, 12), 0.7303)
+      AssertAlmostEqual(TInv2T(0.4384, 9), 0.8108)
+      AssertAlmostEqual(TInv2T(0.0905, 6), 2.0152)
+      AssertAlmostEqual(TInv2T(0.63, 16), 0.4911)
+      AssertAlmostEqual(TInv2T(0.1533, 11), 1.5339)
+      AssertAlmostEqual(TInv2T(0.6297, 12), 0.4948)
+      AssertAlmostEqual(TInv2T(0.1512, 4), 1.7714)
+      AssertAlmostEqual(TInv2T(0.4407, 18), 0.7884)
+      AssertAlmostEqual(TInv2T(0.6169, 15), 0.5108)
+      AssertAlmostEqual(TInv2T(0.6077, 18), 0.5225)
+      AssertAlmostEqual(TInv2T(0.4076, 20), 0.8459)
+      AssertAlmostEqual(TInv2T(0.1462, 18), 1.5187)
+      AssertAlmostEqual(TInv2T(0.3421, 6), 1.0315)
+      AssertAlmostEqual(TInv2T(0.6566, 6), 0.4676)
+      AssertAlmostEqual(TInv2T(0.2986, 1), 1.9733)
+      AssertAlmostEqual(TInv2T(0.2047, 14), 1.3303)
+      AssertAlmostEqual(TInv2T(0.5546, 2), 0.7035)
+      AssertAlmostEqual(TInv2T(0.0862, 6), 2.0504)
+      AssertAlmostEqual(TInv2T(0.6041, 10), 0.5354)
 
-      AssertAlmostEqual(TInv(0.4097, 8), -0.2359, 4)
-      AssertAlmostEqual(TInv(0.174, 19), -0.9623, 4)
-      AssertAlmostEqual(TInv(0.6545, 15), 0.4053, 4)
-      AssertAlmostEqual(TInv(0.7876, 5), 0.8686, 4)
-      AssertAlmostEqual(TInv(0.2995, 3), -0.5861, 4)
-      AssertAlmostEqual(TInv(0.0184, 2), -5.0679, 4)
-      AssertAlmostEqual(TInv(0.892, 1), 2.8333, 4)
-      AssertAlmostEqual(TInv(0.7058, 18), 0.551, 4)
-      AssertAlmostEqual(TInv(0.3783, 2), -0.3549, 4)
-      AssertAlmostEqual(TInv(0.2774, 15), -0.6041, 4)
-      AssertAlmostEqual(TInv(0.0406, 8), -1.9945, 4)
-      AssertAlmostEqual(TInv(0.1271, 4), -1.3303, 4)
-      AssertAlmostEqual(TInv(0.241, 18), -0.718, 4)
-      AssertAlmostEqual(TInv(0.0035, 1), -90.942, 4)
-      AssertAlmostEqual(TInv(0.1646, 10), -1.0257, 4)
-      AssertAlmostEqual(TInv(0.279, 11), -0.6041, 4)
-      AssertAlmostEqual(TInv(0.8897, 4), 1.4502, 4)
-      AssertAlmostEqual(TInv(0.5809, 13), 0.2083, 4)
-      AssertAlmostEqual(TInv(0.3776, 11), -0.3197, 4)
-      AssertAlmostEqual(TInv(0.5267, 15), 0.0681, 4)
+      AssertAlmostEqual(TInv(0.4097, 8), -0.2359)
+      AssertAlmostEqual(TInv(0.174, 19), -0.9623)
+      AssertAlmostEqual(TInv(0.6545, 15), 0.4053)
+      AssertAlmostEqual(TInv(0.7876, 5), 0.8686)
+      AssertAlmostEqual(TInv(0.2995, 3), -0.5861)
+      AssertAlmostEqual(TInv(0.0184, 2), -5.0679)
+      AssertAlmostEqual(TInv(0.892, 1), 2.8333)
+      AssertAlmostEqual(TInv(0.7058, 18), 0.551)
+      AssertAlmostEqual(TInv(0.3783, 2), -0.3549)
+      AssertAlmostEqual(TInv(0.2774, 15), -0.6041)
+      AssertAlmostEqual(TInv(0.0406, 8), -1.9945)
+      AssertAlmostEqual(TInv(0.1271, 4), -1.3303)
+      AssertAlmostEqual(TInv(0.241, 18), -0.718)
+      AssertAlmostEqual(TInv(0.0035, 1), -90.942)
+      AssertAlmostEqual(TInv(0.1646, 10), -1.0257)
+      AssertAlmostEqual(TInv(0.279, 11), -0.6041)
+      AssertAlmostEqual(TInv(0.8897, 4), 1.4502)
+      AssertAlmostEqual(TInv(0.5809, 13), 0.2083)
+      AssertAlmostEqual(TInv(0.3776, 11), -0.3197)
+      AssertAlmostEqual(TInv(0.5267, 15), 0.0681)
 
-      AssertAlmostEqual(MeanAbsoluteDeviationScaleFactor, 1.2533, 4)
+      AssertAlmostEqual(MeanAbsoluteDeviationScaleFactor, 1.2533)
 
-      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(1), 1, 4)
-      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(2), 1.2247, 4)
-      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(4), 1.3501, 4)
-      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(6), 1.3936, 4)
-      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(8), 1.4157, 4)
-      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(10), 1.429, 4)
-      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(12), 1.4378, 4)
-      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(14), 1.4442, 4)
-      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(16), 1.449, 4)
-      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(18), 1.4527, 4)
-      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(20), 1.4557, 4)
-      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(22), 1.4581, 4)
-      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(24), 1.4602, 4)
-      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(26), 1.4619, 4)
-      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(28), 1.4634, 4)
-      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(30), 1.4826, 4)
-      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(32), 1.4826, 4)
-      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(34), 1.4826, 4)
-      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(36), 1.4826, 4)
-      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(38), 1.4826, 4)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(1), 1)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(2), 1.2247)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(4), 1.3501)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(6), 1.3936)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(8), 1.4157)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(10), 1.429)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(12), 1.4378)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(14), 1.4442)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(16), 1.449)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(18), 1.4527)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(20), 1.4557)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(22), 1.4581)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(24), 1.4602)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(26), 1.4619)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(28), 1.4634)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(30), 1.4826)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(32), 1.4826)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(34), 1.4826)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(36), 1.4826)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(38), 1.4826)
 
-      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 1), 63.6567, 4)
-      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 2), 9.9248, 4)
-      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 4), 4.6041, 4)
-      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 6), 3.7074, 4)
-      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 8), 3.3554, 4)
-      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 10), 3.1693, 4)
-      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 12), 3.0545, 4)
-      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 14), 2.9768, 4)
-      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 16), 2.9208, 4)
-      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 20), 2.8453, 4)
-      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 22), 2.8188, 4)
-      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 24), 2.7969, 4)
-      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 28), 2.7633, 4)
-      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 30), 2.5758, 4)
-      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 32), 2.5758, 4)
-      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 34), 2.5758, 4)
-      AssertAlmostEqual(ControlLimitRejectionCriterion(0.95, 30), 1.96, 4)
-      AssertAlmostEqual(ControlLimitRejectionCriterion(0.90, 30), 1.6449, 4)
-      AssertAlmostEqual(ControlLimitRejectionCriterion(0.95, 25), 2.0595, 4)
-      AssertAlmostEqual(ControlLimitRejectionCriterion(0.90, 20), 1.7247, 4)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 1), 63.6567)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 2), 9.9248)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 4), 4.6041)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 6), 3.7074)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 8), 3.3554)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 10), 3.1693)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 12), 3.0545)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 14), 2.9768)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 16), 2.9208)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 20), 2.8453)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 22), 2.8188)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 24), 2.7969)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 28), 2.7633)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 30), 2.5758)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 32), 2.5758)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 34), 2.5758)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.95, 30), 1.96)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.90, 30), 1.6449)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.95, 25), 2.0595)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.90, 20), 1.7247)
 
       AssertEqual(NonNaNCount({60}), 1)
       AssertEqual(NonNaNCount({60, 70}), 2)
@@ -328,14 +328,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertEqual(Mean({18, 58, 47, 47}), 42.5)
       AssertEqual(Mean({10, NaN, 20, 30, NaN}), 20)
       AssertEqual(Mean({67, 90, 74, 32, 62}), 65)
-      AssertAlmostEqual(Mean({78, 0, 98, 65, 69, 57}), 61.1667, 4)
+      AssertAlmostEqual(Mean({78, 0, 98, 65, 69, 57}), 61.1667)
       AssertEqual(Mean({49, 35, 74, 25, 28, 92}), 50.5)
-      AssertAlmostEqual(Mean({7, 64, 22, 7, 42, 34, 30}), 29.4286, 4)
-      AssertAlmostEqual(Mean({13, 29, 39, 33, 96, 43, 17}), 38.5714, 4)
+      AssertAlmostEqual(Mean({7, 64, 22, 7, 42, 34, 30}), 29.4286)
+      AssertAlmostEqual(Mean({13, 29, 39, 33, 96, 43, 17}), 38.5714)
       AssertEqual(Mean({59, 78, 53, 7, 18, 44, 63, 40}), 45.25)
       AssertEqual(Mean({77, 71, 99, 39, 50, 94, 67, 30}), 65.875)
       AssertEqual(Mean({91, 69, 63, 5, 44, 93, 89, 45, 50}), 61)
-      AssertAlmostEqual(Mean({12, 84, 12, 94, 52, 17, 1, 13, 37}), 35.7778, 4)
+      AssertAlmostEqual(Mean({12, 84, 12, 94, 52, 17, 1, 13, 37}), 35.7778)
       AssertEqual(Mean({18, 14, 54, 40, 73, 77, 4, 91, 53, 10}), 43.4)
       AssertEqual(Mean({80, 30, 1, 92, 44, 61, 18, 72, 63, 41}), 50.2)
 
@@ -388,27 +388,27 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertEqual(MeanAbsoluteDeviation({86}), 0)
       AssertEqual(MeanAbsoluteDeviation({7, 24}), 8.5)
       AssertEqual(MeanAbsoluteDeviation({12, 96}), 42)
-      AssertAlmostEqual(MeanAbsoluteDeviation({19, 74, 70}), 23.5556, 4)
-      AssertAlmostEqual(MeanAbsoluteDeviation({96, 93, 65}), 13.1111, 4)
+      AssertAlmostEqual(MeanAbsoluteDeviation({19, 74, 70}), 23.5556)
+      AssertAlmostEqual(MeanAbsoluteDeviation({96, 93, 65}), 13.1111)
       AssertEqual(MeanAbsoluteDeviation({47, 29, 24, 11}), 10.25)
       AssertEqual(MeanAbsoluteDeviation({3, 43, 53, 80}), 21.75)
       AssertEqual(MeanAbsoluteDeviation({17, 27, 98, 85, 51}), 28.72)
       AssertEqual(MeanAbsoluteDeviation({2, 82, 63, 1, 49}), 30.32)
       AssertEqual(MeanAbsoluteDeviation({9, 25, 41, 85, 82, 55}),24.5)
       AssertAlmostEqual(MeanAbsoluteDeviation(
-        {5, 74, 53, 97, 81, 21}),28.8333, 4)
+        {5, 74, 53, 97, 81, 21}),28.8333)
       AssertAlmostEqual(MeanAbsoluteDeviation(
-        {26, 81, 9, 18, 39, 97, 21}), 27.102, 4)
+        {26, 81, 9, 18, 39, 97, 21}), 27.102)
       AssertAlmostEqual(MeanAbsoluteDeviation(
-        {5, 83, 31, 24, 55, 22, 87}), 26.6939, 4)
+        {5, 83, 31, 24, 55, 22, 87}), 26.6939)
       AssertAlmostEqual(MeanAbsoluteDeviation(
-        {22, 84, 6, 79, 89, 71, 34, 56}), 25.8438, 4)
+        {22, 84, 6, 79, 89, 71, 34, 56}), 25.8438)
       AssertEqual(MeanAbsoluteDeviation(
         {33, 39, 6, 88, 69, 11, 76, 65}), 26.125)
       AssertAlmostEqual(MeanAbsoluteDeviation(
-        {31, 52, 12, 60, 52, 44, 47, 81, 34}), 13.9012, 4)
+        {31, 52, 12, 60, 52, 44, 47, 81, 34}), 13.9012)
       AssertAlmostEqual(MeanAbsoluteDeviation(
-        {64, 63, 54, 94, 25, 80, 97, 45, 51}), 17.8519, 4)
+        {64, 63, 54, 94, 25, 80, 97, 45, 51}), 17.8519)
       AssertEqual(MeanAbsoluteDeviation(
         {47, 22, 52, 22, 10, 38, 94, 85, 54, 41}), 19.9)
       AssertEqual(MeanAbsoluteDeviation(
@@ -482,26 +482,26 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertEqual(CentralTendency({3, 5, 1, 9}), 4)
       AssertEqual(CentralTendency({0, 0, 0, 0}), 0)
 
-      AssertAlmostEqual(ControlLimit({8, 2, 0, 10}, 0.99), 30.5449, 4)
-      AssertAlmostEqual(ControlLimit({2, 4, 8, 7}, 0.99), 15.2724, 4)
-      AssertAlmostEqual(ControlLimit({5, 8, 0, 2}, 0.99), 19.0906, 4)
-      AssertAlmostEqual(ControlLimit({8, 1, 0, 3}, 0.99), 11.4543, 4)
-      AssertAlmostEqual(ControlLimit({10, 7, 1, 3}, 0.99), 22.9087, 4)
-      AssertAlmostEqual(ControlLimit({6, 2, 1, 9}, 0.99), 19.0906, 4)
-      AssertAlmostEqual(ControlLimit({4, 9, 9, 3}, 0.99), 19.0906, 4)
-      AssertAlmostEqual(ControlLimit({10, 7, 2, 8}, 0.99), 11.4543, 4)
-      AssertAlmostEqual(ControlLimit({6, 0, 10, 1}, 0.99), 22.9087, 4)
-      AssertAlmostEqual(ControlLimit({10, 3, 4, 2}, 0.99), 7.6362, 4)
-      AssertAlmostEqual(ControlLimit({6, 4, 4, 4}, 0.99), 5.4904, 4)
-      AssertAlmostEqual(ControlLimit({1, 0, 9, 9}, 0.99), 30.5449, 4)
-      AssertAlmostEqual(ControlLimit({0, 3, 6, 2}, 0.99), 11.4543, 4)
-      AssertAlmostEqual(ControlLimit({9, 7, 4, 6}, 0.99), 11.4543, 4)
-      AssertAlmostEqual(ControlLimit({6, 6, 4, 1}, 0.99), 7.6362, 4)
-      AssertAlmostEqual(ControlLimit({7, 3, 4, 1}, 0.99), 11.4543, 4)
-      AssertAlmostEqual(ControlLimit({6, 4, 4, 10}, 0.99), 7.6362, 4)
-      AssertAlmostEqual(ControlLimit({10, 5, 5, 5}, 0.99), 13.7259, 4)
-      AssertAlmostEqual(ControlLimit({8, 5, 5, 5}, 0.98), 6.4023, 4)
-      AssertAlmostEqual(ControlLimit({8, 4, 0, 0}, 0.95), 8.3213, 4)
+      AssertAlmostEqual(ControlLimit({8, 2, 0, 10}, 0.99), 30.5449)
+      AssertAlmostEqual(ControlLimit({2, 4, 8, 7}, 0.99), 15.2724)
+      AssertAlmostEqual(ControlLimit({5, 8, 0, 2}, 0.99), 19.0906)
+      AssertAlmostEqual(ControlLimit({8, 1, 0, 3}, 0.99), 11.4543)
+      AssertAlmostEqual(ControlLimit({10, 7, 1, 3}, 0.99), 22.9087)
+      AssertAlmostEqual(ControlLimit({6, 2, 1, 9}, 0.99), 19.0906)
+      AssertAlmostEqual(ControlLimit({4, 9, 9, 3}, 0.99), 19.0906)
+      AssertAlmostEqual(ControlLimit({10, 7, 2, 8}, 0.99), 11.4543)
+      AssertAlmostEqual(ControlLimit({6, 0, 10, 1}, 0.99), 22.9087)
+      AssertAlmostEqual(ControlLimit({10, 3, 4, 2}, 0.99), 7.6362)
+      AssertAlmostEqual(ControlLimit({6, 4, 4, 4}, 0.99), 5.4904)
+      AssertAlmostEqual(ControlLimit({1, 0, 9, 9}, 0.99), 30.5449)
+      AssertAlmostEqual(ControlLimit({0, 3, 6, 2}, 0.99), 11.4543)
+      AssertAlmostEqual(ControlLimit({9, 7, 4, 6}, 0.99), 11.4543)
+      AssertAlmostEqual(ControlLimit({6, 6, 4, 1}, 0.99), 7.6362)
+      AssertAlmostEqual(ControlLimit({7, 3, 4, 1}, 0.99), 11.4543)
+      AssertAlmostEqual(ControlLimit({6, 4, 4, 10}, 0.99), 7.6362)
+      AssertAlmostEqual(ControlLimit({10, 5, 5, 5}, 0.99), 13.7259)
+      AssertAlmostEqual(ControlLimit({8, 5, 5, 5}, 0.98), 6.4023)
+      AssertAlmostEqual(ControlLimit({8, 4, 0, 0}, 0.95), 8.3213)
 
       AssertArrayEqual(RemoveOutliers(
         {100, 100, 100, 100, 100, 100, 100, 100, 999}),
@@ -600,63 +600,63 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       AssertEqual(ExponentialMovingAverage({70.5547}), 70.5547)
       AssertAlmostEqual(ExponentialMovingAverage(
-        {53.3424, 57.9519}), 56.7995, 4)
+        {53.3424, 57.9519}), 56.7995)
       AssertAlmostEqual(ExponentialMovingAverage(
-        {28.9562, 30.1948}), 29.8852, 4)
+        {28.9562, 30.1948}), 29.8852)
       AssertAlmostEqual(ExponentialMovingAverage(
-        {77.474, 1.4018}), 20.4199, 4)
+        {77.474, 1.4018}), 20.4199)
       AssertAlmostEqual(ExponentialMovingAverage(
-        {76.0724, 81.449, 70.9038}), 74.6551, 4)
+        {76.0724, 81.449, 70.9038}), 74.6551)
       AssertAlmostEqual(ExponentialMovingAverage(
-        {4.5353, 41.4033, 86.2619}), 61.7699, 4)
+        {4.5353, 41.4033, 86.2619}), 61.7699)
       AssertAlmostEqual(ExponentialMovingAverage(
-        {79.048, 37.3536, 96.1953}), 76.9338, 4)
+        {79.048, 37.3536, 96.1953}), 76.9338)
       AssertEqual(ExponentialMovingAverage({87.1446, 5.6237, 94.9557}), 68.3164)
       AssertAlmostEqual(ExponentialMovingAverage(
-        {36.4019, 52.4868, 76.7112}), 64.0315, 4)
+        {36.4019, 52.4868, 76.7112}), 64.0315)
       AssertAlmostEqual(ExponentialMovingAverage(
-        {5.3505, 59.2458, 46.87, 29.8165}), 36.959, 4)
+        {5.3505, 59.2458, 46.87, 29.8165}), 36.959)
       AssertAlmostEqual(ExponentialMovingAverage(
-        {62.2697, 64.7821, 26.3793, 27.9342}), 37.0099, 4)
+        {62.2697, 64.7821, 26.3793, 27.9342}), 37.0099)
       AssertAlmostEqual(ExponentialMovingAverage(
-        {82.9802, 82.4602, 58.9163, 98.6093}), 83.4414, 4)
+        {82.9802, 82.4602, 58.9163, 98.6093}), 83.4414)
       AssertAlmostEqual(ExponentialMovingAverage(
-        {91.0964, 22.6866, 69.5116, 98.0003, 24.3931}), 55.7929, 4)
+        {91.0964, 22.6866, 69.5116, 98.0003, 24.3931}), 55.7929)
       AssertAlmostEqual(ExponentialMovingAverage(
-        {53.3873, 10.637, 99.9415, 67.6176, 1.5704}), 40.2177, 4)
+        {53.3873, 10.637, 99.9415, 67.6176, 1.5704}), 40.2177)
       AssertAlmostEqual(ExponentialMovingAverage(
-        {57.5184, 10.0052, 10.3023, 79.8884, 28.448}), 38.6235, 4)
+        {57.5184, 10.0052, 10.3023, 79.8884, 28.448}), 38.6235)
       AssertAlmostEqual(ExponentialMovingAverage(
-        {4.5649, 29.5773, 38.2011, 30.097, 94.8571}), 54.345, 4)
+        {4.5649, 29.5773, 38.2011, 30.097, 94.8571}), 54.345)
       AssertAlmostEqual(ExponentialMovingAverage(
-        {97.9829, 40.1374, 27.828, 16.0442, 16.2822}), 27.0999, 4)
+        {97.9829, 40.1374, 27.828, 16.0442, 16.2822}), 27.0999)
       AssertAlmostEqual(ExponentialMovingAverage(
-        {64.6587, 41.0073, 41.2767, 71.273, 32.6206, 63.3179}), 52.9531, 4)
+        {64.6587, 41.0073, 41.2767, 71.273, 32.6206, 63.3179}), 52.9531)
       AssertAlmostEqual(ExponentialMovingAverage(
-        {20.7561, 18.6014, 58.3359, 8.0715, 45.7971, 90.573}), 51.847, 4)
+        {20.7561, 18.6014, 58.3359, 8.0715, 45.7971, 90.573}), 51.847)
       AssertAlmostEqual(ExponentialMovingAverage(
-        {26.1368, 78.5212, 37.8903, 28.9665, 91.9377, 63.1742}), 60.2045, 4)
+        {26.1368, 78.5212, 37.8903, 28.9665, 91.9377, 63.1742}), 60.2045)
 
-      AssertAlmostEqual(SlopeToAngle(-4.5806), -77.6849, 4)
-      AssertAlmostEqual(SlopeToAngle(-4.2541), -76.7718, 4)
-      AssertAlmostEqual(SlopeToAngle(1.7964), 60.8967, 4)
-      AssertAlmostEqual(SlopeToAngle(-3.2474), -72.8844, 4)
-      AssertAlmostEqual(SlopeToAngle(4.7917), 78.2119, 4)
-      AssertAlmostEqual(SlopeToAngle(2.1792), 65.3504, 4)
-      AssertAlmostEqual(SlopeToAngle(0.4736), 25.3422, 4)
-      AssertAlmostEqual(SlopeToAngle(-2.0963), -64.4974, 4)
-      AssertAlmostEqual(SlopeToAngle(-3.2077), -72.6851, 4)
-      AssertAlmostEqual(SlopeToAngle(-1.5425), -57.0447, 4)
-      AssertAlmostEqual(SlopeToAngle(-0.5587), -29.1921, 4)
-      AssertAlmostEqual(SlopeToAngle(1.2829), 52.0642, 4)
-      AssertAlmostEqual(SlopeToAngle(3.9501), 75.7936, 4)
-      AssertAlmostEqual(SlopeToAngle(2.5841), 68.8445, 4)
-      AssertAlmostEqual(SlopeToAngle(-3.4547), -73.8563, 4)
-      AssertAlmostEqual(SlopeToAngle(3.2931), 73.1083, 4)
-      AssertAlmostEqual(SlopeToAngle(3.2042), 72.6674, 4)
-      AssertAlmostEqual(SlopeToAngle(3.1088), 72.1687, 4)
-      AssertAlmostEqual(SlopeToAngle(-1.6831), -59.2837, 4)
-      AssertAlmostEqual(SlopeToAngle(-2.0031), -63.4704, 4)
+      AssertAlmostEqual(SlopeToAngle(-4.5806), -77.6849)
+      AssertAlmostEqual(SlopeToAngle(-4.2541), -76.7718)
+      AssertAlmostEqual(SlopeToAngle(1.7964), 60.8967)
+      AssertAlmostEqual(SlopeToAngle(-3.2474), -72.8844)
+      AssertAlmostEqual(SlopeToAngle(4.7917), 78.2119)
+      AssertAlmostEqual(SlopeToAngle(2.1792), 65.3504)
+      AssertAlmostEqual(SlopeToAngle(0.4736), 25.3422)
+      AssertAlmostEqual(SlopeToAngle(-2.0963), -64.4974)
+      AssertAlmostEqual(SlopeToAngle(-3.2077), -72.6851)
+      AssertAlmostEqual(SlopeToAngle(-1.5425), -57.0447)
+      AssertAlmostEqual(SlopeToAngle(-0.5587), -29.1921)
+      AssertAlmostEqual(SlopeToAngle(1.2829), 52.0642)
+      AssertAlmostEqual(SlopeToAngle(3.9501), 75.7936)
+      AssertAlmostEqual(SlopeToAngle(2.5841), 68.8445)
+      AssertAlmostEqual(SlopeToAngle(-3.4547), -73.8563)
+      AssertAlmostEqual(SlopeToAngle(3.2931), 73.1083)
+      AssertAlmostEqual(SlopeToAngle(3.2042), 72.6674)
+      AssertAlmostEqual(SlopeToAngle(3.1088), 72.1687)
+      AssertAlmostEqual(SlopeToAngle(-1.6831), -59.2837)
+      AssertAlmostEqual(SlopeToAngle(-2.0031), -63.4704)
 
       For i = 0 To 19
         AssertTrue(RandomNumber(0, i+1) >= 0)
@@ -1076,38 +1076,38 @@ Namespace Vitens.DynamicBandwidthMonitor
           AssertAlmostEqual(.Slope, {-24.1399, -67.5699, 51.3427, -56.9825,
             27.3182, -2.6573, 32.1923, -46.8462, -11.1224, -61.5455, 9.4424,
             -0.1602, 10.7659, 4.8889, -4.6572, -0.4548, -6.6652, 2.2442,
-            8.6539, -12.0462}(i), 4)
+            8.6539, -12.0462}(i))
           AssertAlmostEqual(.OriginSlope, {383.2213, 397.5889, 426.4229,
             371.4506, 374.8399, 372.6621, 425.6739, 359.6522, 360.8676,
             379.3893, 52.1812, 50.6373, 75.2409, 60.0661, 73.5505, 61.2832,
-            59.1633, 53.9967, 46.4227, 66.0541}(i), 4)
+            59.1633, 53.9967, 46.4227, 66.0541}(i))
           AssertAlmostEqual(.Angle, {-87.6279, -89.1521, 88.8842, -88.9946,
             87.9036, -69.3779, 88.2208, -88.7771, -84.8624, -89.0691, 83.9546,
             -9.0998, 84.6933, 78.4399, -77.8813, -24.4582, -81.4673, 65.9827,
-            83.4085, -85.2545}(i), 4)
+            83.4085, -85.2545}(i))
           AssertAlmostEqual(.OriginAngle, {89.8505, 89.8559, 89.8656, 89.8458,
             89.8471, 89.8463, 89.8654, 89.8407, 89.8412, 89.849, 88.9021,
             88.8687, 89.2385, 89.0462, 89.221, 89.0651, 89.0317, 88.939,
-            88.766, 89.1327}(i), 4)
+            88.766, 89.1327}(i))
           AssertAlmostEqual(.Intercept, {3123.1026, 3566.2179, 2875.6154,
             3284.6538, 2664.3333, 2877.4487, 3016.6923, 3116.4872, 2851.9231,
             3380.5, 2332.5305, 2930.2549, 2585.1154, 2427.9251, 3229.618,
-            2967.1468, 3472.9635, 2986.3475, 2469.7771, 3320.9411}(i), 4)
+            2967.1468, 3472.9635, 2986.3475, 2469.7771, 3320.9411}(i))
           AssertAlmostEqual(.StandardError, {582.4218, 633.706, 535.0359,
             720.9024, 619.3358, 506.8629, 525.9328, 483.3154, 527.9273,
             573.7699, 544.1683, 523.5486, 590.2042, 436.8994, 644.5969,
-            698.2517, 478.875, 384.1275, 419.8051, 657.4656}(i), 4)
+            698.2517, 478.875, 384.1275, 419.8051, 657.4656}(i))
           AssertAlmostEqual(.Correlation, {-0.1548, -0.374, 0.3411, -0.2864,
             0.1645, -0.0198, 0.2255, -0.3441, -0.0794, -0.3759, 0.4296,
             -0.0071, 0.3208, 0.2029, -0.1209, -0.0154, -0.3016, 0.1484,
-            0.5294, -0.3121}(i), 4)
+            0.5294, -0.3121}(i))
           AssertAlmostEqual(.ModifiedCorrelation, {0.819, 0.7932, 0.8652,
             0.7909, 0.8474, 0.8345, 0.8554, 0.8061, 0.8274, 0.7962, 0.8665,
             0.9037, 0.8892, 0.908, 0.887, 0.8274, 0.8714, 0.8915, 0.9047,
-            0.8561}(i), 4)
+            0.8561}(i))
           AssertAlmostEqual(.Determination, {0.024, 0.1398, 0.1164, 0.082,
             0.0271, 0.0004, 0.0509, 0.1184, 0.0063, 0.1413, 0.1845, 0.0001,
-            0.1029, 0.0412, 0.0146, 0.0002, 0.091, 0.022, 0.2803, 0.0974}(i), 4)
+            0.1029, 0.0412, 0.0146, 0.0002, 0.091, 0.022, 0.2803, 0.0974}(i))
         End With
       Next i
 
@@ -1175,7 +1175,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           New CultureInfo("nl-NL")) ' Use Dutch locale for New Year's Day test
         With Result
           AssertAlmostEqual(.Factor, {0, 0, 0, 0, 0, 0, -11.8493, -22.9119, 0,
-            0, 0, 0, 1.1375, 0, 0, 0, 0, 0, 0, 0}(i), 4)
+            0, 0, 0, 1.1375, 0, 0, 0, 0, 0, 0, 0}(i))
           If i = 6 Or i = 7 Or i = 12 Then
             AssertTrue(.HasEvent)
           Else
@@ -1190,30 +1190,30 @@ Namespace Vitens.DynamicBandwidthMonitor
             1097.1504, 950.9752, 496.1124, 673.6569, 1139.1957, 867.4313,
             504.9407, 656.4434, 1065.7651, 898.9191, 471.2433, 668.1,
             1103.9689, 897.7268, 525.3563, 676.7206, 1183.0887,
-            975.8324}(i), 4)
+            975.8324}(i))
           AssertAlmostEqual(.ForecastItem.ForecastValue, {517.2028, 716.9982,
             1059.0551, 919.4719, 488.6181, 683.6728, 1155.5986, 895.6872,
             503.2566, 655.7115, 1061.2282, 893.3488, 464.4957, 666.2928,
             1084.1527, 901.6546, 523.8671, 666.1729, 1190.3511,
-            975.4264}(i), 4)
+            975.4264}(i))
           AssertAlmostEqual(.ForecastItem.Range(0.95), {7.3871, 43.4768,
             57.5299, 51.6959, 28.3939, 0.5641, 0.9146, 0.8148, 5.6816, 7.3282,
             11.0143, 9.3649, 3.9192, 4.4945, 6.9199, 9.2247, 8.3518, 9.6103,
-            20.3862, 15.9607}(i), 4)
+            20.3862, 15.9607}(i))
           AssertAlmostEqual(.ForecastItem.Range(BandwidthCI), {11.1804, 65.8024,
             87.0718, 78.2419, 42.9743, 0.8537, 1.3843, 1.2332, 8.5991, 11.0913,
             16.6702, 14.1738, 5.9317, 6.8025, 10.4733, 13.9616, 12.6405,
-            14.5453, 30.8546, 24.1566}(i), 4)
+            14.5453, 30.8546, 24.1566}(i))
           AssertAlmostEqual(.ForecastItem.LowerControlLimit, {506.0224,
             651.1959, 971.9833, 841.23, 445.6438, 682.8191, 1154.2143, 894.454,
             494.6574, 644.6202, 1044.558, 879.175, 458.564, 659.4903,
             1073.6794, 887.693, 511.2267, 651.6276, 1159.4964,
-            951.2698}(i), 4)
+            951.2698}(i))
           AssertAlmostEqual(.ForecastItem.UpperControlLimit, {528.3832,
             782.8006, 1146.127, 997.7138, 531.5924, 684.5266, 1156.9829,
             896.9205, 511.8557, 666.8028, 1077.8984, 907.5226, 470.4274,
             673.0952, 1094.626, 915.6163, 536.5076, 680.7182, 1221.2057,
-            999.583}(i), 4)
+            999.583}(i))
         End With
         Timestamp = Timestamp.AddSeconds(365*24*60*60/20)
       Next i
