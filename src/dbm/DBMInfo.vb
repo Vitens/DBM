@@ -82,7 +82,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           .Comments & NewLine &
           .LegalCopyright & NewLine &
           "Performance index: " &
-          Round(PerformanceIndex, 1).ToString & "." & NewLine
+          Round(PerformanceIndex, 1).ToString & "." & NewLine &
           NewLine &
           "This program is free software: you can redistribute it and/or " &
           "modify it under the terms of the GNU General Public License as " &

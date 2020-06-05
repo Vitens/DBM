@@ -67,14 +67,16 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Shared Sub AssertEqual(a As Object, b As Object)
 
-      If TypeOf a Is Boolean And TypeOf b Is Boolean AndAlso a=b Then Exit Sub
-      If TypeOf a Is Date And TypeOf b Is Date AndAlso a=b Then Exit Sub
+      If TypeOf a Is Boolean And TypeOf b Is Boolean AndAlso
+        CBool(a) = CBool(b) Then Exit Sub
+      If TypeOf a Is Date And TypeOf b Is Date AndAlso
+        CDate(a) = CDate(b) Then Exit Sub
       If TypeOf a Is Double And TypeOf b Is Double AndAlso
-        Double.IsNaN(a) And Double.IsNaN(b) Then Exit Sub
+        Double.IsNaN(CDbl(a)) And Double.IsNaN(CDbl(b)) Then Exit Sub
       If (TypeOf a Is Integer Or TypeOf a Is Double Or TypeOf a Is Decimal) And
         (TypeOf b Is Integer Or TypeOf b Is Double Or
         TypeOf b Is Decimal) AndAlso
-        a=b Then Exit Sub
+        CDbl(a) = CDbl(b) Then Exit Sub
       Throw New System.Exception("Assert failed. a=" & a.ToString &
         ", b=" & b.ToString)
 
@@ -91,7 +93,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private Shared Sub AssertAlmostEqual(a As Object, b As Object,
       Optional Digits As Integer = 15)
 
-      AssertEqual(Round(a, Digits), Round(b, Digits))
+      AssertEqual(Round(CDbl(a), Digits), Round(CDbl(b), Digits))
 
     End Sub
 
