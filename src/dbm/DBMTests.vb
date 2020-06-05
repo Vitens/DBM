@@ -65,861 +65,938 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function UnitTestsPassed As Boolean
+    Private Shared Sub AssertEqual(a As Object, b As Object)
 
-      ' Unit tests, returns True if all tests pass.
+      If TypeOf a Is Boolean And TypeOf b Is Boolean AndAlso a=b Then Exit Sub
+      If TypeOf a Is Date And TypeOf b Is Date AndAlso a=b Then Exit Sub
+      If TypeOf a Is Double And TypeOf b Is Double AndAlso
+        Double.IsNaN(a) And Double.IsNaN(b) Then Exit Sub
+      If (TypeOf a Is Integer Or TypeOf a Is Double Or TypeOf a Is Decimal) And
+        (TypeOf b Is Integer Or TypeOf b Is Double Or
+        TypeOf b Is Decimal) AndAlso
+        a=b Then Exit Sub
+      Throw New System.Exception("Assert failed. a=" & a.ToString &
+        ", b=" & b.ToString)
+
+    End Sub
+
+
+    Private Shared Sub AssertArrayEqual(a() As Double, b() As Double)
+
+      AssertEqual(Hash(a), Hash(b))
+
+    End Sub
+
+
+    Private Shared Sub AssertAlmostEqual(a As Object, b As Object,
+      Optional Digits As Integer = 15)
+
+      AssertEqual(Round(a, Digits), Round(b, Digits))
+
+    End Sub
+
+
+    Private Shared Sub AssertTrue(a As Boolean)
+
+      AssertEqual(a, True)
+
+    End Sub
+
+
+    Private Shared Sub AssertFalse(a As Boolean)
+
+      AssertEqual(a, False)
+
+    End Sub
+
+
+    Private Shared Sub AssertNaN(a As Double)
+
+      AssertEqual(a, Double.NaN)
+
+    End Sub
+
+
+    Public Shared Sub RunUnitTests
 
       Dim i As Integer
       Dim StatisticsItem As New DBMStatisticsItem
 
-      UnitTestsPassed = True
+      AssertEqual(True, True)
+      AssertEqual(Today, Today)
+      AssertEqual(NaN, NaN)
+      AssertEqual(1, 1)
+      AssertEqual(-2.13, -2.13)
 
-      UnitTestsPassed = UnitTestsPassed And
-        Round(Hash({6, 4, 7, 1, 1, 4, 2, 4}), 4) = 2.2326 And
-        Round(Hash({8, 4, 7, 3, 2, 6, 5, 7}), 4) = 3.6609 And
-        Round(Hash({1, 5, 4, 7, 7, 8, 5, 1}), 4) = 1.8084
+      AssertArrayEqual({1}, {1})
+      AssertArrayEqual({-1.23, 4.56}, {-1.23, 4.56})
 
-      UnitTestsPassed = UnitTestsPassed And
-        Not IsNullOrEmpty(DBMInfo.Version) And
-        Not IsNullOrEmpty(LicenseNotice)
+      AssertAlmostEqual(1.231, 1.232, 2)
+      AssertAlmostEqual(-2, -2)
 
-      UnitTestsPassed = UnitTestsPassed And
-        HasCorrelation(0.9, 45) = True And
-        HasCorrelation(0.85, 45) = True And
-        HasCorrelation(0.8, 45) = False And
-        HasCorrelation(0.9, 0) = False And
-        HasCorrelation(0.9, 35) = True And
-        HasCorrelation(0.9, 25) = False And
-        HasCorrelation(0.8, 35) = False And
-        HasCorrelation(-0.9, 45) = False And
-        HasCorrelation(0.9, -45) = False And
-        HasCorrelation(0, 0) = False
+      AssertTrue(True)
 
-      UnitTestsPassed = UnitTestsPassed And
-        HasAnticorrelation(-0.9, -45, False) = True And
-        HasAnticorrelation(-0.85, -45, True) = False And
-        HasAnticorrelation(-0.8, -45, False) = False And
-        HasAnticorrelation(-0.9, 0, False) = False And
-        HasAnticorrelation(-0.9, -35, False) = True And
-        HasAnticorrelation(-0.9, -25, False) = False And
-        HasAnticorrelation(-0.8, -35, False) = False And
-        HasAnticorrelation(0.9, -45, False) = False And
-        HasAnticorrelation(-0.9, 45, False) = False And
-        HasAnticorrelation(0, 0, False) = False
+      AssertFalse(False)
 
-      UnitTestsPassed = UnitTestsPassed And
-        Suppress(5, 0, 0, 0, 0, False) = 5 And
-        Suppress(5, -0.8, 0, 0, 0, False) = 5 And
-        Suppress(5, -0.9, -45, 0, 0, False) = 0 And
-        Suppress(5, -0.9, 0, 0, 0, True) = 5 And
-        Suppress(5, 0, 0, 0.8, 0, False) = 5 And
-        Suppress(5, 0, 0, 0.9, 45, False) = 0 And
-        Suppress(5, 0, 0, 0.9, 45, True) = 0 And
-        Suppress(-0.9, -0.85, 0, 0, 0, False) = -0.9 And
-        Suppress(-0.9, -0.95, -45, 0, 0, False) = 0 And
-        Suppress(0.9, 0, 0, 0.85, 45, False) = 0 And
-        Suppress(0.9, 0, 0, 0.95, 1, True) = 0.9 And
-        Suppress(-0.9, -0.99, -45, 0, 0, False) = 0 And
-        Suppress(-0.9, 0.99, 0, 0, 0, False) = -0.9 And
-        Suppress(-0.9, 0.99, 0, 0, 0, True) = -0.9 And
-        Suppress(0.99, -0.9, -45, 0, 0, False) = 0 And
-        Suppress(0.99, -0.9, 0, 0, 0, True) = 0.99 And
-        Suppress(-0.99, 0, 0, 0, 0, True) = -0.99 And
-        Suppress(0.99, 0, 0, 0, 0, True) = 0.99 And
-        Suppress(-0.98, -0.99, -1, 0, 0, False) = -0.98 And
-        Suppress(-0.98, -0.99, -45, 0, 0, False) = 0
+      AssertNaN(NaN)
 
-      UnitTestsPassed = UnitTestsPassed And
-        Round(NormSInv(0.95), 4) = 1.6449 And
-        Round(NormSInv(0.99), 4) = 2.3263 And
-        Round(NormSInv(0.9999), 4) = 3.719 And
-        Round(NormSInv(0.8974), 4) = 1.2669 And
-        Round(NormSInv(0.7663), 4) = 0.7267 And
-        Round(NormSInv(0.2248), 4) = -0.7561 And
-        Round(NormSInv(0.9372), 4) = 1.5317 And
-        Round(NormSInv(0.4135), 4) = -0.2186 And
-        Round(NormSInv(0.2454), 4) = -0.689 And
-        Round(NormSInv(0.2711), 4) = -0.6095 And
-        Round(NormSInv(0.2287), 4) = -0.7431 And
-        Round(NormSInv(0.6517), 4) = 0.3899 And
-        Round(NormSInv(0.8663), 4) = 1.1091 And
-        Round(NormSInv(0.9275), 4) = 1.4574 And
-        Round(NormSInv(0.7089), 4) = 0.5502 And
-        Round(NormSInv(0.1234), 4) = -1.1582 And
-        Round(NormSInv(0.0837), 4) = -1.3806 And
-        Round(NormSInv(0.6243), 4) = 0.3168 And
-        Round(NormSInv(0.0353), 4) = -1.808 And
-        Round(NormSInv(0.9767), 4) = 1.9899
+      AssertAlmostEqual(Hash({6, 4, 7, 1, 1, 4, 2, 4}), 2.2326, 4)
+      AssertAlmostEqual(Hash({8, 4, 7, 3, 2, 6, 5, 7}), 3.6609, 4)
+      AssertAlmostEqual(Hash({1, 5, 4, 7, 7, 8, 5, 1}), 1.8084, 4)
 
-      UnitTestsPassed = UnitTestsPassed And
-        Round(TInv2T(0.3353, 16), 4) = 0.9934 And
-        Round(TInv2T(0.4792, 12), 4) = 0.7303 And
-        Round(TInv2T(0.4384, 9), 4) = 0.8108 And
-        Round(TInv2T(0.0905, 6), 4) = 2.0152 And
-        Round(TInv2T(0.63, 16), 4) = 0.4911 And
-        Round(TInv2T(0.1533, 11), 4) = 1.5339 And
-        Round(TInv2T(0.6297, 12), 4) = 0.4948 And
-        Round(TInv2T(0.1512, 4), 4) = 1.7714 And
-        Round(TInv2T(0.4407, 18), 4) = 0.7884 And
-        Round(TInv2T(0.6169, 15), 4) = 0.5108 And
-        Round(TInv2T(0.6077, 18), 4) = 0.5225 And
-        Round(TInv2T(0.4076, 20), 4) = 0.8459 And
-        Round(TInv2T(0.1462, 18), 4) = 1.5187 And
-        Round(TInv2T(0.3421, 6), 4) = 1.0315 And
-        Round(TInv2T(0.6566, 6), 4) = 0.4676 And
-        Round(TInv2T(0.2986, 1), 4) = 1.9733 And
-        Round(TInv2T(0.2047, 14), 4) = 1.3303 And
-        Round(TInv2T(0.5546, 2), 4) = 0.7035 And
-        Round(TInv2T(0.0862, 6), 4) = 2.0504 And
-        Round(TInv2T(0.6041, 10), 4) = 0.5354
+      AssertTrue(HasCorrelation(0.9, 45))
+      AssertTrue(HasCorrelation(0.85, 45))
+      AssertFalse(HasCorrelation(0.8, 45))
+      AssertFalse(HasCorrelation(0.9, 0))
+      AssertTrue(HasCorrelation(0.9, 35))
+      AssertFalse(HasCorrelation(0.9, 25))
+      AssertFalse(HasCorrelation(0.8, 35))
+      AssertFalse(HasCorrelation(-0.9, 45))
+      AssertFalse(HasCorrelation(0.9, -45))
+      AssertFalse(HasCorrelation(0, 0))
 
-      UnitTestsPassed = UnitTestsPassed And
-        Round(TInv(0.4097, 8), 4) = -0.2359 And
-        Round(TInv(0.174, 19), 4) = -0.9623 And
-        Round(TInv(0.6545, 15), 4) = 0.4053 And
-        Round(TInv(0.7876, 5), 4) = 0.8686 And
-        Round(TInv(0.2995, 3), 4) = -0.5861 And
-        Round(TInv(0.0184, 2), 4) = -5.0679 And
-        Round(TInv(0.892, 1), 4) = 2.8333 And
-        Round(TInv(0.7058, 18), 4) = 0.551 And
-        Round(TInv(0.3783, 2), 4) = -0.3549 And
-        Round(TInv(0.2774, 15), 4) = -0.6041 And
-        Round(TInv(0.0406, 8), 4) = -1.9945 And
-        Round(TInv(0.1271, 4), 4) = -1.3303 And
-        Round(TInv(0.241, 18), 4) = -0.718 And
-        Round(TInv(0.0035, 1), 4) = -90.942 And
-        Round(TInv(0.1646, 10), 4) = -1.0257 And
-        Round(TInv(0.279, 11), 4) = -0.6041 And
-        Round(TInv(0.8897, 4), 4) = 1.4502 And
-        Round(TInv(0.5809, 13), 4) = 0.2083 And
-        Round(TInv(0.3776, 11), 4) = -0.3197 And
-        Round(TInv(0.5267, 15), 4) = 0.0681
+      AssertTrue(HasAnticorrelation(-0.9, -45, False))
+      AssertFalse(HasAnticorrelation(-0.85, -45, True))
+      AssertFalse(HasAnticorrelation(-0.8, -45, False))
+      AssertFalse(HasAnticorrelation(-0.9, 0, False))
+      AssertTrue(HasAnticorrelation(-0.9, -35, False))
+      AssertFalse(HasAnticorrelation(-0.9, -25, False))
+      AssertFalse(HasAnticorrelation(-0.8, -35, False))
+      AssertFalse(HasAnticorrelation(0.9, -45, False))
+      AssertFalse(HasAnticorrelation(-0.9, 45, False))
+      AssertFalse(HasAnticorrelation(0, 0, False))
 
-      UnitTestsPassed = UnitTestsPassed And
-        Round(MeanAbsoluteDeviationScaleFactor, 4) = 1.2533
+      AssertEqual(Suppress(5, 0, 0, 0, 0, False), 5)
+      AssertEqual(Suppress(5, -0.8, 0, 0, 0, False), 5)
+      AssertEqual(Suppress(5, -0.9, -45, 0, 0, False), 0)
+      AssertEqual(Suppress(5, -0.9, 0, 0, 0, True), 5)
+      AssertEqual(Suppress(5, 0, 0, 0.8, 0, False), 5)
+      AssertEqual(Suppress(5, 0, 0, 0.9, 45, False), 0)
+      AssertEqual(Suppress(5, 0, 0, 0.9, 45, True), 0)
+      AssertEqual(Suppress(-0.9, -0.85, 0, 0, 0, False), -0.9)
+      AssertEqual(Suppress(-0.9, -0.95, -45, 0, 0, False), 0)
+      AssertEqual(Suppress(0.9, 0, 0, 0.85, 45, False), 0)
+      AssertEqual(Suppress(0.9, 0, 0, 0.95, 1, True), 0.9)
+      AssertEqual(Suppress(-0.9, -0.99, -45, 0, 0, False), 0)
+      AssertEqual(Suppress(-0.9, 0.99, 0, 0, 0, False), -0.9)
+      AssertEqual(Suppress(-0.9, 0.99, 0, 0, 0, True), -0.9)
+      AssertEqual(Suppress(0.99, -0.9, -45, 0, 0, False), 0)
+      AssertEqual(Suppress(0.99, -0.9, 0, 0, 0, True), 0.99)
+      AssertEqual(Suppress(-0.99, 0, 0, 0, 0, True), -0.99)
+      AssertEqual(Suppress(0.99, 0, 0, 0, 0, True), 0.99)
+      AssertEqual(Suppress(-0.98, -0.99, -1, 0, 0, False), -0.98)
+      AssertEqual(Suppress(-0.98, -0.99, -45, 0, 0, False), 0)
 
-      UnitTestsPassed = UnitTestsPassed And
-        Round(MedianAbsoluteDeviationScaleFactor(1), 4) = 1 And
-        Round(MedianAbsoluteDeviationScaleFactor(2), 4) = 1.2247 And
-        Round(MedianAbsoluteDeviationScaleFactor(4), 4) = 1.3501 And
-        Round(MedianAbsoluteDeviationScaleFactor(6), 4) = 1.3936 And
-        Round(MedianAbsoluteDeviationScaleFactor(8), 4) = 1.4157 And
-        Round(MedianAbsoluteDeviationScaleFactor(10), 4) = 1.429 And
-        Round(MedianAbsoluteDeviationScaleFactor(12), 4) = 1.4378 And
-        Round(MedianAbsoluteDeviationScaleFactor(14), 4) = 1.4442 And
-        Round(MedianAbsoluteDeviationScaleFactor(16), 4) = 1.449 And
-        Round(MedianAbsoluteDeviationScaleFactor(18), 4) = 1.4527 And
-        Round(MedianAbsoluteDeviationScaleFactor(20), 4) = 1.4557 And
-        Round(MedianAbsoluteDeviationScaleFactor(22), 4) = 1.4581 And
-        Round(MedianAbsoluteDeviationScaleFactor(24), 4) = 1.4602 And
-        Round(MedianAbsoluteDeviationScaleFactor(26), 4) = 1.4619 And
-        Round(MedianAbsoluteDeviationScaleFactor(28), 4) = 1.4634 And
-        Round(MedianAbsoluteDeviationScaleFactor(30), 4) = 1.4826 And
-        Round(MedianAbsoluteDeviationScaleFactor(32), 4) = 1.4826 And
-        Round(MedianAbsoluteDeviationScaleFactor(34), 4) = 1.4826 And
-        Round(MedianAbsoluteDeviationScaleFactor(36), 4) = 1.4826 And
-        Round(MedianAbsoluteDeviationScaleFactor(38), 4) = 1.4826
+      AssertAlmostEqual(NormSInv(0.95), 1.6449, 4)
+      AssertAlmostEqual(NormSInv(0.99), 2.3263, 4)
+      AssertAlmostEqual(NormSInv(0.9999), 3.719, 4)
+      AssertAlmostEqual(NormSInv(0.8974), 1.2669, 4)
+      AssertAlmostEqual(NormSInv(0.7663), 0.7267, 4)
+      AssertAlmostEqual(NormSInv(0.2248), -0.7561, 4)
+      AssertAlmostEqual(NormSInv(0.9372), 1.5317, 4)
+      AssertAlmostEqual(NormSInv(0.4135), -0.2186, 4)
+      AssertAlmostEqual(NormSInv(0.2454), -0.689, 4)
+      AssertAlmostEqual(NormSInv(0.2711), -0.6095, 4)
+      AssertAlmostEqual(NormSInv(0.2287), -0.7431, 4)
+      AssertAlmostEqual(NormSInv(0.6517), 0.3899, 4)
+      AssertAlmostEqual(NormSInv(0.8663), 1.1091, 4)
+      AssertAlmostEqual(NormSInv(0.9275), 1.4574, 4)
+      AssertAlmostEqual(NormSInv(0.7089), 0.5502, 4)
+      AssertAlmostEqual(NormSInv(0.1234), -1.1582, 4)
+      AssertAlmostEqual(NormSInv(0.0837), -1.3806, 4)
+      AssertAlmostEqual(NormSInv(0.6243), 0.3168, 4)
+      AssertAlmostEqual(NormSInv(0.0353), -1.808, 4)
+      AssertAlmostEqual(NormSInv(0.9767), 1.9899, 4)
 
-      UnitTestsPassed = UnitTestsPassed And
-        Round(ControlLimitRejectionCriterion(0.99, 1), 4) = 63.6567 And
-        Round(ControlLimitRejectionCriterion(0.99, 2), 4) = 9.9248 And
-        Round(ControlLimitRejectionCriterion(0.99, 4), 4) = 4.6041 And
-        Round(ControlLimitRejectionCriterion(0.99, 6), 4) = 3.7074 And
-        Round(ControlLimitRejectionCriterion(0.99, 8), 4) = 3.3554 And
-        Round(ControlLimitRejectionCriterion(0.99, 10), 4) = 3.1693 And
-        Round(ControlLimitRejectionCriterion(0.99, 12), 4) = 3.0545 And
-        Round(ControlLimitRejectionCriterion(0.99, 14), 4) = 2.9768 And
-        Round(ControlLimitRejectionCriterion(0.99, 16), 4) = 2.9208 And
-        Round(ControlLimitRejectionCriterion(0.99, 20), 4) = 2.8453 And
-        Round(ControlLimitRejectionCriterion(0.99, 22), 4) = 2.8188 And
-        Round(ControlLimitRejectionCriterion(0.99, 24), 4) = 2.7969 And
-        Round(ControlLimitRejectionCriterion(0.99, 28), 4) = 2.7633 And
-        Round(ControlLimitRejectionCriterion(0.99, 30), 4) = 2.5758 And
-        Round(ControlLimitRejectionCriterion(0.99, 32), 4) = 2.5758 And
-        Round(ControlLimitRejectionCriterion(0.99, 34), 4) = 2.5758 And
-        Round(ControlLimitRejectionCriterion(0.95, 30), 4) = 1.96 And
-        Round(ControlLimitRejectionCriterion(0.90, 30), 4) = 1.6449 And
-        Round(ControlLimitRejectionCriterion(0.95, 25), 4) = 2.0595 And
-        Round(ControlLimitRejectionCriterion(0.90, 20), 4) = 1.7247
+      AssertAlmostEqual(TInv2T(0.3353, 16), 0.9934, 4)
+      AssertAlmostEqual(TInv2T(0.4792, 12), 0.7303, 4)
+      AssertAlmostEqual(TInv2T(0.4384, 9), 0.8108, 4)
+      AssertAlmostEqual(TInv2T(0.0905, 6), 2.0152, 4)
+      AssertAlmostEqual(TInv2T(0.63, 16), 0.4911, 4)
+      AssertAlmostEqual(TInv2T(0.1533, 11), 1.5339, 4)
+      AssertAlmostEqual(TInv2T(0.6297, 12), 0.4948, 4)
+      AssertAlmostEqual(TInv2T(0.1512, 4), 1.7714, 4)
+      AssertAlmostEqual(TInv2T(0.4407, 18), 0.7884, 4)
+      AssertAlmostEqual(TInv2T(0.6169, 15), 0.5108, 4)
+      AssertAlmostEqual(TInv2T(0.6077, 18), 0.5225, 4)
+      AssertAlmostEqual(TInv2T(0.4076, 20), 0.8459, 4)
+      AssertAlmostEqual(TInv2T(0.1462, 18), 1.5187, 4)
+      AssertAlmostEqual(TInv2T(0.3421, 6), 1.0315, 4)
+      AssertAlmostEqual(TInv2T(0.6566, 6), 0.4676, 4)
+      AssertAlmostEqual(TInv2T(0.2986, 1), 1.9733, 4)
+      AssertAlmostEqual(TInv2T(0.2047, 14), 1.3303, 4)
+      AssertAlmostEqual(TInv2T(0.5546, 2), 0.7035, 4)
+      AssertAlmostEqual(TInv2T(0.0862, 6), 2.0504, 4)
+      AssertAlmostEqual(TInv2T(0.6041, 10), 0.5354, 4)
 
-      UnitTestsPassed = UnitTestsPassed And
-        NonNaNCount({60}) = 1 And
-        NonNaNCount({60, 70}) = 2 And
-        NonNaNCount({60, 70, NaN}) = 2 And
-        NonNaNCount({60, 70, NaN, 20}) = 3 And
-        NonNaNCount({60, 70, NaN, 20, NaN}) = 3 And
-        NonNaNCount({60, 70, NaN, 20, NaN, NaN}) = 3 And
-        NonNaNCount({70, NaN, 20, NaN, NaN, 5}) = 3 And
-        NonNaNCount({NaN, 20, NaN, NaN, 5, 10}) = 3 And
-        NonNaNCount({20, NaN, NaN, 5, 10, 15}) = 4 And
-        NonNaNCount({NaN, NaN, 5, 10, 15, 20}) = 4 And
-        NonNaNCount({NaN, 5, 10, 15, 20, 25}) = 5 And
-        NonNaNCount({5, 10, 15, 20, 25, 30}) = 6 And
-        NonNaNCount({10, 15, 20, 25, 30}) = 5 And
-        NonNaNCount({15, 20, 25, 30}) = 4 And
-        NonNaNCount({20, 25, 30}) = 3 And
-        NonNaNCount({25, 30}) = 2 And
-        NonNaNCount({30}) = 1 And
-        NonNaNCount({}) = 0 And
-        NonNaNCount({NaN}) = 0 And
-        NonNaNCount({NaN, NaN}) = 0
+      AssertAlmostEqual(TInv(0.4097, 8), -0.2359, 4)
+      AssertAlmostEqual(TInv(0.174, 19), -0.9623, 4)
+      AssertAlmostEqual(TInv(0.6545, 15), 0.4053, 4)
+      AssertAlmostEqual(TInv(0.7876, 5), 0.8686, 4)
+      AssertAlmostEqual(TInv(0.2995, 3), -0.5861, 4)
+      AssertAlmostEqual(TInv(0.0184, 2), -5.0679, 4)
+      AssertAlmostEqual(TInv(0.892, 1), 2.8333, 4)
+      AssertAlmostEqual(TInv(0.7058, 18), 0.551, 4)
+      AssertAlmostEqual(TInv(0.3783, 2), -0.3549, 4)
+      AssertAlmostEqual(TInv(0.2774, 15), -0.6041, 4)
+      AssertAlmostEqual(TInv(0.0406, 8), -1.9945, 4)
+      AssertAlmostEqual(TInv(0.1271, 4), -1.3303, 4)
+      AssertAlmostEqual(TInv(0.241, 18), -0.718, 4)
+      AssertAlmostEqual(TInv(0.0035, 1), -90.942, 4)
+      AssertAlmostEqual(TInv(0.1646, 10), -1.0257, 4)
+      AssertAlmostEqual(TInv(0.279, 11), -0.6041, 4)
+      AssertAlmostEqual(TInv(0.8897, 4), 1.4502, 4)
+      AssertAlmostEqual(TInv(0.5809, 13), 0.2083, 4)
+      AssertAlmostEqual(TInv(0.3776, 11), -0.3197, 4)
+      AssertAlmostEqual(TInv(0.5267, 15), 0.0681, 4)
 
-      UnitTestsPassed = UnitTestsPassed And
-        Round(Mean({60}), 4) = 60 And
-        Round(Mean({72}), 4) = 72 And
-        Round(Mean({32, 95}), 4) = 63.5 And
-        Round(Mean({81, 75}), 4) = 78 And
-        Round(Mean({67, 76, 25}), 4) = 56 And
-        Round(Mean({25, NaN, 27}), 4) = 26 And
-        Round(Mean({31, 73, 83, 81}), 4) = 67 And
-        Round(Mean({18, 58, 47, 47}), 4) = 42.5 And
-        Round(Mean({10, NaN, 20, 30, NaN}), 4) = 20 And
-        Round(Mean({67, 90, 74, 32, 62}), 4) = 65 And
-        Round(Mean({78, 0, 98, 65, 69, 57}), 4) = 61.1667 And
-        Round(Mean({49, 35, 74, 25, 28, 92}), 4) = 50.5 And
-        Round(Mean({7, 64, 22, 7, 42, 34, 30}), 4) = 29.4286 And
-        Round(Mean({13, 29, 39, 33, 96, 43, 17}), 4) = 38.5714 And
-        Round(Mean({59, 78, 53, 7, 18, 44, 63, 40}), 4) = 45.25 And
-        Round(Mean({77, 71, 99, 39, 50, 94, 67, 30}), 4) = 65.875 And
-        Round(Mean({91, 69, 63, 5, 44, 93, 89, 45, 50}), 4) = 61 And
-        Round(Mean({12, 84, 12, 94, 52, 17, 1, 13, 37}), 4) = 35.7778 And
-        Round(Mean({18, 14, 54, 40, 73, 77, 4, 91, 53, 10}), 4) = 43.4 And
-        Round(Mean({80, 30, 1, 92, 44, 61, 18, 72, 63, 41}), 4) = 50.2
+      AssertAlmostEqual(MeanAbsoluteDeviationScaleFactor, 1.2533, 4)
 
-      UnitTestsPassed = UnitTestsPassed And
-        Median({57}) = 57 And
-        Median({46}) = 46 And
-        Median({79, 86}) = 82.5 And
-        Median({46, 45}) = 45.5 And
-        Median({10, NaN, 20}) = 15 And
-        Median({58, 79, 68}) = 68 And
-        Median({NaN, 10, 30, NaN}) = 20 And
-        Median({30, 10, NaN, 15}) = 15 And
-        IsNaN(Median({NaN, NaN, NaN, NaN, NaN})) And
-        Median({19, 3, 9, 14, 31}) = 14 And
-        Median({2, 85, 33, 10, 38, 56}) = 35.5 And
-        Median({42, 65, 57, 92, 56, 59}) = 58 And
-        Median({53, 17, 18, 73, 34, 96, 9}) = 34 And
-        Median({23, 23, 43, 74, 8, 51, 88}) = 43 And
-        Median({72, 46, 39, 7, 83, 96, 18, 50}) = 48 And
-        Median({50, 25, 28, 99, 79, 97, 30, 16}) = 40 And
-        Median({7, 22, 58, 32, 5, 90, 46, 91, 66}) = 46 And
-        Median({81, 64, 5, 23, 48, 18, 19, 87, 15}) = 23 And
-        Median({33, 82, 42, 33, 81, 56, 13, 13, 54, 6}) = 37.5 And
-        Median({55, 40, 75, 23, 53, 85, 59, 9, 72, 44}) = 54
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(1), 1, 4)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(2), 1.2247, 4)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(4), 1.3501, 4)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(6), 1.3936, 4)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(8), 1.4157, 4)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(10), 1.429, 4)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(12), 1.4378, 4)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(14), 1.4442, 4)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(16), 1.449, 4)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(18), 1.4527, 4)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(20), 1.4557, 4)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(22), 1.4581, 4)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(24), 1.4602, 4)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(26), 1.4619, 4)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(28), 1.4634, 4)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(30), 1.4826, 4)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(32), 1.4826, 4)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(34), 1.4826, 4)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(36), 1.4826, 4)
+      AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(38), 1.4826, 4)
 
-      UnitTestsPassed = UnitTestsPassed And
-        Hash(AbsoluteDeviation({100, 44, 43, 45}, 44)) =
-        Hash({56, 0, 1, 1}) And
-        Hash(AbsoluteDeviation({76, 70, 84, 39}, 77)) =
-        Hash({1, 7, 7, 38}) And
-        Hash(AbsoluteDeviation({15, 74, 54, 23}, 93)) =
-        Hash({78, 19, 39, 70}) And
-        Hash(AbsoluteDeviation({48, 12, 85, 50}, 9)) =
-        Hash({39, 3, 76, 41}) And
-        Hash(AbsoluteDeviation({7, 24, 28, 41}, 69)) =
-        Hash({62, 45, 41, 28}) And
-        Hash(AbsoluteDeviation({55, 46, 81, 50}, 88)) =
-        Hash({33, 42, 7, 38}) And
-        Hash(AbsoluteDeviation({84, 14, 23, 54}, 52)) =
-        Hash({32, 38, 29, 2}) And
-        Hash(AbsoluteDeviation({92, 92, 45, 21}, 49)) =
-        Hash({43, 43, 4, 28}) And
-        Hash(AbsoluteDeviation({3, 9, 70, 51}, 36)) =
-        Hash({33, 27, 34, 15}) And
-        Hash(AbsoluteDeviation({14, 7, 8, 53}, 37)) =
-        Hash({23, 30, 29, 16}) And
-        Hash(AbsoluteDeviation({66, 37, 23, 80}, 3)) =
-        Hash({63, 34, 20, 77}) And
-        Hash(AbsoluteDeviation({93, 45, 18, 50}, 75)) =
-        Hash({18, 30, 57, 25}) And
-        Hash(AbsoluteDeviation({2, 73, 13, 0}, 37)) =
-        Hash({35, 36, 24, 37}) And
-        Hash(AbsoluteDeviation({76, 77, 56, 11}, 77)) =
-        Hash({1, 0, 21, 66}) And
-        Hash(AbsoluteDeviation({90, 36, 72, 54}, 81)) =
-        Hash({9, 45, 9, 27}) And
-        Hash(AbsoluteDeviation({5, 62, 50, 23}, 19)) =
-        Hash({14, 43, 31, 4}) And
-        Hash(AbsoluteDeviation({79, 51, 54, 24}, 60)) =
-        Hash({19, 9, 6, 36}) And
-        Hash(AbsoluteDeviation({26, 53, 38, 42}, 60)) =
-        Hash({34, 7, 22, 18}) And
-        Hash(AbsoluteDeviation({4, 100, 32, 23}, 32)) =
-        Hash({28, 68, 0, 9}) And
-        Hash(AbsoluteDeviation({15, 94, 58, 67}, 78)) =
-        Hash({63, 16, 20, 11})
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 1), 63.6567, 4)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 2), 9.9248, 4)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 4), 4.6041, 4)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 6), 3.7074, 4)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 8), 3.3554, 4)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 10), 3.1693, 4)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 12), 3.0545, 4)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 14), 2.9768, 4)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 16), 2.9208, 4)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 20), 2.8453, 4)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 22), 2.8188, 4)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 24), 2.7969, 4)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 28), 2.7633, 4)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 30), 2.5758, 4)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 32), 2.5758, 4)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 34), 2.5758, 4)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.95, 30), 1.96, 4)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.90, 30), 1.6449, 4)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.95, 25), 2.0595, 4)
+      AssertAlmostEqual(ControlLimitRejectionCriterion(0.90, 20), 1.7247, 4)
 
-      UnitTestsPassed = UnitTestsPassed And
-        Round(MeanAbsoluteDeviation(
-        {19}), 4) = 0 And
-        Round(MeanAbsoluteDeviation(
-        {86}), 4) = 0 And
-        Round(MeanAbsoluteDeviation(
-        {7, 24}), 4) = 8.5 And
-        Round(MeanAbsoluteDeviation(
-        {12, 96}), 4) = 42 And
-        Round(MeanAbsoluteDeviation(
-        {19, 74, 70}), 4) = 23.5556 And
-        Round(MeanAbsoluteDeviation(
-        {96, 93, 65}), 4) = 13.1111 And
-        Round(MeanAbsoluteDeviation(
-        {47, 29, 24, 11}), 4) = 10.25 And
-        Round(MeanAbsoluteDeviation(
-        {3, 43, 53, 80}), 4) = 21.75 And
-        Round(MeanAbsoluteDeviation(
-        {17, 27, 98, 85, 51}), 4) = 28.72 And
-        Round(MeanAbsoluteDeviation(
-        {2, 82, 63, 1, 49}), 4) = 30.32 And
-        Round(MeanAbsoluteDeviation(
-        {9, 25, 41, 85, 82, 55}), 4) = 24.5 And
-        Round(MeanAbsoluteDeviation(
-        {5, 74, 53, 97, 81, 21}), 4) = 28.8333 And
-        Round(MeanAbsoluteDeviation(
-        {26, 81, 9, 18, 39, 97, 21}), 4) = 27.102 And
-        Round(MeanAbsoluteDeviation(
-        {5, 83, 31, 24, 55, 22, 87}), 4) = 26.6939 And
-        Round(MeanAbsoluteDeviation(
-        {22, 84, 6, 79, 89, 71, 34, 56}), 4) = 25.8438 And
-        Round(MeanAbsoluteDeviation(
-        {33, 39, 6, 88, 69, 11, 76, 65}), 4) = 26.125 And
-        Round(MeanAbsoluteDeviation(
-        {31, 52, 12, 60, 52, 44, 47, 81, 34}), 4) = 13.9012 And
-        Round(MeanAbsoluteDeviation(
-        {64, 63, 54, 94, 25, 80, 97, 45, 51}), 4) = 17.8519 And
-        Round(MeanAbsoluteDeviation(
-        {47, 22, 52, 22, 10, 38, 94, 85, 54, 41}), 4) = 19.9 And
-        Round(MeanAbsoluteDeviation(
-        {7, 12, 84, 29, 41, 8, 18, 15, 16, 84}), 4) = 22.96
+      AssertEqual(NonNaNCount({60}), 1)
+      AssertEqual(NonNaNCount({60, 70}), 2)
+      AssertEqual(NonNaNCount({60, 70, NaN}), 2)
+      AssertEqual(NonNaNCount({60, 70, NaN, 20}), 3)
+      AssertEqual(NonNaNCount({60, 70, NaN, 20, NaN}), 3)
+      AssertEqual(NonNaNCount({60, 70, NaN, 20, NaN, NaN}), 3)
+      AssertEqual(NonNaNCount({70, NaN, 20, NaN, NaN, 5}), 3)
+      AssertEqual(NonNaNCount({NaN, 20, NaN, NaN, 5, 10}), 3)
+      AssertEqual(NonNaNCount({20, NaN, NaN, 5, 10, 15}), 4)
+      AssertEqual(NonNaNCount({NaN, NaN, 5, 10, 15, 20}), 4)
+      AssertEqual(NonNaNCount({NaN, 5, 10, 15, 20, 25}), 5)
+      AssertEqual(NonNaNCount({5, 10, 15, 20, 25, 30}), 6)
+      AssertEqual(NonNaNCount({10, 15, 20, 25, 30}), 5)
+      AssertEqual(NonNaNCount({15, 20, 25, 30}), 4)
+      AssertEqual(NonNaNCount({20, 25, 30}), 3)
+      AssertEqual(NonNaNCount({25, 30}), 2)
+      AssertEqual(NonNaNCount({30}), 1)
+      AssertEqual(NonNaNCount({}), 0)
+      AssertEqual(NonNaNCount({NaN}), 0)
+      AssertEqual(NonNaNCount({NaN, NaN}), 0)
 
-      UnitTestsPassed = UnitTestsPassed And
-        MedianAbsoluteDeviation(
-        {2}) = 0 And
-        MedianAbsoluteDeviation(
-        {37}) = 0 And
-        MedianAbsoluteDeviation(
-        {87, 37}) = 25 And
-        MedianAbsoluteDeviation(
-        {13, 74}) = 30.5 And
-        MedianAbsoluteDeviation(
-        {39, 52, 93}) = 13 And
-        MedianAbsoluteDeviation(
-        {90, 24, 47}) = 23 And
-        MedianAbsoluteDeviation(
-        {11, 51, 20, 62}) = 20 And
-        MedianAbsoluteDeviation(
-        {74, 35, 9, 95}) = 30 And
-        MedianAbsoluteDeviation(
-        {32, 46, 15, 90, 66}) = 20 And
-        MedianAbsoluteDeviation(
-        {91, 19, 50, 55, 44}) = 6 And
-        MedianAbsoluteDeviation(
-        {2, 64, 87, 65, 61, 97}) = 13 And
-        MedianAbsoluteDeviation(
-        {35, 66, 73, 74, 71, 93}) = 4 And
-        MedianAbsoluteDeviation(
-        {54, 81, 80, 36, 11, 36, 45}) = 9 And
-        MedianAbsoluteDeviation(
-        {14, 69, 40, 68, 75, 10, 69}) = 7 And
-        MedianAbsoluteDeviation(
-        {40, 51, 28, 21, 91, 95, 66, 3}) = 22.5 And
-        MedianAbsoluteDeviation(
-        {57, 87, 94, 46, 51, 27, 10, 7}) = 30 And
-        MedianAbsoluteDeviation(
-        {3, 89, 62, 84, 86, 37, 14, 72, 33}) = 25 And
-        MedianAbsoluteDeviation(
-        {48, 6, 14, 2, 74, 89, 15, 8, 83}) = 13 And
-        MedianAbsoluteDeviation(
-        {2, 22, 91, 84, 43, 96, 55, 3, 9, 11}) = 26.5 And
-        MedianAbsoluteDeviation(
-        {6, 96, 82, 26, 47, 84, 34, 39, 60, 99}) = 28
+      AssertAlmostEqual(Mean({60}), 60, 4)
+      AssertAlmostEqual(Mean({72}), 72, 4)
+      AssertAlmostEqual(Mean({32, 95}), 63.5, 4)
+      AssertAlmostEqual(Mean({81, 75}), 78, 4)
+      AssertAlmostEqual(Mean({67, 76, 25}), 56, 4)
+      AssertAlmostEqual(Mean({25, NaN, 27}), 26, 4)
+      AssertAlmostEqual(Mean({31, 73, 83, 81}), 67, 4)
+      AssertAlmostEqual(Mean({18, 58, 47, 47}), 42.5, 4)
+      AssertAlmostEqual(Mean({10, NaN, 20, 30, NaN}), 20, 4)
+      AssertAlmostEqual(Mean({67, 90, 74, 32, 62}), 65, 4)
+      AssertAlmostEqual(Mean({78, 0, 98, 65, 69, 57}), 61.1667, 4)
+      AssertAlmostEqual(Mean({49, 35, 74, 25, 28, 92}), 50.5, 4)
+      AssertAlmostEqual(Mean({7, 64, 22, 7, 42, 34, 30}), 29.4286, 4)
+      AssertAlmostEqual(Mean({13, 29, 39, 33, 96, 43, 17}), 38.5714, 4)
+      AssertAlmostEqual(Mean({59, 78, 53, 7, 18, 44, 63, 40}), 45.25, 4)
+      AssertAlmostEqual(Mean({77, 71, 99, 39, 50, 94, 67, 30}), 65.875, 4)
+      AssertAlmostEqual(Mean({91, 69, 63, 5, 44, 93, 89, 45, 50}), 61, 4)
+      AssertAlmostEqual(Mean({12, 84, 12, 94, 52, 17, 1, 13, 37}), 35.7778, 4)
+      AssertAlmostEqual(Mean({18, 14, 54, 40, 73, 77, 4, 91, 53, 10}), 43.4, 4)
+      AssertAlmostEqual(Mean({80, 30, 1, 92, 44, 61, 18, 72, 63, 41}), 50.2, 4)
 
-      UnitTestsPassed = UnitTestsPassed And
-        Not UseMeanAbsoluteDeviation({6, 5, 5, 9}) And
-        Not UseMeanAbsoluteDeviation({2, 2, 10, 9}) And
-        Not UseMeanAbsoluteDeviation({4, 0, 10, 6}) And
-        Not UseMeanAbsoluteDeviation({6, 10, 1, 1}) And
-        UseMeanAbsoluteDeviation({3, 0, 0, 0}) And
-        Not UseMeanAbsoluteDeviation({10, 0, 8, 5}) And
-        Not UseMeanAbsoluteDeviation({7, 4, 5, 3}) And
-        UseMeanAbsoluteDeviation({5, 1, 5, 5}) And
-        Not UseMeanAbsoluteDeviation({2, 7, 3, 8}) And
-        Not UseMeanAbsoluteDeviation({2, 6, 10, 1}) And
-        Not UseMeanAbsoluteDeviation({1, 6, 3, 5}) And
-        Not UseMeanAbsoluteDeviation({3, 9, 7, 3}) And
-        UseMeanAbsoluteDeviation({5, 5, 8, 5}) And
-        Not UseMeanAbsoluteDeviation({5, 10, 5, 4}) And
-        Not UseMeanAbsoluteDeviation({0, 2, 4, 1}) And
-        Not UseMeanAbsoluteDeviation({7, 3, 0, 10}) And
-        UseMeanAbsoluteDeviation({4, 4, 4, 0}) And
-        Not UseMeanAbsoluteDeviation({5, 7, 4, 5}) And
-        UseMeanAbsoluteDeviation({2, 2, 2, 2}) And
-        UseMeanAbsoluteDeviation({9, 4, 4, 4})
+      AssertEqual({57}, 57)
+      AssertEqual({46}, 46)
+      AssertEqual({79, 86}, 82.5)
+      AssertEqual({46, 45}, 45.5)
+      AssertEqual({10, NaN, 20}, 15)
+      AssertEqual({58, 79, 68}, 68)
+      AssertEqual({NaN, 10, 30, NaN}, 20)
+      AssertEqual({30, 10, NaN, 15}, 15)
+      AssertNaN(Median({NaN, NaN, NaN, NaN, NaN})))
+      AssertEqual({19, 3, 9, 14, 31}, 14)
+      AssertEqual({2, 85, 33, 10, 38, 56}, 35.5)
+      AssertEqual({42, 65, 57, 92, 56, 59}, 58)
+      AssertEqual({53, 17, 18, 73, 34, 96, 9}, 34)
+      AssertEqual({23, 23, 43, 74, 8, 51, 88}, 43)
+      AssertEqual({72, 46, 39, 7, 83, 96, 18, 50}, 48)
+      AssertEqual({50, 25, 28, 99, 79, 97, 30, 16}, 40)
+      AssertEqual({7, 22, 58, 32, 5, 90, 46, 91, 66}, 46)
+      AssertEqual({81, 64, 5, 23, 48, 18, 19, 87, 15}, 23)
+      AssertEqual({33, 82, 42, 33, 81, 56, 13, 13, 54, 6}, 37.5)
+      AssertEqual({55, 40, 75, 23, 53, 85, 59, 9, 72, 44}, 54)
 
-      UnitTestsPassed = UnitTestsPassed And
-        CentralTendency({3, 0, 0, 0}) = 0.75 And
-        CentralTendency({2, 10, 0, 1}) = 1.5 And
-        CentralTendency({7, 7, 7, 1}) = 5.5 And
-        CentralTendency({5, 7, 2, 8}) = 6 And
-        CentralTendency({9, 3, 4, 5}) = 4.5 And
-        CentralTendency({3, 3, 3, 3}) = 3 And
-        CentralTendency({8, 4, 2, 10}) = 6 And
-        CentralTendency({2, 1, 10, 10}) = 6 And
-        CentralTendency({3, 3, 6, 2}) = 3 And
-        CentralTendency({9, 9, 6, 5}) = 7.5 And
-        CentralTendency({2, 8, 8, 9}) = 8 And
-        CentralTendency({7, 7, 4, 1}) = 5.5 And
-        CentralTendency({5, 5, 5, 0}) = 3.75 And
-        CentralTendency({4, 2, 3, 7}) = 3.5 And
-        CentralTendency({2, 1, 5, 1}) = 1.5 And
-        CentralTendency({9, 4, 5, 0}) = 4.5 And
-        CentralTendency({1, 1, 7, 1}) = 2.5 And
-        CentralTendency({1, 5, 9, 5}) = 5 And
-        CentralTendency({3, 5, 1, 9}) = 4 And
-        CentralTendency({0, 0, 0, 0}) = 0
+      AssertArrayEqual(AbsoluteDeviation({100, 44, 43, 45}, 44), {56, 0, 1, 1})
+      AssertArrayEqual(AbsoluteDeviation({76, 70, 84, 39}, 77), {1, 7, 7, 38})
+      AssertArrayEqual(AbsoluteDeviation(
+        {15, 74, 54, 23}, 93), {78, 19, 39, 70})
+      AssertArrayEqual(AbsoluteDeviation({48, 12, 85, 50}, 9), {39, 3, 76, 41})
+      AssertArrayEqual(AbsoluteDeviation({7, 24, 28, 41}, 69), {62, 45, 41, 28})
+      AssertArrayEqual(AbsoluteDeviation({55, 46, 81, 50}, 88), {33, 42, 7, 38})
+      AssertArrayEqual(AbsoluteDeviation({84, 14, 23, 54}, 52), {32, 38, 29, 2})
+      AssertArrayEqual(AbsoluteDeviation({92, 92, 45, 21}, 49), {43, 43, 4, 28})
+      AssertArrayEqual(AbsoluteDeviation({3, 9, 70, 51}, 36), {33, 27, 34, 15})
+      AssertArrayEqual(AbsoluteDeviation({14, 7, 8, 53}, 37), {23, 30, 29, 16})
+      AssertArrayEqual(AbsoluteDeviation({66, 37, 23, 80}, 3), {63, 34, 20, 77})
+      AssertArrayEqual(AbsoluteDeviation(
+        {93, 45, 18, 50}, 75), {18, 30, 57, 25})
+      AssertArrayEqual(AbsoluteDeviation({2, 73, 13, 0}, 37), {35, 36, 24, 37})
+      AssertArrayEqual(AbsoluteDeviation({76, 77, 56, 11}, 77), {1, 0, 21, 66})
+      AssertArrayEqual(AbsoluteDeviation({90, 36, 72, 54}, 81), {9, 45, 9, 27})
+      AssertArrayEqual(AbsoluteDeviation({5, 62, 50, 23}, 19), {14, 43, 31, 4})
+      AssertArrayEqual(AbsoluteDeviation({79, 51, 54, 24}, 60), {19, 9, 6, 36})
+      AssertArrayEqual(AbsoluteDeviation({26, 53, 38, 42}, 60), {34, 7, 22, 18})
+      AssertArrayEqual(AbsoluteDeviation({4, 100, 32, 23}, 32), {28, 68, 0, 9})
+      AssertArrayEqual(AbsoluteDeviation(
+        {15, 94, 58, 67}, 78), {63, 16, 20, 11})
 
-      UnitTestsPassed = UnitTestsPassed And
-        Round(ControlLimit({8, 2, 0, 10}, 0.99), 4) = 30.5449 And
-        Round(ControlLimit({2, 4, 8, 7}, 0.99), 4) = 15.2724 And
-        Round(ControlLimit({5, 8, 0, 2}, 0.99), 4) = 19.0906 And
-        Round(ControlLimit({8, 1, 0, 3}, 0.99), 4) = 11.4543 And
-        Round(ControlLimit({10, 7, 1, 3}, 0.99), 4) = 22.9087 And
-        Round(ControlLimit({6, 2, 1, 9}, 0.99), 4) = 19.0906 And
-        Round(ControlLimit({4, 9, 9, 3}, 0.99), 4) = 19.0906 And
-        Round(ControlLimit({10, 7, 2, 8}, 0.99), 4) = 11.4543 And
-        Round(ControlLimit({6, 0, 10, 1}, 0.99), 4) = 22.9087 And
-        Round(ControlLimit({10, 3, 4, 2}, 0.99), 4) = 7.6362 And
-        Round(ControlLimit({6, 4, 4, 4}, 0.99), 4) = 5.4904 And
-        Round(ControlLimit({1, 0, 9, 9}, 0.99), 4) = 30.5449 And
-        Round(ControlLimit({0, 3, 6, 2}, 0.99), 4) = 11.4543 And
-        Round(ControlLimit({9, 7, 4, 6}, 0.99), 4) = 11.4543 And
-        Round(ControlLimit({6, 6, 4, 1}, 0.99), 4) = 7.6362 And
-        Round(ControlLimit({7, 3, 4, 1}, 0.99), 4) = 11.4543 And
-        Round(ControlLimit({6, 4, 4, 10}, 0.99), 4) = 7.6362 And
-        Round(ControlLimit({10, 5, 5, 5}, 0.99), 4) = 13.7259 And
-        Round(ControlLimit({8, 5, 5, 5}, 0.98), 4) = 6.4023 And
-        Round(ControlLimit({8, 4, 0, 0}, 0.95), 4) = 8.3213
+      AssertAlmostEqual(MeanAbsoluteDeviation({19}), 0, 4)
+      AssertAlmostEqual(MeanAbsoluteDeviation({86}), 0, 4)
+      AssertAlmostEqual(MeanAbsoluteDeviation({7, 24}), 8.5, 4)
+      AssertAlmostEqual(MeanAbsoluteDeviation({12, 96}), 42, 4)
+      AssertAlmostEqual(MeanAbsoluteDeviation({19, 74, 70}), 23.5556, 4)
+      AssertAlmostEqual(MeanAbsoluteDeviation({96, 93, 65}), 13.1111, 4)
+      AssertAlmostEqual(MeanAbsoluteDeviation({47, 29, 24, 11}), 10.25, 4)
+      AssertAlmostEqual(MeanAbsoluteDeviation({3, 43, 53, 80}), 21.75, 4)
+      AssertAlmostEqual(MeanAbsoluteDeviation({17, 27, 98, 85, 51}), 28.72, 4)
+      AssertAlmostEqual(MeanAbsoluteDeviation({2, 82, 63, 1, 49}), 30.32, 4)
+      AssertAlmostEqual(MeanAbsoluteDeviation({9, 25, 41, 85, 82, 55}),24.5, 4)
+      AssertAlmostEqual(MeanAbsoluteDeviation(
+        {5, 74, 53, 97, 81, 21}),28.8333, 4)
+      AssertAlmostEqual(MeanAbsoluteDeviation(
+        {26, 81, 9, 18, 39, 97, 21}), 27.102, 4)
+      AssertAlmostEqual(MeanAbsoluteDeviation(
+        {5, 83, 31, 24, 55, 22, 87}), 26.6939, 4)
+      AssertAlmostEqual(MeanAbsoluteDeviation(
+        {22, 84, 6, 79, 89, 71, 34, 56}), 25.8438, 4)
+      AssertAlmostEqual(MeanAbsoluteDeviation(
+        {33, 39, 6, 88, 69, 11, 76, 65}), 26.125, 4)
+      AssertAlmostEqual(MeanAbsoluteDeviation(
+        {31, 52, 12, 60, 52, 44, 47, 81, 34}), 13.9012, 4)
+      AssertAlmostEqual(MeanAbsoluteDeviation(
+        {64, 63, 54, 94, 25, 80, 97, 45, 51}), 17.8519, 4)
+      AssertAlmostEqual(MeanAbsoluteDeviation(
+        {47, 22, 52, 22, 10, 38, 94, 85, 54, 41}), 19.9, 4)
+      AssertAlmostEqual(MeanAbsoluteDeviation(
+        {7, 12, 84, 29, 41, 8, 18, 15, 16, 84}), 22.96, 4)
 
-      UnitTestsPassed = UnitTestsPassed And
-        Hash(RemoveOutliers({100, 100, 100, 100, 100, 100, 100, 100, 999})) =
-        Hash({100, 100, 100, 100, 100, 100, 100, 100, NaN}) And
-        Hash(RemoveOutliers({100, 101, 102, 103, 104, 105, 106, 107, 999})) =
-        Hash({100, 101, 102, 103, 104, 105, 106, 107, NaN}) And
-        Hash(RemoveOutliers({2223.6946, 2770.1624, 2125.7544, 3948.9927,
-        2184.2341, 2238.6421, 2170.0227, 2967.0674, 2177.3738, 3617.1328,
-        2460.8193, 3315.8684})) = Hash({2223.6946, 2770.1624, 2125.7544, NaN,
-        2184.2341, 2238.6421, 2170.0227, 2967.0674, 2177.3738, NaN,
-        2460.8193, NaN}) And
-        Hash(RemoveOutliers({3355.1553, 3624.3154, 3317.6895, 3610.0039,
-        3990.751, 2950.4382, 2140.5908, 3237.4917, 3319.7139, 2829.2725,
-        3406.9199, 3230.0078})) = Hash({3355.1553, 3624.3154, 3317.6895,
-        3610.0039, 3990.751, 2950.4382, NaN, 3237.4917, 3319.7139, 2829.2725,
-        3406.9199, 3230.0078}) And
-        Hash(RemoveOutliers({2969.7808, 3899.0913, 2637.4045, 2718.73,
-        2960.9597, 2650.6521, 2707.4294, 2034.5339, 2935.9111, 3458.7085,
-        2584.53, 3999.4238})) = Hash({2969.7808, NaN, 2637.4045, 2718.73,
-        2960.9597, 2650.6521, 2707.4294, 2034.5339, 2935.9111, 3458.7085,
-        2584.53, NaN}) And
-        Hash(RemoveOutliers({2774.8018, 2755.0251, 2756.6152, 3800.0625,
-        2900.0671, 2784.0134, 3955.2947, 2847.0908, 2329.7837, 3282.4614,
-        2597.1582, 3009.8796})) = Hash({2774.8018, 2755.0251, 2756.6152, NaN,
-        2900.0671, 2784.0134, NaN, 2847.0908, 2329.7837, 3282.4614,
-        2597.1582, 3009.8796}) And
-        Hash(RemoveOutliers({3084.8821, 3394.1196, 3131.3245, 2799.9587,
-        2528.3088, 3015.4998, 2912.2029, 2022.2645, 3666.5674, 3685.1973,
-        3149.6931, 3070.0479})) = Hash({3084.8821, 3394.1196, 3131.3245,
-        2799.9587, 2528.3088, 3015.4998, 2912.2029, NaN, 3666.5674,
-        3685.1973, 3149.6931, 3070.0479}) And
-        Hash(RemoveOutliers({3815.72, 3063.9106, 3535.0366, 2349.564,
-        2597.2661, 3655.3076, 3452.7407, 2020.7682, 3810.7046, 3833.8396,
-        3960.6016, 3866.8149})) = Hash({3815.72, 3063.9106, 3535.0366, NaN,
-        2597.2661, 3655.3076, 3452.7407, NaN, 3810.7046, 3833.8396,
-        3960.6016, 3866.8149}) And
-        Hash(RemoveOutliers({2812.0613, 3726.7427, 2090.9749, 2548.4485,
-        3900.5151, 3545.854, 3880.2229, 3940.9585, 3942.2234, 3263.0137,
-        3701.8882, 2056.5291})) = Hash({2812.0613, 3726.7427, NaN, 2548.4485,
-        3900.5151, 3545.854, 3880.2229, 3940.9585, 3942.2234, 3263.0137,
-        3701.8882, NaN}) And
-        Hash(RemoveOutliers({3798.4775, 2959.3879, 2317.3547, 2596.3599,
-        2075.6292, 2563.9685, 2695.5081, 2386.2161, 2433.1106, 2810.3716,
-        2499.7554, 3843.103})) = Hash({NaN, 2959.3879, 2317.3547, 2596.3599,
-        2075.6292, 2563.9685, 2695.5081, 2386.2161, 2433.1106, 2810.3716,
-        2499.7554, NaN}) And
-        Hash(RemoveOutliers({2245.7856, 2012.4834, 2473.0103, 2684.5693,
-        2645.4729, 2851.019, 2344.6099, 2408.1492, 3959.5967, 3954.0583,
-        2399.2617, 2652.8855})) = Hash({2245.7856, 2012.4834, 2473.0103,
-        2684.5693, 2645.4729, 2851.019, 2344.6099, 2408.1492, NaN, NaN,
-        2399.2617, 2652.8855}) And
-        Hash(RemoveOutliers({2004.5355, 2743.0693, 3260.7441, 2382.8906,
-        2365.9385, 2243.333, 3506.5352, 3905.7717, 3516.5337, 2133.8328,
-        2308.1809, 2581.4009})) = Hash({2004.5355, 2743.0693, 3260.7441,
-        2382.8906, 2365.9385, 2243.333, 3506.5352, NaN, 3516.5337, 2133.8328,
-        2308.1809, 2581.4009}) And
-        Hash(RemoveOutliers({3250.5376, 3411.313, 2037.264, 3709.5815,
-        3417.1167, 3996.0493, 3529.637, 3992.7163, 2786.95, 3728.834,
-        3304.4272, 2248.9119})) = Hash({3250.5376, 3411.313, NaN, 3709.5815,
-        3417.1167, 3996.0493, 3529.637, 3992.7163, 2786.95, 3728.834,
-        3304.4272, 2248.9119}) And
-        Hash(RemoveOutliers({2398.3125, 2742.4028, 2720.752, 2628.8442,
-        2750.1482, 2724.4932, 2161.6875, 2644.4163, 2188.2952, 2455.4622,
-        3332.5503, 2540.5198})) = Hash({2398.3125, 2742.4028, 2720.752,
-        2628.8442, 2750.1482, 2724.4932, 2161.6875, 2644.4163, 2188.2952,
-        2455.4622, NaN, 2540.5198}) And
-        Hash(RemoveOutliers({3991.7854, 3607.98, 2686.032, 2546.969,
-        3053.8796, 3138.9824, 2441.1689, 2737.1245, 2616.7139, 2550.5774,
-        2406.0913, 2743.2361})) = Hash({NaN, 3607.98, 2686.032, 2546.969,
-        3053.8796, 3138.9824, 2441.1689, 2737.1245, 2616.7139, 2550.5774,
-        2406.0913, 2743.2361}) And
-        Hash(RemoveOutliers({2361.5334, 3636.4312, 2187.593, 2281.5432,
-        2132.3833, 2056.792, 2227.7795, 2757.1753, 3416.9126, 2568.927,
-        2094.2065, 3449.3984})) = Hash({2361.5334, NaN, 2187.593, 2281.5432,
-        2132.3833, 2056.792, 2227.7795, 2757.1753, NaN, 2568.927, 2094.2065,
-        NaN}) And
-        Hash(RemoveOutliers({2249.7119, 2411.8374, 3041.5498, 2679.1458,
-        2561.1577, 2405.7229, 2775.2253, 2832.1233, 2540.2134, 3654.5903,
-        3970.5173, 2920.5637})) = Hash({2249.7119, 2411.8374, 3041.5498,
-        2679.1458, 2561.1577, 2405.7229, 2775.2253, 2832.1233, 2540.2134,
-        3654.5903, NaN, 2920.5637}) And
-        Hash(RemoveOutliers({2038.1091, 2248.3057, 2427.1646, 2337.2427,
-        2642.043, 3497.5393, 3996.3579, 2178.979, 3968.8848, 3460.8613,
-        2774.8486, 2338.1362})) = Hash({2038.1091, 2248.3057, 2427.1646,
-        2337.2427, 2642.043, 3497.5393, NaN, 2178.979, NaN, 3460.8613,
-        2774.8486, 2338.1362}) And
-        Hash(RemoveOutliers({3010.9485, 2517.2876, 2057.7188, 2133.0801,
-        3192.0308, 2035.0759, 3821.248, 2391.8086, 2267.896, 3751.3276,
-        2340.9497, 2327.333})) = Hash({3010.9485, 2517.2876, 2057.7188,
-        2133.0801, 3192.0308, 2035.0759, NaN, 2391.8086, 2267.896, NaN,
-        2340.9497, 2327.333}) And
-        Hash(RemoveOutliers({NaN, 10, NaN, 10, NaN, 10, NaN, 30, 20, NaN,
-        999})) = Hash({NaN, 10, NaN, 10, NaN, 10, NaN, 30, 20, NaN, NaN})
+      AssertEqual(MedianAbsoluteDeviation({2}), 0)
+      AssertEqual(MedianAbsoluteDeviation({37}), 0)
+      AssertEqual(MedianAbsoluteDeviation({87, 37}), 25)
+      AssertEqual(MedianAbsoluteDeviation({13, 74}), 30.5)
+      AssertEqual(MedianAbsoluteDeviation({39, 52, 93}), 13)
+      AssertEqual(MedianAbsoluteDeviation({90, 24, 47}), 23)
+      AssertEqual(MedianAbsoluteDeviation({11, 51, 20, 62}), 20)
+      AssertEqual(MedianAbsoluteDeviation({74, 35, 9, 95}), 30)
+      AssertEqual(MedianAbsoluteDeviation({32, 46, 15, 90, 66}), 20)
+      AssertEqual(MedianAbsoluteDeviation({91, 19, 50, 55, 44}), 6)
+      AssertEqual(MedianAbsoluteDeviation({2, 64, 87, 65, 61, 97}), 13)
+      AssertEqual(MedianAbsoluteDeviation({35, 66, 73, 74, 71, 93}), 4)
+      AssertEqual(MedianAbsoluteDeviation({54, 81, 80, 36, 11, 36, 45}), 9)
+      AssertEqual(MedianAbsoluteDeviation({14, 69, 40, 68, 75, 10, 69}), 7)
+      AssertEqual(MedianAbsoluteDeviation(
+        {40, 51, 28, 21, 91, 95, 66, 3}), 22.5)
+      AssertEqual(MedianAbsoluteDeviation({57, 87, 94, 46, 51, 27, 10, 7}), 30)
+      AssertEqual(MedianAbsoluteDeviation(
+        {3, 89, 62, 84, 86, 37, 14, 72, 33}), 25)
+      AssertEqual(MedianAbsoluteDeviation(
+        {48, 6, 14, 2, 74, 89, 15, 8, 83}), 13)
+      AssertEqual(MedianAbsoluteDeviation(
+        {2, 22, 91, 84, 43, 96, 55, 3, 9, 11}), 26.5)
+      AssertEqual(MedianAbsoluteDeviation(
+        {6, 96, 82, 26, 47, 84, 34, 39, 60, 99}), 28)
 
-      UnitTestsPassed = UnitTestsPassed And
-        Round(ExponentialMovingAverage(
-        {70.5547}), 4) = 70.5547 And
-        Round(ExponentialMovingAverage(
-        {53.3424, 57.9519}), 4) = 56.7995 And
-        Round(ExponentialMovingAverage(
-        {28.9562, 30.1948}), 4) = 29.8852 And
-        Round(ExponentialMovingAverage(
-        {77.474, 1.4018}), 4) = 20.4199 And
-        Round(ExponentialMovingAverage(
-        {76.0724, 81.449, 70.9038}), 4) = 74.6551 And
-        Round(ExponentialMovingAverage(
-        {4.5353, 41.4033, 86.2619}), 4) = 61.7699 And
-        Round(ExponentialMovingAverage(
-        {79.048, 37.3536, 96.1953}), 4) = 76.9338 And
-        Round(ExponentialMovingAverage(
-        {87.1446, 5.6237, 94.9557}), 4) = 68.3164 And
-        Round(ExponentialMovingAverage(
-        {36.4019, 52.4868, 76.7112}), 4) = 64.0315 And
-        Round(ExponentialMovingAverage(
-        {5.3505, 59.2458, 46.87, 29.8165}), 4) = 36.959 And
-        Round(ExponentialMovingAverage(
-        {62.2697, 64.7821, 26.3793, 27.9342}), 4) = 37.0099 And
-        Round(ExponentialMovingAverage(
-        {82.9802, 82.4602, 58.9163, 98.6093}), 4) = 83.4414 And
-        Round(ExponentialMovingAverage(
-        {91.0964, 22.6866, 69.5116, 98.0003, 24.3931}), 4) = 55.7929 And
-        Round(ExponentialMovingAverage(
-        {53.3873, 10.637, 99.9415, 67.6176, 1.5704}), 4) = 40.2177 And
-        Round(ExponentialMovingAverage(
-        {57.5184, 10.0052, 10.3023, 79.8884, 28.448}), 4) = 38.6235 And
-        Round(ExponentialMovingAverage(
-        {4.5649, 29.5773, 38.2011, 30.097, 94.8571}), 4) = 54.345 And
-        Round(ExponentialMovingAverage(
-        {97.9829, 40.1374, 27.828, 16.0442, 16.2822}), 4) = 27.0999 And
-        Round(ExponentialMovingAverage({64.6587,
-        41.0073, 41.2767, 71.273, 32.6206, 63.3179}), 4) = 52.9531 And
-        Round(ExponentialMovingAverage({20.7561,
-        18.6014, 58.3359, 8.0715, 45.7971, 90.573}), 4) = 51.847 And
-        Round(ExponentialMovingAverage(
-        {26.1368, 78.5212, 37.8903, 28.9665, 91.9377, 63.1742}), 4) = 60.2045
+      AssertFalse(UseMeanAbsoluteDeviation({6, 5, 5, 9}))
+      AssertFalse(UseMeanAbsoluteDeviation({2, 2, 10, 9}))
+      AssertFalse(UseMeanAbsoluteDeviation({4, 0, 10, 6}))
+      AssertFalse(UseMeanAbsoluteDeviation({6, 10, 1, 1}))
+      AssertTrue(UseMeanAbsoluteDeviation({3, 0, 0, 0}))
+      AssertFalse(UseMeanAbsoluteDeviation({10, 0, 8, 5}))
+      AssertFalse(UseMeanAbsoluteDeviation({7, 4, 5, 3}))
+      AssertTrue(UseMeanAbsoluteDeviation({5, 1, 5, 5}))
+      AssertFalse(UseMeanAbsoluteDeviation({2, 7, 3, 8}))
+      AssertFalse(UseMeanAbsoluteDeviation({2, 6, 10, 1}))
+      AssertFalse(UseMeanAbsoluteDeviation({1, 6, 3, 5}))
+      AssertFalse(UseMeanAbsoluteDeviation({3, 9, 7, 3}))
+      AssertTrue(UseMeanAbsoluteDeviation({5, 5, 8, 5}))
+      AssertFalse(UseMeanAbsoluteDeviation({5, 10, 5, 4}))
+      AssertFalse(UseMeanAbsoluteDeviation({0, 2, 4, 1}))
+      AssertFalse(UseMeanAbsoluteDeviation({7, 3, 0, 10}))
+      AssertTrue(UseMeanAbsoluteDeviation({4, 4, 4, 0}))
+      AssertFalse(UseMeanAbsoluteDeviation({5, 7, 4, 5}))
+      AssertTrue(UseMeanAbsoluteDeviation({2, 2, 2, 2}))
+      AssertTrue(UseMeanAbsoluteDeviation({9, 4, 4, 4}))
 
-      UnitTestsPassed = UnitTestsPassed And
-        Round(SlopeToAngle(-4.5806), 4) = -77.6849 And
-        Round(SlopeToAngle(-4.2541), 4) = -76.7718 And
-        Round(SlopeToAngle(1.7964), 4) = 60.8967 And
-        Round(SlopeToAngle(-3.2474), 4) = -72.8844 And
-        Round(SlopeToAngle(4.7917), 4) = 78.2119 And
-        Round(SlopeToAngle(2.1792), 4) = 65.3504 And
-        Round(SlopeToAngle(0.4736), 4) = 25.3422 And
-        Round(SlopeToAngle(-2.0963), 4) = -64.4974 And
-        Round(SlopeToAngle(-3.2077), 4) = -72.6851 And
-        Round(SlopeToAngle(-1.5425), 4) = -57.0447 And
-        Round(SlopeToAngle(-0.5587), 4) = -29.1921 And
-        Round(SlopeToAngle(1.2829), 4) = 52.0642 And
-        Round(SlopeToAngle(3.9501), 4) = 75.7936 And
-        Round(SlopeToAngle(2.5841), 4) = 68.8445 And
-        Round(SlopeToAngle(-3.4547), 4) = -73.8563 And
-        Round(SlopeToAngle(3.2931), 4) = 73.1083 And
-        Round(SlopeToAngle(3.2042), 4) = 72.6674 And
-        Round(SlopeToAngle(3.1088), 4) = 72.1687 And
-        Round(SlopeToAngle(-1.6831), 4) = -59.2837 And
-        Round(SlopeToAngle(-2.0031), 4) = -63.4704
+      AssertEqual(CentralTendency({3, 0, 0, 0}), 0.75)
+      AssertEqual(CentralTendency({2, 10, 0, 1}), 1.5)
+      AssertEqual(CentralTendency({7, 7, 7, 1}), 5.5)
+      AssertEqual(CentralTendency({5, 7, 2, 8}), 6)
+      AssertEqual(CentralTendency({9, 3, 4, 5}), 4.5)
+      AssertEqual(CentralTendency({3, 3, 3, 3}), 3)
+      AssertEqual(CentralTendency({8, 4, 2, 10}), 6)
+      AssertEqual(CentralTendency({2, 1, 10, 10}), 6)
+      AssertEqual(CentralTendency({3, 3, 6, 2}), 3)
+      AssertEqual(CentralTendency({9, 9, 6, 5}), 7.5)
+      AssertEqual(CentralTendency({2, 8, 8, 9}), 8)
+      AssertEqual(CentralTendency({7, 7, 4, 1}), 5.5)
+      AssertEqual(CentralTendency({5, 5, 5, 0}), 3.75)
+      AssertEqual(CentralTendency({4, 2, 3, 7}), 3.5)
+      AssertEqual(CentralTendency({2, 1, 5, 1}), 1.5)
+      AssertEqual(CentralTendency({9, 4, 5, 0}), 4.5)
+      AssertEqual(CentralTendency({1, 1, 7, 1}), 2.5)
+      AssertEqual(CentralTendency({1, 5, 9, 5}), 5)
+      AssertEqual(CentralTendency({3, 5, 1, 9}), 4)
+      AssertEqual(CentralTendency({0, 0, 0, 0}), 0)
+
+      AssertAlmostEqual(ControlLimit({8, 2, 0, 10}, 0.99), 30.5449, 4)
+      AssertAlmostEqual(ControlLimit({2, 4, 8, 7}, 0.99), 15.2724, 4)
+      AssertAlmostEqual(ControlLimit({5, 8, 0, 2}, 0.99), 19.0906, 4)
+      AssertAlmostEqual(ControlLimit({8, 1, 0, 3}, 0.99), 11.4543, 4)
+      AssertAlmostEqual(ControlLimit({10, 7, 1, 3}, 0.99), 22.9087, 4)
+      AssertAlmostEqual(ControlLimit({6, 2, 1, 9}, 0.99), 19.0906, 4)
+      AssertAlmostEqual(ControlLimit({4, 9, 9, 3}, 0.99), 19.0906, 4)
+      AssertAlmostEqual(ControlLimit({10, 7, 2, 8}, 0.99), 11.4543, 4)
+      AssertAlmostEqual(ControlLimit({6, 0, 10, 1}, 0.99), 22.9087, 4)
+      AssertAlmostEqual(ControlLimit({10, 3, 4, 2}, 0.99), 7.6362, 4)
+      AssertAlmostEqual(ControlLimit({6, 4, 4, 4}, 0.99), 5.4904, 4)
+      AssertAlmostEqual(ControlLimit({1, 0, 9, 9}, 0.99), 30.5449, 4)
+      AssertAlmostEqual(ControlLimit({0, 3, 6, 2}, 0.99), 11.4543, 4)
+      AssertAlmostEqual(ControlLimit({9, 7, 4, 6}, 0.99), 11.4543, 4)
+      AssertAlmostEqual(ControlLimit({6, 6, 4, 1}, 0.99), 7.6362, 4)
+      AssertAlmostEqual(ControlLimit({7, 3, 4, 1}, 0.99), 11.4543, 4)
+      AssertAlmostEqual(ControlLimit({6, 4, 4, 10}, 0.99), 7.6362, 4)
+      AssertAlmostEqual(ControlLimit({10, 5, 5, 5}, 0.99), 13.7259, 4)
+      AssertAlmostEqual(ControlLimit({8, 5, 5, 5}, 0.98), 6.4023, 4)
+      AssertAlmostEqual(ControlLimit({8, 4, 0, 0}, 0.95), 8.3213, 4)
+
+      AssertArrayEqual(RemoveOutliers(
+        {100, 100, 100, 100, 100, 100, 100, 100, 999}),
+        {100, 100, 100, 100, 100, 100, 100, 100, NaN})
+      AssertArrayEqual(RemoveOutliers(
+        {100, 101, 102, 103, 104, 105, 106, 107, 999}),
+        {100, 101, 102, 103, 104, 105, 106, 107, NaN})
+      AssertArrayEqual(RemoveOutliers(
+        {2223.6946, 2770.1624, 2125.7544, 3948.9927, 2184.2341, 2238.6421,
+        2170.0227, 2967.0674, 2177.3738, 3617.1328, 2460.8193, 3315.8684}),
+        {2223.6946, 2770.1624, 2125.7544, NaN, 2184.2341, 2238.6421, 2170.0227,
+        2967.0674, 2177.3738, NaN, 2460.8193, NaN})
+      AssertArrayEqual(RemoveOutliers(
+        {3355.1553, 3624.3154, 3317.6895, 3610.0039, 3990.751, 2950.4382,
+        2140.5908, 3237.4917, 3319.7139, 2829.2725, 3406.9199, 3230.0078}),
+        {3355.1553, 3624.3154, 3317.6895, 3610.0039, 3990.751, 2950.4382, NaN,
+        3237.4917, 3319.7139, 2829.2725, 3406.9199, 3230.0078})
+      AssertArrayEqual(RemoveOutliers(
+        {2969.7808, 3899.0913, 2637.4045, 2718.73, 2960.9597, 2650.6521,
+        2707.4294, 2034.5339, 2935.9111, 3458.7085, 2584.53, 3999.4238}),
+        {2969.7808, NaN, 2637.4045, 2718.73, 2960.9597, 2650.6521, 2707.4294,
+        2034.5339, 2935.9111, 3458.7085, 2584.53, NaN})
+      AssertArrayEqual(RemoveOutliers(
+        {2774.8018, 2755.0251, 2756.6152, 3800.0625, 2900.0671, 2784.0134,
+        3955.2947, 2847.0908, 2329.7837, 3282.4614, 2597.1582, 3009.8796}),
+        {2774.8018, 2755.0251, 2756.6152, NaN, 2900.0671, 2784.0134, NaN,
+        2847.0908, 2329.7837, 3282.4614, 2597.1582, 3009.8796})
+      AssertArrayEqual(RemoveOutliers(
+        {3084.8821, 3394.1196, 3131.3245, 2799.9587, 2528.3088, 3015.4998,
+        2912.2029, 2022.2645, 3666.5674, 3685.1973, 3149.6931, 3070.0479}),
+        {3084.8821, 3394.1196, 3131.3245, 2799.9587, 2528.3088, 3015.4998,
+        2912.2029, NaN, 3666.5674, 3685.1973, 3149.6931, 3070.0479})
+      AssertArrayEqual(RemoveOutliers(
+        {3815.72, 3063.9106, 3535.0366, 2349.564, 2597.2661, 3655.3076,
+        3452.7407, 2020.7682, 3810.7046, 3833.8396, 3960.6016, 3866.8149}),
+        {3815.72, 3063.9106, 3535.0366, NaN, 2597.2661, 3655.3076, 3452.7407,
+        NaN, 3810.7046, 3833.8396, 3960.6016, 3866.8149})
+      AssertArrayEqual(RemoveOutliers(
+        {2812.0613, 3726.7427, 2090.9749, 2548.4485, 3900.5151, 3545.854,
+        3880.2229, 3940.9585, 3942.2234, 3263.0137, 3701.8882, 2056.5291}),
+        {2812.0613, 3726.7427, NaN, 2548.4485, 3900.5151, 3545.854, 3880.2229,
+        3940.9585, 3942.2234, 3263.0137, 3701.8882, NaN})
+      AssertArrayEqual(RemoveOutliers(
+        {3798.4775, 2959.3879, 2317.3547, 2596.3599, 2075.6292, 2563.9685,
+        2695.5081, 2386.2161, 2433.1106, 2810.3716, 2499.7554, 3843.103}),
+        {NaN, 2959.3879, 2317.3547, 2596.3599, 2075.6292, 2563.9685, 2695.5081,
+        2386.2161, 2433.1106, 2810.3716, 2499.7554, NaN})
+      AssertArrayEqual(RemoveOutliers(
+        {2245.7856, 2012.4834, 2473.0103, 2684.5693, 2645.4729, 2851.019,
+        2344.6099, 2408.1492, 3959.5967, 3954.0583, 2399.2617, 2652.8855}),
+        {2245.7856, 2012.4834, 2473.0103, 2684.5693, 2645.4729, 2851.019,
+        2344.6099, 2408.1492, NaN, NaN, 2399.2617, 2652.8855})
+      AssertArrayEqual(RemoveOutliers(
+        {2004.5355, 2743.0693, 3260.7441, 2382.8906, 2365.9385, 2243.333,
+        3506.5352, 3905.7717, 3516.5337, 2133.8328, 2308.1809, 2581.4009}),
+        {2004.5355, 2743.0693, 3260.7441, 2382.8906, 2365.9385, 2243.333,
+        3506.5352, NaN, 3516.5337, 2133.8328, 2308.1809, 2581.4009})
+      AssertArrayEqual(RemoveOutliers(
+        {3250.5376, 3411.313, 2037.264, 3709.5815, 3417.1167, 3996.0493,
+        3529.637, 3992.7163, 2786.95, 3728.834, 3304.4272, 2248.9119}),
+        {3250.5376, 3411.313, NaN, 3709.5815, 3417.1167, 3996.0493, 3529.637,
+        3992.7163, 2786.95, 3728.834, 3304.4272, 2248.9119})
+      AssertArrayEqual(RemoveOutliers(
+        {2398.3125, 2742.4028, 2720.752, 2628.8442, 2750.1482, 2724.4932,
+        2161.6875, 2644.4163, 2188.2952, 2455.4622, 3332.5503, 2540.5198}),
+        {2398.3125, 2742.4028, 2720.752, 2628.8442, 2750.1482, 2724.4932,
+        2161.6875, 2644.4163, 2188.2952, 2455.4622, NaN, 2540.5198})
+      AssertArrayEqual(RemoveOutliers(
+        {3991.7854, 3607.98, 2686.032, 2546.969, 3053.8796, 3138.9824,
+        2441.1689, 2737.1245, 2616.7139, 2550.5774, 2406.0913, 2743.2361}),
+        {NaN, 3607.98, 2686.032, 2546.969, 3053.8796, 3138.9824, 2441.1689,
+        2737.1245, 2616.7139, 2550.5774, 2406.0913, 2743.2361})
+      AssertArrayEqual(RemoveOutliers(
+        {2361.5334, 3636.4312, 2187.593, 2281.5432, 2132.3833, 2056.792,
+        2227.7795, 2757.1753, 3416.9126, 2568.927, 2094.2065, 3449.3984}),
+        {2361.5334, NaN, 2187.593, 2281.5432, 2132.3833, 2056.792, 2227.7795,
+        2757.1753, NaN, 2568.927, 2094.2065, NaN})
+      AssertArrayEqual(RemoveOutliers(
+        {2249.7119, 2411.8374, 3041.5498, 2679.1458, 2561.1577, 2405.7229,
+        2775.2253, 2832.1233, 2540.2134, 3654.5903, 3970.5173, 2920.5637}),
+        {2249.7119, 2411.8374, 3041.5498, 2679.1458, 2561.1577, 2405.7229,
+        2775.2253, 2832.1233, 2540.2134, 3654.5903, NaN, 2920.5637})
+      AssertArrayEqual(RemoveOutliers(
+        {2038.1091, 2248.3057, 2427.1646, 2337.2427, 2642.043, 3497.5393,
+        3996.3579, 2178.979, 3968.8848, 3460.8613, 2774.8486, 2338.1362}),
+        {2038.1091, 2248.3057, 2427.1646, 2337.2427, 2642.043, 3497.5393, NaN,
+        2178.979, NaN, 3460.8613, 2774.8486, 2338.1362})
+      AssertArrayEqual(RemoveOutliers(
+        {3010.9485, 2517.2876, 2057.7188, 2133.0801, 3192.0308, 2035.0759,
+        3821.248, 2391.8086, 2267.896, 3751.3276, 2340.9497, 2327.333}),
+        {3010.9485, 2517.2876, 2057.7188, 2133.0801, 3192.0308, 2035.0759, NaN,
+        2391.8086, 2267.896, NaN, 2340.9497, 2327.333})
+      AssertArrayEqual(RemoveOutliers(
+        {NaN, 10, NaN, 10, NaN, 10, NaN, 30, 20, NaN, 999}),
+        {NaN, 10, NaN, 10, NaN, 10, NaN, 30, 20, NaN, NaN})
+
+      AssertAlmostEqual(ExponentialMovingAverage({70.5547}), 70.5547, 4)
+      AssertAlmostEqual(ExponentialMovingAverage(
+        {53.3424, 57.9519}), 56.7995, 4)
+      AssertAlmostEqual(ExponentialMovingAverage(
+        {28.9562, 30.1948}), 29.8852, 4)
+      AssertAlmostEqual(ExponentialMovingAverage(
+        {77.474, 1.4018}), 20.4199, 4)
+      AssertAlmostEqual(ExponentialMovingAverage(
+        {76.0724, 81.449, 70.9038}), 74.6551, 4)
+      AssertAlmostEqual(ExponentialMovingAverage(
+        {4.5353, 41.4033, 86.2619}), 61.7699, 4)
+      AssertAlmostEqual(ExponentialMovingAverage(
+        {79.048, 37.3536, 96.1953}), 76.9338, 4)
+      AssertAlmostEqual(ExponentialMovingAverage(
+        {87.1446, 5.6237, 94.9557}), 68.3164, 4)
+      AssertAlmostEqual(ExponentialMovingAverage(
+        {36.4019, 52.4868, 76.7112}), 64.0315, 4)
+      AssertAlmostEqual(ExponentialMovingAverage(
+        {5.3505, 59.2458, 46.87, 29.8165}), 36.959, 4)
+      AssertAlmostEqual(ExponentialMovingAverage(
+        {62.2697, 64.7821, 26.3793, 27.9342}), 37.0099, 4)
+      AssertAlmostEqual(ExponentialMovingAverage(
+        {82.9802, 82.4602, 58.9163, 98.6093}), 83.4414, 4)
+      AssertAlmostEqual(ExponentialMovingAverage(
+        {91.0964, 22.6866, 69.5116, 98.0003, 24.3931}), 55.7929, 4)
+      AssertAlmostEqual(ExponentialMovingAverage(
+        {53.3873, 10.637, 99.9415, 67.6176, 1.5704}), 40.2177, 4)
+      AssertAlmostEqual(ExponentialMovingAverage(
+        {57.5184, 10.0052, 10.3023, 79.8884, 28.448}), 38.6235, 4)
+      AssertAlmostEqual(ExponentialMovingAverage(
+        {4.5649, 29.5773, 38.2011, 30.097, 94.8571}), 54.345, 4)
+      AssertAlmostEqual(ExponentialMovingAverage(
+        {97.9829, 40.1374, 27.828, 16.0442, 16.2822}), 27.0999, 4)
+      AssertAlmostEqual(ExponentialMovingAverage(
+        {64.6587, 41.0073, 41.2767, 71.273, 32.6206, 63.3179}), 52.9531, 4)
+      AssertAlmostEqual(ExponentialMovingAverage(
+        {20.7561, 18.6014, 58.3359, 8.0715, 45.7971, 90.573}), 51.847, 4)
+      AssertAlmostEqual(ExponentialMovingAverage(
+        {26.1368, 78.5212, 37.8903, 28.9665, 91.9377, 63.1742}), 60.2045, 4)
+
+      AssertAlmostEqual(SlopeToAngle(-4.5806), -77.6849, 4)
+      AssertAlmostEqual(SlopeToAngle(-4.2541), -76.7718, 4)
+      AssertAlmostEqual(SlopeToAngle(1.7964), 60.8967, 4)
+      AssertAlmostEqual(SlopeToAngle(-3.2474), -72.8844, 4)
+      AssertAlmostEqual(SlopeToAngle(4.7917), 78.2119, 4)
+      AssertAlmostEqual(SlopeToAngle(2.1792), 65.3504, 4)
+      AssertAlmostEqual(SlopeToAngle(0.4736), 25.3422, 4)
+      AssertAlmostEqual(SlopeToAngle(-2.0963), -64.4974, 4)
+      AssertAlmostEqual(SlopeToAngle(-3.2077), -72.6851, 4)
+      AssertAlmostEqual(SlopeToAngle(-1.5425), -57.0447, 4)
+      AssertAlmostEqual(SlopeToAngle(-0.5587), -29.1921, 4)
+      AssertAlmostEqual(SlopeToAngle(1.2829), 52.0642, 4)
+      AssertAlmostEqual(SlopeToAngle(3.9501), 75.7936, 4)
+      AssertAlmostEqual(SlopeToAngle(2.5841), 68.8445, 4)
+      AssertAlmostEqual(SlopeToAngle(-3.4547), -73.8563, 4)
+      AssertAlmostEqual(SlopeToAngle(3.2931), 73.1083, 4)
+      AssertAlmostEqual(SlopeToAngle(3.2042), 72.6674, 4)
+      AssertAlmostEqual(SlopeToAngle(3.1088), 72.1687, 4)
+      AssertAlmostEqual(SlopeToAngle(-1.6831), -59.2837, 4)
+      AssertAlmostEqual(SlopeToAngle(-2.0031), -63.4704, 4)
 
       For i = 0 To 19
-        UnitTestsPassed = UnitTestsPassed And
-          RandomNumber(0, i+1) >= 0 And
-          RandomNumber(0, i+1) <= i+1
+        AssertTrue(RandomNumber(0, i+1) >= 0)
+        AssertTrue(RandomNumber(0, i+1) <= i+1)
       Next i
 
-      UnitTestsPassed = UnitTestsPassed And
-        IsNaN(AlignPreviousInterval(0, 0)) And
-        AlignPreviousInterval(0, 12) = 0 And
-        AlignPreviousInterval(0, -12) = 0 And
-        AlignPreviousInterval(353, 84) = 336 And
-        AlignPreviousInterval(512, 71) = 497 And
-        AlignPreviousInterval(-651, 34) = -680 And
-        AlignPreviousInterval(-136, -20) = -120 And
-        AlignPreviousInterval(800, -118) = 826 And
-        AlignPreviousInterval(-671, 81) = -729 And
-        AlignPreviousInterval(-769, -124) = -744 And
-        AlignPreviousInterval(-676, -61) = -671 And
-        AlignPreviousInterval(627, -14) = 630 And
-        AlignPreviousInterval(337, -68) = 340 And
-        AlignPreviousInterval(661, 37) = 629 And
-        AlignPreviousInterval(228, 57) = 228 And
-        AlignPreviousInterval(686, -22) = 704 And
-        AlignPreviousInterval(846, -35) = 875 And
-        AlignPreviousInterval(571, 108) = 540 And
-        AlignPreviousInterval(-531, -56) = -504 And
-        AlignPreviousInterval(-880, 105) = -945
+      AssertNaN(AlignPreviousInterval(0, 0))
+      AssertEqual(AlignPreviousInterval(0, 12), 0)
+      AssertEqual(AlignPreviousInterval(0, -12), 0)
+      AssertEqual(AlignPreviousInterval(353, 84), 336)
+      AssertEqual(AlignPreviousInterval(512, 71), 497)
+      AssertEqual(AlignPreviousInterval(-651, 34), -680)
+      AssertEqual(AlignPreviousInterval(-136, -20), -120)
+      AssertEqual(AlignPreviousInterval(800, -118), 826)
+      AssertEqual(AlignPreviousInterval(-671, 81), -729)
+      AssertEqual(AlignPreviousInterval(-769, -124), -744)
+      AssertEqual(AlignPreviousInterval(-676, -61), -671)
+      AssertEqual(AlignPreviousInterval(627, -14), 630)
+      AssertEqual(AlignPreviousInterval(337, -68), 340)
+      AssertEqual(AlignPreviousInterval(661, 37), 629)
+      AssertEqual(AlignPreviousInterval(228, 57), 228)
+      AssertEqual(AlignPreviousInterval(686, -22), 704)
+      AssertEqual(AlignPreviousInterval(846, -35), 875)
+      AssertEqual(AlignPreviousInterval(571, 108), 540)
+      AssertEqual(AlignPreviousInterval(-531, -56), -504)
+      AssertEqual(AlignPreviousInterval(-880, 105), -945)
 
-      UnitTestsPassed = UnitTestsPassed And
-        AlignTimestamp(New DateTime(2016, 4, 4, 16, 33, 2), 60) =
-        New DateTime(2016, 4, 4, 16, 33, 0) And
-        AlignTimestamp(New DateTime(2015, 7, 15, 2, 29, 58), 60) = 
-        New DateTime(2015, 7, 15, 2, 29, 0) And
-        AlignTimestamp(New DateTime(2016, 4, 1, 22, 5, 17), 60) = 
-        New DateTime(2016, 4, 1, 22, 5, 0) And
-        AlignTimestamp(New DateTime(2013, 12, 1, 21, 47, 35), 60) = 
-        New DateTime(2013, 12, 1, 21, 47, 0) And
-        AlignTimestamp(New DateTime(2016, 11, 22, 0, 22, 17), 60) = 
-        New DateTime(2016, 11, 22, 0, 22, 0) And
-        AlignTimestamp(New DateTime(2016, 10, 11, 19, 11, 41), 300) = 
-        New DateTime(2016, 10, 11, 19, 10, 0) And
-        AlignTimestamp(New DateTime(2013, 10, 26, 4, 24, 53), 300) = 
-        New DateTime(2013, 10, 26, 4, 20, 0) And
-        AlignTimestamp(New DateTime(2014, 5, 2, 2, 52, 41), 300) = 
-        New DateTime(2014, 5, 2, 2, 50, 0) And
-        AlignTimestamp(New DateTime(2014, 8, 16, 13, 11, 10), 300) = 
-        New DateTime(2014, 8, 16, 13, 10, 0) And
-        AlignTimestamp(New DateTime(2014, 10, 25, 8, 26, 4), 300) = 
-        New DateTime(2014, 10, 25, 8, 25, 0) And
-        AlignTimestamp(New DateTime(2015, 6, 2, 18, 36, 24), 3600) = 
-        New DateTime(2015, 6, 2, 18, 0, 0) And
-        AlignTimestamp(New DateTime(2016, 11, 21, 16, 24, 27), 3600) = 
-        New DateTime(2016, 11, 21, 16, 0, 0) And
-        AlignTimestamp(New DateTime(2014, 4, 4, 8, 42, 10), 3600) = 
-        New DateTime(2014, 4, 4, 8, 0, 0) And
-        AlignTimestamp(New DateTime(2016, 2, 22, 19, 8, 41), 3600) = 
-        New DateTime(2016, 2, 22, 19, 0, 0) And
-        AlignTimestamp(New DateTime(2015, 9, 13, 22, 48, 17), 3600) = 
-        New DateTime(2015, 9, 13, 22, 0, 0) And
-        AlignTimestamp(New DateTime(2016, 10, 20, 2, 47, 48), 86400) = 
-        New DateTime(2016, 10, 20, 0, 0, 0) And
-        AlignTimestamp(New DateTime(2014, 2, 8, 23, 12, 34), 86400) = 
-        New DateTime(2014, 2, 8, 0, 0, 0) And
-        AlignTimestamp(New DateTime(2016, 2, 27, 23, 40, 39), 86400) = 
-        New DateTime(2016, 2, 27, 0, 0, 0) And
-        AlignTimestamp(New DateTime(2015, 8, 26, 9, 35, 55), 86400) = 
-        New DateTime(2015, 8, 26, 0, 0, 0) And
-        AlignTimestamp(New DateTime(2016, 2, 11, 0, 44, 7), 86400) = 
-        New DateTime(2016, 2, 11, 0, 0, 0)
+      AssertEqual(AlignTimestamp(
+        New DateTime(2016, 4, 4, 16, 33, 2), 60),
+        New DateTime(2016, 4, 4, 16, 33, 0))
+      AssertEqual(AlignTimestamp(
+        New DateTime(2015, 7, 15, 2, 29, 58), 60),
+        New DateTime(2015, 7, 15, 2, 29, 0))
+      AssertEqual(AlignTimestamp(
+        New DateTime(2016, 4, 1, 22, 5, 17), 60),
+        New DateTime(2016, 4, 1, 22, 5, 0))
+      AssertEqual(AlignTimestamp(
+        New DateTime(2013, 12, 1, 21, 47, 35), 60),
+        New DateTime(2013, 12, 1, 21, 47, 0))
+      AssertEqual(AlignTimestamp(
+        New DateTime(2016, 11, 22, 0, 22, 17), 60),
+        New DateTime(2016, 11, 22, 0, 22, 0))
+      AssertEqual(AlignTimestamp(
+        New DateTime(2016, 10, 11, 19, 11, 41), 300),
+        New DateTime(2016, 10, 11, 19, 10, 0))
+      AssertEqual(AlignTimestamp(
+        New DateTime(2013, 10, 26, 4, 24, 53), 300),
+        New DateTime(2013, 10, 26, 4, 20, 0))
+      AssertEqual(AlignTimestamp(
+        New DateTime(2014, 5, 2, 2, 52, 41), 300),
+        New DateTime(2014, 5, 2, 2, 50, 0))
+      AssertEqual(AlignTimestamp(
+        New DateTime(2014, 8, 16, 13, 11, 10), 300),
+        New DateTime(2014, 8, 16, 13, 10, 0))
+      AssertEqual(AlignTimestamp(
+        New DateTime(2014, 10, 25, 8, 26, 4), 300),
+        New DateTime(2014, 10, 25, 8, 25, 0))
+      AssertEqual(AlignTimestamp(
+        New DateTime(2015, 6, 2, 18, 36, 24), 3600),
+        New DateTime(2015, 6, 2, 18, 0, 0))
+      AssertEqual(AlignTimestamp(
+        New DateTime(2016, 11, 21, 16, 24, 27), 3600),
+        New DateTime(2016, 11, 21, 16, 0, 0))
+      AssertEqual(AlignTimestamp(
+        New DateTime(2014, 4, 4, 8, 42, 10), 3600),
+        New DateTime(2014, 4, 4, 8, 0, 0))
+      AssertEqual(AlignTimestamp(
+        New DateTime(2016, 2, 22, 19, 8, 41), 3600),
+        New DateTime(2016, 2, 22, 19, 0, 0))
+      AssertEqual(AlignTimestamp(
+        New DateTime(2015, 9, 13, 22, 48, 17), 3600),
+        New DateTime(2015, 9, 13, 22, 0, 0))
+      AssertEqual(AlignTimestamp(
+        New DateTime(2016, 10, 20, 2, 47, 48), 86400),
+        New DateTime(2016, 10, 20, 0, 0, 0))
+      AssertEqual(AlignTimestamp(
+        New DateTime(2014, 2, 8, 23, 12, 34), 86400),
+        New DateTime(2014, 2, 8, 0, 0, 0))
+      AssertEqual(AlignTimestamp(
+        New DateTime(2016, 2, 27, 23, 40, 39), 86400),
+        New DateTime(2016, 2, 27, 0, 0, 0))
+      AssertEqual(AlignTimestamp(
+        New DateTime(2015, 8, 26, 9, 35, 55), 86400),
+        New DateTime(2015, 8, 26, 0, 0, 0))
+      AssertEqual(AlignTimestamp(
+        New DateTime(2016, 2, 11, 0, 44, 7), 86400),
+        New DateTime(2016, 2, 11, 0, 0, 0))
 
-      UnitTestsPassed = UnitTestsPassed And
-        NextInterval(New DateTime(2016, 4, 4, 16, 33, 2)) =
-        New DateTime(2016, 4, 4, 16, 35, 0) And
-        NextInterval(New DateTime(2015, 7, 15, 2, 29, 58)) = 
-        New DateTime(2015, 7, 15, 2, 30, 0) And
-        NextInterval(New DateTime(2016, 4, 1, 22, 5, 17)) = 
-        New DateTime(2016, 4, 1, 22, 10, 0) And
-        NextInterval(New DateTime(2013, 12, 1, 21, 47, 35)) = 
-        New DateTime(2013, 12, 1, 21, 50, 0) And
-        NextInterval(New DateTime(2016, 11, 22, 0, 22, 17)) = 
-        New DateTime(2016, 11, 22, 0, 25, 0) And
-        NextInterval(New DateTime(2016, 10, 11, 19, 11, 41)) = 
-        New DateTime(2016, 10, 11, 19, 15, 0) And
-        NextInterval(New DateTime(2013, 10, 26, 4, 24, 53)) = 
-        New DateTime(2013, 10, 26, 4, 25, 0) And
-        NextInterval(New DateTime(2014, 5, 2, 2, 52, 41)) = 
-        New DateTime(2014, 5, 2, 2, 55, 0) And
-        NextInterval(New DateTime(2014, 8, 16, 13, 11, 10)) = 
-        New DateTime(2014, 8, 16, 13, 15, 0) And
-        NextInterval(New DateTime(2014, 10, 25, 8, 26, 4)) = 
-        New DateTime(2014, 10, 25, 8, 30, 0) And
-        NextInterval(New DateTime(2015, 6, 2, 18, 36, 24), 1) = 
-        New DateTime(2015, 6, 2, 18, 40, 0) And
-        NextInterval(New DateTime(2016, 11, 21, 16, 24, 27), 2) = 
-        New DateTime(2016, 11, 21, 16, 30, 0) And
-        NextInterval(New DateTime(2014, 4, 4, 8, 42, 10), 3) = 
-        New DateTime(2014, 4, 4, 8, 55, 0) And
-        NextInterval(New DateTime(2016, 2, 22, 19, 8, 41), 4) = 
-        New DateTime(2016, 2, 22, 19, 25, 0) And
-        NextInterval(New DateTime(2015, 9, 13, 22, 48, 17), 5) = 
-        New DateTime(2015, 9, 13, 23, 10, 0) And
-        NextInterval(New DateTime(2016, 10, 20, 2, 47, 48), 6) = 
-        New DateTime(2016, 10, 20, 3, 15, 0) And
-        NextInterval(New DateTime(2014, 2, 8, 23, 12, 34), 7) = 
-        New DateTime(2014, 2, 8, 23, 45, 0) And
-        NextInterval(New DateTime(2016, 2, 27, 23, 40, 39), 8) = 
-        New DateTime(2016, 2, 28, 0, 20, 0) And
-        NextInterval(New DateTime(2015, 8, 26, 9, 35, 55), -12) = 
-        New DateTime(2015, 8, 26, 8, 35, 0) And
-        NextInterval(New DateTime(2016, 2, 11, 0, 44, 7), 0) = 
-        New DateTime(2016, 2, 11, 0, 40, 0)
+      AssertEqual(NextInterval(
+        New DateTime(2016, 4, 4, 16, 33, 2)),
+        New DateTime(2016, 4, 4, 16, 35, 0))
+      AssertEqual(NextInterval(
+        New DateTime(2015, 7, 15, 2, 29, 58)),
+        New DateTime(2015, 7, 15, 2, 30, 0))
+      AssertEqual(NextInterval(
+        New DateTime(2016, 4, 1, 22, 5, 17)),
+        New DateTime(2016, 4, 1, 22, 10, 0))
+      AssertEqual(NextInterval(
+        New DateTime(2013, 12, 1, 21, 47, 35)),
+        New DateTime(2013, 12, 1, 21, 50, 0))
+      AssertEqual(NextInterval(
+        New DateTime(2016, 11, 22, 0, 22, 17)),
+        New DateTime(2016, 11, 22, 0, 25, 0))
+      AssertEqual(NextInterval(
+        New DateTime(2016, 10, 11, 19, 11, 41)),
+        New DateTime(2016, 10, 11, 19, 15, 0))
+      AssertEqual(NextInterval(
+        New DateTime(2013, 10, 26, 4, 24, 53)),
+        New DateTime(2013, 10, 26, 4, 25, 0))
+      AssertEqual(NextInterval(
+        New DateTime(2014, 5, 2, 2, 52, 41)),
+        New DateTime(2014, 5, 2, 2, 55, 0))
+      AssertEqual(NextInterval(
+        New DateTime(2014, 8, 16, 13, 11, 10)),
+        New DateTime(2014, 8, 16, 13, 15, 0))
+      AssertEqual(NextInterval(
+        New DateTime(2014, 10, 25, 8, 26, 4)),
+        New DateTime(2014, 10, 25, 8, 30, 0))
+      AssertEqual(NextInterval(
+        New DateTime(2015, 6, 2, 18, 36, 24), 1),
+        New DateTime(2015, 6, 2, 18, 40, 0))
+      AssertEqual(NextInterval(
+        New DateTime(2016, 11, 21, 16, 24, 27), 2),
+        New DateTime(2016, 11, 21, 16, 30, 0))
+      AssertEqual(NextInterval(
+        New DateTime(2014, 4, 4, 8, 42, 10), 3),
+        New DateTime(2014, 4, 4, 8, 55, 0))
+      AssertEqual(NextInterval(
+        New DateTime(2016, 2, 22, 19, 8, 41), 4),
+        New DateTime(2016, 2, 22, 19, 25, 0))
+      AssertEqual(NextInterval(
+        New DateTime(2015, 9, 13, 22, 48, 17), 5),
+        New DateTime(2015, 9, 13, 23, 10, 0))
+      AssertEqual(NextInterval(
+        New DateTime(2016, 10, 20, 2, 47, 48), 6),
+        New DateTime(2016, 10, 20, 3, 15, 0))
+      AssertEqual(NextInterval(
+        New DateTime(2014, 2, 8, 23, 12, 34), 7),
+        New DateTime(2014, 2, 8, 23, 45, 0))
+      AssertEqual(NextInterval(
+        New DateTime(2016, 2, 27, 23, 40, 39), 8),
+        New DateTime(2016, 2, 28, 0, 20, 0))
+      AssertEqual(NextInterval(
+        New DateTime(2015, 8, 26, 9, 35, 55), -12),
+        New DateTime(2015, 8, 26, 8, 35, 0))
+      AssertEqual(NextInterval(
+        New DateTime(2016, 2, 11, 0, 44, 7), 0),
+        New DateTime(2016, 2, 11, 0, 40, 0))
 
-      UnitTestsPassed = UnitTestsPassed And
-        Computus(1864) = New DateTime(1864, 3, 27) And
-        Computus(1900) = New DateTime(1900, 4, 15) And
-        Computus(1933) = New DateTime(1933, 4, 16) And
-        Computus(1999) = New DateTime(1999, 4, 4) And
-        Computus(2001) = New DateTime(2001, 4, 15) And
-        Computus(2003) = New DateTime(2003, 4, 20) And
-        Computus(2005) = New DateTime(2005, 3, 27) And
-        Computus(2007) = New DateTime(2007, 4, 8) And
-        Computus(2013) = New DateTime(2013, 3, 31) And
-        Computus(2017) = New DateTime(2017, 4, 16) And
-        Computus(2019) = New DateTime(2019, 4, 21) And
-        Computus(2021) = New DateTime(2021, 4, 4) And
-        Computus(2023) = New DateTime(2023, 4, 9) And
-        Computus(2027) = New DateTime(2027, 3, 28) And
-        Computus(2031) = New DateTime(2031, 4, 13) And
-        Computus(2033) = New DateTime(2033, 4, 17) And
-        Computus(2037) = New DateTime(2037, 4, 5) And
-        Computus(2099) = New DateTime(2099, 4, 12) And
-        Computus(2172) = New DateTime(2172, 4, 12) And
-        Computus(2292) = New DateTime(2292, 4, 10)
+      AssertEqual(Computus(1864), New DateTime(1864, 3, 27))
+      AssertEqual(Computus(1900), New DateTime(1900, 4, 15))
+      AssertEqual(Computus(1933), New DateTime(1933, 4, 16))
+      AssertEqual(Computus(1999), New DateTime(1999, 4, 4))
+      AssertEqual(Computus(2001), New DateTime(2001, 4, 15))
+      AssertEqual(Computus(2003), New DateTime(2003, 4, 20))
+      AssertEqual(Computus(2005), New DateTime(2005, 3, 27))
+      AssertEqual(Computus(2007), New DateTime(2007, 4, 8))
+      AssertEqual(Computus(2013), New DateTime(2013, 3, 31))
+      AssertEqual(Computus(2017), New DateTime(2017, 4, 16))
+      AssertEqual(Computus(2019), New DateTime(2019, 4, 21))
+      AssertEqual(Computus(2021), New DateTime(2021, 4, 4))
+      AssertEqual(Computus(2023), New DateTime(2023, 4, 9))
+      AssertEqual(Computus(2027), New DateTime(2027, 3, 28))
+      AssertEqual(Computus(2031), New DateTime(2031, 4, 13))
+      AssertEqual(Computus(2033), New DateTime(2033, 4, 17))
+      AssertEqual(Computus(2037), New DateTime(2037, 4, 5))
+      AssertEqual(Computus(2099), New DateTime(2099, 4, 12))
+      AssertEqual(Computus(2172), New DateTime(2172, 4, 12))
+      AssertEqual(Computus(2292), New DateTime(2292, 4, 10))
 
-      UnitTestsPassed = UnitTestsPassed And
-        IsHoliday(New DateTime(2021, 12, 25), InvariantCulture) And
-        Not IsHoliday(New DateTime(2020, 10, 12), InvariantCulture) And
-        IsHoliday(New DateTime(2012, 1, 1), New CultureInfo("nl-NL")) And
-        Not IsHoliday(New DateTime(2016, 3, 26), New CultureInfo("nl-NL")) And
-        IsHoliday(New DateTime(2016, 3, 28), New CultureInfo("nl-NL")) And
-        Not IsHoliday(New DateTime(2016, 3, 29), New CultureInfo("nl-NL")) And
-        IsHoliday(New DateTime(2012, 4, 30), New CultureInfo("nl-NL")) And
-        IsHoliday(New DateTime(2018, 4, 27, 23, 59, 59),
-        New CultureInfo("nl-NL")) And
-        IsHoliday(New DateTime(2014, 5, 29), New CultureInfo("nl-NL")) And
-        IsHoliday(New DateTime(2020, 6, 1), New CultureInfo("nl-NL")) And
-        IsHoliday(New DateTime(2009, 12, 25), New CultureInfo("nl-NL")) And
-        IsHoliday(New DateTime(2011, 12, 26), New CultureInfo("nl-NL")) And
-        IsHoliday(New DateTime(2010, 12, 31), New CultureInfo("nl-NL")) And
-        Not IsHoliday(New DateTime(2014, 2, 1, 0, 0, 1),
-        New CultureInfo("nl-NL")) And
-        Not IsHoliday(New DateTime(2009, 2, 23), New CultureInfo("nl-NL")) And
-        Not IsHoliday(New DateTime(2014, 5, 5), New CultureInfo("nl-NL")) And
-        IsHoliday(New DateTime(2015, 5, 5), New CultureInfo("nl-NL")) And
-        Not IsHoliday(New DateTime(2011, 4, 11), New CultureInfo("nl-NL")) And
-        IsHoliday(New DateTime(2022, 4, 17), New CultureInfo("en-US")) And
-        Not IsHoliday(New DateTime(2020, 6, 1), New CultureInfo("en-US"))
+      AssertTrue(IsHoliday(New DateTime(2021, 12, 25), InvariantCulture))
+      AssertFalse(IsHoliday(New DateTime(2020, 10, 12), InvariantCulture))
+      AssertTrue(IsHoliday(New DateTime(2012, 1, 1), New CultureInfo("nl-NL")))
+      AssertFalse(IsHoliday(
+        New DateTime(2016, 3, 26), New CultureInfo("nl-NL")))
+      AssertTrue(IsHoliday(New DateTime(2016, 3, 28), New CultureInfo("nl-NL")))
+      AssertFalse(IsHoliday(
+        New DateTime(2016, 3, 29), New CultureInfo("nl-NL")))
+      AssertTrue(IsHoliday(New DateTime(2012, 4, 30), New CultureInfo("nl-NL")))
+      AssertTrue(IsHoliday(
+        New DateTime(2018, 4, 27, 23, 59, 59), New CultureInfo("nl-NL")))
+      AssertTrue(IsHoliday(New DateTime(2014, 5, 29), New CultureInfo("nl-NL")))
+      AssertTrue(IsHoliday(New DateTime(2020, 6, 1), New CultureInfo("nl-NL")))
+      AssertTrue(IsHoliday(
+        New DateTime(2009, 12, 25), New CultureInfo("nl-NL")))
+      AssertTrue(IsHoliday(
+        New DateTime(2011, 12, 26), New CultureInfo("nl-NL")))
+      AssertTrue(IsHoliday(
+        New DateTime(2010, 12, 31), New CultureInfo("nl-NL")))
+      AssertFalse(IsHoliday(
+        New DateTime(2014, 2, 1, 0, 0, 1), New CultureInfo("nl-NL")))
+      AssertFalse(IsHoliday(
+        New DateTime(2009, 2, 23), New CultureInfo("nl-NL")))
+      AssertFalse(IsHoliday(New DateTime(2014, 5, 5), New CultureInfo("nl-NL")))
+      AssertTrue(IsHoliday(New DateTime(2015, 5, 5), New CultureInfo("nl-NL")))
+      AssertFalse(IsHoliday(
+        New DateTime(2011, 4, 11), New CultureInfo("nl-NL")))
+      AssertTrue(IsHoliday(New DateTime(2022, 4, 17), New CultureInfo("en-US")))
+      AssertFalse(IsHoliday(New DateTime(2020, 6, 1), New CultureInfo("en-US")))
 
-      UnitTestsPassed = UnitTestsPassed And
-        DaysSinceSunday(New DateTime(2016, 4, 4, 16, 33, 2)) = 1 And
-        DaysSinceSunday(New DateTime(2015, 7, 15, 2, 29, 58)) = 3 And
-        DaysSinceSunday(New DateTime(2016, 4, 1, 22, 5, 17)) = 5 And
-        DaysSinceSunday(New DateTime(2013, 12, 1, 21, 47, 35)) = 0 And
-        DaysSinceSunday(New DateTime(2016, 11, 22, 0, 22, 17)) = 2 And
-        DaysSinceSunday(New DateTime(2016, 10, 11, 19, 11, 41)) = 2 And
-        DaysSinceSunday(New DateTime(2013, 10, 26, 4, 24, 53)) = 6 And
-        DaysSinceSunday(New DateTime(2014, 5, 2, 2, 52, 41)) = 5 And
-        DaysSinceSunday(New DateTime(2014, 8, 16, 13, 11, 10)) = 6 And
-        DaysSinceSunday(New DateTime(2014, 10, 25, 8, 26, 4)) = 6 And
-        DaysSinceSunday(New DateTime(2015, 6, 2, 18, 36, 24)) = 2 And
-        DaysSinceSunday(New DateTime(2016, 11, 21, 16, 24, 27)) = 1 And
-        DaysSinceSunday(New DateTime(2014, 4, 4, 8, 42, 10)) = 5 And
-        DaysSinceSunday(New DateTime(2016, 2, 22, 19, 8, 41)) = 1 And
-        DaysSinceSunday(New DateTime(2015, 9, 13, 22, 48, 17)) = 0 And
-        DaysSinceSunday(New DateTime(2016, 10, 20, 2, 47, 48)) = 4 And
-        DaysSinceSunday(New DateTime(2014, 2, 8, 23, 12, 34)) = 6 And
-        DaysSinceSunday(New DateTime(2016, 2, 27, 23, 40, 39)) = 6 And
-        DaysSinceSunday(New DateTime(2015, 8, 26, 9, 35, 55)) = 3 And
-        DaysSinceSunday(New DateTime(2016, 2, 11, 0, 44, 7)) = 4
+      AssertEqual(DaysSinceSunday(New DateTime(2016, 4, 4, 16, 33, 2)), 1)
+      AssertEqual(DaysSinceSunday(New DateTime(2015, 7, 15, 2, 29, 58)), 3)
+      AssertEqual(DaysSinceSunday(New DateTime(2016, 4, 1, 22, 5, 17)), 5)
+      AssertEqual(DaysSinceSunday(New DateTime(2013, 12, 1, 21, 47, 35)), 0)
+      AssertEqual(DaysSinceSunday(New DateTime(2016, 11, 22, 0, 22, 17)), 2)
+      AssertEqual(DaysSinceSunday(New DateTime(2016, 10, 11, 19, 11, 41)), 2)
+      AssertEqual(DaysSinceSunday(New DateTime(2013, 10, 26, 4, 24, 53)), 6)
+      AssertEqual(DaysSinceSunday(New DateTime(2014, 5, 2, 2, 52, 41)), 5)
+      AssertEqual(DaysSinceSunday(New DateTime(2014, 8, 16, 13, 11, 10)), 6)
+      AssertEqual(DaysSinceSunday(New DateTime(2014, 10, 25, 8, 26, 4)), 6)
+      AssertEqual(DaysSinceSunday(New DateTime(2015, 6, 2, 18, 36, 24)), 2)
+      AssertEqual(DaysSinceSunday(New DateTime(2016, 11, 21, 16, 24, 27)), 1)
+      AssertEqual(DaysSinceSunday(New DateTime(2014, 4, 4, 8, 42, 10)), 5)
+      AssertEqual(DaysSinceSunday(New DateTime(2016, 2, 22, 19, 8, 41)), 1)
+      AssertEqual(DaysSinceSunday(New DateTime(2015, 9, 13, 22, 48, 17)), 0)
+      AssertEqual(DaysSinceSunday(New DateTime(2016, 10, 20, 2, 47, 48)), 4)
+      AssertEqual(DaysSinceSunday(New DateTime(2014, 2, 8, 23, 12, 34)), 6)
+      AssertEqual(DaysSinceSunday(New DateTime(2016, 2, 27, 23, 40, 39)), 6)
+      AssertEqual(DaysSinceSunday(New DateTime(2015, 8, 26, 9, 35, 55)), 3)
+      AssertEqual(DaysSinceSunday(New DateTime(2016, 2, 11, 0, 44, 7)), 4)
 
-      UnitTestsPassed = UnitTestsPassed And
-        PreviousSunday(New DateTime(2016, 4, 4, 16, 33, 2)) =
-        New DateTime(2016, 4, 3, 16, 33, 2) And
-        PreviousSunday(New DateTime(2015, 7, 15, 2, 29, 58)) =
-        New DateTime(2015, 7, 12, 2, 29, 58) And
-        PreviousSunday(New DateTime(2016, 4, 1, 22, 5, 17)) =
-        New DateTime(2016, 3, 27, 22, 5, 17) And
-        PreviousSunday(New DateTime(2013, 12, 1, 21, 47, 35)) =
-        New DateTime(2013, 12, 1, 21, 47, 35) And
-        PreviousSunday(New DateTime(2016, 11, 22, 0, 22, 17)) =
-        New DateTime(2016, 11, 20, 0, 22, 17) And
-        PreviousSunday(New DateTime(2016, 10, 11, 19, 11, 41)) =
-        New DateTime(2016, 10, 9, 19, 11, 41) And
-        PreviousSunday(New DateTime(2013, 10, 26, 4, 24, 53)) =
-        New DateTime(2013, 10, 20, 4, 24, 53) And
-        PreviousSunday(New DateTime(2014, 5, 2, 2, 52, 41)) =
-        New DateTime(2014, 4, 27, 2, 52, 41) And
-        PreviousSunday(New DateTime(2014, 8, 16, 13, 11, 10)) =
-        New DateTime(2014, 8, 10, 13, 11, 10) And
-        PreviousSunday(New DateTime(2014, 10, 25, 8, 26, 4)) =
-        New DateTime(2014, 10, 19, 8, 26, 4) And
-        PreviousSunday(New DateTime(2015, 6, 2, 18, 36, 24)) =
-        New DateTime(2015, 5, 31, 18, 36, 24) And
-        PreviousSunday(New DateTime(2016, 11, 21, 16, 24, 27)) =
-        New DateTime(2016, 11, 20, 16, 24, 27) And
-        PreviousSunday(New DateTime(2014, 4, 4, 8, 42, 10)) =
-        New DateTime(2014, 3, 30, 8, 42, 10) And
-        PreviousSunday(New DateTime(2016, 2, 22, 19, 8, 41)) =
-        New DateTime(2016, 2, 21, 19, 8, 41) And
-        PreviousSunday(New DateTime(2015, 9, 13, 22, 48, 17)) =
-        New DateTime(2015, 9, 13, 22, 48, 17) And
-        PreviousSunday(New DateTime(2016, 10, 20, 2, 47, 48)) =
-        New DateTime(2016, 10, 16, 2, 47, 48) And
-        PreviousSunday(New DateTime(2014, 2, 8, 23, 12, 34)) =
-        New DateTime(2014, 2, 2, 23, 12, 34) And
-        PreviousSunday(New DateTime(2016, 2, 27, 23, 40, 39)) =
-        New DateTime(2016, 2, 21, 23, 40, 39) And
-        PreviousSunday(New DateTime(2018, 3, 26, 2, 44, 7)) =
-        New DateTime(2018, 3, 25, 2, 44, 7) And
-        PreviousSunday(New DateTime(2018, 10, 29, 2, 12, 19)) =
-        New DateTime(2018, 10, 28, 2, 12, 19)
+      AssertEqual(PreviousSunday(
+        New DateTime(2016, 4, 4, 16, 33, 2)),
+        New DateTime(2016, 4, 3, 16, 33, 2))
+      AssertEqual(PreviousSunday(
+        New DateTime(2015, 7, 15, 2, 29, 58)),
+        New DateTime(2015, 7, 12, 2, 29, 58))
+      AssertEqual(PreviousSunday(
+        New DateTime(2016, 4, 1, 22, 5, 17)),
+        New DateTime(2016, 3, 27, 22, 5, 17))
+      AssertEqual(PreviousSunday(
+        New DateTime(2013, 12, 1, 21, 47, 35)),
+        New DateTime(2013, 12, 1, 21, 47, 35))
+      AssertEqual(PreviousSunday(
+        New DateTime(2016, 11, 22, 0, 22, 17)),
+        New DateTime(2016, 11, 20, 0, 22, 17))
+      AssertEqual(PreviousSunday(
+        New DateTime(2016, 10, 11, 19, 11, 41)),
+        New DateTime(2016, 10, 9, 19, 11, 41))
+      AssertEqual(PreviousSunday(
+        New DateTime(2013, 10, 26, 4, 24, 53)),
+        New DateTime(2013, 10, 20, 4, 24, 53))
+      AssertEqual(PreviousSunday(
+        New DateTime(2014, 5, 2, 2, 52, 41)),
+        New DateTime(2014, 4, 27, 2, 52, 41))
+      AssertEqual(PreviousSunday(
+        New DateTime(2014, 8, 16, 13, 11, 10)),
+        New DateTime(2014, 8, 10, 13, 11, 10))
+      AssertEqual(PreviousSunday(
+        New DateTime(2014, 10, 25, 8, 26, 4)),
+        New DateTime(2014, 10, 19, 8, 26, 4))
+      AssertEqual(PreviousSunday(
+        New DateTime(2015, 6, 2, 18, 36, 24)),
+        New DateTime(2015, 5, 31, 18, 36, 24))
+      AssertEqual(PreviousSunday(
+        New DateTime(2016, 11, 21, 16, 24, 27)),
+        New DateTime(2016, 11, 20, 16, 24, 27))
+      AssertEqual(PreviousSunday(
+        New DateTime(2014, 4, 4, 8, 42, 10)),
+        New DateTime(2014, 3, 30, 8, 42, 10))
+      AssertEqual(PreviousSunday(
+        New DateTime(2016, 2, 22, 19, 8, 41)),
+        New DateTime(2016, 2, 21, 19, 8, 41))
+      AssertEqual(PreviousSunday(
+        New DateTime(2015, 9, 13, 22, 48, 17)),
+        New DateTime(2015, 9, 13, 22, 48, 17))
+      AssertEqual(PreviousSunday(
+        New DateTime(2016, 10, 20, 2, 47, 48)),
+        New DateTime(2016, 10, 16, 2, 47, 48))
+      AssertEqual(PreviousSunday(
+        New DateTime(2014, 2, 8, 23, 12, 34)),
+        New DateTime(2014, 2, 2, 23, 12, 34))
+      AssertEqual(PreviousSunday(
+        New DateTime(2016, 2, 27, 23, 40, 39)),
+        New DateTime(2016, 2, 21, 23, 40, 39))
+      AssertEqual(PreviousSunday(
+        New DateTime(2018, 3, 26, 2, 44, 7)),
+        New DateTime(2018, 3, 25, 2, 44, 7))
+      AssertEqual(PreviousSunday(
+        New DateTime(2018, 10, 29, 2, 12, 19)),
+        New DateTime(2018, 10, 28, 2, 12, 19))
 
-      UnitTestsPassed = UnitTestsPassed And
-        OffsetHoliday(New DateTime(2021, 12, 25), InvariantCulture) =
-        New DateTime(2021, 12, 19) And
-        OffsetHoliday(New DateTime(2020, 10, 12), InvariantCulture) =
-        New DateTime(2020, 10, 12) And
-        OffsetHoliday(New DateTime(2012, 1, 1), New CultureInfo("nl-NL")) =
-        New DateTime(2012, 1, 1) And
-        OffsetHoliday(New DateTime(2016, 3, 26), New CultureInfo("nl-NL")) =
-        New DateTime(2016, 3, 26) And
-        OffsetHoliday(New DateTime(2016, 3, 28), New CultureInfo("nl-NL")) =
-        New DateTime(2016, 3, 27) And
-        OffsetHoliday(New DateTime(2016, 3, 29), New CultureInfo("nl-NL")) =
-        New DateTime(2016, 3, 29) And
-        OffsetHoliday(New DateTime(2012, 4, 30), New CultureInfo("nl-NL")) =
-        New DateTime(2012, 4, 29) And
-        OffsetHoliday(New DateTime(2018, 4, 27, 23, 59, 59),
-        New CultureInfo("nl-NL")) = New DateTime(2018, 4, 22, 23, 59, 59) And
-        OffsetHoliday(New DateTime(2014, 5, 29), New CultureInfo("nl-NL")) =
-        New DateTime(2014, 5, 25) And
-        OffsetHoliday(New DateTime(2020, 6, 1), New CultureInfo("nl-NL")) =
-        New DateTime(2020, 5, 31) And
-        OffsetHoliday(New DateTime(2009, 12, 25), New CultureInfo("nl-NL")) =
-        New DateTime(2009, 12, 20) And
-        OffsetHoliday(New DateTime(2011, 12, 26), New CultureInfo("nl-NL")) =
-        New DateTime(2011, 12, 25) And
-        OffsetHoliday(New DateTime(2010, 12, 31), New CultureInfo("nl-NL")) =
-        New DateTime(2010, 12, 26) And
-        OffsetHoliday(New DateTime(2014, 2, 1, 0, 0, 1),
-        New CultureInfo("nl-NL")) = New DateTime(2014, 2, 1, 0, 0, 1) And
-        OffsetHoliday(New DateTime(2009, 2, 23), New CultureInfo("nl-NL")) =
-        New DateTime(2009, 2, 23) And
-        OffsetHoliday(New DateTime(2014, 5, 5), New CultureInfo("nl-NL")) =
-        New DateTime(2014, 5, 5) And
-        OffsetHoliday(New DateTime(2015, 5, 5), New CultureInfo("nl-NL")) =
-        New DateTime(2015, 5, 3) And
-        OffsetHoliday(New DateTime(2011, 4, 11), New CultureInfo("nl-NL")) =
-        New DateTime(2011, 4, 11) And
-        OffsetHoliday(New DateTime(2022, 4, 17), New CultureInfo("en-US")) =
-        New DateTime(2022, 4, 17) And
-        OffsetHoliday(New DateTime(2020, 6, 1), New CultureInfo("en-US")) =
-        New DateTime(2020, 6, 1)
+      AssertEqual(OffsetHoliday(
+        New DateTime(2021, 12, 25), InvariantCulture),
+        New DateTime(2021, 12, 19))
+      AssertEqual(OffsetHoliday(
+        New DateTime(2020, 10, 12), InvariantCulture),
+        New DateTime(2020, 10, 12))
+      AssertEqual(OffsetHoliday(
+        New DateTime(2012, 1, 1), New CultureInfo("nl-NL")),
+        New DateTime(2012, 1, 1))
+      AssertEqual(OffsetHoliday(
+        New DateTime(2016, 3, 26), New CultureInfo("nl-NL")),
+        New DateTime(2016, 3, 26))
+      AssertEqual(OffsetHoliday(
+        New DateTime(2016, 3, 28), New CultureInfo("nl-NL")),
+        New DateTime(2016, 3, 27))
+      AssertEqual(OffsetHoliday(
+        New DateTime(2016, 3, 29), New CultureInfo("nl-NL")),
+        New DateTime(2016, 3, 29))
+      AssertEqual(OffsetHoliday(
+        New DateTime(2012, 4, 30), New CultureInfo("nl-NL")),
+        New DateTime(2012, 4, 29))
+      AssertEqual(OffsetHoliday(
+        New DateTime(2018, 4, 27, 23, 59, 59), New CultureInfo("nl-NL")),
+        New DateTime(2018, 4, 22, 23, 59, 59))
+      AssertEqual(OffsetHoliday(
+        New DateTime(2014, 5, 29), New CultureInfo("nl-NL")),
+        New DateTime(2014, 5, 25))
+      AssertEqual(OffsetHoliday(
+        New DateTime(2020, 6, 1), New CultureInfo("nl-NL")),
+        New DateTime(2020, 5, 31))
+      AssertEqual(OffsetHoliday(
+        New DateTime(2009, 12, 25), New CultureInfo("nl-NL")),
+        New DateTime(2009, 12, 20))
+      AssertEqual(OffsetHoliday(
+        New DateTime(2011, 12, 26), New CultureInfo("nl-NL")),
+        New DateTime(2011, 12, 25))
+      AssertEqual(OffsetHoliday(
+        New DateTime(2010, 12, 31), New CultureInfo("nl-NL")),
+        New DateTime(2010, 12, 26))
+      AssertEqual(OffsetHoliday(
+        New DateTime(2014, 2, 1, 0, 0, 1), New CultureInfo("nl-NL")),
+        New DateTime(2014, 2, 1, 0, 0, 1))
+      AssertEqual(OffsetHoliday(
+        New DateTime(2009, 2, 23), New CultureInfo("nl-NL")),
+        New DateTime(2009, 2, 23))
+      AssertEqual(OffsetHoliday(
+        New DateTime(2014, 5, 5), New CultureInfo("nl-NL")),
+        New DateTime(2014, 5, 5))
+      AssertEqual(OffsetHoliday(
+        New DateTime(2015, 5, 5), New CultureInfo("nl-NL")),
+        New DateTime(2015, 5, 3))
+      AssertEqual(OffsetHoliday(
+        New DateTime(2011, 4, 11), New CultureInfo("nl-NL")),
+        New DateTime(2011, 4, 11))
+      AssertEqual(OffsetHoliday(
+        New DateTime(2022, 4, 17), New CultureInfo("en-US")),
+        New DateTime(2022, 4, 17))
+      AssertEqual(OffsetHoliday(
+        New DateTime(2020, 6, 1), New CultureInfo("en-US")),
+        New DateTime(2020, 6, 1))
 
       For i = 0 To 19
         If i = 0 Then
@@ -994,97 +1071,90 @@ Namespace Vitens.DynamicBandwidthMonitor
             43, 46, 53, 55, 63})
         End If
         With StatisticsItem
-          UnitTestsPassed = UnitTestsPassed And
-            Round(.Slope, 4) = {-24.1399, -67.5699, 51.3427, -56.9825,
+          AssertAlmostEqual(.Slope, {-24.1399, -67.5699, 51.3427, -56.9825,
             27.3182, -2.6573, 32.1923, -46.8462, -11.1224, -61.5455, 9.4424,
             -0.1602, 10.7659, 4.8889, -4.6572, -0.4548, -6.6652, 2.2442,
-            8.6539, -12.0462}(i) And
-            Round(.OriginSlope, 4) = {383.2213, 397.5889, 426.4229, 371.4506,
-            374.8399, 372.6621, 425.6739, 359.6522, 360.8676, 379.3893,
-            52.1812, 50.6373, 75.2409, 60.0661, 73.5505, 61.2832, 59.1633,
-            53.9967, 46.4227, 66.0541}(i) And
-            Round(.Angle, 4) = {-87.6279, -89.1521, 88.8842, -88.9946,
+            8.6539, -12.0462}(i), 4)
+          AssertAlmostEqual(.OriginSlope, {383.2213, 397.5889, 426.4229,
+            371.4506, 374.8399, 372.6621, 425.6739, 359.6522, 360.8676,
+            379.3893, 52.1812, 50.6373, 75.2409, 60.0661, 73.5505, 61.2832,
+            59.1633, 53.9967, 46.4227, 66.0541}(i), 4)
+          AssertAlmostEqual(.Angle, {-87.6279, -89.1521, 88.8842, -88.9946,
             87.9036, -69.3779, 88.2208, -88.7771, -84.8624, -89.0691, 83.9546,
             -9.0998, 84.6933, 78.4399, -77.8813, -24.4582, -81.4673, 65.9827,
-            83.4085, -85.2545}(i) And
-            Round(.OriginAngle, 4) = {89.8505, 89.8559, 89.8656, 89.8458,
+            83.4085, -85.2545}(i), 4)
+          AssertAlmostEqual(.OriginAngle, {89.8505, 89.8559, 89.8656, 89.8458,
             89.8471, 89.8463, 89.8654, 89.8407, 89.8412, 89.849, 88.9021,
             88.8687, 89.2385, 89.0462, 89.221, 89.0651, 89.0317, 88.939,
-            88.766, 89.1327}(i) And
-            Round(.Intercept, 4) = {3123.1026, 3566.2179, 2875.6154,
+            88.766, 89.1327}(i), 4)
+          AssertAlmostEqual(.Intercept, {3123.1026, 3566.2179, 2875.6154,
             3284.6538, 2664.3333, 2877.4487, 3016.6923, 3116.4872, 2851.9231,
             3380.5, 2332.5305, 2930.2549, 2585.1154, 2427.9251, 3229.618,
-            2967.1468, 3472.9635, 2986.3475, 2469.7771, 3320.9411}(i) And
-            Round(.StandardError, 4) = {582.4218, 633.706, 535.0359, 720.9024,
-            619.3358, 506.8629, 525.9328, 483.3154, 527.9273, 573.7699,
-            544.1683, 523.5486, 590.2042, 436.8994, 644.5969, 698.2517,
-            478.875, 384.1275, 419.8051, 657.4656}(i) And
-            Round(.Correlation, 4) = {-0.1548, -0.374, 0.3411, -0.2864,
+            2967.1468, 3472.9635, 2986.3475, 2469.7771, 3320.9411}(i), 4)
+          AssertAlmostEqual(.StandardError, {582.4218, 633.706, 535.0359,
+            720.9024, 619.3358, 506.8629, 525.9328, 483.3154, 527.9273,
+            573.7699, 544.1683, 523.5486, 590.2042, 436.8994, 644.5969,
+            698.2517, 478.875, 384.1275, 419.8051, 657.4656}(i), 4)
+          AssertAlmostEqual(.Correlation, {-0.1548, -0.374, 0.3411, -0.2864,
             0.1645, -0.0198, 0.2255, -0.3441, -0.0794, -0.3759, 0.4296,
             -0.0071, 0.3208, 0.2029, -0.1209, -0.0154, -0.3016, 0.1484,
-            0.5294, -0.3121}(i) And
-            Round(.ModifiedCorrelation, 4) = {0.819, 0.7932, 0.8652, 0.7909,
-            0.8474, 0.8345, 0.8554, 0.8061, 0.8274, 0.7962, 0.8665, 0.9037,
-            0.8892, 0.908, 0.887, 0.8274, 0.8714, 0.8915, 0.9047,
-            0.8561}(i) And
-            Round(.Determination, 4) = {0.024, 0.1398, 0.1164, 0.082, 0.0271,
-            0.0004, 0.0509, 0.1184, 0.0063, 0.1413, 0.1845, 0.0001, 0.1029,
-            0.0412, 0.0146, 0.0002, 0.091, 0.022, 0.2803, 0.0974}(i)
+            0.5294, -0.3121}(i), 4)
+          AssertAlmostEqual(.ModifiedCorrelation, {0.819, 0.7932, 0.8652,
+            0.7909, 0.8474, 0.8345, 0.8554, 0.8061, 0.8274, 0.7962, 0.8665,
+            0.9037, 0.8892, 0.908, 0.887, 0.8274, 0.8714, 0.8915, 0.9047,
+            0.8561}(i), 4)
+          AssertAlmostEqual(.Determination, {0.024, 0.1398, 0.1164, 0.082,
+            0.0271, 0.0004, 0.0509, 0.1184, 0.0063, 0.1413, 0.1845, 0.0001,
+            0.1029, 0.0412, 0.0146, 0.0002, 0.091, 0.022, 0.2803, 0.0974}(i), 4)
         End With
       Next i
 
-      UnitTestsPassed = UnitTestsPassed And
-        PIAFIntervalSeconds(-25, 86400)*23 = 86100 And
-        PIAFIntervalSeconds(6, 3600)*5 = 3300 And
-        PIAFIntervalSeconds(-14, 3600) = 300 And
-        PIAFIntervalSeconds(-13, 3600) = 300 And
-        PIAFIntervalSeconds(-12, 3600) = 330 And
-        PIAFIntervalSeconds(-10, 3600) = 412.5 And
-        PIAFIntervalSeconds(-7, 3600) = 660 And
-        PIAFIntervalSeconds(-3, 3600) = 3300 And
-        PIAFIntervalSeconds(-2, 3600) = 3600 And
-        PIAFIntervalSeconds(-1, 3600) = 300 And
-        PIAFIntervalSeconds(0, 3600) = 300 And
-        PIAFIntervalSeconds(1, 3600) = 3600 And
-        PIAFIntervalSeconds(2, 3600) = 3300 And
-        PIAFIntervalSeconds(3, 3600) = 1650 And
-        PIAFIntervalSeconds(5, 3600) = 825 And
-        PIAFIntervalSeconds(9, 3600) = 412.5 And
-        PIAFIntervalSeconds(11, 3600) = 330 And
-        PIAFIntervalSeconds(12, 3600) = 300 And
-        PIAFIntervalSeconds(13, 3600) = 300 And
-        PIAFIntervalSeconds(14, 3600) = 300
+      AssertEqual(PIAFIntervalSeconds(-25, 86400)*23, 86100)
+      AssertEqual(PIAFIntervalSeconds(6, 3600)*5, 3300)
+      AssertEqual(PIAFIntervalSeconds(-14, 3600), 300)
+      AssertEqual(PIAFIntervalSeconds(-13, 3600), 300)
+      AssertEqual(PIAFIntervalSeconds(-12, 3600), 330)
+      AssertEqual(PIAFIntervalSeconds(-10, 3600), 412.5)
+      AssertEqual(PIAFIntervalSeconds(-7, 3600), 660)
+      AssertEqual(PIAFIntervalSeconds(-3, 3600), 3300)
+      AssertEqual(PIAFIntervalSeconds(-2, 3600), 3600)
+      AssertEqual(PIAFIntervalSeconds(-1, 3600), 300)
+      AssertEqual(PIAFIntervalSeconds(0, 3600), 300)
+      AssertEqual(PIAFIntervalSeconds(1, 3600), 3600)
+      AssertEqual(PIAFIntervalSeconds(2, 3600), 3300)
+      AssertEqual(PIAFIntervalSeconds(3, 3600), 1650)
+      AssertEqual(PIAFIntervalSeconds(5, 3600), 825)
+      AssertEqual(PIAFIntervalSeconds(9, 3600), 412.5)
+      AssertEqual(PIAFIntervalSeconds(11, 3600), 330)
+      AssertEqual(PIAFIntervalSeconds(12, 3600), 300)
+      AssertEqual(PIAFIntervalSeconds(13, 3600), 300)
+      AssertEqual(PIAFIntervalSeconds(14, 3600), 300)
 
-      UnitTestsPassed = UnitTestsPassed And
-        Not PIAFShouldPrepareData(-600) And
-        Not PIAFShouldPrepareData(-599) And
-        Not PIAFShouldPrepareData(-1) And
-        Not PIAFShouldPrepareData(0) And
-        Not PIAFShouldPrepareData(1) And
-        Not PIAFShouldPrepareData(299) And
-        Not PIAFShouldPrepareData(300) And
-        Not PIAFShouldPrepareData(301) And
-        Not PIAFShouldPrepareData(599) And
-        PIAFShouldPrepareData(600) And
-        PIAFShouldPrepareData(601) And
-        PIAFShouldPrepareData(899) And
-        PIAFShouldPrepareData(900) And
-        PIAFShouldPrepareData(901) And
-        PIAFShouldPrepareData(1199) And
-        PIAFShouldPrepareData(1200) And
-        PIAFShouldPrepareData(1201) And
-        PIAFShouldPrepareData(1499) And
-        PIAFShouldPrepareData(1500) And
-        PIAFShouldPrepareData(1501)
+      AssertFalse(PIAFShouldPrepareData(-600))
+      AssertFalse(PIAFShouldPrepareData(-599))
+      AssertFalse(PIAFShouldPrepareData(-1))
+      AssertFalse(PIAFShouldPrepareData(0))
+      AssertFalse(PIAFShouldPrepareData(1))
+      AssertFalse(PIAFShouldPrepareData(299))
+      AssertFalse(PIAFShouldPrepareData(300))
+      AssertFalse(PIAFShouldPrepareData(301))
+      AssertFalse(PIAFShouldPrepareData(599))
+      AssertTrue(PIAFShouldPrepareData(600))
+      AssertTrue(PIAFShouldPrepareData(601))
+      AssertTrue(PIAFShouldPrepareData(899))
+      AssertTrue(PIAFShouldPrepareData(900))
+      AssertTrue(PIAFShouldPrepareData(901))
+      AssertTrue(PIAFShouldPrepareData(1199))
+      AssertTrue(PIAFShouldPrepareData(1200))
+      AssertTrue(PIAFShouldPrepareData(1201))
+      AssertTrue(PIAFShouldPrepareData(1499))
+      AssertTrue(PIAFShouldPrepareData(1500))
+      AssertTrue(PIAFShouldPrepareData(1501))
 
-      Return UnitTestsPassed
-
-    End Function
+    End Sub
 
 
-    Public Shared Function IntegrationTestsPassed As Boolean
-
-      ' Integration tests, returns True if all tests pass.
+    Public Shared Sub RunIntegrationTests
 
       Dim InputPointDriver As DBMPointDriverTestModel
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
@@ -1092,8 +1162,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim i As Integer
       Dim Result As DBMResult
       Dim DBM As New DBM
-
-      IntegrationTestsPassed = True
 
       InputPointDriver = New DBMPointDriverTestModel(0)
       CorrelationPoints.Add(
@@ -1104,49 +1172,51 @@ Namespace Vitens.DynamicBandwidthMonitor
         Result = DBM.Result(InputPointDriver, CorrelationPoints, Timestamp,
           New CultureInfo("nl-NL")) ' Use Dutch locale for New Year's Day test
         With Result
-          IntegrationTestsPassed = IntegrationTestsPassed And
-            Round(.Factor, 4) = {0, 0, 0, 0, 0, 0, -11.8493, -22.9119, 0, 0, 0,
-            0, 1.1375, 0, 0, 0, 0, 0, 0, 0}(i) And
-            .HasEvent = {False, False, False, False, False, False, True,
-            True, False, False, False, False, True, False, False, False,
-            False, False, False, False}(i) And
-            .HasSuppressedEvent = {False, False, False, False, False,
-            True, False, False, False, False, False, False, False, False,
-            True, False, False, False, False, False}(i) And
-            Round(.ForecastItem.Measurement, 4) = {527.5796, 687.0052,
+          AssertAlmostEqual(.Factor, {0, 0, 0, 0, 0, 0, -11.8493, -22.9119, 0,
+            0, 0, 0, 1.1375, 0, 0, 0, 0, 0, 0, 0}(i), 4)
+          If i = 6 Or i = 7 Or i = 12 Then
+            AssertTrue(.HasEvent)
+          Else
+            AssertFalse(.HasEvent)
+          End If
+          If i = 5 Or i = 14 Then
+            AssertTrue(.HasSuppressedEvent)
+          Else
+            AssertFalse(.HasSuppressedEvent)
+          End If
+          AssertAlmostEqual(.ForecastItem.Measurement, {527.5796, 687.0052,
             1097.1504, 950.9752, 496.1124, 673.6569, 1139.1957, 867.4313,
             504.9407, 656.4434, 1065.7651, 898.9191, 471.2433, 668.1,
             1103.9689, 897.7268, 525.3563, 676.7206, 1183.0887,
-            975.8324}(i) And
-            Round(.ForecastItem.ForecastValue, 4) = {517.2028, 716.9982,
+            975.8324}(i), 4)
+          AssertAlmostEqual(.ForecastItem.ForecastValue, {517.2028, 716.9982,
             1059.0551, 919.4719, 488.6181, 683.6728, 1155.5986, 895.6872,
             503.2566, 655.7115, 1061.2282, 893.3488, 464.4957, 666.2928,
             1084.1527, 901.6546, 523.8671, 666.1729, 1190.3511,
-            975.4264}(i) And
-            Round(.ForecastItem.Range(0.95), 4) = {7.3871, 43.4768, 57.5299,
-            51.6959, 28.3939, 0.5641, 0.9146, 0.8148, 5.6816, 7.3282, 11.0143,
-            9.3649, 3.9192, 4.4945, 6.9199, 9.2247, 8.3518, 9.6103, 20.3862,
-            15.9607}(i) And
-            Round(.ForecastItem.Range(BandwidthCI), 4) = {11.1804, 65.8024,
+            975.4264}(i), 4)
+          AssertAlmostEqual(.ForecastItem.Range(0.95), {7.3871, 43.4768,
+            57.5299, 51.6959, 28.3939, 0.5641, 0.9146, 0.8148, 5.6816, 7.3282,
+            11.0143, 9.3649, 3.9192, 4.4945, 6.9199, 9.2247, 8.3518, 9.6103,
+            20.3862, 15.9607}(i), 4)
+          AssertAlmostEqual(.ForecastItem.Range(BandwidthCI), {11.1804, 65.8024,
             87.0718, 78.2419, 42.9743, 0.8537, 1.3843, 1.2332, 8.5991, 11.0913,
             16.6702, 14.1738, 5.9317, 6.8025, 10.4733, 13.9616, 12.6405,
-            14.5453, 30.8546, 24.1566}(i) And
-            Round(.ForecastItem.LowerControlLimit, 4) = {506.0224, 651.1959,
-            971.9833, 841.23, 445.6438, 682.8191, 1154.2143, 894.454,
+            14.5453, 30.8546, 24.1566}(i), 4)
+          AssertAlmostEqual(.ForecastItem.LowerControlLimit, {506.0224,
+            651.1959, 971.9833, 841.23, 445.6438, 682.8191, 1154.2143, 894.454,
             494.6574, 644.6202, 1044.558, 879.175, 458.564, 659.4903,
             1073.6794, 887.693, 511.2267, 651.6276, 1159.4964,
-            951.2698}(i) And
-            Round(.ForecastItem.UpperControlLimit, 4) = {528.3832, 782.8006,
-            1146.127, 997.7138, 531.5924, 684.5266, 1156.9829, 896.9205,
-            511.8557, 666.8028, 1077.8984, 907.5226, 470.4274, 673.0952,
-            1094.626, 915.6163, 536.5076, 680.7182, 1221.2057, 999.583}(i)
+            951.2698}(i), 4)
+          AssertAlmostEqual(.ForecastItem.UpperControlLimit, {528.3832,
+            782.8006, 1146.127, 997.7138, 531.5924, 684.5266, 1156.9829,
+            896.9205, 511.8557, 666.8028, 1077.8984, 907.5226, 470.4274,
+            673.0952, 1094.626, 915.6163, 536.5076, 680.7182, 1221.2057,
+            999.583}(i), 4)
         End With
         Timestamp = Timestamp.AddSeconds(365*24*60*60/20)
       Next i
 
-      Return IntegrationTestsPassed
-
-    End Function
+    End Sub
 
 
     Public Shared Function PerformanceIndex As Double
