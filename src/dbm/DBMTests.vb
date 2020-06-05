@@ -1206,7 +1206,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             14.5453, 30.8546, 24.1566}(i), 4)
           AssertAlmostEqual(.ForecastItem.LowerControlLimit, {506.0224,
             651.1959, 971.9833, 841.23, 445.6438, 682.8191, 1154.2143, 894.454,
-            494.6574, 644.6202, 1044.558, 879.175, 458.564, 659.4903,
+            494.6574, 644.6202, 1044.558, 879.175, 458.554, 659.4903,
             1073.6794, 887.693, 511.2267, 651.6276, 1159.4964,
             951.2698}(i), 4)
           AssertAlmostEqual(.ForecastItem.UpperControlLimit, {528.3832,
