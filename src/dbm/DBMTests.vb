@@ -346,7 +346,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertEqual({58, 79, 68}, 68)
       AssertEqual({NaN, 10, 30, NaN}, 20)
       AssertEqual({30, 10, NaN, 15}, 15)
-      AssertNaN(Median({NaN, NaN, NaN, NaN, NaN})))
+      AssertNaN(Median({NaN, NaN, NaN, NaN, NaN}))
       AssertEqual({19, 3, 9, 14, 31}, 14)
       AssertEqual({2, 85, 33, 10, 38, 56}, 35.5)
       AssertEqual({42, 65, 57, 92, 56, 59}, 58)
