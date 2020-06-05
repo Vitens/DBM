@@ -77,8 +77,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         (TypeOf b Is Integer Or TypeOf b Is Double Or
         TypeOf b Is Decimal) AndAlso
         ToDouble(a) = ToDouble(b) Then Exit Sub
-      Throw New System.Exception("Assert failed. a=" & a.ToString &
-        ", b=" & b.ToString)
+      Throw New Exception("Assert failed a=" & a.ToString & " b=" & b.ToString)
 
     End Sub
 
