@@ -327,26 +327,26 @@ If Not Fail Then Console.WriteLine("EQUAL a=" & a.ToString & ", b=" & b.ToString
       AssertEqual(NonNaNCount({NaN}), 0)
       AssertEqual(NonNaNCount({NaN, NaN}), 0)
 
-      AssertAlmostEqual(Mean({60}), 60, 4)
-      AssertAlmostEqual(Mean({72}), 72, 4)
-      AssertAlmostEqual(Mean({32, 95}), 63.5, 4)
-      AssertAlmostEqual(Mean({81, 75}), 78, 4)
-      AssertAlmostEqual(Mean({67, 76, 25}), 56, 4)
-      AssertAlmostEqual(Mean({25, NaN, 27}), 26, 4)
-      AssertAlmostEqual(Mean({31, 73, 83, 81}), 67, 4)
-      AssertAlmostEqual(Mean({18, 58, 47, 47}), 42.5, 4)
-      AssertAlmostEqual(Mean({10, NaN, 20, 30, NaN}), 20, 4)
-      AssertAlmostEqual(Mean({67, 90, 74, 32, 62}), 65, 4)
+      AssertEqual(Mean({60}), 60)
+      AssertEqual(Mean({72}), 72)
+      AssertEqual(Mean({32, 95}), 63.5)
+      AssertEqual(Mean({81, 75}), 78)
+      AssertEqual(Mean({67, 76, 25}), 56)
+      AssertEqual(Mean({25, NaN, 27}), 26)
+      AssertEqual(Mean({31, 73, 83, 81}), 67)
+      AssertEqual(Mean({18, 58, 47, 47}), 42.5)
+      AssertEqual(Mean({10, NaN, 20, 30, NaN}), 20)
+      AssertEqual(Mean({67, 90, 74, 32, 62}), 65)
       AssertAlmostEqual(Mean({78, 0, 98, 65, 69, 57}), 61.1667, 4)
-      AssertAlmostEqual(Mean({49, 35, 74, 25, 28, 92}), 50.5, 4)
+      AssertEqual(Mean({49, 35, 74, 25, 28, 92}), 50.5)
       AssertAlmostEqual(Mean({7, 64, 22, 7, 42, 34, 30}), 29.4286, 4)
       AssertAlmostEqual(Mean({13, 29, 39, 33, 96, 43, 17}), 38.5714, 4)
-      AssertAlmostEqual(Mean({59, 78, 53, 7, 18, 44, 63, 40}), 45.25, 4)
-      AssertAlmostEqual(Mean({77, 71, 99, 39, 50, 94, 67, 30}), 65.875, 4)
-      AssertAlmostEqual(Mean({91, 69, 63, 5, 44, 93, 89, 45, 50}), 61, 4)
+      AssertEqual(Mean({59, 78, 53, 7, 18, 44, 63, 40}), 45.25)
+      AssertEqual(Mean({77, 71, 99, 39, 50, 94, 67, 30}), 65.875)
+      AssertEqual(Mean({91, 69, 63, 5, 44, 93, 89, 45, 50}), 61)
       AssertAlmostEqual(Mean({12, 84, 12, 94, 52, 17, 1, 13, 37}), 35.7778, 4)
-      AssertAlmostEqual(Mean({18, 14, 54, 40, 73, 77, 4, 91, 53, 10}), 43.4, 4)
-      AssertAlmostEqual(Mean({80, 30, 1, 92, 44, 61, 18, 72, 63, 41}), 50.2, 4)
+      AssertEqual(Mean({18, 14, 54, 40, 73, 77, 4, 91, 53, 10}), 43.4)
+      AssertEqual(Mean({80, 30, 1, 92, 44, 61, 18, 72, 63, 41}), 50.2)
 
       AssertEqual(Median({57}), 57)
       AssertEqual(Median({46}), 46)
@@ -393,17 +393,17 @@ If Not Fail Then Console.WriteLine("EQUAL a=" & a.ToString & ", b=" & b.ToString
       AssertArrayEqual(AbsoluteDeviation(
         {15, 94, 58, 67}, 78), {63, 16, 20, 11})
 
-      AssertAlmostEqual(MeanAbsoluteDeviation({19}), 0, 4)
-      AssertAlmostEqual(MeanAbsoluteDeviation({86}), 0, 4)
-      AssertAlmostEqual(MeanAbsoluteDeviation({7, 24}), 8.5, 4)
-      AssertAlmostEqual(MeanAbsoluteDeviation({12, 96}), 42, 4)
+      AssertEqual(MeanAbsoluteDeviation({19}), 0)
+      AssertEqual(MeanAbsoluteDeviation({86}), 0)
+      AssertEqual(MeanAbsoluteDeviation({7, 24}), 8.5)
+      AssertEqual(MeanAbsoluteDeviation({12, 96}), 42)
       AssertAlmostEqual(MeanAbsoluteDeviation({19, 74, 70}), 23.5556, 4)
       AssertAlmostEqual(MeanAbsoluteDeviation({96, 93, 65}), 13.1111, 4)
-      AssertAlmostEqual(MeanAbsoluteDeviation({47, 29, 24, 11}), 10.25, 4)
-      AssertAlmostEqual(MeanAbsoluteDeviation({3, 43, 53, 80}), 21.75, 4)
-      AssertAlmostEqual(MeanAbsoluteDeviation({17, 27, 98, 85, 51}), 28.72, 4)
-      AssertAlmostEqual(MeanAbsoluteDeviation({2, 82, 63, 1, 49}), 30.32, 4)
-      AssertAlmostEqual(MeanAbsoluteDeviation({9, 25, 41, 85, 82, 55}),24.5, 4)
+      AssertEqual(MeanAbsoluteDeviation({47, 29, 24, 11}), 10.25)
+      AssertEqual(MeanAbsoluteDeviation({3, 43, 53, 80}), 21.75)
+      AssertEqual(MeanAbsoluteDeviation({17, 27, 98, 85, 51}), 28.72)
+      AssertEqual(MeanAbsoluteDeviation({2, 82, 63, 1, 49}), 30.32)
+      AssertEqual(MeanAbsoluteDeviation({9, 25, 41, 85, 82, 55}),24.5)
       AssertAlmostEqual(MeanAbsoluteDeviation(
         {5, 74, 53, 97, 81, 21}),28.8333, 4)
       AssertAlmostEqual(MeanAbsoluteDeviation(
@@ -412,16 +412,16 @@ If Not Fail Then Console.WriteLine("EQUAL a=" & a.ToString & ", b=" & b.ToString
         {5, 83, 31, 24, 55, 22, 87}), 26.6939, 4)
       AssertAlmostEqual(MeanAbsoluteDeviation(
         {22, 84, 6, 79, 89, 71, 34, 56}), 25.8438, 4)
-      AssertAlmostEqual(MeanAbsoluteDeviation(
-        {33, 39, 6, 88, 69, 11, 76, 65}), 26.125, 4)
+      AssertEqual(MeanAbsoluteDeviation(
+        {33, 39, 6, 88, 69, 11, 76, 65}), 26.125)
       AssertAlmostEqual(MeanAbsoluteDeviation(
         {31, 52, 12, 60, 52, 44, 47, 81, 34}), 13.9012, 4)
       AssertAlmostEqual(MeanAbsoluteDeviation(
         {64, 63, 54, 94, 25, 80, 97, 45, 51}), 17.8519, 4)
-      AssertAlmostEqual(MeanAbsoluteDeviation(
-        {47, 22, 52, 22, 10, 38, 94, 85, 54, 41}), 19.9, 4)
-      AssertAlmostEqual(MeanAbsoluteDeviation(
-        {7, 12, 84, 29, 41, 8, 18, 15, 16, 84}), 22.96, 4)
+      AssertEqual(MeanAbsoluteDeviation(
+        {47, 22, 52, 22, 10, 38, 94, 85, 54, 41}), 19.9)
+      AssertEqual(MeanAbsoluteDeviation(
+        {7, 12, 84, 29, 41, 8, 18, 15, 16, 84}), 22.96)
 
       AssertEqual(MedianAbsoluteDeviation({2}), 0)
       AssertEqual(MedianAbsoluteDeviation({37}), 0)
@@ -607,7 +607,7 @@ If Not Fail Then Console.WriteLine("EQUAL a=" & a.ToString & ", b=" & b.ToString
         {NaN, 10, NaN, 10, NaN, 10, NaN, 30, 20, NaN, 999}),
         {NaN, 10, NaN, 10, NaN, 10, NaN, 30, 20, NaN, NaN})
 
-      AssertAlmostEqual(ExponentialMovingAverage({70.5547}), 70.5547, 4)
+      AssertEqual(ExponentialMovingAverage({70.5547}), 70.5547)
       AssertAlmostEqual(ExponentialMovingAverage(
         {53.3424, 57.9519}), 56.7995, 4)
       AssertAlmostEqual(ExponentialMovingAverage(
@@ -620,8 +620,7 @@ If Not Fail Then Console.WriteLine("EQUAL a=" & a.ToString & ", b=" & b.ToString
         {4.5353, 41.4033, 86.2619}), 61.7699, 4)
       AssertAlmostEqual(ExponentialMovingAverage(
         {79.048, 37.3536, 96.1953}), 76.9338, 4)
-      AssertAlmostEqual(ExponentialMovingAverage(
-        {87.1446, 5.6237, 94.9557}), 68.3164, 4)
+      AssertEqual(ExponentialMovingAverage({87.1446, 5.6237, 94.9557}), 68.3164)
       AssertAlmostEqual(ExponentialMovingAverage(
         {36.4019, 52.4868, 76.7112}), 64.0315, 4)
       AssertAlmostEqual(ExponentialMovingAverage(
