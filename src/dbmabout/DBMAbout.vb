@@ -37,17 +37,13 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMAbout
 
 
-    ' DBMAbout is a command line utility that can be used to quickly print DBM
-    ' version and test result information.
+    ' DBMAbout is a command line utility that can be used to output some DBM
+    ' information.
 
 
     Public Shared Sub Main
 
-      ' Output version, copyright, license information, test results
-      ' and performance index.
-
       Console.Write(LicenseNotice)
-      Console.Write(NewLine & TestResults)
 
     End Sub
 

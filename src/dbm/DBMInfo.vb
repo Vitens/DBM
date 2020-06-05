@@ -71,12 +71,16 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function LicenseNotice As String
 
-      ' Returns a string containing product name, version number, copyright and
-      ' license notice.
+      ' Returns a string containing product name, version number, copyright,
+      ' performance index, and license notice.
+
+      RunUnitTests
+      RunIntegrationTests
 
       With GetFileVersionInfo
         Return .ProductName & " v" & Version & NewLine &
           .Comments & NewLine &
+          "Performance Index " & Round(PerformanceIndex, 1).ToString & NewLine &
           .LegalCopyright & NewLine &
           NewLine &
           "This program is free software: you can redistribute it and/or " &
@@ -93,20 +97,6 @@ Namespace Vitens.DynamicBandwidthMonitor
           "License along with this program.  " &
           "If not, see <http://www.gnu.org/licenses/>." & NewLine
       End With
-
-    End Function
-
-
-    Public Shared Function TestResults As String
-
-      ' Returns a string containing test results and performance index.
-
-      Return " * Unit tests " &
-        If(UnitTestsPassed, "PASSED", "FAILED") & "." & NewLine &
-        " * Integration tests " &
-        If(IntegrationTestsPassed, "PASSED", "FAILED") & "." & NewLine &
-        " * Performance index " &
-        Round(PerformanceIndex, 1).ToString & "." & NewLine
 
     End Function
 

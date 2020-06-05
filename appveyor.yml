@@ -48,7 +48,6 @@ after_build:
 
 test_script:
   cmd: |-
-    build\DBMAbout.exe | find "FAILED" > NUL && exit 1 || exit 0
     "%TEMP%\Setup_%product%_v%version%+%commit%.exe" /VERYSILENT /NORESTART
     if not exist "%ProgramFiles(x86)%\%company%\%product%\build\DBM.dll" exit 1
 
