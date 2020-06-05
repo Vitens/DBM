@@ -24,6 +24,7 @@ Option Strict
 
 Imports System
 Imports System.Collections.Generic
+Imports System.Convert
 Imports System.DateTime
 Imports System.Double
 Imports System.Globalization
@@ -68,15 +69,15 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private Shared Sub AssertEqual(a As Object, b As Object)
 
       If TypeOf a Is Boolean And TypeOf b Is Boolean AndAlso
-        CBool(a) = CBool(b) Then Exit Sub
+        ToBoolean(a) = ToBoolean(b) Then Exit Sub
       If TypeOf a Is Date And TypeOf b Is Date AndAlso
-        CDate(a) = CDate(b) Then Exit Sub
+        ToDateTime(a) = ToDateTime(b) Then Exit Sub
       If TypeOf a Is Double And TypeOf b Is Double AndAlso
-        Double.IsNaN(CDbl(a)) And Double.IsNaN(CDbl(b)) Then Exit Sub
+        IsNaN(ToDouble(a)) And IsNaN(ToDouble(b)) Then Exit Sub
       If (TypeOf a Is Integer Or TypeOf a Is Double Or TypeOf a Is Decimal) And
         (TypeOf b Is Integer Or TypeOf b Is Double Or
         TypeOf b Is Decimal) AndAlso
-        CDbl(a) = CDbl(b) Then Exit Sub
+        ToDouble(a) = ToDouble(b) Then Exit Sub
       Throw New System.Exception("Assert failed. a=" & a.ToString &
         ", b=" & b.ToString)
 
@@ -93,7 +94,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private Shared Sub AssertAlmostEqual(a As Object, b As Object,
       Optional Digits As Integer = 15)
 
-      AssertEqual(Round(CDbl(a), Digits), Round(CDbl(b), Digits))
+      AssertEqual(Round(ToDouble(a), Digits), Round(ToDouble(b), Digits))
 
     End Sub
 
@@ -114,7 +115,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Shared Sub AssertNaN(a As Double)
 
-      AssertEqual(a, Double.NaN)
+      AssertEqual(a, NaN)
 
     End Sub
 
