@@ -94,15 +94,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private Shared Sub AssertAlmostEqual(a As Object, b As Object,
       Optional Digits As Integer = 15)
 
-Dim Fail As Boolean
-Try
- Fail = False
- AssertEqual(ToDouble(a), ToDouble(b))
-Catch
- Fail = True
-End Try
-If Not Fail Then Console.WriteLine("EQUAL a=" & a.ToString & ", b=" & b.ToString)
-
       AssertEqual(Round(ToDouble(a), Digits), Round(ToDouble(b), Digits))
 
     End Sub
