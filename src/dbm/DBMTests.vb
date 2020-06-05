@@ -1146,7 +1146,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertTrue(PIAFShouldPrepareData(1201))
       AssertTrue(PIAFShouldPrepareData(1499))
       AssertTrue(PIAFShouldPrepareData(1500))
-      AssertTrue(PIAFShouldPrepareData(1501))
+      AssertFalse(PIAFShouldPrepareData(1501))
 
     End Sub
 
