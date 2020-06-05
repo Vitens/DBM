@@ -81,7 +81,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Return .ProductName & " v" & Version & NewLine &
           .Comments & NewLine &
           .LegalCopyright & NewLine &
-          "Performance index: " &
+          "Performance index " &
           Round(PerformanceIndex, 1).ToString & "." & NewLine &
           NewLine &
           "This program is free software: you can redistribute it and/or " &
