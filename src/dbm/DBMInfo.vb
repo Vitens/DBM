@@ -80,7 +80,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       With GetFileVersionInfo
         Return .ProductName & " v" & Version & NewLine &
           .Comments & NewLine &
-          "Performance index " & Round(PerformanceIndex, 1).ToString & NewLine &
+          "Performance Index " & Round(PerformanceIndex, 1).ToString & NewLine &
           .LegalCopyright & NewLine &
           NewLine &
           "This program is free software: you can redistribute it and/or " &
