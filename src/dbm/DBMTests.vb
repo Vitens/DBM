@@ -394,8 +394,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertEqual(MeanAbsoluteDeviation({17, 27, 98, 85, 51}), 28.72)
       AssertEqual(MeanAbsoluteDeviation({2, 82, 63, 1, 49}), 30.32)
       AssertEqual(MeanAbsoluteDeviation({9, 25, 41, 85, 82, 55}),24.5)
-      AssertAlmostEqual(MeanAbsoluteDeviation(
-        {5, 74, 53, 97, 81, 21}),28.8333)
+      AssertAlmostEqual(MeanAbsoluteDeviation({5, 74, 53, 97, 81, 21}),28.8333)
       AssertAlmostEqual(MeanAbsoluteDeviation(
         {26, 81, 9, 18, 39, 97, 21}), 27.102)
       AssertAlmostEqual(MeanAbsoluteDeviation(
@@ -598,12 +597,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         {NaN, 10, NaN, 10, NaN, 10, NaN, 30, 20, NaN, NaN})
 
       AssertEqual(ExponentialMovingAverage({70.5547}), 70.5547)
-      AssertAlmostEqual(ExponentialMovingAverage(
-        {53.3424, 57.9519}), 56.7995)
-      AssertAlmostEqual(ExponentialMovingAverage(
-        {28.9562, 30.1948}), 29.8852)
-      AssertAlmostEqual(ExponentialMovingAverage(
-        {77.474, 1.4018}), 20.4199)
+      AssertAlmostEqual(ExponentialMovingAverage({53.3424, 57.9519}), 56.7995)
+      AssertAlmostEqual(ExponentialMovingAverage({28.9562, 30.1948}), 29.8852)
+      AssertAlmostEqual(ExponentialMovingAverage({77.474, 1.4018}), 20.4199)
       AssertAlmostEqual(ExponentialMovingAverage(
         {76.0724, 81.449, 70.9038}), 74.6551)
       AssertAlmostEqual(ExponentialMovingAverage(
