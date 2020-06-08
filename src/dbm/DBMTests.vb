@@ -24,16 +24,13 @@ Option Strict
 
 Imports System
 Imports System.Collections.Generic
-Imports System.Convert
 Imports System.DateTime
 Imports System.Double
 Imports System.Globalization
 Imports System.Globalization.CultureInfo
-Imports System.Math
-Imports System.String
 Imports Vitens.DynamicBandwidthMonitor.DBM
+Imports Vitens.DynamicBandwidthMonitor.DBMAssert
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
-Imports Vitens.DynamicBandwidthMonitor.DBMInfo
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMMisc
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
@@ -44,77 +41,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
   Public Class DBMTests
-
-
-    Private Shared Function Hash(Values() As Double) As Double
-
-      ' Simple hash function for checking array contents.
-
-      Dim Value As Double
-
-      Hash = 1
-      For Each Value In Values
-        If Not IsNaN(Value) Then
-          Hash = (Hash+Value+1)/3
-        End If
-      Next
-
-      Return Hash
-
-    End Function
-
-
-    Private Shared Sub AssertEqual(a As Object, b As Object)
-
-      If TypeOf a Is Boolean And TypeOf b Is Boolean AndAlso
-        ToBoolean(a) = ToBoolean(b) Then Exit Sub
-      If TypeOf a Is Date And TypeOf b Is Date AndAlso
-        ToDateTime(a) = ToDateTime(b) Then Exit Sub
-      If TypeOf a Is Double And TypeOf b Is Double AndAlso
-        IsNaN(ToDouble(a)) And IsNaN(ToDouble(b)) Then Exit Sub
-      If (TypeOf a Is Integer Or TypeOf a Is Double Or TypeOf a Is Decimal) And
-        (TypeOf b Is Integer Or TypeOf b Is Double Or
-        TypeOf b Is Decimal) AndAlso
-        ToDouble(a) = ToDouble(b) Then Exit Sub
-      Throw New Exception("Assert failed a=" & a.ToString & " b=" & b.ToString)
-
-    End Sub
-
-
-    Private Shared Sub AssertArrayEqual(a() As Double, b() As Double)
-
-      AssertEqual(Hash(a), Hash(b))
-
-    End Sub
-
-
-    Private Shared Sub AssertAlmostEqual(a As Object, b As Object,
-      Optional Digits As Integer = 4)
-
-      AssertEqual(Round(ToDouble(a), Digits), Round(ToDouble(b), Digits))
-
-    End Sub
-
-
-    Private Shared Sub AssertTrue(a As Boolean)
-
-      AssertEqual(a, True)
-
-    End Sub
-
-
-    Private Shared Sub AssertFalse(a As Boolean)
-
-      AssertEqual(a, False)
-
-    End Sub
-
-
-    Private Shared Sub AssertNaN(a As Double)
-
-      AssertEqual(a, NaN)
-
-    End Sub
 
 
     Public Shared Sub RunUnitTests
