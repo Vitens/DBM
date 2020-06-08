@@ -69,6 +69,15 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Shared Function Product As String
+
+      ' Returns the name of the product.
+
+      Return .ProductName & " v" & Version
+
+    End Function
+
+
     Public Shared Function LicenseNotice As String
 
       ' Returns a string containing product name, version number, copyright,
@@ -78,7 +87,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       RunIntegrationTests
 
       With GetFileVersionInfo
-        Return .ProductName & " v" & Version & NewLine &
+        Return Product & NewLine &
           .Comments & NewLine &
           "Performance Index " & Round(PerformanceIndex, 1).ToString & NewLine &
           .LegalCopyright & NewLine &
