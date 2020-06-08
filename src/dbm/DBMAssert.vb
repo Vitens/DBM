@@ -69,10 +69,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       If TypeOf a Is Boolean And TypeOf b Is Boolean AndAlso
         ToBoolean(a) = ToBoolean(b) Then Exit Sub
-      If TypeOf a Is Date And TypeOf b Is Date AndAlso
+      If TypeOf a Is DateTime And TypeOf b Is DateTime AndAlso
         ToDateTime(a) = ToDateTime(b) Then Exit Sub
       If TypeOf a Is Double And TypeOf b Is Double AndAlso
-        IsNaN(ToDouble(a)) And IsNaN(ToDouble(b)) Then Exit Sub
+        (IsNaN(ToDouble(a)) And IsNaN(ToDouble(b))) Then Exit Sub
       If (TypeOf a Is Integer Or TypeOf a Is Double Or TypeOf a Is Decimal) And
         (TypeOf b Is Integer Or TypeOf b Is Double Or
         TypeOf b Is Decimal) AndAlso
