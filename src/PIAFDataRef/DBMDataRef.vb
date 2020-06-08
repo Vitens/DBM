@@ -187,7 +187,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' suitable for displaying to an end-user. It must fully represent all
         ' the configuration information in a format that can also be used to set
         ' the configuration using this property.
-        Return LicenseNotice
+        Return Product
       End Get
 
       Set

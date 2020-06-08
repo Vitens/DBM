@@ -24,17 +24,13 @@ Option Strict
 
 Imports System
 Imports System.Collections.Generic
-Imports System.Convert
 Imports System.DateTime
 Imports System.Double
 Imports System.Globalization
 Imports System.Globalization.CultureInfo
-Imports System.Math
-Imports System.String
-Imports System.TimeSpan
 Imports Vitens.DynamicBandwidthMonitor.DBM
+Imports Vitens.DynamicBandwidthMonitor.DBMAssert
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
-Imports Vitens.DynamicBandwidthMonitor.DBMInfo
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMMisc
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
@@ -47,81 +43,9 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMTests
 
 
-    Private Shared Function Hash(Values() As Double) As Double
-
-      ' Simple hash function for checking array contents.
-
-      Dim Value As Double
-
-      Hash = 1
-      For Each Value In Values
-        If Not IsNaN(Value) Then
-          Hash = (Hash+Value+1)/3
-        End If
-      Next
-
-      Return Hash
-
-    End Function
-
-
-    Private Shared Sub AssertEqual(a As Object, b As Object)
-
-      If TypeOf a Is Boolean And TypeOf b Is Boolean AndAlso
-        ToBoolean(a) = ToBoolean(b) Then Exit Sub
-      If TypeOf a Is Date And TypeOf b Is Date AndAlso
-        ToDateTime(a) = ToDateTime(b) Then Exit Sub
-      If TypeOf a Is Double And TypeOf b Is Double AndAlso
-        IsNaN(ToDouble(a)) And IsNaN(ToDouble(b)) Then Exit Sub
-      If (TypeOf a Is Integer Or TypeOf a Is Double Or TypeOf a Is Decimal) And
-        (TypeOf b Is Integer Or TypeOf b Is Double Or
-        TypeOf b Is Decimal) AndAlso
-        ToDouble(a) = ToDouble(b) Then Exit Sub
-      Throw New Exception("Assert failed a=" & a.ToString & " b=" & b.ToString)
-
-    End Sub
-
-
-    Private Shared Sub AssertArrayEqual(a() As Double, b() As Double)
-
-      AssertEqual(Hash(a), Hash(b))
-
-    End Sub
-
-
-    Private Shared Sub AssertAlmostEqual(a As Object, b As Object,
-      Optional Digits As Integer = 4)
-
-      AssertEqual(Round(ToDouble(a), Digits), Round(ToDouble(b), Digits))
-
-    End Sub
-
-
-    Private Shared Sub AssertTrue(a As Boolean)
-
-      AssertEqual(a, True)
-
-    End Sub
-
-
-    Private Shared Sub AssertFalse(a As Boolean)
-
-      AssertEqual(a, False)
-
-    End Sub
-
-
-    Private Shared Sub AssertNaN(a As Double)
-
-      AssertEqual(a, NaN)
-
-    End Sub
-
-
     Public Shared Sub RunUnitTests
 
       Dim i As Integer
-      Dim StatisticsItem As New DBMStatisticsItem
 
       AssertEqual(True, True)
       AssertEqual(Today, Today)
@@ -996,113 +920,83 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2020, 6, 1))
 
       For i = 0 To 19
-        If i = 0 Then
-          StatisticsItem = Statistics({3411, 3067, 3159, 2579, 2604, 3549,
-            2028, 3521, 3629, 3418, 2091, 2828})
-        ElseIf i = 1 Then
-          StatisticsItem = Statistics({3725, 3581, 2747, 3924, 3743, 2112,
-            3899, 2728, 3050, 3534, 2107, 3185})
-        ElseIf i = 2 Then
-          StatisticsItem = Statistics({2937, 2596, 3245, 3296, 2528, 2559,
-            3660, 3649, 3178, 3972, 3822, 2454})
-        ElseIf i = 3 Then
-          StatisticsItem = Statistics({3390, 3960, 2488, 3068, 2213, 3999,
-            3352, 2031, 3150, 2200, 2206, 3598})
-        ElseIf i = 4 Then
-          StatisticsItem = Statistics({2569, 2091, 2592, 2764, 2602, 3897,
-            3960, 2803, 2557, 2321, 2326, 3293})
-        ElseIf i = 5 Then
-          StatisticsItem = Statistics({2820, 2826, 3425, 2652, 3266, 2415,
-            2372, 3167, 2161, 2916, 3811, 2523})
-        ElseIf i = 6 Then
-          StatisticsItem = Statistics({3570, 2758, 2579, 3839, 3263, 3255,
-            2857, 2196, 3122, 3389, 3827, 3670})
-        ElseIf i = 7 Then
-          StatisticsItem = Statistics({2045, 3087, 3832, 2861, 3356, 3005,
-            3027, 2926, 2707, 2810, 2539, 2111})
-        ElseIf i = 8 Then
-          StatisticsItem = Statistics({2488, 3958, 2122, 2781, 2730, 2980,
-            2311, 2949, 2515, 3258, 3084, 2313})
-        ElseIf i = 9 Then
-          StatisticsItem = Statistics({3877, 3309, 3012, 2781, 2215, 3568,
-            2919, 3507, 3192, 3665, 2038, 2421})
-        ElseIf i = 10 Then
-          StatisticsItem = Statistics({2148, 2211, 2663, 2256, 2000, 3074,
-            3314, 3088, 3655, 2164, 2384, 3358}, {3, 5, 10, 20, 28, 32, 41,
-            46, 57, 66, 74, 76})
-        ElseIf i = 11 Then
-          StatisticsItem = Statistics({2908, 2714, 2300, 3409, 3858, 3060,
-            2179, 3515, 2804, 2924, 2984, 2415}, {10, 18, 28, 35, 44, 50, 51,
-            62, 63, 66, 74, 80})
-        ElseIf i = 12 Then
-          StatisticsItem = Statistics({2659, 2191, 3180, 2340, 3855, 2196,
-            2888, 2546, 3745, 3501, 2546, 3347}, {9, 11, 13, 18, 21, 26, 28,
-            37, 42, 47, 56, 61})
-        ElseIf i = 13 Then
-          StatisticsItem = Statistics({2513, 2180, 2062, 2645, 3580, 2595,
-            2471, 2961, 2509, 2681, 2090, 2965}, {6, 14, 23, 26, 32, 35, 37,
-            41, 45, 48, 58, 68})
-        ElseIf i = 14 Then
-          StatisticsItem = Statistics({2412, 3729, 3177, 3510, 3856, 2662,
-            3086, 2161, 3269, 2820, 3921, 2229}, {7, 12, 23, 29, 30, 32, 36,
-            38, 41, 49, 55, 61})
-        ElseIf i = 15 Then
-          StatisticsItem = Statistics({3847, 3240, 2695, 2298, 2960, 2439,
-            3987, 2261, 2058, 2691, 3095, 3846}, {4, 9, 15, 18, 20, 26, 36,
-            45, 49, 58, 64, 71})
-        ElseIf i = 16 Then
-          StatisticsItem = Statistics({3076, 2813, 3694, 3652, 3345, 3444,
-            3994, 2680, 2990, 2826, 3391, 2358}, {7, 14, 24, 28, 37, 40, 49,
-            51, 55, 61, 69, 77})
-        ElseIf i = 17 Then
-          StatisticsItem = Statistics({2846, 3086, 3629, 3082, 2855, 3018,
-            2456, 3238, 2980, 3362, 3773, 2741}, {6, 16, 23, 29, 35, 40, 49,
-            60, 64, 73, 75, 78})
-        ElseIf i = 18 Then
-          StatisticsItem = Statistics({2605, 2586, 2301, 3060, 2447, 3169,
-            2727, 3752, 2956, 2381, 3368, 3495}, {6, 13, 24, 30, 38, 47, 57,
-            59, 69, 77, 86, 96})
-        ElseIf i = 19 Then
-          StatisticsItem = Statistics({3228, 3564, 2323, 3616, 2405, 3914,
-            2132, 2123, 3586, 2759, 2927, 2239}, {10, 15, 21, 22, 24, 32, 34,
-            43, 46, 53, 55, 63})
-        End If
-        With StatisticsItem
+        With {
+          Statistics({3411, 3067, 3159, 2579, 2604, 3549, 2028, 3521, 3629,
+            3418, 2091, 2828}),
+          Statistics({3725, 3581, 2747, 3924, 3743, 2112, 3899, 2728, 3050,
+            3534, 2107, 3185}),
+          Statistics({2937, 2596, 3245, 3296, 2528, 2559, 3660, 3649, 3178,
+            3972, 3822, 2454}),
+          Statistics({3390, 3960, 2488, 3068, 2213, 3999, 3352, 2031, 3150,
+            2200, 2206, 3598}),
+          Statistics({2569, 2091, 2592, 2764, 2602, 3897, 3960, 2803, 2557,
+            2321, 2326, 3293}),
+          Statistics({2820, 2826, 3425, 2652, 3266, 2415, 2372, 3167, 2161,
+            2916, 3811, 2523}),
+          Statistics({3570, 2758, 2579, 3839, 3263, 3255, 2857, 2196, 3122,
+            3389, 3827, 3670}),
+          Statistics({2045, 3087, 3832, 2861, 3356, 3005, 3027, 2926, 2707,
+            2810, 2539, 2111}),
+          Statistics({2488, 3958, 2122, 2781, 2730, 2980, 2311, 2949, 2515,
+            3258, 3084, 2313}),
+          Statistics({3877, 3309, 3012, 2781, 2215, 3568, 2919, 3507, 3192,
+            3665, 2038, 2421}),
+          Statistics({2148, 2211, 2663, 2256, 2000, 3074, 3314, 3088, 3655,
+            2164, 2384, 3358}, {3, 5, 10, 20, 28, 32, 41, 46, 57, 66, 74, 76}),
+          Statistics({2908, 2714, 2300, 3409, 3858, 3060, 2179, 3515, 2804,
+            2924, 2984, 2415}, {9, 18, 28, 35, 44, 50, 51, 62, 63, 66, 74, 80}),
+          Statistics({2659, 2191, 3180, 2340, 3855, 2196, 2888, 2546, 3745,
+            3501, 2546, 3347}, {9, 11, 13, 18, 21, 26, 28, 37, 42, 47, 56, 61}),
+          Statistics({2513, 2180, 2062, 2645, 3580, 2595, 2471, 2961, 2509,
+            2681, 2090, 2965}, {6, 14, 23, 26, 32, 35, 37, 41, 45, 48, 58, 68}),
+          Statistics({2412, 3729, 3177, 3510, 3856, 2662, 3086, 2161, 3269,
+            2820, 3921, 2229}, {7, 12, 23, 29, 30, 32, 36, 38, 41, 49, 55, 61}),
+          Statistics({3847, 3240, 2695, 2298, 2960, 2439, 3987, 2261, 2058,
+            2691, 3095, 3846}, {4, 9, 15, 18, 20, 26, 36, 45, 49, 58, 64, 71}),
+          Statistics({3076, 2813, 3694, 3652, 3345, 3444, 3994, 2680, 2990,
+            2826, 3391, 2358}, {7, 14, 24, 28, 37, 40, 49, 51, 55, 61, 69, 77}),
+          Statistics({2846, 3086, 3629, 3082, 2855, 3018, 2456, 3238, 2980,
+            3362, 3773, 2741}, {6, 16, 23, 29, 35, 40, 49, 60, 64, 73, 75, 78}),
+          Statistics({2605, 2586, 2301, 3060, 2447, 3169, 2727, 3752, 2956,
+            2381, 3368, 3495}, {6, 13, 24, 30, 38, 47, 57, 59, 69, 77, 86, 96}),
+          Statistics({3228, 3564, 2323, 3616, 2405, 3914, 2132, 2123, 3586,
+            2759, 2927, 2239}, {10, 15, 21, 22, 24, 32, 34, 43, 46, 53, 55, 63})
+          }(i)
           AssertAlmostEqual(.Slope, {-24.1399, -67.5699, 51.3427, -56.9825,
             27.3182, -2.6573, 32.1923, -46.8462, -11.1224, -61.5455, 9.4424,
-            -0.1602, 10.7659, 4.8889, -4.6572, -0.4548, -6.6652, 2.2442,
+            -0.1552, 10.7659, 4.8889, -4.6572, -0.4548, -6.6652, 2.2442,
             8.6539, -12.0462}(i))
           AssertAlmostEqual(.OriginSlope, {383.2213, 397.5889, 426.4229,
             371.4506, 374.8399, 372.6621, 425.6739, 359.6522, 360.8676,
-            379.3893, 52.1812, 50.6373, 75.2409, 60.0661, 73.5505, 61.2832,
+            379.3893, 52.1812, 50.5792, 75.2409, 60.0661, 73.5505, 61.2832,
             59.1633, 53.9967, 46.4227, 66.0541}(i))
           AssertAlmostEqual(.Angle, {-87.6279, -89.1521, 88.8842, -88.9946,
             87.9036, -69.3779, 88.2208, -88.7771, -84.8624, -89.0691, 83.9546,
-            -9.0998, 84.6933, 78.4399, -77.8813, -24.4582, -81.4673, 65.9827,
+            -8.8239, 84.6933, 78.4399, -77.8813, -24.4582, -81.4673, 65.9827,
             83.4085, -85.2545}(i))
           AssertAlmostEqual(.OriginAngle, {89.8505, 89.8559, 89.8656, 89.8458,
             89.8471, 89.8463, 89.8654, 89.8407, 89.8412, 89.849, 88.9021,
-            88.8687, 89.2385, 89.0462, 89.221, 89.0651, 89.0317, 88.939,
+            88.8674, 89.2385, 89.0462, 89.221, 89.0651, 89.0317, 88.939,
             88.766, 89.1327}(i))
           AssertAlmostEqual(.Intercept, {3123.1026, 3566.2179, 2875.6154,
             3284.6538, 2664.3333, 2877.4487, 3016.6923, 3116.4872, 2851.9231,
-            3380.5, 2332.5305, 2930.2549, 2585.1154, 2427.9251, 3229.618,
+            3380.5, 2332.5305, 2930.0031, 2585.1154, 2427.9251, 3229.618,
             2967.1468, 3472.9635, 2986.3475, 2469.7771, 3320.9411}(i))
           AssertAlmostEqual(.StandardError, {582.4218, 633.706, 535.0359,
             720.9024, 619.3358, 506.8629, 525.9328, 483.3154, 527.9273,
-            573.7699, 544.1683, 523.5486, 590.2042, 436.8994, 644.5969,
+            573.7699, 544.1683, 523.5492, 590.2042, 436.8994, 644.5969,
             698.2517, 478.875, 384.1275, 419.8051, 657.4656}(i))
           AssertAlmostEqual(.Correlation, {-0.1548, -0.374, 0.3411, -0.2864,
             0.1645, -0.0198, 0.2255, -0.3441, -0.0794, -0.3759, 0.4296,
-            -0.0071, 0.3208, 0.2029, -0.1209, -0.0154, -0.3016, 0.1484,
+            -0.0069, 0.3208, 0.2029, -0.1209, -0.0154, -0.3016, 0.1484,
             0.5294, -0.3121}(i))
           AssertAlmostEqual(.ModifiedCorrelation, {0.819, 0.7932, 0.8652,
             0.7909, 0.8474, 0.8345, 0.8554, 0.8061, 0.8274, 0.7962, 0.8665,
-            0.9037, 0.8892, 0.908, 0.887, 0.8274, 0.8714, 0.8915, 0.9047,
+            0.9024, 0.8892, 0.908, 0.887, 0.8274, 0.8714, 0.8915, 0.9047,
             0.8561}(i))
           AssertAlmostEqual(.Determination, {0.024, 0.1398, 0.1164, 0.082,
-            0.0271, 0.0004, 0.0509, 0.1184, 0.0063, 0.1413, 0.1845, 0.0001,
-            0.1029, 0.0412, 0.0146, 0.0002, 0.091, 0.022, 0.2803, 0.0974}(i))
+            0.0271, 0.0004, 0.0509, 0.1184, 0.0063, 0.1413, 0.1845, 0, 0.1029,
+            0.0412, 0.0146, 0.0002, 0.091, 0.022, 0.2803, 0.0974}(i))
         End With
       Next i
 
@@ -1214,41 +1108,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       Next i
 
     End Sub
-
-
-    Public Shared Function PerformanceIndex As Double
-
-      ' Returns the performance of the DBM calculation as a performance index.
-      ' The returned value indicates how many full days per second this system
-      ' can calculate when performing real-time continuous calculations.
-
-      Const DurationTicks As Double = 0.1*TicksPerSecond ' 0.1 seconds
-
-      Dim InputPointDriver As DBMPointDriverTestModel
-      Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
-      Dim Timestamp, Timer As DateTime
-      Dim Result As DBMResult
-      Dim DBM As New DBM
-      Dim Count As Integer
-
-      InputPointDriver = New DBMPointDriverTestModel(0)
-      CorrelationPoints.Add(New DBMCorrelationPoint(
-        New DBMPointDriverTestModel(5394), False))
-      CorrelationPoints.Add(New DBMCorrelationPoint(
-        New DBMPointDriverTestModel(227), True))
-      Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
-
-      Timer = Now
-      Do While Now.Ticks-Timer.Ticks < DurationTicks
-        Result = DBM.Result(InputPointDriver, CorrelationPoints, Timestamp,
-          New CultureInfo("nl-NL")) ' Use Dutch locale for holidays
-        Count += 1
-        Timestamp = Timestamp.AddSeconds(CalculationInterval)
-      Loop
-
-      Return Count/(DurationTicks/TicksPerSecond)/(24*60*60/CalculationInterval)
-
-    End Function
 
 
   End Class

@@ -69,34 +69,42 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function LicenseNotice As String
+    Public Shared Function Product As String
 
-      ' Returns a string containing product name, version number, copyright,
-      ' performance index, and license notice.
-
-      RunUnitTests
-      RunIntegrationTests
+      ' Returns the name of and information about the product.
 
       With GetFileVersionInfo
         Return .ProductName & " v" & Version & NewLine &
           .Comments & NewLine &
-          "Performance Index " & Round(PerformanceIndex, 1).ToString & NewLine &
-          .LegalCopyright & NewLine &
-          NewLine &
-          "This program is free software: you can redistribute it and/or " &
-          "modify it under the terms of the GNU General Public License as " &
-          "published by the Free Software Foundation, either version 3 of " &
-          "the License, or (at your option) any later version." & NewLine &
-          NewLine &
-          "This program is distributed in the hope that it will be useful, " &
-          "but WITHOUT ANY WARRANTY; without even the implied warranty of " &
-          "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the " &
-          "GNU General Public License for more details." & NewLine &
-          NewLine &
-          "You should have received a copy of the GNU General Public " &
-          "License along with this program.  " &
-          "If not, see <http://www.gnu.org/licenses/>." & NewLine
+          .LegalCopyright & NewLine
       End With
+
+    End Function
+
+
+    Public Shared Function LicenseNotice As String
+
+      ' Returns a string containing product name, version number, copyright,
+      ' and license notice. An exception occurs if one of the tests fail.
+
+      RunUnitTests
+      RunIntegrationTests
+
+      Return Product &
+        NewLine &
+        "This program is free software: you can redistribute it and/or " &
+        "modify it under the terms of the GNU General Public License as " &
+        "published by the Free Software Foundation, either version 3 of the " &
+        "License, or (at your option) any later version." & NewLine &
+        NewLine &
+        "This program is distributed in the hope that it will be useful, but " &
+        "WITHOUT ANY WARRANTY; without even the implied warranty of " &
+        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU " &
+        "General Public License for more details." & NewLine &
+        NewLine &
+        "You should have received a copy of the GNU General Public License " &
+        "along with this program.  " &
+        "If not, see <http://www.gnu.org/licenses/>." & NewLine
 
     End Function
 
