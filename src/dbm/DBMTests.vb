@@ -25,13 +25,11 @@ Option Strict
 Imports System
 Imports System.Collections.Generic
 Imports System.Convert
-Imports System.DateTime
 Imports System.Double
 Imports System.Globalization
 Imports System.Globalization.CultureInfo
 Imports System.Math
 Imports System.String
-Imports System.TimeSpan
 Imports Vitens.DynamicBandwidthMonitor.DBM
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
@@ -1183,41 +1181,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       Next i
 
     End Sub
-
-
-    Public Shared Function PerformanceIndex As Double
-
-      ' Returns the performance of the DBM calculation as a performance index.
-      ' The returned value indicates how many full days per second this system
-      ' can calculate when performing real-time continuous calculations.
-
-      Const DurationTicks As Double = 0.1*TicksPerSecond ' 0.1 seconds
-
-      Dim InputPointDriver As DBMPointDriverTestModel
-      Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
-      Dim Timestamp, Timer As DateTime
-      Dim Result As DBMResult
-      Dim DBM As New DBM
-      Dim Count As Integer
-
-      InputPointDriver = New DBMPointDriverTestModel(0)
-      CorrelationPoints.Add(New DBMCorrelationPoint(
-        New DBMPointDriverTestModel(5394), False))
-      CorrelationPoints.Add(New DBMCorrelationPoint(
-        New DBMPointDriverTestModel(227), True))
-      Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
-
-      Timer = Now
-      Do While Now.Ticks-Timer.Ticks < DurationTicks
-        Result = DBM.Result(InputPointDriver, CorrelationPoints, Timestamp,
-          New CultureInfo("nl-NL")) ' Use Dutch locale for holidays
-        Count += 1
-        Timestamp = Timestamp.AddSeconds(CalculationInterval)
-      Loop
-
-      Return Count/(DurationTicks/TicksPerSecond)/(24*60*60/CalculationInterval)
-
-    End Function
 
 
   End Class
