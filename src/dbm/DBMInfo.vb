@@ -85,7 +85,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function LicenseNotice As String
 
       ' Returns a string containing product name, version number, copyright,
-      ' performance index, and license notice. Fails if one of the tests fails.
+      ' performance index, and license notice. An exception occurs if one of the
+      ' tests fail.
 
       RunUnitTests
       RunIntegrationTests
