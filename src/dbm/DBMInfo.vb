@@ -73,7 +73,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Returns the name of the product.
 
-      Return .ProductName & " v" & Version
+      Return GetFileVersionInfo.ProductName & " v" & Version
 
     End Function
 
