@@ -21,6 +21,6 @@ rem along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 cd /d %~dp0
 
-rem Sign
-rem arguments: file, pfx file, password
-powershell -Command "Set-AuthenticodeSignature -Certificate (New-Object System.Security.Cryptography.X509Certificates.X509Certificate2('%2', '%3')) -TimestampServer http://timestamp.digicert.com -HashAlgorithm SHA256 -FilePath '%1'"
+rem Sign all
+rem arguments: pfx file, password
+for %%f in (build\*.dll build\*.exe) do sign.bat %%f %1 %2
