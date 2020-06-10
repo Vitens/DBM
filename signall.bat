@@ -23,4 +23,4 @@ cd /d %~dp0
 
 rem Sign all
 rem arguments: pfx file, password
-for %%f in (build\*.dll build\*.exe) do sign.bat %%f %1 %2
+for %%f in (build\*.dll build\*.exe) do @sign.bat %%f %1 %2
