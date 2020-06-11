@@ -22,5 +22,5 @@ rem along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 cd /d %~dp0
 
 rem Sign
-rem arguments: file, pfx file, password
-powershell -Command "try { Set-AuthenticodeSignature -Certificate (New-Object System.Security.Cryptography.X509Certificates.X509Certificate2('%2', '%3')) -TimestampServer http://timestamp.digicert.com -HashAlgorithm SHA256 -FilePath '%1' | Out-Null } catch { Write-Host $_; exit 1 }"
+rem arguments: pfx file, password
+for %%f in (build\*.dll build\*.exe) do powershell -Command "Set-AuthenticodeSignature -Certificate (New-Object System.Security.Cryptography.X509Certificates.X509Certificate2('%1', '%2')) -TimestampServer http://timestamp.digicert.com -HashAlgorithm SHA256 -FilePath '%%f'"
