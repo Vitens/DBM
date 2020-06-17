@@ -356,9 +356,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             Sqrt(CalculationInterval)/2*(1+RandomNumber(0, 1000)/1000))) Then
             Try
 
-              If PIAFShouldPrepareData(timeRange.EndTime.UtcSeconds-
-                timeRange.StartTime.UtcSeconds) Then DBM.PrepareData(
-                InputPointDriver, CorrelationPoints,
+              DBM.PrepareData(InputPointDriver, CorrelationPoints,
                 timeRange.StartTime.LocalTime, timeRange.EndTime.LocalTime)
 
               Do While timeRange.EndTime > timeRange.StartTime

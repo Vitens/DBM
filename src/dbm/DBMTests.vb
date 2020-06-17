@@ -1021,27 +1021,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertEqual(PIAFIntervalSeconds(13, 3600), 300)
       AssertEqual(PIAFIntervalSeconds(14, 3600), 300)
 
-      AssertFalse(PIAFShouldPrepareData(-600))
-      AssertFalse(PIAFShouldPrepareData(-599))
-      AssertFalse(PIAFShouldPrepareData(-1))
-      AssertFalse(PIAFShouldPrepareData(0))
-      AssertFalse(PIAFShouldPrepareData(1))
-      AssertFalse(PIAFShouldPrepareData(299))
-      AssertFalse(PIAFShouldPrepareData(300))
-      AssertFalse(PIAFShouldPrepareData(301))
-      AssertFalse(PIAFShouldPrepareData(599))
-      AssertTrue(PIAFShouldPrepareData(600))
-      AssertTrue(PIAFShouldPrepareData(601))
-      AssertTrue(PIAFShouldPrepareData(899))
-      AssertTrue(PIAFShouldPrepareData(900))
-      AssertTrue(PIAFShouldPrepareData(901))
-      AssertTrue(PIAFShouldPrepareData(1199))
-      AssertTrue(PIAFShouldPrepareData(1200))
-      AssertTrue(PIAFShouldPrepareData(1201))
-      AssertTrue(PIAFShouldPrepareData(1499))
-      AssertTrue(PIAFShouldPrepareData(1500))
-      AssertTrue(PIAFShouldPrepareData(1501))
-
     End Sub
 
 

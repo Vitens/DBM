@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2019  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -149,7 +149,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' and correlation PointDrivers. The driver can then prepare the dataset
       ' for which calculations are required in the next step. The (aligned) end
       ' time itself is excluded. Useful for retrieving in bulk and caching in
-      ' memory.
+      ' memory. Note that some drivers will only return data that has been
+      ' prepared using this method.
 
       Dim CorrelationPoint As DBMCorrelationPoint
 
@@ -178,7 +179,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' This is the main function to call to retrieve results for a specific
       ' timestamp. If a list of DBMCorrelationPoints is passed, events can be
-      ' suppressed if a strong correlation is found.
+      ' suppressed if a strong correlation is found. Be sure to call the
+      ' PrepareData method to prepare data in memory before calculating
+      ' DBM results.
 
       Dim CorrelationPoint As DBMCorrelationPoint
       Dim CorrelationResult As DBMResult
