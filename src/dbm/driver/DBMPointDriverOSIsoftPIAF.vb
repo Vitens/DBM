@@ -91,10 +91,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Overrides Function GetData(Timestamp As DateTime) As Double
 
-      ' GetData retrieves data from the Values dictionary, or NaN when not
-      ' available.
+      ' GetData retrieves data from the Values dictionary. If there is no data
+      ' for the timestamp, return Not a Number.
 
-      ' Look up data from memory
       GetData = Nothing
       If Values.TryGetValue(Timestamp, GetData) Then ' In cache
         Return GetData ' Return value from cache
