@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2019  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -91,19 +91,14 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Overrides Function GetData(Timestamp As DateTime) As Double
 
-      ' GetData retrieves data from the Values dictionary. Non existing
-      ' timestamps are retrieved from OSIsoft PI AF directly.
+      ' GetData retrieves data from the Values dictionary. If there is no data
+      ' for the timestamp, return Not a Number.
 
-      Dim Value As Double
-
-      ' Look up data from memory
-      If Values.TryGetValue(Timestamp, Value) Then ' In cache
-        Return Value ' Return value from cache
+      GetData = Nothing
+      If Values.TryGetValue(Timestamp, GetData) Then ' In cache
+        Return GetData ' Return value from cache
       Else
-        Return DirectCast(DirectCast(Point, AFAttribute).Data.Summary(
-          New AFTimeRange(New AFTime(Timestamp), New AFTime(
-          Timestamp.AddSeconds(CalculationInterval))), Average, TimeWeighted,
-          EarliestTime).Item(Average).Value, Double) ' Get average from PI AF
+        Return NaN ' No data in memory for timestamp, return Not a Number.
       End If
 
     End Function

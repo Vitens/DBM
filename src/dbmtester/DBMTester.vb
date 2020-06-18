@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2019  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -152,7 +152,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         DBM.PrepareData(InputPointDriver, CorrelationPoints,
           StartTimestamp, EndTimestamp.AddSeconds(CalculationInterval))
 
-        Do While StartTimestamp <= EndTimestamp
+        Do While EndTimestamp >= StartTimestamp
 
           With DBM.Result(InputPointDriver, CorrelationPoints, StartTimestamp)
             Console.WriteLine(FormatDateTime(.Timestamp) & Separator &

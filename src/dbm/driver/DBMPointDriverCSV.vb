@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2019  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -95,12 +95,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Overrides Function GetData(Timestamp As DateTime) As Double
 
-      ' GetData retrieves data from the Values dictionary. Non existing
-      ' timestamps return NaN.
+      ' GetData retrieves data from the Values dictionary. If there is no data
+      ' for the timestamp, return Not a Number.
 
-      If Values.Count = 0 Then PrepareData(DateTime.MinValue, DateTime.MaxValue)
-
-      ' Look up data from memory
       GetData = Nothing
       If Values.TryGetValue(Timestamp, GetData) Then ' In cache
         Return GetData ' Return value from cache
