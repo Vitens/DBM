@@ -82,6 +82,13 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private DBMNonShared As New DBM ' Fall back to nonshared object.
 
 
+    Public Shared Function CreateDataPipe As Object
+
+      Return New DBMEventSource
+
+    End Function
+
+
     Public Overrides Readonly Property SupportedContexts _
       As AFDataReferenceContext
 
@@ -122,7 +129,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' enumeration values logically ORed together. The default value is None.
         Return AFDataMethods.RecordedValue Or AFDataMethods.RecordedValues Or
           AFDataMethods.PlotValues Or AFDataMethods.Summary Or
-          AFDataMethods.Summaries
+          AFDataMethods.Summaries Or AFDataMethods.DataPipe
       End Get
 
     End Property
