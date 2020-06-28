@@ -25,6 +25,7 @@ Option Strict
 Imports System
 Imports System.Collections.Generic
 Imports System.DateTime
+Imports System.Threading
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Time
@@ -42,29 +43,60 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private LastTime As AFTime = Now
 
 
+    Private Structure RetrievalInfo
+
+      Public StartTime As AFTime
+      Public EndTime As AFTime
+      Public Attribute As AFAttribute
+
+    End Structure
+
+
+    Private Shared Sub AddValuesToPipe(RetrievalInfo As RetrievalInfo)
+
+      Dim Value As AFValue
+
+      For Each Value In RetrievalInfo.Attribute.GetValues(
+        New AFTimeRange(RetrievalInfo.StartTime, RetrievalInfo.EndTime),
+        0, Nothing)
+
+        MyBase.PublishEvent(RetrievalInfo.Attribute,
+          New AFDataPipeEvent(AFDataPipeAction.Add, Value))
+
+      Next
+
+    End Sub
+
+
     Protected Overrides Function GetEvents As Boolean
 
       Dim EvalTime As AFTime = Now
+      Dim RetrievalInfo As RetrievalInfo
       Dim Attribute As AFAttribute
-      Dim Value As AFValue
+      Dim Threads As New List(Of Thread)
+      Dim Thread As Thread
 
       EvalTime = New AFTime(AlignPreviousInterval(EvalTime.UtcSeconds,
         CalculationInterval))
+
+      RetrievalInfo.StartTime = LastTime
+      RetrievalInfo.EndTime = EvalTime
 
       For Each Attribute In MyBase.Signups
 
         If Attribute IsNot Nothing And LastTime < EvalTime Then
 
-          For Each Value In Attribute.GetValues(
-            New AFTimeRange(LastTime, EvalTime), 0, Nothing)
-
-            MyBase.PublishEvent(Attribute,
-              New AFDataPipeEvent(AFDataPipeAction.Add, Value))
-
-          Next
+          RetrievalInfo.Attribute = Attribute
+          Threads.Add(New Thread(
+	    New ParameterizedThreadStart(AddressOf AddValuesToPipe)))
+          Threads(Threads.Count-1).Start(RetrievalInfo)
 
         End If
 
+      Next
+
+      For Each Thread In Threads
+        Thread.Join
       Next
 
       LastTime = EvalTime
