@@ -423,9 +423,9 @@ Namespace Vitens.DynamicBandwidthMonitor
             End Try
           End If
 
-        ' Clean up single-use DBM object.
-        If Not Object.ReferenceEquals(DBM, DBMShared) And
-          Not Object.ReferenceEquals(DBM, DBMNonShared) Then DBM = Nothing
+          ' Clean up single-use DBM object.
+          If Not Object.ReferenceEquals(DBM, DBMShared) And
+            Not Object.ReferenceEquals(DBM, DBMNonShared) Then DBM = Nothing
 
         Next DBM
 
