@@ -41,6 +41,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private LastTime As AFTime = Now
+    Private ValueResults As New List(Of ValueResult)
 
 
     Private Structure RetrievalInfo
@@ -52,16 +53,27 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Structure
 
 
-    Private Shared Sub AddValuesToPipe(RetrievalInfo As RetrievalInfo)
+    Private Structure ValueResult
 
+      Public Attribute As AFAttribute
+      Public Value As AFValue
+
+    End Structure
+
+
+    Private Shared Sub RetrieveValues(RetrievalInfo As RetrievalInfo)
+
+      Dim ValueResult As ValueResult
       Dim Value As AFValue
+
+      ValueResult.Attribute = RetrievalInfo.Attribute
 
       For Each Value In RetrievalInfo.Attribute.GetValues(
         New AFTimeRange(RetrievalInfo.StartTime, RetrievalInfo.EndTime),
         0, Nothing)
 
-        MyBase.PublishEvent(RetrievalInfo.Attribute,
-          New AFDataPipeEvent(AFDataPipeAction.Add, Value))
+        ValueResult.Value = Value
+        ValueResults.Add(ValueResult)
 
       Next
 
@@ -75,6 +87,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Attribute As AFAttribute
       Dim Threads As New List(Of Thread)
       Dim Thread As Thread
+      Dim ValueResult As ValueResult
 
       EvalTime = New AFTime(AlignPreviousInterval(EvalTime.UtcSeconds,
         CalculationInterval))
@@ -88,7 +101,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
           RetrievalInfo.Attribute = Attribute
           Threads.Add(New Thread(
-	    New ParameterizedThreadStart(AddressOf AddValuesToPipe)))
+            New ParameterizedThreadStart(AddressOf RetrieveValues)))
           Threads(Threads.Count-1).Start(RetrievalInfo)
 
         End If
@@ -97,6 +110,11 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       For Each Thread In Threads
         Thread.Join
+      Next
+
+      For Each ValueResult In ValueResults
+        MyBase.PublishEvent(ValueResult.Attribute,
+          New AFDataPipeEvent(AFDataPipeAction.Add, ValueResult.Value))
       Next
 
       LastTime = EvalTime
