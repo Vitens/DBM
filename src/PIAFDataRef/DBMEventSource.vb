@@ -70,6 +70,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private Shared Sub RetrieveEvents(RetrievalInfo As Object)
 
       Dim DataPipeEvent As DataPipeEvent
+      Dim Values As AFValues
       Dim Value As AFValue
 
       DataPipeEvent.Attribute = DirectCast(
@@ -77,15 +78,21 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Call the GetValues method for the attribute to retrieve events to store
       ' in the shared events list.
-      For Each Value In DirectCast(RetrievalInfo, RetrievalInfo).Attribute.
+      Values = DirectCast(RetrievalInfo, RetrievalInfo).Attribute.
         GetValues(New AFTimeRange(
         DirectCast(RetrievalInfo, RetrievalInfo).StartTime,
         DirectCast(RetrievalInfo, RetrievalInfo).EndTime), 0, Nothing)
 
-        DataPipeEvent.Value = Value
-        DataPipeEvents.Add(DataPipeEvent)
-
-      Next
+      ' Store events in shared events list.
+      Monitor.Enter(DataPipeEvents)
+      Try
+        For Each Value In Values
+          DataPipeEvent.Value = Value
+          DataPipeEvents.Add(DataPipeEvent)
+        Next
+      Finally
+        Monitor.Exit(DataPipeEvents)
+      End Try
 
     End Sub
 
@@ -134,11 +141,16 @@ Namespace Vitens.DynamicBandwidthMonitor
         Next
 
         ' Publish all events to the data pipe.
-        For Each DataPipeEvent In DataPipeEvents
-          MyBase.PublishEvent(DataPipeEvent.Attribute,
-            New AFDataPipeEvent(AFDataPipeAction.Add, DataPipeEvent.Value))
-        Next
-        DataPipeEvents.Clear
+        Monitor.Enter(DataPipeEvents)
+        Try
+          For Each DataPipeEvent In DataPipeEvents
+            MyBase.PublishEvent(DataPipeEvent.Attribute,
+              New AFDataPipeEvent(AFDataPipeAction.Add, DataPipeEvent.Value))
+          Next
+          DataPipeEvents.Clear
+        Finally
+          Monitor.Exit(DataPipeEvents)
+        End Try
 
         LastTime = EvalTime
 
