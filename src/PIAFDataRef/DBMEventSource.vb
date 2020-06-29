@@ -57,7 +57,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Structure RetrievalInfo
 
-      ' This structure is used to pass information required to retrieve values
+      ' This structure is used to pass information required to retrieve events
       ' to the thread started for each attribute.
 
       Public StartTime As AFTime
@@ -67,7 +67,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Structure
 
 
-    Private Shared Sub RetrieveValues(RetrievalInfo As Object)
+    Private Shared Sub RetrieveEvents(RetrievalInfo As Object)
 
       Dim DataPipeEvent As DataPipeEvent
       Dim Value As AFValue
@@ -75,7 +75,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       DataPipeEvent.Attribute = DirectCast(
         RetrievalInfo, RetrievalInfo).Attribute
 
-      ' Call the GetValues method for the attribute to retrieve values to store
+      ' Call the GetValues method for the attribute to retrieve events to store
       ' in the shared events list.
       For Each Value In
         DirectCast(RetrievalInfo, RetrievalInfo).Attribute.GetValues(
@@ -117,9 +117,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
           RetrievalInfo.Attribute = Attribute
           ' Start a new thread for each attribute, passing information about the
-          ' attribute and the time range to retrieve data for.
+          ' attribute and the time range to retrieve events for.
           Threads.Add(New Thread(
-            New ParameterizedThreadStart(AddressOf RetrieveValues)))
+            New ParameterizedThreadStart(AddressOf RetrieveEvents)))
           Threads(Threads.Count-1).Start(RetrievalInfo)
 
         End If
