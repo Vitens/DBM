@@ -117,6 +117,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         MyBase.PublishEvent(ValueResult.Attribute,
           New AFDataPipeEvent(AFDataPipeAction.Add, ValueResult.Value))
       Next
+      ValueResults.Clear
 
       LastTime = EvalTime
 
