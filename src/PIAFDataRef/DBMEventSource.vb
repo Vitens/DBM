@@ -77,9 +77,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Call the GetValues method for the attribute to retrieve events to store
       ' in the shared events list.
-      For Each Value In
-        DirectCast(RetrievalInfo, RetrievalInfo).Attribute.GetValues(
-        New AFTimeRange(DirectCast(RetrievalInfo, RetrievalInfo).StartTime,
+      For Each Value In DirectCast(RetrievalInfo, RetrievalInfo).Attribute.
+        GetValues(New AFTimeRange(
+        DirectCast(RetrievalInfo, RetrievalInfo).StartTime,
         DirectCast(RetrievalInfo, RetrievalInfo).EndTime), 0, Nothing)
 
         DataPipeEvent.Value = Value
