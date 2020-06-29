@@ -40,8 +40,16 @@ Namespace Vitens.DynamicBandwidthMonitor
     Inherits AFEventSource
 
 
-    Private LastTime As AFTime = Now
     Private Shared ValueResults As New List(Of ValueResult)
+    Private LastTime As AFTime = Now
+
+
+    Private Structure ValueResult
+
+      Public Attribute As AFAttribute
+      Public Value As AFValue
+
+    End Structure
 
 
     Private Structure RetrievalInfo
@@ -49,14 +57,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       Public StartTime As AFTime
       Public EndTime As AFTime
       Public Attribute As AFAttribute
-
-    End Structure
-
-
-    Private Structure ValueResult
-
-      Public Attribute As AFAttribute
-      Public Value As AFValue
 
     End Structure
 
