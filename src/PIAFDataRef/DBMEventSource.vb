@@ -128,6 +128,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Protected Overrides Sub Dispose(disposing As Boolean)
 
       LastTime = Nothing
+      ValueResults = Nothing
 
     End Sub
 
