@@ -107,38 +107,42 @@ Namespace Vitens.DynamicBandwidthMonitor
       EvalTime = New AFTime(AlignPreviousInterval(EvalTime.UtcSeconds,
         CalculationInterval))
 
-      RetrievalInfo.StartTime = LastTime
-      RetrievalInfo.EndTime = EvalTime
+      ' Only check for new events once per calculation interval.
+      If LastTime < EvalTime Then
 
-      For Each Attribute In MyBase.Signups
+        RetrievalInfo.StartTime = LastTime
+        RetrievalInfo.EndTime = EvalTime
 
-        ' Only check for new events once per calculation interval.
-        If Attribute IsNot Nothing And LastTime < EvalTime Then
+        For Each Attribute In MyBase.Signups
 
-          RetrievalInfo.Attribute = Attribute
-          ' Start a new thread for each attribute, passing information about the
-          ' attribute and the time range to retrieve events for.
-          Threads.Add(New Thread(
-            New ParameterizedThreadStart(AddressOf RetrieveEvents)))
-          Threads(Threads.Count-1).Start(RetrievalInfo)
+          If Attribute IsNot Nothing Then
 
-        End If
+            RetrievalInfo.Attribute = Attribute
+            ' Start a new thread for each attribute, passing information about
+            ' the attribute and the time range to retrieve events for.
+            Threads.Add(New Thread(
+              New ParameterizedThreadStart(AddressOf RetrieveEvents)))
+            Threads(Threads.Count-1).Start(RetrievalInfo)
 
-      Next
+          End If
 
-      ' Wait for all threads to finish.
-      For Each Thread In Threads
-        Thread.Join
-      Next
+        Next
 
-      ' Publish all events to the data pipe.
-      For Each DataPipeEvent In DataPipeEvents
-        MyBase.PublishEvent(DataPipeEvent.Attribute,
-          New AFDataPipeEvent(AFDataPipeAction.Add, DataPipeEvent.Value))
-      Next
-      DataPipeEvents.Clear
+        ' Wait for all threads to finish.
+        For Each Thread In Threads
+          Thread.Join
+        Next
 
-      LastTime = EvalTime
+        ' Publish all events to the data pipe.
+        For Each DataPipeEvent In DataPipeEvents
+          MyBase.PublishEvent(DataPipeEvent.Attribute,
+            New AFDataPipeEvent(AFDataPipeAction.Add, DataPipeEvent.Value))
+        Next
+        DataPipeEvents.Clear
+
+        LastTime = EvalTime
+
+      End If
 
       Return False
 
