@@ -133,7 +133,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' enumeration values logically ORed together. The default value is None.
         Return AFDataMethods.RecordedValue Or AFDataMethods.RecordedValues Or
           AFDataMethods.PlotValues Or AFDataMethods.Summary Or
-          AFDataMethods.Summaries ' Or AFDataMethods.DataPipe
+          AFDataMethods.Summaries Or AFDataMethods.DataPipe
       End Get
 
     End Property
