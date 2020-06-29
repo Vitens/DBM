@@ -141,16 +141,11 @@ Namespace Vitens.DynamicBandwidthMonitor
         Next
 
         ' Publish all events to the data pipe.
-        Monitor.Enter(DataPipeEvents)
-        Try
-          For Each DataPipeEvent In DataPipeEvents
-            MyBase.PublishEvent(DataPipeEvent.Attribute,
-              New AFDataPipeEvent(AFDataPipeAction.Add, DataPipeEvent.Value))
-          Next
-          DataPipeEvents.Clear
-        Finally
-          Monitor.Exit(DataPipeEvents)
-        End Try
+        For Each DataPipeEvent In DataPipeEvents
+          MyBase.PublishEvent(DataPipeEvent.Attribute,
+            New AFDataPipeEvent(AFDataPipeAction.Add, DataPipeEvent.Value))
+        Next
+        DataPipeEvents.Clear
 
         LastTime = EvalTime
 
