@@ -21,6 +21,10 @@ rem along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 cd /d %~dp0
 
+Rem Variables
+set ts=-TimestampServer http://timestamp.digicert.com
+if %USERDOMAIN%==VITENS if %SESSIONNAME:~0,3%==RDP set ts=
+
 rem Sign
 rem arguments: pfx file, password
-for %%f in (build\*.dll build\*.exe) do powershell -Command "Set-AuthenticodeSignature -Certificate (New-Object System.Security.Cryptography.X509Certificates.X509Certificate2('%1', '%2')) -TimestampServer http://timestamp.digicert.com -HashAlgorithm SHA256 -FilePath '%%f'"
+for %%f in (build\*.dll build\*.exe) do powershell -Command "Set-AuthenticodeSignature -Certificate (New-Object System.Security.Cryptography.X509Certificates.X509Certificate2('%1', '%2')) %ts% -HashAlgorithm SHA256 -FilePath '%%f'"
