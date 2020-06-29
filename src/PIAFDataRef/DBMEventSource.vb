@@ -40,11 +40,11 @@ Namespace Vitens.DynamicBandwidthMonitor
     Inherits AFEventSource
 
 
-    Private Shared Events As New List(Of Event)
+    Private Shared DataPipeEvents As New List(Of DataPipeEvent)
     Private LastTime As AFTime = Now
 
 
-    Private Structure Event
+    Private Structure DataPipeEvent
 
       ' This structure is used to store events retrieved in a separate thread
       ' per attribute.
@@ -69,10 +69,11 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Shared Sub RetrieveValues(RetrievalInfo As Object)
 
-      Dim Event As Event
+      Dim DataPipeEvent As DataPipeEvent
       Dim Value As AFValue
 
-      Event.Attribute = DirectCast(RetrievalInfo, RetrievalInfo).Attribute
+      DataPipeEvent.Attribute = DirectCast(
+        RetrievalInfo, RetrievalInfo).Attribute
 
       ' Call the GetValues method for the attribute to retrieve values to store
       ' in the shared events list.
@@ -81,8 +82,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         New AFTimeRange(DirectCast(RetrievalInfo, RetrievalInfo).StartTime,
         DirectCast(RetrievalInfo, RetrievalInfo).EndTime), 0, Nothing)
 
-        Event.Value = Value
-        Events.Add(Event)
+        DataPipeEvent.Value = Value
+        DataPipeEvents.Add(DataPipeEvent)
 
       Next
 
@@ -99,7 +100,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Attribute As AFAttribute
       Dim Threads As New List(Of Thread)
       Dim Thread As Thread
-      Dim Event As Event
+      Dim DataPipeEvent As DataPipeEvent
 
       ' The evaluation time is the current time aligned to the previous
       ' calculation interval.
@@ -131,11 +132,11 @@ Namespace Vitens.DynamicBandwidthMonitor
       Next
 
       ' Publish all events to the data pipe.
-      For Each Event In Events
-        MyBase.PublishEvent(Event.Attribute,
-          New AFDataPipeEvent(AFDataPipeAction.Add, Event.Value))
+      For Each DataPipeEvent In DataPipeEvents
+        MyBase.PublishEvent(DataPipeEvent.Attribute,
+          New AFDataPipeEvent(AFDataPipeAction.Add, DataPipeEvent.Value))
       Next
-      Events.Clear
+      DataPipeEvents.Clear
 
       LastTime = EvalTime
 
@@ -148,7 +149,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Clean up objects.
 
-      Events = Nothing
+      DataPipeEvents = Nothing
       LastTime = Nothing
 
     End Sub
