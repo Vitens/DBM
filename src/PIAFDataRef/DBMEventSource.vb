@@ -61,16 +61,17 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Structure
 
 
-    Private Shared Sub RetrieveValues(RetrievalInfo As RetrievalInfo)
+    Private Shared Sub RetrieveValues(RetrievalInfo As Object)
 
       Dim ValueResult As ValueResult
       Dim Value As AFValue
 
-      ValueResult.Attribute = RetrievalInfo.Attribute
+      ValueResult.Attribute = DirectCast(RetrievalInfo, RetrievalInfo).Attribute
 
-      For Each Value In RetrievalInfo.Attribute.GetValues(
-        New AFTimeRange(RetrievalInfo.StartTime, RetrievalInfo.EndTime),
-        0, Nothing)
+      For Each Value In
+        DirectCast(RetrievalInfo, RetrievalInfo).Attribute.GetValues(
+        New AFTimeRange(DirectCast(RetrievalInfo, RetrievalInfo).StartTime,
+        DirectCast(RetrievalInfo, RetrievalInfo).EndTime), 0, Nothing)
 
         ValueResult.Value = Value
         ValueResults.Add(ValueResult)
