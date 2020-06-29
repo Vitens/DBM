@@ -41,7 +41,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private LastTime As AFTime = Now
-    Private ValueResults As New List(Of ValueResult)
+    Private Shared ValueResults As New List(Of ValueResult)
 
 
     Private Structure RetrievalInfo
