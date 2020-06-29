@@ -46,6 +46,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Structure ValueResult
 
+      ' This structure is used to store value results retrieved in a separate
+      ' thread per attribute.
+
       Public Attribute As AFAttribute
       Public Value As AFValue
 
@@ -53,6 +56,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private Structure RetrievalInfo
+
+      ' This structure is used to pass information required to retrieve values
+      ' to the thread started for each attribute.
 
       Public StartTime As AFTime
       Public EndTime As AFTime
@@ -68,6 +74,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ValueResult.Attribute = DirectCast(RetrievalInfo, RetrievalInfo).Attribute
 
+      ' Call the GetValues method for the attribute to retrieve values to store
+      ' in the shared results list.
       For Each Value In
         DirectCast(RetrievalInfo, RetrievalInfo).Attribute.GetValues(
         New AFTimeRange(DirectCast(RetrievalInfo, RetrievalInfo).StartTime,
@@ -83,6 +91,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Protected Overrides Function GetEvents As Boolean
 
+      ' The GetEvents method is designed to get data pipe events from the System
+      ' of record.
+
       Dim EvalTime As AFTime = Now
       Dim RetrievalInfo As RetrievalInfo
       Dim Attribute As AFAttribute
@@ -90,6 +101,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Thread As Thread
       Dim ValueResult As ValueResult
 
+      ' The evaluation time is the current time aligned to the previous
+      ' calculation interval.
       EvalTime = New AFTime(AlignPreviousInterval(EvalTime.UtcSeconds,
         CalculationInterval))
 
@@ -98,9 +111,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       For Each Attribute In MyBase.Signups
 
+        ' Only check for new events once per calculation interval.
         If Attribute IsNot Nothing And LastTime < EvalTime Then
 
           RetrievalInfo.Attribute = Attribute
+          ' Start a new thread for each attribute, passing information about the
+          ' attribute and the time range to retrieve data for.
           Threads.Add(New Thread(
             New ParameterizedThreadStart(AddressOf RetrieveValues)))
           Threads(Threads.Count-1).Start(RetrievalInfo)
@@ -109,10 +125,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Next
 
+      ' Wait for all threads to finish.
       For Each Thread In Threads
         Thread.Join
       Next
 
+      ' Publish all retrieved value results to the data pipe as added events.
       For Each ValueResult In ValueResults
         MyBase.PublishEvent(ValueResult.Attribute,
           New AFDataPipeEvent(AFDataPipeAction.Add, ValueResult.Value))
@@ -127,6 +145,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Protected Overrides Sub Dispose(disposing As Boolean)
+
+      ' Clean up objects.
 
       ValueResults = Nothing
       LastTime = Nothing
