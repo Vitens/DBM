@@ -40,14 +40,14 @@ Namespace Vitens.DynamicBandwidthMonitor
     Inherits AFEventSource
 
 
-    Private Shared ValueResults As New List(Of ValueResult)
+    Private Shared Events As New List(Of Event)
     Private LastTime As AFTime = Now
 
 
-    Private Structure ValueResult
+    Private Structure Event
 
-      ' This structure is used to store value results retrieved in a separate
-      ' thread per attribute.
+      ' This structure is used to store events retrieved in a separate thread
+      ' per attribute.
 
       Public Attribute As AFAttribute
       Public Value As AFValue
@@ -69,20 +69,20 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Shared Sub RetrieveValues(RetrievalInfo As Object)
 
-      Dim ValueResult As ValueResult
+      Dim Event As Event
       Dim Value As AFValue
 
-      ValueResult.Attribute = DirectCast(RetrievalInfo, RetrievalInfo).Attribute
+      Event.Attribute = DirectCast(RetrievalInfo, RetrievalInfo).Attribute
 
       ' Call the GetValues method for the attribute to retrieve values to store
-      ' in the shared results list.
+      ' in the shared events list.
       For Each Value In
         DirectCast(RetrievalInfo, RetrievalInfo).Attribute.GetValues(
         New AFTimeRange(DirectCast(RetrievalInfo, RetrievalInfo).StartTime,
         DirectCast(RetrievalInfo, RetrievalInfo).EndTime), 0, Nothing)
 
-        ValueResult.Value = Value
-        ValueResults.Add(ValueResult)
+        Event.Value = Value
+        Events.Add(Event)
 
       Next
 
@@ -99,7 +99,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Attribute As AFAttribute
       Dim Threads As New List(Of Thread)
       Dim Thread As Thread
-      Dim ValueResult As ValueResult
+      Dim Event As Event
 
       ' The evaluation time is the current time aligned to the previous
       ' calculation interval.
@@ -130,12 +130,12 @@ Namespace Vitens.DynamicBandwidthMonitor
         Thread.Join
       Next
 
-      ' Publish all retrieved value results to the data pipe as added events.
-      For Each ValueResult In ValueResults
-        MyBase.PublishEvent(ValueResult.Attribute,
-          New AFDataPipeEvent(AFDataPipeAction.Add, ValueResult.Value))
+      ' Publish all events to the data pipe.
+      For Each Event In Events
+        MyBase.PublishEvent(Event.Attribute,
+          New AFDataPipeEvent(AFDataPipeAction.Add, Event.Value))
       Next
-      ValueResults.Clear
+      Events.Clear
 
       LastTime = EvalTime
 
@@ -148,7 +148,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Clean up objects.
 
-      ValueResults = Nothing
+      Events = Nothing
       LastTime = Nothing
 
     End Sub
