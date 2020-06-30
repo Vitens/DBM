@@ -155,12 +155,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Protected Overrides Sub Dispose(disposing As Boolean)
-
-      ' Clean up objects.
-
-      DataPipeEvents = Nothing
-      LastEvent = Nothing
-
     End Sub
 
 
