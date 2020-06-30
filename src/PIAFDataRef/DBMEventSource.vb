@@ -69,12 +69,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Shared Sub RetrieveEvents(RetrievalInfo As Object)
 
-      Dim DataPipeEvent As DataPipeEvent
       Dim Values As AFValues
+      Dim DataPipeEvent As DataPipeEvent
       Dim Value As AFValue
-
-      DataPipeEvent.Attribute = DirectCast(
-        RetrievalInfo, RetrievalInfo).Attribute
 
       ' Call the GetValues method for the attribute to retrieve events to store
       ' in the shared events list.
@@ -86,6 +83,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Store events in shared events list.
       Monitor.Enter(DataPipeEvents)
       Try
+        DataPipeEvent.Attribute = DirectCast(
+          RetrievalInfo, RetrievalInfo).Attribute
         For Each Value In Values
           DataPipeEvent.Value = Value
           DataPipeEvents.Add(DataPipeEvent)
