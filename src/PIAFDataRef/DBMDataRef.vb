@@ -82,6 +82,17 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private DBMNonShared As New DBM ' Fall back to nonshared object.
 
 
+    Public Shared Function CreateDataPipe As Object
+
+      ' This Data Reference is a System of Record, so expose the CreateDataPipe
+      ' method and return a new instance of the event source class derived from
+      ' AFEventSource.
+
+      Return New DBMEventSource
+
+    End Function
+
+
     Public Overrides Readonly Property SupportedContexts _
       As AFDataReferenceContext
 
@@ -122,7 +133,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' enumeration values logically ORed together. The default value is None.
         Return AFDataMethods.RecordedValue Or AFDataMethods.RecordedValues Or
           AFDataMethods.PlotValues Or AFDataMethods.Summary Or
-          AFDataMethods.Summaries
+          AFDataMethods.Summaries Or AFDataMethods.DataPipe
       End Get
 
     End Property
@@ -422,10 +433,6 @@ Namespace Vitens.DynamicBandwidthMonitor
               Monitor.Exit(DBM) ' Ensure that the lock is released.
             End Try
           End If
-
-          ' Clean up single-use DBM object.
-          If Not Object.ReferenceEquals(DBM, DBMShared) And
-            Not Object.ReferenceEquals(DBM, DBMNonShared) Then DBM = Nothing
 
         Next DBM
 
