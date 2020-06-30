@@ -41,7 +41,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private Shared DataPipeEvents As New List(Of DataPipeEvent)
-    Private LastTime As AFTime = Now
+    Private LastEvent As AFTime = Now
 
 
     Private Structure DataPipeEvent
@@ -101,23 +101,24 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' The GetEvents method is designed to get data pipe events from the System
       ' of record.
 
-      Dim EvalTime As AFTime = Now
+      Dim CurrentInterval As AFTime = Now
       Dim RetrievalInfo As RetrievalInfo
       Dim Attribute As AFAttribute
       Dim Threads As New List(Of Thread)
       Dim Thread As Thread
       Dim DataPipeEvent As DataPipeEvent
 
-      ' The evaluation time is the current time aligned to the previous
-      ' calculation interval.
-      EvalTime = New AFTime(AlignPreviousInterval(EvalTime.UtcSeconds,
-        CalculationInterval))
+      ' Current time aligned to the previous calculation interval.
+      CurrentInterval = New AFTime(AlignPreviousInterval(
+        CurrentInterval.UtcSeconds, CalculationInterval))
 
       ' Only check for new events once per calculation interval.
-      If LastTime < EvalTime Then
+      If LastEvent < CurrentInterval Then
 
-        RetrievalInfo.StartTime = LastTime
-        RetrievalInfo.EndTime = EvalTime
+        RetrievalInfo.StartTime = LastEvent
+        RetrievalInfo.EndTime = CurrentInterval
+
+        LastEvent = CurrentInterval
 
         For Each Attribute In MyBase.Signups
 
@@ -146,8 +147,6 @@ Namespace Vitens.DynamicBandwidthMonitor
         Next
         DataPipeEvents.Clear
 
-        LastTime = EvalTime
-
       End If
 
       Return False
@@ -160,7 +159,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Clean up objects.
 
       DataPipeEvents = Nothing
-      LastTime = Nothing
+      LastEvent = Nothing
 
     End Sub
 
