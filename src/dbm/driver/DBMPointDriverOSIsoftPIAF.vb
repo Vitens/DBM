@@ -106,7 +106,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' of the stored data since the duration was changed). So if the start
       ' timestamp is not already stored, clear data and get the whole time
       ' range.
-      If StartTimestamp < LastValueTimestamp And
+      If StartTimestamp <= LastValueTimestamp And
         EndTimestamp > LastValueTimestamp And
         Values.ContainsKey(StartTimestamp) Then ' Check if we can reuse data.
         If EndTimestamp >
