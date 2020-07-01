@@ -39,7 +39,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Inherits AFEventSource
 
 
-    Private LastEvent As AFTime = Now
+    Private LastEvent As AFTime = Now.AddSeconds(CalculationInterval) ' Snapshot
 
 
     Protected Overrides Function GetEvents As Boolean
