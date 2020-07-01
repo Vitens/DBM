@@ -32,6 +32,7 @@ Imports OSIsoft.AF.Data.AFSummaryTypes
 Imports OSIsoft.AF.Data.AFTimestampCalculation
 Imports OSIsoft.AF.PI
 Imports OSIsoft.AF.Time
+Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
@@ -82,8 +83,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' If we already have the data for the time range, we do not need to do
       ' anything and this sub can be exited.
       If Values.ContainsKey(StartTimestamp) And
-        Values.ContainsKey(EndTimestamp.AddSeconds(-CalculationInterval)) Then
-        Exit Sub
+        Values.ContainsKey(EndTimestamp.AddSeconds(-CalculationInterval))
+        Then Exit Sub
 
       ' Check if we are in the next interval after the previous one.
       If Values.ContainsKey(StartTimestamp.AddSeconds(-CalculationInterval)) And
