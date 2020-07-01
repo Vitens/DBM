@@ -94,8 +94,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         EndTimestamp > LastValueTimestamp Then
         If EndTimestamp >
           LastValueTimestamp.AddSeconds(CalculationInterval) Then
-          For i = 1 To ((EndTimestamp-LastValueTimestamp).TotalSeconds)/
-            CalculationInterval-1
+          For i = 1 To CInt(((EndTimestamp-LastValueTimestamp).TotalSeconds)/
+            CalculationInterval)-1
             StartTimestamp = StartTimestamp.AddSeconds(-CalculationInterval)
             If Values.ContainsKey(StartTimestamp) Then
               Values.Remove(StartTimestamp) ' Remove old, out-of-scope values.
