@@ -78,8 +78,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const pValueMinMax As Double = 0.9999 ' CI for Minimum and Maximum
 
 
-    Private Shared DBMShared As New DBM ' Use shared DBM object, if available.
-    Private DBMNonShared As New DBM ' Fall back to nonshared object.
+    Private Shared DBM As New DBM
 
 
     Public Shared Function CreateDataPipe As Object
@@ -303,7 +302,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Element, ParentElement, SiblingElement As AFElement
       Dim InputPointDriver As DBMPointDriver
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
-      Dim CalculationStart As DateTime = Now ' Limit calculation duration.
 
       GetValues = New AFValues
       timeRange.StartTime = New AFTime(AlignPreviousInterval(
@@ -361,80 +359,60 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         End If
 
-        For Each DBM In {DBMShared, DBMNonShared, New DBM} ' Prefer shared obj.
+        Monitor.Enter(DBM) ' Request the lock, and block until it is obtained.
+        Try
 
-          If Monitor.TryEnter(DBM, TimeSpan.FromSeconds(
-            Sqrt(CalculationInterval)/2*(1+RandomNumber(0, 1000)/1000))) Then
-            Try
+          DBM.PrepareData(InputPointDriver, CorrelationPoints,
+            timeRange.StartTime.LocalTime, timeRange.EndTime.LocalTime)
 
-              DBM.PrepareData(InputPointDriver, CorrelationPoints,
-                timeRange.StartTime.LocalTime, timeRange.EndTime.LocalTime)
+          Do While timeRange.EndTime > timeRange.StartTime
 
-              Do While timeRange.EndTime > timeRange.StartTime
+            With DBM.Result(InputPointDriver, CorrelationPoints,
+              timeRange.StartTime.LocalTime)
 
-                If (Now-CalculationStart).TotalSeconds <
-                  CalculationInterval Then ' Calculation duration not exceeded.
+              If Attribute.Trait Is LimitTarget Then
+                GetValues.Add(New AFValue(.ForecastItem.Measurement,
+                  timeRange.StartTime.LocalTime))
+              ElseIf Attribute.Trait Is Forecast Then
+                GetValues.Add(New AFValue(.ForecastItem.ForecastValue,
+                  timeRange.StartTime.LocalTime))
+              ElseIf Attribute.Trait Is LimitMinimum Then
+                GetValues.Add(New AFValue(.ForecastItem.ForecastValue-
+                  .ForecastItem.Range(pValueMinMax),
+                  timeRange.StartTime.LocalTime))
+              ElseIf Attribute.Trait Is LimitLoLo Then
+                GetValues.Add(New AFValue(.ForecastItem.LowerControlLimit,
+                  timeRange.StartTime.LocalTime))
+              ElseIf Attribute.Trait Is LimitLo Then
+                GetValues.Add(New AFValue(.ForecastItem.ForecastValue-
+                  .ForecastItem.Range(pValueLoHi),
+                  timeRange.StartTime.LocalTime))
+              ElseIf Attribute.Trait Is LimitHi Then
+                GetValues.Add(New AFValue(.ForecastItem.ForecastValue+
+                  .ForecastItem.Range(pValueLoHi),
+                  timeRange.StartTime.LocalTime))
+              ElseIf Attribute.Trait Is LimitHiHi Then
+                GetValues.Add(New AFValue(.ForecastItem.UpperControlLimit,
+                  timeRange.StartTime.LocalTime))
+              ElseIf Attribute.Trait Is LimitMaximum Then
+                GetValues.Add(New AFValue(.ForecastItem.ForecastValue+
+                  .ForecastItem.Range(pValueMinMax),
+                  timeRange.StartTime.LocalTime))
+              Else
+                GetValues.Add(New AFValue(.Factor,
+                  timeRange.StartTime.LocalTime))
+              End If
 
-                  With DBM.Result(InputPointDriver, CorrelationPoints,
-                    timeRange.StartTime.LocalTime)
+            End With
 
-                    If Attribute.Trait Is LimitTarget Then
-                      GetValues.Add(New AFValue(.ForecastItem.Measurement,
-                        timeRange.StartTime.LocalTime))
-                    ElseIf Attribute.Trait Is Forecast Then
-                      GetValues.Add(New AFValue(.ForecastItem.ForecastValue,
-                        timeRange.StartTime.LocalTime))
-                    ElseIf Attribute.Trait Is LimitMinimum Then
-                      GetValues.Add(New AFValue(.ForecastItem.ForecastValue-
-                        .ForecastItem.Range(pValueMinMax),
-                        timeRange.StartTime.LocalTime))
-                    ElseIf Attribute.Trait Is LimitLoLo Then
-                      GetValues.Add(New AFValue(.ForecastItem.LowerControlLimit,
-                        timeRange.StartTime.LocalTime))
-                    ElseIf Attribute.Trait Is LimitLo Then
-                      GetValues.Add(New AFValue(.ForecastItem.ForecastValue-
-                        .ForecastItem.Range(pValueLoHi),
-                        timeRange.StartTime.LocalTime))
-                    ElseIf Attribute.Trait Is LimitHi Then
-                      GetValues.Add(New AFValue(.ForecastItem.ForecastValue+
-                        .ForecastItem.Range(pValueLoHi),
-                        timeRange.StartTime.LocalTime))
-                    ElseIf Attribute.Trait Is LimitHiHi Then
-                      GetValues.Add(New AFValue(.ForecastItem.UpperControlLimit,
-                        timeRange.StartTime.LocalTime))
-                    ElseIf Attribute.Trait Is LimitMaximum Then
-                      GetValues.Add(New AFValue(.ForecastItem.ForecastValue+
-                        .ForecastItem.Range(pValueMinMax),
-                        timeRange.StartTime.LocalTime))
-                    Else
-                      GetValues.Add(New AFValue(.Factor,
-                        timeRange.StartTime.LocalTime))
-                    End If
+            timeRange.StartTime = New AFTime(
+              timeRange.StartTime.UtcSeconds+IntervalSeconds) ' Next intv.
 
-                  End With
+          Loop
 
-                Else
-
-                  ' Calculation duration exceeded, return digital state.
-                  GetValues.Add(AFValue.CreateSystemStateValue(
-                    AFSystemStateCode.ScanTimeout,
-                    timeRange.StartTime.LocalTime))
-
-                End If
-
-                timeRange.StartTime = New AFTime(
-                  timeRange.StartTime.UtcSeconds+IntervalSeconds) ' Next intv.
-
-              Loop
-
-              Exit For
-
-            Finally
-              Monitor.Exit(DBM) ' Ensure that the lock is released.
-            End Try
-          End If
-
-        Next DBM
+        Finally
+          Monitor.Exit(DBM) ' Ensure that the lock is released.
+        End Try
 
       End If
 

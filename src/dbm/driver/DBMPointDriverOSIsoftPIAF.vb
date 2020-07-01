@@ -25,6 +25,7 @@ Option Strict
 Imports System
 Imports System.Collections.Generic
 Imports System.Double
+Imports System.Math
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Data.AFCalculationBasis
 Imports OSIsoft.AF.Data.AFSummaryTypes
@@ -66,39 +67,49 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' OSIsoft PI AF and stores this in the Values dictionary. The (aligned)
       ' end time itself is excluded.
 
+      Dim Snapshot As DateTime = New AFTime(AlignPreviousInterval(
+        DirectCast(Point, AFAttribute).GetValue.Timestamp.UtcSeconds,
+        -CalculationInterval)).LocalTime ' Interval after snapshot timestamp
       Dim PIValues As AFValues
       Dim Value As AFValue
 
-      If TypeOf DirectCast(Point, AFAttribute).PIPoint Is PIPoint Then
+      ' Never retrieve values beyond the snapshot time aligned to the previous
+      ' interval. Exit this sub if there is no data to retrieve.
+      StartTimestamp = New DateTime(Min(StartTimestamp.Ticks, Snapshot.Ticks))
+      EndTimestamp = New DateTime(Min(EndTimestamp.Ticks, Snapshot.Ticks))
+      If StartTimestamp >= EndTimestamp Then Exit Sub
 
-        ' If the source is a PI Point, use time weighted averages for each
-        ' interval in the time range. Calculating interval averages is very fast
-        ' with the PI Point data reference.
+      ' If we already have the data for the time range, we do not need to do
+      ' anything and this sub can be exited.
+      If Values.ContainsKey(StartTimestamp) And
+        Values.ContainsKey(EndTimestamp.AddSeconds(-CalculationInterval)) Then
+        Exit Sub
 
-        PIValues = DirectCast(Point, AFAttribute).Data.Summaries(
-          New AFTimeRange(New AFTime(StartTimestamp),
-          New AFTime(EndTimestamp)), New AFTimeSpan(0, 0, 0, 0, 0,
-          CalculationInterval, 0), Average, TimeWeighted, EarliestTime).
-          Item(Average)
-
+      ' Check if we are in the next interval after the previous one.
+      If Values.ContainsKey(StartTimestamp.AddSeconds(-CalculationInterval)) And
+        Values.ContainsKey(StartTimestamp) And
+        Values.ContainsKey(EndTimestamp.AddSeconds(-2*CalculationInterval)) And
+        Not Values.ContainsKey(EndTimestamp.AddSeconds(-CalculationInterval))
+        Then
+        ' Remove the single value prior to the start timestamp, and only read
+        ' the single value at the end timestamp and append this to the
+        ' dictionary.
+        Values.Remove(StartTimestamp.AddSeconds(-CalculationInterval))
+        StartTimestamp = EndTimestamp.AddSeconds(-CalculationInterval)
       Else
-
-        ' If the source is not a PI Point, use interpolated values for each
-        ' interval in the time range. This is because calculating time weighted
-        ' averages for each interval for non-PI Point data references might be
-        ' very costly in terms of performance. Note that the InterpolatedValues
-        ' method returns one extra interval compared to the Summaries method,
-        ' so one interval is subtracted from the end timestamp in the call.
-
-        PIValues = DirectCast(Point, AFAttribute).Data.InterpolatedValues(
-          New AFTimeRange(New AFTime(StartTimestamp),
-          New AFTime(EndTimestamp.AddSeconds(-CalculationInterval))),
-          New AFTimeSpan(0, 0, 0, 0, 0, CalculationInterval, 0),
-          Nothing, Nothing, True)
-
+        ' We need data for another time range, so just clear the dictionary.
+        Values.Clear
       End If
 
-      Values.Clear
+      ' Retrieve interpolated values for each interval in the time range. Since
+      ' we want to exclude the end timestamp itself, one interval is subtracted
+      ' from the end timestamp in the call.
+      PIValues = DirectCast(Point, AFAttribute).Data.InterpolatedValues(
+        New AFTimeRange(New AFTime(StartTimestamp),
+        New AFTime(EndTimestamp.AddSeconds(-CalculationInterval))),
+        New AFTimeSpan(0, 0, 0, 0, 0, CalculationInterval, 0),
+        Nothing, Nothing, True)
+
       For Each Value In PIValues ' Store averages in Values dictionary
         If Not Values.ContainsKey(Value.Timestamp.LocalTime) Then ' DST dupes
           If TypeOf Value.Value Is Double Then
