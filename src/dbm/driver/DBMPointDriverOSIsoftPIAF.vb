@@ -76,37 +76,48 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim PIValues As AFValues
       Dim Value As AFValue
 
-      ' Never retrieve values beyond the snapshot time aligned to the previous
+      ' Never retrieve values beyond the snapshot time aligned to the next
       ' interval. Exit this sub if there is no data to retrieve.
       StartTimestamp = New DateTime(Min(StartTimestamp.Ticks, Snapshot.Ticks))
       EndTimestamp = New DateTime(Min(EndTimestamp.Ticks, Snapshot.Ticks))
       If StartTimestamp >= EndTimestamp Then Exit Sub
 
       ' If we already have the data for the time range, we do not need to do
-      ' anything and this sub can be exited.
+      ' anything and this sub can be exited. This is needed to prevent
+      ' retrieving data when zooming in on a larger historical time range for
+      ' example. To determine if we have data for the time range in memory, just
+      ' check if the first and last interval values are stored.
       If Values.ContainsKey(StartTimestamp) And
         Values.ContainsKey(EndTimestamp.AddSeconds(-CalculationInterval)) Then
         Exit Sub
       End If
 
-      ' Check if we are in a next interval after the previous one.
+      ' Check if we are in a next interval after the previous one, so that
+      ' already retrieved data can be reused. This might seem quite complex, but
+      ' basically we try to add only the data we do not have to the data we
+      ' have already retrieved. Old values that we have stored that are probably
+      ' not useful anymore are then removed so that the number of values in
+      ' memory remains the same for the new time range. Note that this method
+      ' currently only works when moving forward in time; moving backward will
+      ' not reuse any stored data and will just retrieve all required data from
+      ' the PI system.
       If StartTimestamp < LastValueTimestamp And
-        EndTimestamp > LastValueTimestamp Then
+        EndTimestamp > LastValueTimestamp Then ' Check if we can reuse data.
         If EndTimestamp >
           LastValueTimestamp.AddSeconds(CalculationInterval) Then
           For i = 1 To CInt(((EndTimestamp-LastValueTimestamp).TotalSeconds)/
-            CalculationInterval)-1
+            CalculationInterval)-1 ' Iterate over old values to remove.
             StartTimestamp = StartTimestamp.AddSeconds(-CalculationInterval)
             If Values.ContainsKey(StartTimestamp) Then
               Values.Remove(StartTimestamp) ' Remove old, out-of-scope values.
             End If
           Next i
         Else
-          Exit Sub ' We already have all data required.
+          Exit Sub ' Exit, since we already have all data required in memory.
         End If
         StartTimestamp = LastValueTimestamp.AddSeconds(CalculationInterval)
       Else
-        Values.Clear
+        Values.Clear ' There is no data we can reuse, so clear it.
       End If
       LastValueTimestamp = EndTimestamp.AddSeconds(-CalculationInterval)
 
