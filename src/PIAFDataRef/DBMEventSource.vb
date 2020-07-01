@@ -51,9 +51,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Attribute As AFAttribute
       Dim Value As AFValue
 
-      ' Current time aligned to the previous calculation interval.
+      ' Current time aligned to the next calculation interval.
       CurrentInterval = New AFTime(AlignPreviousInterval(
-        CurrentInterval.UtcSeconds, CalculationInterval))
+        CurrentInterval.UtcSeconds, -CalculationInterval))
 
       ' Only check for new events once per calculation interval.
       If LastEvent < CurrentInterval Then
