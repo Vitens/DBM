@@ -52,6 +52,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private Values As New Dictionary(Of DateTime, Double)
+    Private LastValueTimestamp As DateTime
 
 
     Public Sub New(Point As Object)
@@ -71,6 +72,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Snapshot As DateTime = New AFTime(AlignPreviousInterval(
         DirectCast(Point, AFAttribute).GetValue.Timestamp.UtcSeconds,
         -CalculationInterval)).LocalTime ' Interval after snapshot timestamp
+      Dim i As Integer
       Dim PIValues As AFValues
       Dim Value As AFValue
 
@@ -87,21 +89,26 @@ Namespace Vitens.DynamicBandwidthMonitor
         Exit Sub
       End If
 
-      ' Check if we are in the next interval after the previous one.
-      If Values.ContainsKey(StartTimestamp.AddSeconds(-CalculationInterval)) And
-        Values.ContainsKey(StartTimestamp) And
-        Values.ContainsKey(EndTimestamp.AddSeconds(-2*CalculationInterval)) And
-        Not Values.ContainsKey(EndTimestamp.
-        AddSeconds(-CalculationInterval)) Then
-        ' Remove the single value prior to the start timestamp, and only read
-        ' the single value at the end timestamp and append this to the
-        ' dictionary.
-        Values.Remove(StartTimestamp.AddSeconds(-CalculationInterval))
-        StartTimestamp = EndTimestamp.AddSeconds(-CalculationInterval)
+      ' Check if we are in a next interval after the previous one.
+      If StartTimestamp < LastValueTimestamp And
+        EndTimestamp > LastValueTimestamp Then
+        If EndTimestamp >
+          LastValueTimestamp.AddSeconds(CalculationInterval) Then
+          For i = 1 To ((EndTimestamp-LastValueTimestamp).TotalSeconds)/
+            CalculationInterval-1
+            StartTimestamp = StartTimestamp.AddSeconds(-CalculationInterval)
+            If Values.ContainsKey(StartTimestamp) Then
+              Values.Remove(StartTimestamp) ' Remove old, out-of-scope values.
+            End If
+          Next i
+        Else
+          Exit Sub ' We already have all data required.
+        End If
+        StartTimestamp = LastValueTimestamp.AddSeconds(CalculationInterval)
       Else
-        ' We need data for another time range, so just clear the dictionary.
         Values.Clear
       End If
+      LastValueTimestamp = EndTimestamp.AddSeconds(-CalculationInterval)
 
       If TypeOf DirectCast(Point, AFAttribute).PIPoint Is PIPoint Then
 
