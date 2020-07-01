@@ -64,9 +64,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Sub PrepareData(StartTimestamp As DateTime,
       EndTimestamp As DateTime)
 
-      ' Retrieves an average value for each interval in the time range from
-      ' OSIsoft PI AF and stores this in the Values dictionary. The (aligned)
-      ' end time itself is excluded.
+      ' Retrieves a value for each interval in the time range from OSIsoft PI AF
+      ' and stores this in the Values dictionary. The (aligned) end time itself
+      ' is excluded.
 
       Dim Snapshot As DateTime = New AFTime(AlignPreviousInterval(
         DirectCast(Point, AFAttribute).GetValue.Timestamp.UtcSeconds,
@@ -112,7 +112,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         New AFTimeSpan(0, 0, 0, 0, 0, CalculationInterval, 0),
         Nothing, Nothing, True)
 
-      For Each Value In PIValues ' Store averages in Values dictionary
+      For Each Value In PIValues ' Store values in Values dictionary
         If Not Values.ContainsKey(Value.Timestamp.LocalTime) Then ' DST dupes
           If TypeOf Value.Value Is Double Then
             Values.Add(Value.Timestamp.LocalTime,
