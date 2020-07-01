@@ -83,15 +83,16 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' If we already have the data for the time range, we do not need to do
       ' anything and this sub can be exited.
       If Values.ContainsKey(StartTimestamp) And
-        Values.ContainsKey(EndTimestamp.AddSeconds(-CalculationInterval))
-        Then Exit Sub
+        Values.ContainsKey(EndTimestamp.AddSeconds(-CalculationInterval)) Then
+        Exit Sub
+      End If
 
       ' Check if we are in the next interval after the previous one.
       If Values.ContainsKey(StartTimestamp.AddSeconds(-CalculationInterval)) And
         Values.ContainsKey(StartTimestamp) And
         Values.ContainsKey(EndTimestamp.AddSeconds(-2*CalculationInterval)) And
-        Not Values.ContainsKey(EndTimestamp.AddSeconds(-CalculationInterval))
-        Then
+        Not Values.ContainsKey(EndTimestamp.
+        AddSeconds(-CalculationInterval)) Then
         ' Remove the single value prior to the start timestamp, and only read
         ' the single value at the end timestamp and append this to the
         ' dictionary.
