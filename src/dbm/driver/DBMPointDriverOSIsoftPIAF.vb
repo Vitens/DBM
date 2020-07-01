@@ -103,14 +103,34 @@ Namespace Vitens.DynamicBandwidthMonitor
         Values.Clear
       End If
 
-      ' Retrieve interpolated values for each interval in the time range. Since
-      ' we want to exclude the end timestamp itself, one interval is subtracted
-      ' from the end timestamp in the call.
-      PIValues = DirectCast(Point, AFAttribute).Data.InterpolatedValues(
-        New AFTimeRange(New AFTime(StartTimestamp),
-        New AFTime(EndTimestamp.AddSeconds(-CalculationInterval))),
-        New AFTimeSpan(0, 0, 0, 0, 0, CalculationInterval, 0),
-        Nothing, Nothing, True)
+      If TypeOf DirectCast(Point, AFAttribute).PIPoint Is PIPoint Then
+
+        ' If the source is a PI Point, use time weighted averages for each
+        ' interval in the time range. Calculating interval averages is very fast
+        ' with the PI Point data reference.
+
+        PIValues = DirectCast(Point, AFAttribute).Data.Summaries(
+          New AFTimeRange(New AFTime(StartTimestamp),
+          New AFTime(EndTimestamp)), New AFTimeSpan(0, 0, 0, 0, 0,
+          CalculationInterval, 0), Average, TimeWeighted, EarliestTime).
+          Item(Average)
+
+      Else
+
+        ' If the source is not a PI Point, use interpolated values for each
+        ' interval in the time range. This is because calculating time weighted
+        ' averages for each interval for non-PI Point data references might be
+        ' very costly in terms of performance. Note that the InterpolatedValues
+        ' method returns one extra interval compared to the Summaries method,
+        ' so one interval is subtracted from the end timestamp in the call.
+
+        PIValues = DirectCast(Point, AFAttribute).Data.InterpolatedValues(
+          New AFTimeRange(New AFTime(StartTimestamp),
+          New AFTime(EndTimestamp.AddSeconds(-CalculationInterval))),
+          New AFTimeSpan(0, 0, 0, 0, 0, CalculationInterval, 0),
+          Nothing, Nothing, True)
+
+      End If
 
       For Each Value In PIValues ' Store values in Values dictionary
         If Not Values.ContainsKey(Value.Timestamp.LocalTime) Then ' DST dupes
