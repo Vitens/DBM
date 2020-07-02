@@ -617,7 +617,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertEqual(AlignNextInterval(627, -14), 616)
       AssertEqual(AlignNextInterval(337, -68), 272)
       AssertEqual(AlignNextInterval(661, 37), 666)
-      AssertEqual(AlignNextInterval(228, 57), 228)
+      AssertEqual(AlignNextInterval(228, 57), 285)
       AssertEqual(AlignNextInterval(686, -22), 682)
       AssertEqual(AlignNextInterval(846, -35), 840)
       AssertEqual(AlignNextInterval(571, 108), 648)
