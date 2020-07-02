@@ -433,7 +433,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Align a value to the next interval. Use a negative interval for
       ' aligning to the previous interval.
 
-      Return (AlignPreviousInterval(Value, -Interval))
+      Return AlignPreviousInterval(Value, -Interval)
 
     End Function
 
