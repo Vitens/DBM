@@ -69,9 +69,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' and stores this in the Values dictionary. The (aligned) end time itself
       ' is excluded.
 
-      Dim Snapshot As DateTime = New AFTime(AlignPreviousInterval(
+      Dim Snapshot As DateTime = New AFTime(AlignNextInterval(
         DirectCast(Point, AFAttribute).GetValue.Timestamp.UtcSeconds,
-        -CalculationInterval)).LocalTime ' Interval after snapshot timestamp
+        CalculationInterval)).LocalTime ' Interval after snapshot timestamp
       Dim i As Integer
       Dim PIValues As AFValues
       Dim Value As AFValue

@@ -427,6 +427,17 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Shared Function AlignNextInterval(Value As Double,
+      Interval As Double) As Double
+
+      ' Align a value to the next interval. Use a negative interval for
+      ' aligning to the previous interval.
+
+      Return (AlignPreviousInterval(Value, -Interval))
+
+    End Function
+
+
   End Class
 
 
