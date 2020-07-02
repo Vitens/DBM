@@ -100,23 +100,19 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' memory remains the same for the new time range. Note that this method
       ' currently only works when moving forward in time; moving backward will
       ' not reuse any stored data and will just retrieve all required data from
-      ' the PI system. Take care that when we are moving forward, we do not also
-      ' move the start timestamp backward as this would be impossible to do with
-      ' the current implementation (this would require adding data to both sides
-      ' of the stored data since the duration was changed). So if the start
-      ' timestamp is not already stored, clear data and get the whole time
-      ' range.
+      ' the PI system. There is a small issue when moving the start timestamp
+      ' backward while not also moving the end timestamp backward: new
+      ' timestamps will not be retrieved at the new start of the time range. In
+      ' practice, we do not expect that this unusual time window movement will
+      ' have any impact.
       If StartTimestamp <= LastValueTimestamp And
-        EndTimestamp > LastValueTimestamp And
-        Values.ContainsKey(StartTimestamp) Then ' Check if we can reuse data.
+        EndTimestamp > LastValueTimestamp Then ' Check if we can reuse data.
         If EndTimestamp >
           LastValueTimestamp.AddSeconds(CalculationInterval) Then
           For i = 1 To CInt(((EndTimestamp-LastValueTimestamp).TotalSeconds)/
             CalculationInterval)-1 ' Iterate over old values to remove.
             StartTimestamp = StartTimestamp.AddSeconds(-CalculationInterval)
-            If Values.ContainsKey(StartTimestamp) Then
-              Values.Remove(StartTimestamp) ' Remove old, out-of-scope values.
-            End If
+            Values.Remove(StartTimestamp) ' Remove old, out-of-scope values.
           Next i
         Else
           Exit Sub ' Exit, since we already have all data required in memory.
