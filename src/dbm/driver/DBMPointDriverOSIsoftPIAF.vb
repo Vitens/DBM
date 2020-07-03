@@ -32,7 +32,6 @@ Imports OSIsoft.AF.Data.AFSummaryTypes
 Imports OSIsoft.AF.Data.AFTimestampCalculation
 Imports OSIsoft.AF.PI
 Imports OSIsoft.AF.Time
-Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
@@ -53,7 +52,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private Values As New Dictionary(Of DateTime, Double)
-    Private PreviousEndTimestamp As DateTime
+    Private PreviousStartTimestamp As DateTime = DateTime.MaxValue
+    Private PreviousEndTimestamp As DateTime = DateTime.MinValue
 
 
     Public Sub New(Point As Object)
@@ -73,7 +73,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Snapshot As DateTime = New AFTime(AlignNextInterval(
         DirectCast(Point, AFAttribute).GetValue.Timestamp.UtcSeconds,
         CalculationInterval)).LocalTime ' Interval after snapshot timestamp
-      Dim i As Integer
       Dim PIValues As AFValues
       Dim Value As AFValue
 
@@ -81,46 +80,52 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' interval. Exit this sub if there is no data to retrieve.
       StartTimestamp = New DateTime(Min(StartTimestamp.Ticks, Snapshot.Ticks))
       EndTimestamp = New DateTime(Min(EndTimestamp.Ticks, Snapshot.Ticks))
-      If StartTimestamp >= EndTimestamp Then Exit Sub
+      If Not StartTimestamp < EndTimestamp Then Exit Sub
 
-      ' If we already have the data for the time range, we do not need to do
-      ' anything and this sub can be exited. This is needed to prevent
-      ' retrieving data when zooming in on a larger historical time range for
-      ' example. To determine if we have data for the time range in memory, just
-      ' check if the first and last interval values are stored.
-      If Values.ContainsKey(StartTimestamp) And
-        Values.ContainsKey(EndTimestamp.AddSeconds(-CalculationInterval)) Then
-        Exit Sub
-      End If
-
-      ' Check if we are in a next interval after the previous one, so that
-      ' already retrieved data can be reused. This might seem quite complex, but
-      ' basically we try to add only the data we do not have to the data we
-      ' have already retrieved. Old values that we have stored that are probably
-      ' not useful anymore are then removed so that the number of values in
-      ' memory remains the same for the new time range. Note that this method
-      ' currently only works when moving forward in time; moving backward will
-      ' not reuse any stored data and will just retrieve all required data from
-      ' the PI system. There is a small issue when moving the start timestamp
-      ' backward while not also moving the end timestamp backward: new
-      ' timestamps will not be retrieved at the new start of the time range. In
-      ' practice, we do not expect that this unusual time window movement will
-      ' have any impact.
-      If StartTimestamp < PreviousEndTimestamp And
-        EndTimestamp >= PreviousEndTimestamp Then ' Check if we can reuse data.
-        If EndTimestamp > PreviousEndTimestamp Then
-          For i = 1 To Intervals(PreviousEndTimestamp, EndTimestamp)
-            StartTimestamp = StartTimestamp.AddSeconds(-CalculationInterval)
-            Values.Remove(StartTimestamp) ' Remove old, out-of-scope values.
-          Next i
-        Else
-          Exit Sub ' Exit, since we already have all data required in memory.
+      ' Determine what data stored in memory can be reused, what needs to be
+      ' removed, and what needs to be retrieved from the PI System and stored
+      ' in memory. Here is a simplified overview of how the different cases
+      ' (S(tart)-E(nd)) are handled, compared to the time range stored
+      ' previously (PS-PE):
+      '             PS*==========*PE  S...PS E...PE Action
+      '   Case 1:     S==========E      =      =    Do nothing
+      '   Case 2:  S++|==========E      <      =    Add backward
+      '   Case 3:     ---S=======E      >      =    Do nothing
+      '   Case 4:     S=======E---      =      <    Do nothing
+      '   Case 5:  S++|=======E---      <      <    Remove forward, add backward
+      '   Case 6:     ---S====E---      >      <    Do nothing
+      '   Case 7:     S==========|++E   =      >    Add forward
+      '   Case 8:  S++|==========|++E   <      >    Clear all
+      '   Case 9:     ---S=======|++E   >      >    Remove backward, add forward
+      If StartTimestamp < PreviousStartTimestamp And
+        EndTimestamp > PreviousEndTimestamp Then ' Case 8
+        Values.Clear ' Clear all
+        PreviousStartTimestamp = StartTimestamp
+        PreviousEndTimestamp = EndTimestamp
+      Else If StartTimestamp >= PreviousStartTimestamp And
+        EndTimestamp <= PreviousEndTimestamp Then ' Cases 1, 3, 4, 6
+        Exit Sub ' Do nothing
+      Else If StartTimestamp < PreviousStartTimestamp Then ' Cases 2, 5
+        If EndTimestamp < PreviousEndTimestamp Then ' Case 5
+          Do While EndTimestamp < PreviousEndTimestamp ' Remove forward
+            PreviousEndTimestamp = PreviousEndTimestamp.
+              AddSeconds(-CalculationInterval)
+            Values.Remove(PreviousEndTimestamp)
+          Loop
         End If
-        StartTimestamp = PreviousEndTimestamp
-      Else
-        Values.Clear ' There is no data we can reuse, so clear it.
+        EndTimestamp = PreviousStartTimestamp ' Add backward
+        PreviousStartTimestamp = StartTimestamp
+      Else If EndTimestamp > PreviousEndTimestamp Then ' Cases 7, 9
+        If StartTimestamp > PreviousStartTimestamp Then ' Case 9
+          Do While PreviousStartTimestamp < StartTimestamp ' Remove backward
+            Values.Remove(PreviousStartTimestamp)
+            PreviousStartTimestamp = PreviousStartTimestamp.
+              AddSeconds(CalculationInterval)
+          Loop
+        End If
+        StartTimestamp = PreviousEndTimestamp ' Add forward
+        PreviousEndTimestamp = EndTimestamp
       End If
-      PreviousEndTimestamp = EndTimestamp
 
       If TypeOf DirectCast(Point, AFAttribute).PIPoint Is PIPoint Then
 

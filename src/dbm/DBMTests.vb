@@ -746,47 +746,6 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2016, 2, 11, 0, 44, 7), 0),
         New DateTime(2016, 2, 11, 0, 40, 0))
 
-      AssertEqual(Intervals(New DateTime(2016, 1, 1, 8, 0, 0),
-        New DateTime(2016, 1, 1, 9, 0, 0)), 12)
-      AssertEqual(Intervals(New DateTime(2016, 1, 1, 8, 5, 0),
-        New DateTime(2016, 1, 1, 9, 0, 0)), 11)
-      AssertEqual(Intervals(New DateTime(2016, 1, 1, 8, 5, 0),
-        New DateTime(2016, 1, 1, 9, 5, 0)), 12)
-      AssertEqual(Intervals(New DateTime(2016, 1, 1, 8, 5, 0),
-        New DateTime(2016, 1, 1, 9, 10, 0)), 13)
-      AssertEqual(Intervals(New DateTime(2016, 1, 1, 8, 0, 0),
-        New DateTime(2016, 1, 1, 10, 0, 0)), 24)
-      AssertEqual(Intervals(New DateTime(2016, 1, 1, 8, 4, 12),
-        New DateTime(2016, 1, 1, 9, 1, 16)), 12)
-      AssertEqual(Intervals(New DateTime(2016, 1, 1, 8, 6, 55),
-        New DateTime(2016, 1, 1, 9, 4, 59)), 11)
-      AssertEqual(Intervals(New DateTime(2016, 1, 1, 8, 8, 32),
-        New DateTime(2016, 1, 1, 9, 9, 3)), 12)
-      AssertEqual(Intervals(New DateTime(2016, 1, 1, 8, 6, 9),
-        New DateTime(2016, 1, 1, 9, 14, 0)), 13)
-      AssertEqual(Intervals(New DateTime(2016, 1, 1, 8, 2, 22),
-        New DateTime(2016, 1, 1, 10, 3, 51)), 24)
-      AssertEqual(Intervals(New DateTime(2016, 1, 1, 8, 0, 0),
-        New DateTime(2016, 1, 1, 8, 0, 0)), 0)
-      AssertEqual(Intervals(New DateTime(2016, 1, 1, 8, 4, 50),
-        New DateTime(2016, 1, 1, 8, 1, 29)), 0)
-      AssertEqual(Intervals(New DateTime(2016, 1, 1, 9, 0, 0),
-        New DateTime(2016, 1, 1, 8, 0, 0)), -12)
-      AssertEqual(Intervals(New DateTime(2016, 1, 1, 9, 0, 0),
-        New DateTime(2016, 1, 1, 8, 5, 0)), -11)
-      AssertEqual(Intervals(New DateTime(2016, 1, 1, 9, 5, 0),
-        New DateTime(2016, 1, 1, 8, 5, 0)), -12)
-      AssertEqual(Intervals(New DateTime(2016, 1, 1, 9, 10, 0),
-        New DateTime(2016, 1, 1, 8, 5, 0)), -13)
-      AssertEqual(Intervals(New DateTime(2016, 1, 1, 9, 1, 16),
-        New DateTime(2016, 1, 1, 8, 4, 12)), -12)
-      AssertEqual(Intervals(New DateTime(2016, 1, 1, 9, 4, 59),
-        New DateTime(2016, 1, 1, 8, 6, 55)), -11)
-      AssertEqual(Intervals(New DateTime(2016, 1, 1, 9, 9, 3),
-        New DateTime(2016, 1, 1, 8, 8, 32)), -12)
-      AssertEqual(Intervals(New DateTime(2016, 1, 1, 9, 14, 0),
-        New DateTime(2016, 1, 1, 8, 6, 9)), -13)
-
       AssertEqual(Computus(1864), New DateTime(1864, 3, 27))
       AssertEqual(Computus(1900), New DateTime(1900, 4, 15))
       AssertEqual(Computus(1933), New DateTime(1933, 4, 16))
