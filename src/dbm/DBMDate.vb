@@ -58,6 +58,16 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Shared Function Intervals(StartTimestamp As DateTime,
+      EndTimestamp As DateTime) As Integer
+
+      Return (AlignTimestamp(EndTimestamp, CalculationInterval)-
+        AlignTimestamp(StartTimestamp, CalculationInterval)).
+        TotalSeconds/CalculationInterval
+
+    End Function
+
+
     Public Shared Function Computus(Year As Integer) As DateTime
 
       ' Computus (Latin for computation) is the calculation of the date of
