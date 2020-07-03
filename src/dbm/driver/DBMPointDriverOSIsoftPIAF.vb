@@ -77,7 +77,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Value As AFValue
 
       ' Never retrieve values beyond the snapshot time aligned to the next
-      ' interval. Exit this sub if there is no data to retrieve.
+      ' interval. Exit this sub if there is no data to retrieve or when the
+      ' start timestamp is not before the end timestamp.
       StartTimestamp = New DateTime(Min(StartTimestamp.Ticks, Snapshot.Ticks))
       EndTimestamp = New DateTime(Min(EndTimestamp.Ticks, Snapshot.Ticks))
       If Not StartTimestamp < EndTimestamp Then Exit Sub
@@ -97,8 +98,11 @@ Namespace Vitens.DynamicBandwidthMonitor
       '   Case 7:     S==========|++E   =      >    Add forward
       '   Case 8:  S++|==========|++E   <      >    Clear all
       '   Case 9:     ---S=======|++E   >      >    Remove backward, add forward
-      If StartTimestamp < PreviousStartTimestamp And
-        EndTimestamp > PreviousEndTimestamp Then ' Case 8
+      '   Case 10: S==E a) or b) S==E   E<=PS S>=PE Clear all
+      If (StartTimestamp < PreviousStartTimestamp And
+        EndTimestamp > PreviousEndTimestamp) Or
+        EndTimestamp <= PreviousStartTimestamp Or
+        StartTimestamp >= PreviousEndTimestamp Then ' Case 8, 10a), 10b)
         Values.Clear ' Clear all
         PreviousStartTimestamp = StartTimestamp
         PreviousEndTimestamp = EndTimestamp
