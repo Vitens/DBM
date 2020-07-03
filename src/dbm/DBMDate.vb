@@ -61,9 +61,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function Intervals(StartTimestamp As DateTime,
       EndTimestamp As DateTime) As Integer
 
-      Return (AlignTimestamp(EndTimestamp, CalculationInterval)-
+      Return CInt((AlignTimestamp(EndTimestamp, CalculationInterval)-
         AlignTimestamp(StartTimestamp, CalculationInterval)).
-        TotalSeconds/CalculationInterval
+        TotalSeconds/CalculationInterval)
 
     End Function
 

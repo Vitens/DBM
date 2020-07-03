@@ -32,6 +32,7 @@ Imports OSIsoft.AF.Data.AFSummaryTypes
 Imports OSIsoft.AF.Data.AFTimestampCalculation
 Imports OSIsoft.AF.PI
 Imports OSIsoft.AF.Time
+Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
@@ -109,8 +110,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         EndTimestamp > LastValueTimestamp Then ' Check if we can reuse data.
         If EndTimestamp >
           LastValueTimestamp.AddSeconds(CalculationInterval) Then
-          For i = 1 To CInt(((EndTimestamp-LastValueTimestamp).TotalSeconds)/
-            CalculationInterval)-1 ' Iterate over old values to remove.
+          For i = 1 To Intervals(EndTimestamp, LastValueTimestamp)-1
             StartTimestamp = StartTimestamp.AddSeconds(-CalculationInterval)
             Values.Remove(StartTimestamp) ' Remove old, out-of-scope values.
           Next i
