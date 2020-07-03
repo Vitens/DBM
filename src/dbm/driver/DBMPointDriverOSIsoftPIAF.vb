@@ -157,13 +157,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
 
       For Each Value In PIValues ' Store values in Values dictionary
-        If Not Values.ContainsKey(Value.Timestamp.LocalTime) Then ' DST dupes
-          If TypeOf Value.Value Is Double Then
-            Values.Add(Value.Timestamp.LocalTime,
-              DirectCast(Value.Value, Double))
-          Else
-            Values.Add(Value.Timestamp.LocalTime, NaN)
-          End If
+        If TypeOf Value.Value Is Double AndAlso
+          Not Values.ContainsKey(Value.Timestamp.LocalTime) Then ' DST dupes
+          Values.Add(Value.Timestamp.LocalTime, DirectCast(Value.Value, Double))
         End If
       Next
 
