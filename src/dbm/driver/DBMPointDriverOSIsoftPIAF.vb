@@ -53,7 +53,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private Values As New Dictionary(Of DateTime, Double)
-    Private LastValueTimestamp As DateTime
+    Private PreviousEndTimestamp As DateTime
 
 
     Public Sub New(Point As Object)
@@ -106,22 +106,21 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' timestamps will not be retrieved at the new start of the time range. In
       ' practice, we do not expect that this unusual time window movement will
       ' have any impact.
-      If StartTimestamp <= LastValueTimestamp And
-        EndTimestamp > LastValueTimestamp Then ' Check if we can reuse data.
-        If EndTimestamp >
-          LastValueTimestamp.AddSeconds(CalculationInterval) Then
-          For i = 1 To Intervals(LastValueTimestamp, EndTimestamp)-1
+      If StartTimestamp < PreviousEndTimestamp And
+        EndTimestamp >= PreviousEndTimestamp Then ' Check if we can reuse data.
+        If EndTimestamp > PreviousEndTimestamp Then
+          For i = 1 To Intervals(PreviousEndTimestamp, EndTimestamp)
             StartTimestamp = StartTimestamp.AddSeconds(-CalculationInterval)
             Values.Remove(StartTimestamp) ' Remove old, out-of-scope values.
           Next i
         Else
           Exit Sub ' Exit, since we already have all data required in memory.
         End If
-        StartTimestamp = LastValueTimestamp.AddSeconds(CalculationInterval)
+        StartTimestamp = PreviousEndTimestamp
       Else
         Values.Clear ' There is no data we can reuse, so clear it.
       End If
-      LastValueTimestamp = EndTimestamp.AddSeconds(-CalculationInterval)
+      PreviousEndTimestamp = EndTimestamp
 
       If TypeOf DirectCast(Point, AFAttribute).PIPoint Is PIPoint Then
 
