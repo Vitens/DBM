@@ -110,7 +110,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         EndTimestamp > LastValueTimestamp Then ' Check if we can reuse data.
         If EndTimestamp >
           LastValueTimestamp.AddSeconds(CalculationInterval) Then
-          For i = 1 To Intervals(EndTimestamp, LastValueTimestamp)-1
+          For i = 1 To Intervals(LastValueTimestamp, EndTimestamp)-1
             StartTimestamp = StartTimestamp.AddSeconds(-CalculationInterval)
             Values.Remove(StartTimestamp) ' Remove old, out-of-scope values.
           Next i
