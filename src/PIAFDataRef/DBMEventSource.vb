@@ -55,15 +55,14 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         If Attribute IsNot Nothing AndAlso Attribute.Parent IsNot Nothing Then
 
-          If Not LastEvents.ContainsKey(Attribute) Then
-            LastEvents.Add(Attribute,
-              New AFTime(Now.AddSeconds(CalculationInterval)))
-          End If
-
           ' Parent attribute snapshot time aligned to the next calculation
           ' interval.
           InputSnapshot = New AFTime(AlignNextInterval(Attribute.Parent.
             GetValue.Timestamp.UtcSeconds, CalculationInterval))
+
+          If Not LastEvents.ContainsKey(Attribute) Then
+            LastEvents.Add(Attribute, InputSnapshot)
+          End If
 
           ' Only check for new events once per calculation interval.
           If LastEvents.Item(Attribute) < InputSnapshot Then
