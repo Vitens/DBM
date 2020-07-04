@@ -39,7 +39,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Inherits AFEventSource
 
 
-    Private LastEvent As AFTime = Now.AddSeconds(CalculationInterval) ' Snapshot
+    Private LastEvents As New Dictionary(Of AFAttribute, AFTime)
 
 
     Protected Overrides Function GetEvents As Boolean
@@ -47,36 +47,41 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' The GetEvents method is designed to get data pipe events from the System
       ' of record.
 
-      Dim CurrentInterval As AFTime = Now
       Dim Attribute As AFAttribute
+      Dim InputSnapshot As AFTime
       Dim Value As AFValue
 
-      ' Current time aligned to the next calculation interval.
-      CurrentInterval = New AFTime(AlignNextInterval(
-        CurrentInterval.UtcSeconds, CalculationInterval))
+      For Each Attribute In MyBase.Signups
 
-      ' Only check for new events once per calculation interval.
-      If LastEvent < CurrentInterval Then
+        If Attribute IsNot Nothing And Attribute.Parent IsNot Nothing Then
 
-        For Each Attribute In MyBase.Signups
+          If Not LastEvents.ContainsKey(Attribute) Then
+            LastEvents.Add(Attribute,
+              New AFTime(Now.AddSeconds(CalculationInterval)))
+          End If
 
-          If Attribute IsNot Nothing Then
+          ' Parent attribute snapshot time aligned to the next calculation
+          ' interval.
+          InputSnapshot = New AFTime(AlignNextInterval(Attribute.Parent.
+            GetValue.Timestamp.UtcSeconds, CalculationInterval))
+
+          ' Only check for new events once per calculation interval.
+          If LastEvents.Item(Attribute) < InputSnapshot Then
 
             For Each Value In Attribute.GetValues(
-              New AFTimeRange(LastEvent, CurrentInterval), 0, Nothing)
-
+              New AFTimeRange(LastEvents.Item(Attribute),
+              InputSnapshot), 0, Nothing)
               MyBase.PublishEvent(Attribute,
                 New AFDataPipeEvent(AFDataPipeAction.Add, Value))
-
             Next
+
+            LastEvents.Item(Attribute) = InputSnapshot
 
           End If
 
-        Next
+        End If
 
-        LastEvent = CurrentInterval
-
-      End If
+      Next
 
       Return False
 

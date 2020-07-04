@@ -102,7 +102,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       If (StartTimestamp < PreviousStartTimestamp And
         EndTimestamp > PreviousEndTimestamp) Or
         EndTimestamp <= PreviousStartTimestamp Or
-        StartTimestamp >= PreviousEndTimestamp Then ' Case 8, 10a), 10b)
+        StartTimestamp >= PreviousEndTimestamp Then ' Cases 8, 10a), 10b)
         Values.Clear ' Clear all
         PreviousStartTimestamp = StartTimestamp
         PreviousEndTimestamp = EndTimestamp
