@@ -235,16 +235,36 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim Timestamp As AFTime = Now
 
-      If timeContext IsNot Nothing Then
-        Timestamp = DirectCast(timeContext, AFTime)
-      End If
-      Timestamp = New AFTime(AlignPreviousInterval(Timestamp.UtcSeconds,
-        CalculationInterval)) ' Align
+      If Attribute IsNot Nothing AndAlso Attribute.Parent IsNot Nothing Then
 
-      ' Returns the value for the attribute.
-      Return GetValues(Nothing, New AFTimeRange(Timestamp,
-        New AFTime(Timestamp.UtcSeconds+CalculationInterval)), 1,
-        Nothing, Nothing)(0) ' Request a single value
+        If timeContext IsNot Nothing Then
+          ' Use passed timestamp.
+          Timestamp = DirectCast(timeContext, AFTime)
+        Else
+          ' Use parent snapshot as snapshot timestamp for this attribute, as
+          ' this is the input source.
+          Timestamp = Attribute.Parent.GetValue.Timestamp
+        End If
+
+        ' Align timestamp to the previous interval.
+        Timestamp = New AFTime(AlignPreviousInterval(Timestamp.UtcSeconds,
+          CalculationInterval))
+
+        ' Returns the value for the attribute.
+        Return GetValues(Nothing, New AFTimeRange(Timestamp,
+          New AFTime(Timestamp.UtcSeconds+CalculationInterval)), 1,
+          Nothing, Nothing)(0) ' Request a single value
+
+      Else
+
+        ' Attribute or parent attribute is not configured properly, return a
+        ' Configure system state (definition: 'The point configuration has been
+        ' rejected as invalid by the data source. Check the interface message
+        ' logs for additional information.').
+        Return AFValue.CreateSystemStateValue(
+          AFSystemStateCode.Configure, Timestamp)
+
+      End If
 
     End Function
 

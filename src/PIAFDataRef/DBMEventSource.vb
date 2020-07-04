@@ -53,30 +53,24 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       For Each Attribute In MyBase.Signups
 
-        If Attribute IsNot Nothing AndAlso Attribute.Parent IsNot Nothing Then
+        ' Attribute snapshot time aligned to the next calculation interval.
+        InputSnapshot = New AFTime(AlignNextInterval(Attribute.GetValue.
+          Timestamp.UtcSeconds, CalculationInterval))
 
-          ' Parent attribute snapshot time aligned to the next calculation
-          ' interval.
-          InputSnapshot = New AFTime(AlignNextInterval(Attribute.Parent.
-            GetValue.Timestamp.UtcSeconds, CalculationInterval))
+        If Not LastEvents.ContainsKey(Attribute) Then
+          LastEvents.Add(Attribute, InputSnapshot)
+        End If
 
-          If Not LastEvents.ContainsKey(Attribute) Then
-            LastEvents.Add(Attribute, InputSnapshot)
-          End If
+        ' Only check for new events once per calculation interval.
+        If LastEvents.Item(Attribute) < InputSnapshot Then
 
-          ' Only check for new events once per calculation interval.
-          If LastEvents.Item(Attribute) < InputSnapshot Then
+          For Each Value In Attribute.GetValues(New AFTimeRange(
+            LastEvents.Item(Attribute), InputSnapshot), 0, Nothing)
+            MyBase.PublishEvent(Attribute,
+              New AFDataPipeEvent(AFDataPipeAction.Add, Value))
+          Next
 
-            For Each Value In Attribute.GetValues(
-              New AFTimeRange(LastEvents.Item(Attribute),
-              InputSnapshot), 0, Nothing)
-              MyBase.PublishEvent(Attribute,
-                New AFDataPipeEvent(AFDataPipeAction.Add, Value))
-            Next
-
-            LastEvents.Item(Attribute) = InputSnapshot
-
-          End If
+          LastEvents.Item(Attribute) = InputSnapshot
 
         End If
 

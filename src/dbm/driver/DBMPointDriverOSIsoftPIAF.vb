@@ -30,7 +30,6 @@ Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Data.AFCalculationBasis
 Imports OSIsoft.AF.Data.AFSummaryTypes
 Imports OSIsoft.AF.Data.AFTimestampCalculation
-Imports OSIsoft.AF.PI
 Imports OSIsoft.AF.Time
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
@@ -73,7 +72,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Snapshot As DateTime = New AFTime(AlignNextInterval(
         DirectCast(Point, AFAttribute).GetValue.Timestamp.UtcSeconds,
         CalculationInterval)).LocalTime ' Interval after snapshot timestamp
-      Dim PIValues As AFValues
       Dim Value As AFValue
 
       ' Never retrieve values beyond the snapshot time aligned to the next
@@ -131,36 +129,11 @@ Namespace Vitens.DynamicBandwidthMonitor
         PreviousEndTimestamp = EndTimestamp
       End If
 
-      If TypeOf DirectCast(Point, AFAttribute).PIPoint Is PIPoint Then
-
-        ' If the source is a PI Point, use time weighted averages for each
-        ' interval in the time range. Calculating interval averages is very fast
-        ' with the PI Point data reference.
-
-        PIValues = DirectCast(Point, AFAttribute).Data.Summaries(
-          New AFTimeRange(New AFTime(StartTimestamp),
-          New AFTime(EndTimestamp)), New AFTimeSpan(0, 0, 0, 0, 0,
-          CalculationInterval, 0), Average, TimeWeighted, EarliestTime).
-          Item(Average)
-
-      Else
-
-        ' If the source is not a PI Point, use interpolated values for each
-        ' interval in the time range. This is because calculating time weighted
-        ' averages for each interval for non-PI Point data references might be
-        ' very costly in terms of performance. Note that the InterpolatedValues
-        ' method returns one extra interval compared to the Summaries method,
-        ' so one interval is subtracted from the end timestamp in the call.
-
-        PIValues = DirectCast(Point, AFAttribute).Data.InterpolatedValues(
-          New AFTimeRange(New AFTime(StartTimestamp),
-          New AFTime(EndTimestamp.AddSeconds(-CalculationInterval))),
-          New AFTimeSpan(0, 0, 0, 0, 0, CalculationInterval, 0),
-          Nothing, Nothing, True)
-
-      End If
-
-      For Each Value In PIValues ' Store values in Values dictionary
+      For Each Value In DirectCast(Point, AFAttribute).Data.Summaries(
+        New AFTimeRange(New AFTime(StartTimestamp),
+        New AFTime(EndTimestamp)), New AFTimeSpan(0, 0, 0, 0, 0,
+        CalculationInterval, 0), Average, TimeWeighted, EarliestTime).
+        Item(Average) ' Get interval averages for time range from PI AF.
         If TypeOf Value.Value Is Double AndAlso
           Not Values.ContainsKey(Value.Timestamp.LocalTime) Then ' DST dupes
           Values.Add(Value.Timestamp.LocalTime, DirectCast(Value.Value, Double))
