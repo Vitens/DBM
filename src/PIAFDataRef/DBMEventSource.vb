@@ -53,7 +53,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       For Each Attribute In MyBase.Signups
 
-        If Attribute IsNot Nothing And Attribute.Parent IsNot Nothing Then
+        If Attribute IsNot Nothing AndAlso Attribute.Parent IsNot Nothing Then
 
           If Not LastEvents.ContainsKey(Attribute) Then
             LastEvents.Add(Attribute,

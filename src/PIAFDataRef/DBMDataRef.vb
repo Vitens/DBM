@@ -312,7 +312,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Retrieve correlation PI points from AF hierarchy if owned by an
       ' attribute (element is an instance of an element template) and attribute
       ' has a parent attribute.
-      If Attribute IsNot Nothing And Attribute.Parent IsNot Nothing Then
+      If Attribute IsNot Nothing AndAlso Attribute.Parent IsNot Nothing Then
 
         Element = DirectCast(Attribute.Element, AFElement)
         InputPointDriver = New DBMPointDriver(Attribute.Parent) ' Parent attrib.
