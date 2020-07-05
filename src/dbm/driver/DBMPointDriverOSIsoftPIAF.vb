@@ -129,11 +129,11 @@ Namespace Vitens.DynamicBandwidthMonitor
         PreviousEndTimestamp = EndTimestamp
       End If
 
-      For Each Value In DirectCast(Point, AFAttribute).Data.Summaries(
-        New AFTimeRange(New AFTime(StartTimestamp),
-        New AFTime(EndTimestamp)), New AFTimeSpan(0, 0, 0, 0, 0,
-        CalculationInterval, 0), Average, TimeWeighted, EarliestTime).
-        Item(Average) ' Get interval averages for time range from PI AF.
+      For Each Value In DirectCast(Point, AFAttribute).Data.InterpolatedValues(
+          New AFTimeRange(New AFTime(StartTimestamp),
+          New AFTime(EndTimestamp.AddSeconds(-CalculationInterval))),
+          New AFTimeSpan(0, 0, 0, 0, 0, CalculationInterval, 0),
+          Nothing, Nothing, True) ' Get interpolated values for the time range.
         If TypeOf Value.Value Is Double AndAlso
           Not Values.ContainsKey(Value.Timestamp.LocalTime) Then ' DST dupes
           Values.Add(Value.Timestamp.LocalTime, DirectCast(Value.Value, Double))
