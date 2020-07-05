@@ -51,26 +51,39 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim EndTimestamp As AFTime
       Dim Value As AFValue
 
+      ' Iterate over all signed up attributes in this data pipe.
       For Each Attribute In MyBase.Signups
 
-        ' Attribute snapshot time aligned to the next calculation interval.
-        EndTimestamp = New AFTime(AlignNextInterval(Attribute.GetValue.
-          Timestamp.UtcSeconds, CalculationInterval))
+        ' Check if we need to perform an action on this attribute.
+        If Attribute IsNot Nothing Then
 
-        If Not PreviousEndTimestamps.ContainsKey(Attribute) Then
-          PreviousEndTimestamps.Add(Attribute, EndTimestamp)
-        End If
+          ' Attribute snapshot time aligned to the next calculation interval.
+          EndTimestamp = New AFTime(AlignNextInterval(Attribute.GetValue.
+            Timestamp.UtcSeconds, CalculationInterval))
 
-        ' Only check for new events once per calculation interval.
-        If PreviousEndTimestamps.Item(Attribute) < EndTimestamp Then
+          ' If there is no previous end timestamp for this attribute yet, use
+          ' the one just retrieved.
+          If Not PreviousEndTimestamps.ContainsKey(Attribute) Then
+            PreviousEndTimestamps.Add(Attribute, EndTimestamp)
+          End If
 
-          For Each Value In Attribute.GetValues(New AFTimeRange(
-            PreviousEndTimestamps.Item(Attribute), EndTimestamp), 0, Nothing)
-            MyBase.PublishEvent(Attribute,
-              New AFDataPipeEvent(AFDataPipeAction.Add, Value))
-          Next
+          ' Check if there are new values to retrieve.
+          If PreviousEndTimestamps.Item(Attribute) < EndTimestamp Then
 
-          PreviousEndTimestamps.Item(Attribute) = EndTimestamp
+            ' Retrieve values since last event.
+            For Each Value In Attribute.GetValues(New AFTimeRange(
+              PreviousEndTimestamps.Item(Attribute), EndTimestamp), 0, Nothing)
+
+              ' Publish new values as events in the data pipe.
+              MyBase.PublishEvent(Attribute,
+                New AFDataPipeEvent(AFDataPipeAction.Add, Value))
+
+            Next
+
+            ' Store end timestamp as previous end timestamp for this attribute.
+            PreviousEndTimestamps.Item(Attribute) = EndTimestamp
+
+          End If
 
         End If
 
