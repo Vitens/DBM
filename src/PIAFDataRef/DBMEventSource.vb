@@ -51,7 +51,13 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim EndTimestamp As AFTime
       Dim Value As AFValue
 
-      ' Iterate over all signed up attributes in this data pipe.
+      ' Iterate over all signed up attributes in this data pipe. We use serial
+      ' processing of the attributes, since we need to reuse the DBM object to
+      ' store all cached data. This means that for some services signing up to
+      ' many attributes, initialization might take quite some time. After data
+      ' is retrieved for all attributes for the first time, only small amounts
+      ' of new data are needed for all consequent evaluations, greatly speeding
+      ' them up.
       For Each Attribute In MyBase.Signups
 
         ' Check if we need to perform an action on this attribute. This is only
