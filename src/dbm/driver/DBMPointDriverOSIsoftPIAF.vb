@@ -141,8 +141,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         If TypeOf Value.Value Is Double AndAlso
           Not Values.ContainsKey(Value.Timestamp.LocalTime) Then
           Values.Add(Value.Timestamp.LocalTime, DirectCast(Value.Value, Double))
-
         End If
+
       Next
 
     End Sub
