@@ -54,11 +54,17 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Iterate over all signed up attributes in this data pipe.
       For Each Attribute In MyBase.Signups
 
-        ' Check if we need to perform an action on this attribute.
-        If Attribute IsNot Nothing Then
+        ' Check if we need to perform an action on this attribute. This is only
+        ' needed if the attribute and it's parent (input source) are an instance
+        ' of an object.
+        If Attribute IsNot Nothing AndAlso Attribute.Parent IsNot Nothing Then
 
-          ' Attribute snapshot time aligned to the next calculation interval.
-          EndTimestamp = New AFTime(AlignNextInterval(Attribute.GetValue.
+          ' Use parent attribute snapshot as snapshot timestamp for this
+          ' attribute, as this is the input source. Aligned to the next
+          ' calculation interval. Do not query the attribute itself, as this
+          ' would trigger a DBM calculation while we only need the timestamp
+          ' here.
+          EndTimestamp = New AFTime(AlignNextInterval(Attribute.Parent.GetValue.
             Timestamp.UtcSeconds, CalculationInterval))
 
           ' If there is no previous end timestamp for this attribute yet, use
