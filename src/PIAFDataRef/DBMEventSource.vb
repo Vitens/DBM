@@ -39,7 +39,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Inherits AFEventSource
 
 
-    Private PreviousEndTimestamp As AFTime = Now.AddSeconds(CalculationInterval)
+    Private PreviousInterval As AFTime = AFTime.MinValue
+    Private PreviousSnapshots As New Dictionary(Of AFAttribute, AFTime)
 
 
     Protected Overrides Function GetEvents As Boolean
@@ -47,47 +48,57 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' The GetEvents method is designed to get data pipe events from the System
       ' of record.
 
-      Dim EndTimestamp As AFTime = Now
+      Dim CurrentInterval As AFTime = Now
       Dim Attribute As AFAttribute
-      Dim Value As AFValue
+      Dim Snapshot As AFValue
 
-      ' Determine the end timestamp (exclusive) of the time range to return
-      ' values for. Set this to the interval after the current time.
-      EndTimestamp = New AFTime(AlignNextInterval(
-        EndTimestamp.UtcSeconds, CalculationInterval))
+      ' Determine the start of the current time interval. For this event source,
+      ' we only return at most one new event per attribute.
+      CurrentInterval = New AFTime(AlignPreviousInterval(
+        CurrentInterval.UtcSeconds, CalculationInterval))
 
-      ' Check if there are new values to retrieve.
-      If PreviousEndTimestamp < EndTimestamp Then
+      ' Only check for new events once per calculation interval.
+      If PreviousInterval < CurrentInterval Then
 
         ' Iterate over all signed up attributes in this data pipe. We use serial
         ' processing of the attributes, since we need to reuse the DBM object to
         ' store all cached data. This means that for some services signing up to
-        ' many attributes, initialization might take quite some time. After data
-        ' is retrieved for all attributes for the first time, only small amounts
-        ' of new data are needed for all consequent evaluations, greatly
-        ' speeding them up.
+        ' many attributes, initialization might take some time. After data is
+        ' retrieved for all attributes for the first time, only small amounts of
+        ' new data are needed for all consequent evaluations, greatly speeding
+        ' them up.
         For Each Attribute In MyBase.Signups
 
           ' Check if we need to perform an action on this attribute. This is
           ' only needed if the attribute is an instance of an object.
           If Attribute IsNot Nothing Then
 
-            ' Retrieve values since last event.
-            For Each Value In Attribute.GetValues(
-              New AFTimeRange(PreviousEndTimestamp, EndTimestamp), 0, Nothing)
+            If Not PreviousSnapshots.ContainsKey(Attribute) Then
 
-              ' Publish new values as events in the data pipe.
-              MyBase.PublishEvent(Attribute,
-                New AFDataPipeEvent(AFDataPipeAction.Add, Value))
+              ' Store the initial previous snapshot for this attribute.
+              PreviousSnapshots.Add(Attribute, AFTime.MinValue)
 
-            Next
+            Else
+
+              ' In a new interval, retrieve snapshot value. If newer, store
+              ' snapshot timestamp as previous snapshot timestamp for this
+              ' attribute, and publish snapshot value as new event in the data
+              ' pipe.
+              Snapshot = Attribute.GetValue
+              If Snapshot.Timestamp > PreviousSnapshots.Item(Attribute) Then
+                PreviousSnapshots.Item(Attribute) = Snapshot.Timestamp
+                MyBase.PublishEvent(Attribute,
+                  New AFDataPipeEvent(AFDataPipeAction.Add, Snapshot))
+              End
+
+            End If
 
           End If
 
         Next
 
-        ' Store end timestamp as previous end timestamp for this attribute.
-        PreviousEndTimestamp = EndTimestamp
+        ' Store current interval as previous interval.
+        PreviousInterval = CurrentInterval
 
       End If
 
