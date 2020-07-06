@@ -61,16 +61,13 @@ Namespace Vitens.DynamicBandwidthMonitor
       For Each Attribute In MyBase.Signups
 
         ' Check if we need to perform an action on this attribute. This is only
-        ' needed if the attribute and it's parent (input source) are an instance
-        ' of an object.
-        If Attribute IsNot Nothing AndAlso Attribute.Parent IsNot Nothing Then
+        ' needed if the attribute is an instance of an object.
+        If Attribute IsNot Nothing Then
 
-          ' Use parent attribute snapshot as snapshot timestamp for this
-          ' attribute, as this is the input source. Align to the next
-          ' calculation interval. Do not query the attribute itself, as this
-          ' would trigger a DBM calculation while we only need the timestamp
-          ' here.
-          EndTimestamp = New AFTime(AlignNextInterval(Attribute.Parent.GetValue.
+          ' Retrieve snapshot timestamp for this attribute and align to the next
+          ' calculation interval to determine the end timestamp (exclusive) of
+          ' the time range to return values for.
+          EndTimestamp = New AFTime(AlignNextInterval(Attribute.GetValue.
             Timestamp.UtcSeconds, CalculationInterval))
 
           ' If there is no previous end timestamp for this attribute yet, use
