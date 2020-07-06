@@ -72,16 +72,13 @@ Namespace Vitens.DynamicBandwidthMonitor
       Result = New DBMResult
       Result.Timestamp = AlignTimestamp(Timestamp, CalculationInterval)
 
-      ' If required, create new cache for this subtract point. The size of the
-      ' cache is automatically optimized for real-time continuous
-      ' calculations.
+      ' If required, create new cache for this subtract point.
       If CacheStale.IsStale Then SubtractPointsCache.Clear ' Clear stale cache
       If Not SubtractPointsCache.HasItem(SubtractPoint) Then
-        SubtractPointsCache.AddItem(SubtractPoint, New DBMCache(
-          EMAPreviousPeriods+2*CorrelationPreviousPeriods+1)) ' 51 items
+        SubtractPointsCache.AddItem(SubtractPoint, New DBMCache)
       End If
       ForecastItemsCache = DirectCast(SubtractPointsCache.
-        GetItem(SubtractPoint), DBMCache)
+        GetItem(SubtractPoint), DBMCache) ' Cache object for this calculation.
 
       For CorrelationCounter = 0 To CorrelationPreviousPeriods ' Correl. loop
 

@@ -60,7 +60,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         If Attribute IsNot Nothing AndAlso Attribute.Parent IsNot Nothing Then
 
           ' Use parent attribute snapshot as snapshot timestamp for this
-          ' attribute, as this is the input source. Aligned to the next
+          ' attribute, as this is the input source. Align to the next
           ' calculation interval. Do not query the attribute itself, as this
           ' would trigger a DBM calculation while we only need the timestamp
           ' here.
