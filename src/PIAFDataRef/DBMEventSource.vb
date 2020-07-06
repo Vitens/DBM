@@ -89,7 +89,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                 PreviousSnapshots.Item(Attribute) = Snapshot.Timestamp
                 MyBase.PublishEvent(Attribute,
                   New AFDataPipeEvent(AFDataPipeAction.Add, Snapshot))
-              End
+              End If
 
             End If
 
