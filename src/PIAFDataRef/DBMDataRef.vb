@@ -81,17 +81,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private Shared DBM As New DBM
 
 
-    Public Shared Function CreateDataPipe As Object
-
-      ' This Data Reference is a System of Record, so expose the CreateDataPipe
-      ' method and return a new instance of the event source class derived from
-      ' AFEventSource.
-
-      Return New DBMEventSource
-
-    End Function
-
-
     Public Overrides Readonly Property SupportedContexts _
       As AFDataReferenceContext
 
@@ -132,7 +121,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' enumeration values logically ORed together. The default value is None.
         Return AFDataMethods.RecordedValue Or AFDataMethods.RecordedValues Or
           AFDataMethods.PlotValues Or AFDataMethods.Summary Or
-          AFDataMethods.Summaries Or AFDataMethods.DataPipe
+          AFDataMethods.Summaries
       End Get
 
     End Property
