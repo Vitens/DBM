@@ -383,6 +383,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         Monitor.Enter(DBM) ' Request the lock, and block until it is obtained.
         Try
 
+          ' Every 8 hours, clear all cached data in the DBM object.
+          DBM.ClearCache(8)
+
           DBM.PrepareData(InputPointDriver, CorrelationPoints,
             timeRange.StartTime.LocalTime, timeRange.EndTime.LocalTime)
 
