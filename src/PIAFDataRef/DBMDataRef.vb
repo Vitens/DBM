@@ -213,9 +213,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' type for both needs to be a double.
 
       Return Attribute IsNot Nothing AndAlso
-        TypeOf Attribute.Type Is Double AndAlso
+        Attribute.Type Is GetType(Double) AndAlso
         Attribute.Parent IsNot Nothing AndAlso
-        TypeOf Attribute.Parent.Type Is Double
+        Attribute.Parent.Type Is GetType(Double)
 
     End Function
 
