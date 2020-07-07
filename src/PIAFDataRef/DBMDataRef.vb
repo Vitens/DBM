@@ -206,6 +206,20 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
+    Private Function AttributeConfigurationIsValid As Boolean
+
+      ' Check if this attribute is properly configured. The attribute and it's
+      ' parent (input source) need to be an instance of an object, and the data
+      ' type for both needs to be a double.
+
+      Return Attribute IsNot Nothing AndAlso
+        TypeOf Attribute.Type Is Double AndAlso
+        Attribute.Parent IsNot Nothing AndAlso
+        TypeOf Attribute.Parent.Type Is Double
+
+    End Function
+
+
     Public Overrides Function GetValue(context As Object,
       timeContext As Object, inputAttributes As AFAttributeList,
       inputValues As AFValues) As AFValue
@@ -235,9 +249,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim Timestamp As AFTime = Now
 
-      ' Check if this attribute is properly configured. The attribute and it's
-      ' parent (input source) need to be an instance of an object.
-      If Attribute IsNot Nothing AndAlso Attribute.Parent IsNot Nothing Then
+      ' Check if this attribute is properly configured.
+      If AttributeConfigurationIsValid Then
 
         If timeContext IsNot Nothing Then
           ' Use passed timestamp.
@@ -325,22 +338,16 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
 
       GetValues = New AFValues
-      timeRange.StartTime = New AFTime(AlignPreviousInterval(
-        timeRange.StartTime.UtcSeconds, CalculationInterval)) ' Align
-      IntervalSeconds = PIAFIntervalSeconds(numberOfValues,
-        timeRange.EndTime.UtcSeconds-timeRange.StartTime.UtcSeconds)
 
-      ' Retrieve correlation PI points from AF hierarchy if owned by an
-      ' attribute (element is an instance of an element template) and attribute
-      ' has a parent attribute.
-      If Attribute IsNot Nothing AndAlso Attribute.Parent IsNot Nothing Then
+      ' Check if this attribute is properly configured.
+      If AttributeConfigurationIsValid Then
 
         Element = DirectCast(Attribute.Element, AFElement)
         InputPointDriver = New DBMPointDriver(Attribute.Parent) ' Parent attrib.
 
-        ' Retrieve correlation points for non-root elements only when
-        ' calculating the DBM factor value and if correlation calculations are
-        ' not disabled using categories.
+        ' Retrieve correlation points from AF hierarchy for non-root elements
+        ' only when calculating the DBM factor value and if correlation
+        ' calculations are not disabled using categories.
         If Not Element.IsRoot And Attribute.Trait Is Nothing And
           Not Attribute.CategoriesString.Contains(CategoryNoCorrelation) Then
 
@@ -385,6 +392,11 @@ Namespace Vitens.DynamicBandwidthMonitor
 
           ' Every 8 hours, clear all cached data in the DBM object.
           DBM.ClearCache(8)
+
+          timeRange.StartTime = New AFTime(AlignPreviousInterval(
+            timeRange.StartTime.UtcSeconds, CalculationInterval)) ' Align
+          IntervalSeconds = PIAFIntervalSeconds(numberOfValues,
+            timeRange.EndTime.UtcSeconds-timeRange.StartTime.UtcSeconds)
 
           DBM.PrepareData(InputPointDriver, CorrelationPoints,
             timeRange.StartTime.LocalTime, timeRange.EndTime.LocalTime)
