@@ -31,7 +31,7 @@ Imports OSIsoft.AF.Data.AFCalculationBasis
 Imports OSIsoft.AF.Data.AFSummaryTypes
 Imports OSIsoft.AF.Data.AFTimestampCalculation
 Imports OSIsoft.AF.Time
-Imports Vitens.DynamicBandwidthMonitor.DBMMath
+Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
@@ -69,9 +69,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' and stores this in the Values dictionary. The (aligned) end time itself
       ' is excluded.
 
-      Dim Snapshot As DateTime = New AFTime(AlignNextInterval(
-        DirectCast(Point, AFAttribute).GetValue.Timestamp.UtcSeconds,
-        CalculationInterval)).LocalTime ' Interval after snapshot timestamp
+      Dim Snapshot As DateTime = NextInterval(DirectCast(Point, AFAttribute).
+        GetValue.Timestamp.LocalTime) ' Interval after snapshot timestamp
       Dim Value As AFValue
 
       ' Never retrieve values beyond the snapshot time aligned to the next
