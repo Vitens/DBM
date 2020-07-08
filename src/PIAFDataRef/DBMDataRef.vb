@@ -114,6 +114,22 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
+    Private Function AttributeHasFutureData As Boolean
+
+      ' Returns a boolean indicating if this attribute has future data, f.ex.
+      ' when it returns a forecast. We should not enable the data pipe for these
+      ' attributes as services like the Analyses Service will not be able to use
+      ' future data because the snapshot timestamp is seen as the last available
+      ' timestamp.
+
+      Return Attribute.Trait Is Forecast Or Attribute.Trait Is LimitMinimum Or
+        Attribute.Trait Is LimitLoLo Or Attribute.Trait Is LimitLo Or
+        Attribute.Trait Is LimitHi Or Attribute.Trait Is LimitHiHi Or
+        Attribute.Trait Is LimitMaximum
+
+    End Function
+
+
     Public Overrides Readonly Property SupportedDataMethods As AFDataMethods
 
       ' https://techsupport.osisoft.com/Documentation/PI-AF-SDK/html/P_OSIsoft_A
@@ -130,9 +146,12 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Specifies which of the data methods are supported by the data
         ' reference. Its value can be one or more of the AFDataMethods
         ' enumeration values logically ORed together. The default value is None.
-        Return AFDataMethods.RecordedValue Or AFDataMethods.RecordedValues Or
-          AFDataMethods.PlotValues Or AFDataMethods.Summary Or
-          AFDataMethods.Summaries Or AFDataMethods.DataPipe
+        SupportedDataMethods = AFDataMethods.RecordedValue Or
+          AFDataMethods.RecordedValues Or AFDataMethods.PlotValues Or
+          AFDataMethods.Summary Or AFDataMethods.Summaries
+        If Not AttributeHasFutureData Then SupportedDataMethods =
+          SupportedDataMethods Or AFDataMethods.DataPipe ' Support datapipe
+        Return SupportedDataMethods
       End Get
 
     End Property
