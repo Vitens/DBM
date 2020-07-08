@@ -36,15 +36,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const KeyNothingAlternative As Integer = Int32.MinValue
 
 
-    Private MaximumItems As Integer
     Private CacheItems As New Dictionary(Of Object, DBMCacheItem)
-
-
-    Public Sub New(Optional MaximumItems As Integer = 0)
-
-      Me.MaximumItems = MaximumItems ' Use default (0) value for unlimited items
-
-    End Sub
 
 
     Private Function ValidatedKey(Key As Object) As Object
@@ -69,14 +61,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Sub AddItem(Key As Object, Item As Object)
-
-      ' Limit number of cached forecast results per point. Cache size is
-      ' limited using random eviction policy.
-
-      If MaximumItems > 0 And CacheItems.Count >= MaximumItems Then
-        CacheItems.Remove(CacheItems.ElementAt(
-          RandomNumber(0, CacheItems.Count-1)).Key)
-      End If
 
       CacheItems.Add(ValidatedKey(Key), New DBMCacheItem(Item))
 

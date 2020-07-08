@@ -24,6 +24,7 @@ Option Strict
 
 Imports System
 Imports System.Collections.Generic
+Imports System.DateTime
 Imports System.Globalization
 Imports System.Math
 Imports System.Threading.Thread
@@ -77,7 +78,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' distribution processes.
 
 
-    Private PointsCache As New DBMCache(CInt((4^CacheSizeFactor)/4)) ' 1024 itms
+    Private PointsCache As New DBMCache
+    Private LastClearCache As DateTime = Now
 
 
     Private Function Point(PointDriver As DBMPointDriverAbstract) As DBMPoint
@@ -92,6 +94,22 @@ Namespace Vitens.DynamicBandwidthMonitor
       Return DirectCast(PointsCache.GetItem(PointDriver.Point), DBMPoint)
 
     End Function
+
+
+    Public Sub ClearCache(Optional Hours As Integer = 0)
+
+      ' Clear all cached points including their cached data and cached forecast
+      ' results. Calling this periodically will make sure that all data is
+      ' refreshed and that unused data is removed from memory. Use the Hour
+      ' parameter to only clear the cache after a set amount of hours has
+      ' passed.
+
+      If (Now-LastClearCache).TotalHours >= Hours Then
+        PointsCache.Clear
+        LastClearCache = Now
+      End If
+
+    End Sub
 
 
     Public Shared Function HasCorrelation(RelErrCorr As Double,
