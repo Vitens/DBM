@@ -351,10 +351,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' not be invoked directly by the user. Instead, the user should call the
       ' AFAttribute.GetValues method which will in-turn, invoke this method.
 
-      Dim IntervalSeconds As Double
       Dim Element, ParentElement, SiblingElement As AFElement
       Dim InputPointDriver As DBMPointDriver
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
+      Dim IntervalSeconds As Double
 
       GetValues = New AFValues
 
@@ -412,8 +412,11 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' Every 8 hours, clear all cached data in the DBM object.
           DBM.ClearCache(8)
 
+          ' Align timestamps and determine interval seconds.
           timeRange.StartTime = New AFTime(AlignPreviousInterval(
-            timeRange.StartTime.UtcSeconds, CalculationInterval)) ' Align
+            timeRange.StartTime.UtcSeconds, CalculationInterval)) ' Previous
+          timeRange.EndTime = New AFTime(AlignPreviousInterval(
+            timeRange.EndTime.UtcSeconds, -CalculationInterval)) ' Next
           IntervalSeconds = PIAFIntervalSeconds(numberOfValues,
             timeRange.EndTime.UtcSeconds-timeRange.StartTime.UtcSeconds)
 
