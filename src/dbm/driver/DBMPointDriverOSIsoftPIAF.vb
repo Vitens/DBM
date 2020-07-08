@@ -25,7 +25,6 @@ Option Strict
 Imports System
 Imports System.Collections.Generic
 Imports System.Double
-Imports System.Math
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Data.AFCalculationBasis
 Imports OSIsoft.AF.Data.AFSummaryTypes
@@ -74,12 +73,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Value As AFValue
 
       ' Never retrieve values beyond the snapshot time aligned to the next
-      ' interval. Preserve the Kind property when limiting the variables if
-      ' constructing by ticks.
-      StartTimestamp = New DateTime(
-        Min(StartTimestamp.Ticks, Snapshot.Ticks), StartTimestamp.Kind)
-      EndTimestamp = New DateTime(
-        Min(EndTimestamp.Ticks, Snapshot.Ticks), EndTimestamp.Kind)
+      ' interval.
+      If StartTimestamp > Snapshot Then StartTimestamp = Snapshot
+      If EndTimestamp > Snapshot Then EndTimestamp = Snapshot
 
       ' Exit this sub if there is no data to retrieve or when the start
       ' timestamp is not before the end timestamp.
