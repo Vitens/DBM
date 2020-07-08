@@ -75,10 +75,15 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Value As AFValue
 
       ' Never retrieve values beyond the snapshot time aligned to the next
-      ' interval. Exit this sub if there is no data to retrieve or when the
-      ' start timestamp is not before the end timestamp.
-      StartTimestamp = New DateTime(Min(StartTimestamp.Ticks, Snapshot.Ticks))
-      EndTimestamp = New DateTime(Min(EndTimestamp.Ticks, Snapshot.Ticks))
+      ' interval. Preserve the Kind property when limiting the variables if
+      ' constructing by ticks.
+      StartTimestamp = New DateTime(
+        Min(StartTimestamp.Ticks, Snapshot.Ticks), StartTimestamp.Kind)
+      EndTimestamp = New DateTime(
+        Min(EndTimestamp.Ticks, Snapshot.Ticks), EndTimestamp.Kind)
+
+      ' Exit this sub if there is no data to retrieve or when the start
+      ' timestamp is not before the end timestamp.
       If Not StartTimestamp < EndTimestamp Then Exit Sub
 
       ' Determine what data stored in memory can be reused, what needs to be
