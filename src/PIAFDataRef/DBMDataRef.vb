@@ -355,6 +355,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim InputPointDriver As DBMPointDriver
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim IntervalSeconds As Double
+      Dim Snapshot As AFTime
 
       GetValues = New AFValues
 
@@ -420,10 +421,16 @@ Namespace Vitens.DynamicBandwidthMonitor
           IntervalSeconds = PIAFIntervalSeconds(numberOfValues,
             timeRange.EndTime.UtcSeconds-timeRange.StartTime.UtcSeconds)
 
+          ' Retrieve snapshot timestamp and retrieve all data from the data
+          ' source using the driver.
+          Snapshot = Attribute.Parent.GetValue.Timestamp
           DBM.PrepareData(InputPointDriver, CorrelationPoints,
             timeRange.StartTime.LocalTime, timeRange.EndTime.LocalTime)
 
-          Do While timeRange.EndTime > timeRange.StartTime
+          ' Loop through time range. For attributes without future data, do not
+          ' return data beyond the snapshot timestamp.
+          Do While timeRange.EndTime > timeRange.StartTime And
+            (AttributeHasFutureData Or Not timeRange.StartTime > Snapshot)
 
             With DBM.Result(InputPointDriver, CorrelationPoints,
               timeRange.StartTime.LocalTime)
