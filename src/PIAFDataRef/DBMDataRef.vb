@@ -266,18 +266,27 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' AFAttribute.GetValue Overload methods which will in-turn, invoke this
       ' method.
 
+      Dim Snapshot As AFTime
       Dim Timestamp As AFTime = Now
 
       ' Check if this attribute is properly configured.
       If AttributeConfigurationIsValid Then
 
+        ' Retrieve parent attribute snapshot timestamp.
+        Snapshot = Attribute.Parent.GetValue.Timestamp
+
         If timeContext IsNot Nothing Then
-          ' Use passed timestamp.
+          ' Use passed timestamp. For attributes without future data, do not
+          ' return data beyond the snapshot timestamp.
           Timestamp = DirectCast(timeContext, AFTime)
+          If Not AttributeHasFutureData And Timestamp > Snapshot Then
+            ' No future data available, return a NoData system state.
+            Return AFValue.CreateSystemStateValue(
+              AFSystemStateCode.NoData, Timestamp)
+          End If
         Else
-          ' Use parent attribute snapshot as snapshot timestamp for this
-          ' attribute, as this is the input source.
-          Timestamp = Attribute.Parent.GetValue.Timestamp
+          ' No passed timestamp, use snapshot timestamp.
+          Timestamp = Snapshot
         End If
 
         ' Align timestamp to the previous interval.
