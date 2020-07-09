@@ -285,8 +285,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
           If Not AttributeHasFutureData Then
 
-            If Timestamp > Snapshot.Addition(
-              New AFTimeSpan(0, 0, 0, 0, 10, 0, 0)) Then
+            If Timestamp > Snapshot+New AFTimeSpan(0, 0, 0, 0, 10, 0, 0) Then
 
               ' For attributes without future data, do not return data beyond 10
               ' minutes past the snapshot timestamp. Return a No Data system
