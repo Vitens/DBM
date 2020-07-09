@@ -272,26 +272,45 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Check if this attribute is properly configured.
       If AttributeConfigurationIsValid Then
 
-        ' Retrieve parent attribute snapshot timestamp.
-        Snapshot = Attribute.Parent.GetValue.Timestamp
+        ' Retrieve parent attribute snapshot timestamp aligned to the previous
+        ' interval.
+        Snapshot = New AFTime(AlignPreviousInterval(
+          Attribute.Parent.GetValue.Timestamp.UtcSeconds, CalculationInterval))
 
         If timeContext IsNot Nothing Then
-          ' Use passed timestamp. For attributes without future data, do not
-          ' return data beyond the snapshot timestamp.
-          Timestamp = DirectCast(timeContext, AFTime)
-          If Not AttributeHasFutureData And Timestamp > Snapshot Then
-            ' No future data available, return a NoData system state.
-            Return AFValue.CreateSystemStateValue(
-              AFSystemStateCode.NoData, Timestamp)
+
+          ' Use passed timestamp aligned to the previous interval.
+          Timestamp = New AFTime(AlignPreviousInterval(
+            DirectCast(timeContext, AFTime).UtcSeconds, CalculationInterval))
+
+          If Not AttributeHasFutureData Then
+
+            If Timestamp > Snapshot+New AFTimeSpan(0, 0, 0, 0, 10, 0, 0) Then
+
+              ' For attributes without future data, do not return data beyond 10
+              ' minutes past the snapshot timestamp. Return a No Data system
+              ' state instead. Definition: 'Data-retrieval functions use this
+              ' state for time periods where no archive values for a tag can
+              ' exist 10 minutes into the future or before the oldest mounted
+              ' archive.'
+              Return AFValue.CreateSystemStateValue(
+                AFSystemStateCode.NoData, Timestamp)
+
+            End If
+
+            ' For attributes without future data, return the snapshot value for
+            ' values in the future, unless a No Data system state was already
+            ' returned.
+            If Timestamp > Snapshot Then Timestamp = Snapshot
+
           End If
+
         Else
+
           ' No passed timestamp, use snapshot timestamp.
           Timestamp = Snapshot
-        End If
 
-        ' Align timestamp to the previous interval.
-        Timestamp = New AFTime(AlignPreviousInterval(Timestamp.UtcSeconds,
-          CalculationInterval))
+        End If
 
         ' Returns the single value for the attribute.
         Return GetValues(Nothing, New AFTimeRange(Timestamp,
@@ -301,8 +320,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Else
 
         ' Attribute or parent attribute is not configured properly, return a
-        ' Configure system state. Definition: The point configuration has been
-        ' rejected as invalid by the data source.
+        ' Configure system state. Definition: 'The point configuration has been
+        ' rejected as invalid by the data source.'
         Return AFValue.CreateSystemStateValue(
           AFSystemStateCode.Configure, Timestamp)
 
