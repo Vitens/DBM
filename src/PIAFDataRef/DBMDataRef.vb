@@ -280,7 +280,9 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' return data beyond the snapshot timestamp.
           Timestamp = DirectCast(timeContext, AFTime)
           If Not AttributeHasFutureData And Timestamp > Snapshot Then
-            Timestamp = Snapshot
+            ' No future data available, return a NoData system state.
+            Return AFValue.CreateSystemStateValue(
+              AFSystemStateCode.NoData, Timestamp)
           End If
         Else
           ' No passed timestamp, use snapshot timestamp.
