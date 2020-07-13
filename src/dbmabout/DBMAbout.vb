@@ -24,6 +24,7 @@ Option Strict
 
 Imports System
 Imports System.Environment
+Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
 Imports Vitens.DynamicBandwidthMonitor.DBMTests
 
