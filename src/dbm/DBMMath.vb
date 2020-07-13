@@ -47,7 +47,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Approximation of inverse standard normal CDF developed by
       ' Peter J. Acklam
 
-console.writeline("NormSInv p=" & p.ToString)
       Const a1 As Double = -39.6968302866538, a2 As Double = 220.946098424521
       Const a3 As Double = -275.928510446969, a4 As Double = 138.357751867269
       Const a5 As Double = -30.6647980661472, a6 As Double = 2.50662827745924
@@ -87,7 +86,6 @@ console.writeline("NormSInv p=" & p.ToString)
       ' Returns the two-tailed inverse of the Student's t-distribution.
       ' Hill's approx. inverse t-dist.: Comm. of A.C.M Vol.13 No.10 1970 pg 620
 
-console.writeline("TInv2T p=" & p.ToString & " dof=" & dof.ToString)
       Dim a, b, c, d, x, y As Double
 
       If dof = 1 Then
@@ -154,7 +152,6 @@ console.writeline("TInv2T p=" & p.ToString & " dof=" & dof.ToString)
       ' Precomputed result
       If n = 11 Then Return 1.43380414160658
 
-console.writeline("MedAbsDevScF n=" & n.ToString)
       If n < 30 Then
         Return 1/TInv(0.75, n) ' n<30 Student's t-distribution
       Else
@@ -179,7 +176,6 @@ console.writeline("MedAbsDevScF n=" & n.ToString)
         3.49948706845407, 3.35538805213598, 3.2498355357257, 3.16927251686568,
         3.10580635664082}(n-6)
 
-console.writeline("CtlLimRejCrit p=" & p.ToString & " n=" & n.ToString)
       If n < 30 Then
         Return TInv((p+1)/2, n) ' n<30 Student's t-distribution
       Else
