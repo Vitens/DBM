@@ -86,9 +86,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns a string containing product name, version number, copyright,
       ' and license notice. An exception occurs if one of the tests fail.
 
-console.writeline("UNIT TESTS")
       RunUnitTests
-console.writeline("INTEG TEST")
       RunIntegrationTests
 
       Return Product &
