@@ -136,7 +136,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' R.C. Geary. The Ratio of the Mean Deviation to the Standard Deviation
       '  as a Test of Normality. Biometrika, 1935. Cited on page 8.
 
-      Return 1.2533141373155 ' Precomputed result for Sqrt(PI/2)
+      Return Sqrt(PI/2)
 
     End Function
 
@@ -148,9 +148,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' For a symmetric distribution with zero mean, the population MAD is the
       ' 75th percentile of the distribution.
       ' Huber, P. J. (1981). Robust statistics. New York: John Wiley.
-
-      ' Precomputed result
-      If n = 11 Then Return 1.43380414160658
 
       If n < 30 Then
         Return 1/TInv(0.75, n) ' n<30 Student's t-distribution
@@ -170,11 +167,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Student. 1908. Probable error of a correlation
       '  coefficient. Biometrika 6, 2-3, 302–310.
       ' Hogg and Tanis' Probability and Statistical Inference (7e).
-
-      ' Precomputed results
-      If p = 0.99 And n >= 6 and n <= 11 Then Return {3.70744533800376,
-        3.49948706845407, 3.35538805213598, 3.2498355357257, 3.16927251686568,
-        3.10580635664082}(n-6)
 
       If n < 30 Then
         Return TInv((p+1)/2, n) ' n<30 Student's t-distribution
@@ -397,9 +389,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function SlopeToAngle(Slope As Double) As Double
 
       ' Returns angle in degrees for Slope.
-
-      ' Precomputed result
-      If Slope = 1 Then Return 45
 
       Return Atan(Slope)/(2*PI)*360
 
