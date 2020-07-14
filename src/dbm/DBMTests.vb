@@ -1096,7 +1096,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' The returned value indicates how many full days per second this system
       ' can calculate when performing real-time continuous calculations.
 
-      Const DurationTicks As Double = 3*TicksPerSecond ' 3 seconds
+      Const DurationTicks As Double = 5*TicksPerSecond ' Measure for 5 seconds.
 
       Dim InputPointDriver As DBMPointDriverTestModel
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
@@ -1115,12 +1115,12 @@ Namespace Vitens.DynamicBandwidthMonitor
       Timer = Now
       Do While Now.Ticks-Timer.Ticks < DurationTicks
         Result = DBM.Result(InputPointDriver, CorrelationPoints, Timestamp,
-          New CultureInfo("nl-NL")) ' Use Dutch locale for holidays
-        Count += 1
+          New CultureInfo("nl-NL")) ' Use Dutch locale for holidays.
+        If Now.Ticks-Timer.Ticks >= DurationTicks/2 Then Count += 1 ' 2nd half.
         Timestamp = Timestamp.AddSeconds(CalculationInterval)
       Loop
 
-      Return Count/(DurationTicks/TicksPerSecond)/(24*60*60/CalculationInterval)
+      Return 2*Count*TicksPerSecond*CalculationInterval/(24*60*60*DurationTicks)
 
     End Function
 
