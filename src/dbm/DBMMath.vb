@@ -47,36 +47,26 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Approximation of inverse standard normal CDF developed by
       ' Peter J. Acklam
 
-      Const a1 As Double = -39.6968302866538, a2 As Double = 220.946098424521
-      Const a3 As Double = -275.928510446969, a4 As Double = 138.357751867269
-      Const a5 As Double = -30.6647980661472, a6 As Double = 2.50662827745924
-      Const b1 As Double = -54.4760987982241, b2 As Double = 161.585836858041
-      Const b3 As Double = -155.698979859887, b4 As Double = 66.8013118877197
-      Const b5 As Double = -13.2806815528857
-      Const c1 As Double = -7.78489400243029E-03
-      Const c2 As Double = -0.322396458041136
-      Const c3 As Double = -2.40075827716184, c4 As Double = -2.54973253934373
-      Const c5 As Double = 4.37466414146497, c6 As Double = 2.93816398269878
-      Const d1 As Double = 7.78469570904146E-03, d2 As Double = 0.32246712907004
-      Const d3 As Double = 2.445134137143, d4 As Double = 3.75440866190742
-      Const p_low As Double = 0.02425, p_high As Double = 1-p_low
-
       Dim q, r As Double
 
-      If p < p_low Then ' Left tail
+      If p < 0.02425 Then ' Left tail
         q = Sqrt(-2*Log(p))
-        Return (((((c1*q+c2)*q+c3)*q+c4)*q+c5)*q+c6)/
-          ((((d1*q+d2)*q+d3)*q+d4)*q+1)
-      ElseIf p <= p_high Then
+      ElseIf p <= 0.97575 Then
         q = p-0.5
         r = q*q
-        Return (((((a1*r+a2)*r+a3)*r+a4)*r+a5)*r+a6)*q/
-          (((((b1*r+b2)*r+b3)*r+b4)*r+b5)*r+1)
+        Return (((((-3.96968302866538E+01*r+2.20946098424521E+02)*r-
+          2.75928510446969E+02)*r+1.38357751867269E+02)*r-3.06647980661472E+01)*
+          r+2.50662827745924E+00)*q/(((((-5.44760987982241E+01*r+
+          1.61585836858041E+02)*r-1.55698979859887E+02)*r+6.68013118877197E+01)*
+          r-1.32806815528857E+01)*r+1)
       Else ' Right tail
         q = Sqrt(-2*Log(1-p))
-        Return -(((((c1*q+c2)*q+c3)*q+c4)*q+c5)*q+c6)/
-          ((((d1*q+d2)*q+d3)*q+d4)*q+1)
       End If
+
+      Return (((((-7.78489400243029E-03*q-3.22396458041136E-01)*q-
+        2.40075827716184E+00)*q-2.54973253934373E+00)*q+4.37466414146497E+00)*q+
+        2.93816398269878E+00)/((((7.78469570904146E-03*q+3.2246712907004E-01)*q+
+        2.445134137143E+00)*q+3.75440866190742E+00)*q+1)
 
     End Function
 
