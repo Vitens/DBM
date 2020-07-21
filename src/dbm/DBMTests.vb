@@ -202,6 +202,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(34), 1.4826)
       AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(36), 1.4826)
       AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(38), 1.4826)
+
       For i = 1 To 30 ' LUT
         If i < 30 Then
           AssertAlmostEqual(
@@ -232,6 +233,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.90, 30), 1.6449)
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.95, 25), 2.0595)
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.90, 20), 1.7247)
+
       For i = 1 To 30 ' LUT
         For Each j In {0.9, 0.95, 0.98, 0.99, 0.9998, 0.9999}
           If i < 30 Then
