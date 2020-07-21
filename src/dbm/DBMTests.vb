@@ -1043,8 +1043,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         Result = DBM.Result(InputPointDriver, CorrelationPoints, Timestamp,
           New CultureInfo("nl-NL")) ' Use Dutch locale for New Year's Day test
         With Result
-          AssertAlmostEqual(.Factor, {0, 0, 0, 0, 0, 0, -11.8493, -22.9119, 0,
-            0, 0, 0, 1.1375, 0, 0, 0, 0, 0, 0, 0}(i))
+          AssertAlmostEqual(.Factor, {0, 0, 0, 0, 0, 0, -11.8493, -22.912, 0, 0,
+            0, 0, 1.1375, 0, 0, 0, 0, 0, 0, 0}(i))
           If i = 6 Or i = 7 Or i = 12 Then
             AssertTrue(.HasEvent)
           Else
