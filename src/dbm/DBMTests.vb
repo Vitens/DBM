@@ -212,15 +212,6 @@ Namespace Vitens.DynamicBandwidthMonitor
         End If
       Next i
 
-For i = 1 To 30
-        If i < 30 Then
-          Console.Write( 1/TInv(0.75, i) & ", " )
-        Else
-          Console.Write( 1/NormSInv(0.75) & ", " )
-        End If
-Next i
-console.writeline("")
-
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 1), 63.6567)
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 2), 9.9248)
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 4), 4.6041)
@@ -252,18 +243,6 @@ console.writeline("")
           End If
         Next
       Next i
-
-For Each j In {0.9, 0.95, 0.98, 0.99, 0.9998, 0.9999}
- console.write(j & ": ")
- For i = 1 To 30
-          If i < 30 Then
-            Console.Write(TInv((j+1)/2, i) & ", ")
-          Else
-            Console.Write(NormSInv((j+1)/2) & ", ")
-          End If
- Next i
- console.writeline("")
-Next
 
       AssertEqual(NonNaNCount({60}), 1)
       AssertEqual(NonNaNCount({60, 70}), 2)
