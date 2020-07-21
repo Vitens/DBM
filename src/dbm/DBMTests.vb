@@ -580,6 +580,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(ExponentialMovingAverage(
         {26.1368, 78.5212, 37.8903, 28.9665, 91.9377, 63.1742}), 60.2045)
 
+      AssertAlmostEqual(SlopeToAngle(-4.5806), -77.6849)
       AssertAlmostEqual(SlopeToAngle(-4.2541), -76.7718)
       AssertAlmostEqual(SlopeToAngle(1.7964), 60.8967)
       AssertAlmostEqual(SlopeToAngle(-3.2474), -72.8844)
@@ -599,7 +600,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(SlopeToAngle(3.1088), 72.1687)
       AssertAlmostEqual(SlopeToAngle(-1.6831), -59.2837)
       AssertAlmostEqual(SlopeToAngle(-2.0031), -63.4704)
-      AssertEqual(SlopeToAngle(1), 45) ' LUT
 
       For i = 0 To 19
         AssertTrue(RandomNumber(0, i+1) >= 0)
