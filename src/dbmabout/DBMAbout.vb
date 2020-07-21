@@ -45,9 +45,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Sub Main
 
-      Console.Write(LicenseNotice)
-      Console.WriteLine(NewLine & "Performance Index " &
-        Round(PerformanceIndex, 1).ToString)
+      Console.Write(LicenseNotice & NewLine & "Performance Index ...")
+      Console.WriteLine("\b\b\b" & Round(PerformanceIndex, 1).ToString)
 
     End Sub
 

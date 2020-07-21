@@ -150,8 +150,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' 75th percentile of the distribution.
       ' Huber, P. J. (1981). Robust statistics. New York: John Wiley.
 
-      ' Precomputed results. For n<30 use Student's t-distribution and return
-      ' 1/TInv(0.75, n). For n>=30 use Standard normal distribution and return
+      ' Precomputed results. For n < 30 use Student's t-distribution and return
+      ' 1/TInv(0.75, n). For n >= 30 use Standard normal distribution and return
       ' 1/NormSInv(0.75).
       Return {1, 1.22474487139159, 1.30736889697561, 1.35007883495785,
         1.3761084297607, 1.39361514055844, 1.40618933948217, 1.41565535988511,
@@ -232,9 +232,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         }(Min(Max(1, n), 30)-1)
 
       If n < 30 Then
-        Return TInv((p+1)/2, n) ' n<30 Student's t-distribution
+        Return TInv((p+1)/2, n) ' n < 30 Student's t-distribution
       Else
-        Return NormSInv((p+1)/2) ' n>=30 Standard normal distribution
+        Return NormSInv((p+1)/2) ' n >= 30 Standard normal distribution
       End If
 
     End Function
