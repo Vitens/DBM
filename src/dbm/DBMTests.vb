@@ -180,7 +180,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(TInv(0.5267, 15), 0.0681)
 
       AssertAlmostEqual(MeanAbsoluteDeviationScaleFactor, 1.2533)
-      AssertAlmostEqual(MeanAbsoluteDeviationScaleFactor, Sqrt(PI/2))
+      AssertEqual(MeanAbsoluteDeviationScaleFactor, Sqrt(PI/2)) ' LUT
 
       AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(1), 1)
       AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(2), 1.2247)
@@ -202,13 +202,11 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(34), 1.4826)
       AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(36), 1.4826)
       AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(38), 1.4826)
-      For i = 1 To 30
+      For i = 1 To 30 ' LUT
         If i < 30 Then
-          AssertAlmostEqual(
-            MedianAbsoluteDeviationScaleFactor(i), 1/TInv(0.75, i))
+          AssertEqual(MedianAbsoluteDeviationScaleFactor(i), 1/TInv(0.75, i))
         Else
-          AssertAlmostEqual(
-            MedianAbsoluteDeviationScaleFactor(i), 1/NormSInv(0.75))
+          AssertEqual(MedianAbsoluteDeviationScaleFactor(i), 1/NormSInv(0.75))
         End If
       Next i
 
@@ -232,14 +230,12 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.90, 30), 1.6449)
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.95, 25), 2.0595)
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.90, 20), 1.7247)
-      For i = 1 To 30
+      For i = 1 To 30 ' LUT
         For Each j In {0.9, 0.95, 0.98, 0.99, 0.9998, 0.9999}
           If i < 30 Then
-            AssertAlmostEqual(
-              ControlLimitRejectionCriterion(j, i), TInv((j+1)/2, i), 2)
+            AssertEqual(ControlLimitRejectionCriterion(j, i), TInv((j+1)/2, i))
           Else
-            AssertAlmostEqual(
-              ControlLimitRejectionCriterion(j, i), NormSInv((j+1)/2))
+            AssertEqual(ControlLimitRejectionCriterion(j, i), NormSInv((j+1)/2))
           End If
         Next
       Next i
@@ -599,7 +595,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(SlopeToAngle(3.1088), 72.1687)
       AssertAlmostEqual(SlopeToAngle(-1.6831), -59.2837)
       AssertAlmostEqual(SlopeToAngle(-2.0031), -63.4704)
-      AssertAlmostEqual(SlopeToAngle(1), 45)
+      AssertEqual(SlopeToAngle(1), 45) ' LUT
 
       For i = 0 To 19
         AssertTrue(RandomNumber(0, i+1) >= 0)
