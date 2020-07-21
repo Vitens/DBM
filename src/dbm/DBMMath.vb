@@ -129,7 +129,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' R.C. Geary. The Ratio of the Mean Deviation to the Standard Deviation
       '  as a Test of Normality. Biometrika, 1935. Cited on page 8.
 
-      ' Precomputed result. Return Sqrt(PI/2).
+      ' Precomputed lookup table. Return Sqrt(PI/2).
       Return 1.2533141373155
 
     End Function
@@ -143,9 +143,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' 75th percentile of the distribution.
       ' Huber, P. J. (1981). Robust statistics. New York: John Wiley.
 
-      ' Precomputed results. For n < 30 use Student's t-distribution and return
-      ' 1/TInv(0.75, n). For n >= 30 use Standard normal distribution and return
-      ' 1/NormSInv(0.75).
+      ' Precomputed lookup table. For n < 30 use Student's t-distribution and
+      ' return 1/TInv(0.75, n). For n >= 30 use Standard normal distribution and
+      ' return 1/NormSInv(0.75).
       Return {1, 1.22474487139159, 1.30736889697561, 1.35007883495785,
         1.3761084297607, 1.39361514055844, 1.40618933948217, 1.41565535988511,
         1.42303754318443, 1.42895507786675, 1.43380414160659, 1.43784994442648,
@@ -168,7 +168,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       '  coefficient. Biometrika 6, 2-3, 302–310.
       ' Hogg and Tanis' Probability and Statistical Inference (7e).
 
-      ' Precomputed results.
+      ' Precomputed lookup table. For n < 30 use Student's t-distribution and
+      ' return TInv((p+1)/2, n). For n >= 30 use Standard normal distribution
+      ' and return NormSInv((p+1)/2).
       If p = 0.9 Then Return {6.31375151467504, 2.91998558035372,
         2.35337987284673, 2.13187860590667, 2.01505450968809, 1.94318189391582,
         1.89457912775647, 1.85954823258324, 1.833113012866, 1.81246115789112,
