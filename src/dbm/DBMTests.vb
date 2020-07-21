@@ -214,9 +214,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 For i = 1 To 30
         If i < 30 Then
-          Console.Write( 1/TInv(0.75, i) & ", " )
+          Console.Write( Convert.ToString(1/TInv(0.75, i)) & ", " )
         Else
-          Console.Write( 1/NormSInv(0.75) & ", " )
+          Console.Write( Convert.ToString(1/NormSInv(0.75)) & ", " )
         End If
 Next i
 console.writeline("")
@@ -257,9 +257,9 @@ For Each j In {0.9, 0.95, 0.98, 0.99, 0.9998, 0.9999}
  console.write(j & ": ")
  For i = 1 To 30
           If i < 30 Then
-            Console.Write(TInv((j+1)/2, i) & ", ")
+            Console.Write( Convert.ToString(TInv((j+1)/2, i)) & ", ")
           Else
-            Console.Write(NormSInv((j+1)/2) & ", ")
+            Console.Write( Convert.ToString(NormSInv((j+1)/2)) & ", ")
           End If
  Next i
  console.writeline("")
