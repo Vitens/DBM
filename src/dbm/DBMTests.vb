@@ -428,23 +428,23 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertEqual(CentralTendency({3, 5, 1, 9}), 4)
       AssertEqual(CentralTendency({0, 0, 0, 0}), 0)
 
-      AssertAlmostEqual(ControlLimit({8, 2, 0, 10}, 0.99), 30.545)
-      AssertAlmostEqual(ControlLimit({2, 4, 8, 7}, 0.99), 15.2725)
+      AssertAlmostEqual(ControlLimit({8, 2, 0, 10}, 0.99), 30.5449)
+      AssertAlmostEqual(ControlLimit({2, 4, 8, 7}, 0.99), 15.2724)
       AssertAlmostEqual(ControlLimit({5, 8, 0, 2}, 0.99), 19.0906)
-      AssertAlmostEqual(ControlLimit({8, 1, 0, 3}, 0.99), 11.4544)
-      AssertAlmostEqual(ControlLimit({10, 7, 1, 3}, 0.99), 22.9088)
+      AssertAlmostEqual(ControlLimit({8, 1, 0, 3}, 0.99), 11.4543)
+      AssertAlmostEqual(ControlLimit({10, 7, 1, 3}, 0.99), 22.9087)
       AssertAlmostEqual(ControlLimit({6, 2, 1, 9}, 0.99), 19.0906)
       AssertAlmostEqual(ControlLimit({4, 9, 9, 3}, 0.99), 19.0906)
-      AssertAlmostEqual(ControlLimit({10, 7, 2, 8}, 0.99), 11.4544)
-      AssertAlmostEqual(ControlLimit({6, 0, 10, 1}, 0.99), 22.9088)
-      AssertAlmostEqual(ControlLimit({10, 3, 4, 2}, 0.99), 7.6363)
+      AssertAlmostEqual(ControlLimit({10, 7, 2, 8}, 0.99), 11.4543)
+      AssertAlmostEqual(ControlLimit({6, 0, 10, 1}, 0.99), 22.9087)
+      AssertAlmostEqual(ControlLimit({10, 3, 4, 2}, 0.99), 7.6362)
       AssertAlmostEqual(ControlLimit({6, 4, 4, 4}, 0.99), 5.4904)
-      AssertAlmostEqual(ControlLimit({1, 0, 9, 9}, 0.99), 30.545)
-      AssertAlmostEqual(ControlLimit({0, 3, 6, 2}, 0.99), 11.4544)
-      AssertAlmostEqual(ControlLimit({9, 7, 4, 6}, 0.99), 11.4544)
-      AssertAlmostEqual(ControlLimit({6, 6, 4, 1}, 0.99), 7.6363)
-      AssertAlmostEqual(ControlLimit({7, 3, 4, 1}, 0.99), 11.4544)
-      AssertAlmostEqual(ControlLimit({6, 4, 4, 10}, 0.99), 7.6363)
+      AssertAlmostEqual(ControlLimit({1, 0, 9, 9}, 0.99), 30.5449)
+      AssertAlmostEqual(ControlLimit({0, 3, 6, 2}, 0.99), 11.4543)
+      AssertAlmostEqual(ControlLimit({9, 7, 4, 6}, 0.99), 11.4543)
+      AssertAlmostEqual(ControlLimit({6, 6, 4, 1}, 0.99), 7.6362)
+      AssertAlmostEqual(ControlLimit({7, 3, 4, 1}, 0.99), 11.4543)
+      AssertAlmostEqual(ControlLimit({6, 4, 4, 10}, 0.99), 7.6362)
       AssertAlmostEqual(ControlLimit({10, 5, 5, 5}, 0.99), 13.7259)
       AssertAlmostEqual(ControlLimit({8, 5, 5, 5}, 0.98), 6.4023)
       AssertAlmostEqual(ControlLimit({8, 4, 0, 0}, 0.95), 8.3213)
@@ -1066,8 +1066,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         Result = DBM.Result(InputPointDriver, CorrelationPoints, Timestamp,
           New CultureInfo("nl-NL")) ' Use Dutch locale for New Year's Day test
         With Result
-          AssertAlmostEqual(.Factor, {0, 0, 0, 0, 0, 0, -11.8493, -22.912, 0, 0,
-            0, 0, 1.1375, 0, 0, 0, 0, 0, 0, 0}(i))
+          AssertAlmostEqual(.Factor, {0, 0, 0, 0, 0, 0, -11.8493, -22.9119, 0,
+            0, 0, 0, 1.1375, 0, 0, 0, 0, 0, 0, 0}(i))
           If i = 6 Or i = 7 Or i = 12 Then
             AssertTrue(.HasEvent)
           Else
