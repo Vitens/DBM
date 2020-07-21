@@ -236,7 +236,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         For Each j In {0.9, 0.95, 0.98, 0.99, 0.9998, 0.9999}
           If i < 30 Then
             AssertAlmostEqual(
-              ControlLimitRejectionCriterion(j, i), TInv((j+1)/2, i), 15)
+              ControlLimitRejectionCriterion(j, i), TInv((j+1)/2, i), 14)
           Else
             AssertAlmostEqual(
               ControlLimitRejectionCriterion(j, i), NormSInv((j+1)/2), 15)
