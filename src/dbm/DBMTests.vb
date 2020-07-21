@@ -180,7 +180,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(TInv(0.5267, 15), 0.0681)
 
       AssertAlmostEqual(MeanAbsoluteDeviationScaleFactor, 1.2533)
-      AssertAlmostEqual(MeanAbsoluteDeviationScaleFactor, Sqrt(PI/2), 8)
+      AssertAlmostEqual(MeanAbsoluteDeviationScaleFactor, Sqrt(PI/2))
 
       AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(1), 1)
       AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(2), 1.2247)
@@ -205,10 +205,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       For i = 1 To 30
         If i < 30 Then
           AssertAlmostEqual(
-            MedianAbsoluteDeviationScaleFactor(i), 1/TInv(0.75, i), 8)
+            MedianAbsoluteDeviationScaleFactor(i), 1/TInv(0.75, i))
         Else
           AssertAlmostEqual(
-            MedianAbsoluteDeviationScaleFactor(i), 1/NormSInv(0.75), 8)
+            MedianAbsoluteDeviationScaleFactor(i), 1/NormSInv(0.75))
         End If
       Next i
 
@@ -236,10 +236,10 @@ Namespace Vitens.DynamicBandwidthMonitor
         For Each j In {0.9, 0.95, 0.98, 0.99, 0.9998, 0.9999}
           If i < 30 Then
             AssertAlmostEqual(
-              ControlLimitRejectionCriterion(j, i), TInv((j+1)/2, i), 8)
+              ControlLimitRejectionCriterion(j, i), TInv((j+1)/2, i))
           Else
             AssertAlmostEqual(
-              ControlLimitRejectionCriterion(j, i), NormSInv((j+1)/2), 8)
+              ControlLimitRejectionCriterion(j, i), NormSInv((j+1)/2))
           End If
         Next
       Next i
