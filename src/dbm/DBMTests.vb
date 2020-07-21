@@ -205,7 +205,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       For i = 1 To 30 ' LUT
         If i < 30 Then
           AssertAlmostEqual(
-            MedianAbsoluteDeviationScaleFactor(i), 1/TInv(0.75, i), 14)
+            MedianAbsoluteDeviationScaleFactor(i), 1/TInv(0.75, i), 13)
         Else
           AssertAlmostEqual(
             MedianAbsoluteDeviationScaleFactor(i), 1/NormSInv(0.75), 15)
