@@ -239,7 +239,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               ControlLimitRejectionCriterion(j, i), TInv((j+1)/2, i), 11)
           Else
             AssertAlmostEqual(
-              ControlLimitRejectionCriterion(j, i), NormSInv((j+1)/2), 15)
+              ControlLimitRejectionCriterion(j, i), NormSInv((j+1)/2), 14)
           End If
         Next
       Next i
