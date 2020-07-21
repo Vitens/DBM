@@ -405,7 +405,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertEqual(CentralTendency({3, 5, 1, 9}), 4)
       AssertEqual(CentralTendency({0, 0, 0, 0}), 0)
 
-      AssertAlmostEqual(ControlLimit({8, 2, 0, 10}, 0.99), 30.5449)
+      AssertAlmostEqual(ControlLimit({8, 2, 0, 10}, 0.99), 30.545)
       AssertAlmostEqual(ControlLimit({2, 4, 8, 7}, 0.99), 15.2724)
       AssertAlmostEqual(ControlLimit({5, 8, 0, 2}, 0.99), 19.0906)
       AssertAlmostEqual(ControlLimit({8, 1, 0, 3}, 0.99), 11.4543)
@@ -416,7 +416,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(ControlLimit({6, 0, 10, 1}, 0.99), 22.9087)
       AssertAlmostEqual(ControlLimit({10, 3, 4, 2}, 0.99), 7.6362)
       AssertAlmostEqual(ControlLimit({6, 4, 4, 4}, 0.99), 5.4904)
-      AssertAlmostEqual(ControlLimit({1, 0, 9, 9}, 0.99), 30.5449)
+      AssertAlmostEqual(ControlLimit({1, 0, 9, 9}, 0.99), 30.545)
       AssertAlmostEqual(ControlLimit({0, 3, 6, 2}, 0.99), 11.4543)
       AssertAlmostEqual(ControlLimit({9, 7, 4, 6}, 0.99), 11.4543)
       AssertAlmostEqual(ControlLimit({6, 6, 4, 1}, 0.99), 7.6362)
