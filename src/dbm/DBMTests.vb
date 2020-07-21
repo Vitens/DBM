@@ -28,6 +28,7 @@ Imports System.DateTime
 Imports System.Double
 Imports System.Globalization
 Imports System.Globalization.CultureInfo
+Imports System.Math
 Imports System.TimeSpan
 Imports Vitens.DynamicBandwidthMonitor.DBM
 Imports Vitens.DynamicBandwidthMonitor.DBMAssert
@@ -47,6 +48,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Sub RunUnitTests
 
       Dim i As Integer
+      Dim j As Double
 
       AssertEqual(True, True)
       AssertEqual(Today, Today)
@@ -178,6 +180,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(TInv(0.5267, 15), 0.0681)
 
       AssertAlmostEqual(MeanAbsoluteDeviationScaleFactor, 1.2533)
+      AssertAlmostEqual(MeanAbsoluteDeviationScaleFactor, Sqrt(PI/2), 8)
 
       AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(1), 1)
       AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(2), 1.2247)
@@ -199,6 +202,15 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(34), 1.4826)
       AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(36), 1.4826)
       AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(38), 1.4826)
+      For i = 1 To 30
+        If i < 30 Then
+          AssertAlmostEqual(
+            MedianAbsoluteDeviationScaleFactor(i), 1/TInv(0.75, i), 8)
+        Else
+          AssertAlmostEqual(
+            MedianAbsoluteDeviationScaleFactor(i), 1/NormSInv(0.75), 8)
+        End If
+      Next i
 
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 1), 63.6567)
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 2), 9.9248)
@@ -220,6 +232,17 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.90, 30), 1.6449)
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.95, 25), 2.0595)
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.90, 20), 1.7247)
+      For i = 1 To 30
+        For Each j In {0.9, 0.95, 0.98, 0.99, 0.9998, 0.9999}
+          If i < 30 Then
+            AssertAlmostEqual(
+              ControlLimitRejectionCriterion(j, i), TInv((j+1)/2, i), 8)
+          Else
+            AssertAlmostEqual(
+              ControlLimitRejectionCriterion(j, i), NormSInv((j+1)/2), 8)
+          End If
+        Next
+      Next i
 
       AssertEqual(NonNaNCount({60}), 1)
       AssertEqual(NonNaNCount({60, 70}), 2)
@@ -557,7 +580,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(ExponentialMovingAverage(
         {26.1368, 78.5212, 37.8903, 28.9665, 91.9377, 63.1742}), 60.2045)
 
-      AssertAlmostEqual(SlopeToAngle(-4.5806), -77.6849)
       AssertAlmostEqual(SlopeToAngle(-4.2541), -76.7718)
       AssertAlmostEqual(SlopeToAngle(1.7964), 60.8967)
       AssertAlmostEqual(SlopeToAngle(-3.2474), -72.8844)
@@ -577,6 +599,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(SlopeToAngle(3.1088), 72.1687)
       AssertAlmostEqual(SlopeToAngle(-1.6831), -59.2837)
       AssertAlmostEqual(SlopeToAngle(-2.0031), -63.4704)
+      AssertAlmostEqual(SlopeToAngle(1), 45)
 
       For i = 0 To 19
         AssertTrue(RandomNumber(0, i+1) >= 0)

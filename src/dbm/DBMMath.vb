@@ -453,7 +453,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Returns angle in degrees for Slope.
 
-      ' Precomputed result
+      ' Precomputed result.
       If Slope = 1 Then Return 45
 
       Return Atan(Slope)/(2*PI)*360
