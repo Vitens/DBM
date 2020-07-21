@@ -179,9 +179,11 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Hogg and Tanis' Probability and Statistical Inference (7e).
 
       ' Precomputed results
-      If p = 0.99 And n >= 6 and n <= 11 Then Return {3.70744533800376,
+      If p = 0.99 And n >= 6 And n <= 11 Then Return {3.70744533800376,
         3.49948706845407, 3.35538805213598, 3.2498355357257, 3.16927251686568,
         3.10580635664082}(n-6)
+
+Console.WriteLine(p.ToString)
 
       If n < 30 Then
         Return TInv((p+1)/2, n) ' n<30 Student's t-distribution
