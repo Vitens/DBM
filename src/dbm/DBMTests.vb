@@ -254,7 +254,7 @@ console.writeline("")
       Next i
 
 For Each j In {0.9, 0.95, 0.98, 0.99, 0.9998, 0.9999}
- console.write(Convert.ToString(j) & ": ")
+ console.write(j & ": ")
  For i = 1 To 30
           If i < 30 Then
             Console.Write( Convert.ToString(TInv((j+1)/2, i)) & ", ")
