@@ -78,7 +78,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const pValueMinMax As Double = 0.9999 ' CI for Minimum and Maximum
 
 
-    Private Shared DBM As New DBM
+    Private Shared DBMShared As New DBM ' Use shared DBM object, if available.
+    Private DBMNonShared As New DBM ' Fall back to non-shared object.
 
 
     Public Shared Function CreateDataPipe As Object
@@ -415,7 +416,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                     Attribute.Parent.Name)), False))
                 End If
               End If
-            Next
+            Next SiblingElement
           End If
 
           ' Find parents recursively
@@ -435,77 +436,96 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         End If
 
-        Monitor.Enter(DBM) ' Request the lock, and block until it is obtained.
-        Try
+        For Each DBM In {DBMShared, DBMNonShared, New DBM} ' Prefer shared obj.
 
-          ' Every 8 hours, clear all cached data in the DBM object.
-          DBM.ClearCache(8)
+          ' First, try to enter and lock the shared DBM object. This is
+          ' preferred since cached data for all attributes can then be reused.
+          ' If this takes longer than half the calculation interval, fall back
+          ' to a non-shared object specific to this attribute instance. If this
+          ' then still takes too long, longer than the calculation interval,
+          ' just create a new DBM instance and use that. We won't have any cache
+          ' to reuse, but at least the calculation will run. There is a
+          ' trade-off here between having results available quicky and being
+          ' able to reuse already cached data (which requires calculations to be
+          ' processed in serial).
 
-          ' Align timestamps and determine interval seconds.
-          timeRange.StartTime = New AFTime(AlignPreviousInterval(
-            timeRange.StartTime.UtcSeconds, CalculationInterval)) ' Previous
-          timeRange.EndTime = New AFTime(AlignPreviousInterval(
-            timeRange.EndTime.UtcSeconds, -CalculationInterval)) ' Next
-          IntervalSeconds = PIAFIntervalSeconds(numberOfValues,
-            timeRange.EndTime.UtcSeconds-timeRange.StartTime.UtcSeconds)
+          If Monitor.TryEnter(DBM,
+            TimeSpan.FromSeconds(CalculationInterval/2)) Then
+            Try
 
-          ' Retrieve snapshot timestamp and retrieve all data from the data
-          ' source using the driver.
-          Snapshot = Attribute.Parent.GetValue.Timestamp
-          DBM.PrepareData(InputPointDriver, CorrelationPoints,
-            timeRange.StartTime.LocalTime, timeRange.EndTime.LocalTime)
+              ' Every 8 hours, clear all cached data in the DBM object.
+              DBM.ClearCache(8)
 
-          ' Loop through time range. For attributes without future data, do not
-          ' return data beyond the snapshot timestamp.
-          Do While timeRange.EndTime > timeRange.StartTime And
-            (AttributeHasFutureData Or Not timeRange.StartTime > Snapshot)
+              ' Align timestamps and determine interval seconds.
+              timeRange.StartTime = New AFTime(AlignPreviousInterval(
+                timeRange.StartTime.UtcSeconds, CalculationInterval)) ' Previous
+              timeRange.EndTime = New AFTime(AlignPreviousInterval(
+                timeRange.EndTime.UtcSeconds, -CalculationInterval)) ' Next
+              IntervalSeconds = PIAFIntervalSeconds(numberOfValues,
+                timeRange.EndTime.UtcSeconds-timeRange.StartTime.UtcSeconds)
 
-            With DBM.Result(InputPointDriver, CorrelationPoints,
-              timeRange.StartTime.LocalTime)
+              ' Retrieve snapshot timestamp and retrieve all data from the data
+              ' source using the driver.
+              Snapshot = Attribute.Parent.GetValue.Timestamp
+              DBM.PrepareData(InputPointDriver, CorrelationPoints,
+                timeRange.StartTime.LocalTime, timeRange.EndTime.LocalTime)
 
-              If Attribute.Trait Is LimitTarget Then
-                GetValues.Add(New AFValue(.ForecastItem.Measurement,
-                  timeRange.StartTime.LocalTime))
-              ElseIf Attribute.Trait Is Forecast Then
-                GetValues.Add(New AFValue(.ForecastItem.ForecastValue,
-                  timeRange.StartTime.LocalTime))
-              ElseIf Attribute.Trait Is LimitMinimum Then
-                GetValues.Add(New AFValue(.ForecastItem.ForecastValue-
-                  .ForecastItem.Range(pValueMinMax),
-                  timeRange.StartTime.LocalTime))
-              ElseIf Attribute.Trait Is LimitLoLo Then
-                GetValues.Add(New AFValue(.ForecastItem.LowerControlLimit,
-                  timeRange.StartTime.LocalTime))
-              ElseIf Attribute.Trait Is LimitLo Then
-                GetValues.Add(New AFValue(.ForecastItem.ForecastValue-
-                  .ForecastItem.Range(pValueLoHi),
-                  timeRange.StartTime.LocalTime))
-              ElseIf Attribute.Trait Is LimitHi Then
-                GetValues.Add(New AFValue(.ForecastItem.ForecastValue+
-                  .ForecastItem.Range(pValueLoHi),
-                  timeRange.StartTime.LocalTime))
-              ElseIf Attribute.Trait Is LimitHiHi Then
-                GetValues.Add(New AFValue(.ForecastItem.UpperControlLimit,
-                  timeRange.StartTime.LocalTime))
-              ElseIf Attribute.Trait Is LimitMaximum Then
-                GetValues.Add(New AFValue(.ForecastItem.ForecastValue+
-                  .ForecastItem.Range(pValueMinMax),
-                  timeRange.StartTime.LocalTime))
-              Else
-                GetValues.Add(New AFValue(.Factor,
-                  timeRange.StartTime.LocalTime))
-              End If
+              ' Loop through time range. For attributes without future data, do
+              ' not return data beyond the snapshot timestamp.
+              Do While timeRange.EndTime > timeRange.StartTime And
+                (AttributeHasFutureData Or Not timeRange.StartTime > Snapshot)
 
-            End With
+                With DBM.Result(InputPointDriver, CorrelationPoints,
+                  timeRange.StartTime.LocalTime)
 
-            timeRange.StartTime = New AFTime(
-              timeRange.StartTime.UtcSeconds+IntervalSeconds) ' Next intv.
+                  If Attribute.Trait Is LimitTarget Then
+                    GetValues.Add(New AFValue(.ForecastItem.Measurement,
+                      timeRange.StartTime.LocalTime))
+                  ElseIf Attribute.Trait Is Forecast Then
+                    GetValues.Add(New AFValue(.ForecastItem.ForecastValue,
+                      timeRange.StartTime.LocalTime))
+                  ElseIf Attribute.Trait Is LimitMinimum Then
+                    GetValues.Add(New AFValue(.ForecastItem.ForecastValue-
+                      .ForecastItem.Range(pValueMinMax),
+                      timeRange.StartTime.LocalTime))
+                  ElseIf Attribute.Trait Is LimitLoLo Then
+                    GetValues.Add(New AFValue(.ForecastItem.LowerControlLimit,
+                      timeRange.StartTime.LocalTime))
+                  ElseIf Attribute.Trait Is LimitLo Then
+                    GetValues.Add(New AFValue(.ForecastItem.ForecastValue-
+                      .ForecastItem.Range(pValueLoHi),
+                      timeRange.StartTime.LocalTime))
+                  ElseIf Attribute.Trait Is LimitHi Then
+                    GetValues.Add(New AFValue(.ForecastItem.ForecastValue+
+                      .ForecastItem.Range(pValueLoHi),
+                      timeRange.StartTime.LocalTime))
+                  ElseIf Attribute.Trait Is LimitHiHi Then
+                    GetValues.Add(New AFValue(.ForecastItem.UpperControlLimit,
+                      timeRange.StartTime.LocalTime))
+                  ElseIf Attribute.Trait Is LimitMaximum Then
+                    GetValues.Add(New AFValue(.ForecastItem.ForecastValue+
+                      .ForecastItem.Range(pValueMinMax),
+                      timeRange.StartTime.LocalTime))
+                  Else
+                    GetValues.Add(New AFValue(.Factor,
+                      timeRange.StartTime.LocalTime))
+                  End If
 
-          Loop
+                End With
 
-        Finally
-          Monitor.Exit(DBM) ' Ensure that the lock is released.
-        End Try
+                timeRange.StartTime = New AFTime(
+                  timeRange.StartTime.UtcSeconds+IntervalSeconds) ' Next intv.
+
+              Loop
+
+              Exit For ' We have our results, no need to try other DBM objects.
+
+            Finally
+              Monitor.Exit(DBM) ' Ensure that the lock is released.
+            End Try
+          End If
+
+        Next DBM
 
       End If
 
