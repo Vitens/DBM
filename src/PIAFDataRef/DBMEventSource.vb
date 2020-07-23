@@ -124,9 +124,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' instance. If the attribute-specific DBM object cannot be locked as
         ' well, use a new object. For these last two cases, we need to query the
         ' attributes in parallel, since we don't want to have the waiting step
-        ' for each attribute in serial. So since data is essentially retrieved
-        ' in serial, this means that for some services signing up to many
-        ' attributes, initialization might take some time. After data is
+        ' for each attribute in serial. For clients, data is essentially
+        ' retrieved in serial. For some services signing up to many attributes,
+        ' initialization might take some time because of this. After data is
         ' retrieved for all attributes for the first time, only small amounts of
         ' new data are needed for all consequent evaluations, greatly speeding
         ' them up.
@@ -153,13 +153,11 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Publish all events to the data pipe and clear the events list.
         Monitor.Enter(DataPipeEvents) ' Lock
         Try
-
           For Each DataPipeEvent In DataPipeEvents
             MyBase.PublishEvent(DataPipeEvent.Attribute,
               New AFDataPipeEvent(AFDataPipeAction.Add, DataPipeEvent.Value))
           Next
           DataPipeEvents.Clear
-
         Finally
           Monitor.Exit(DataPipeEvents)
         End Try
