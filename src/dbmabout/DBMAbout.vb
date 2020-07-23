@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2019  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -24,7 +24,9 @@ Option Strict
 
 Imports System
 Imports System.Environment
+Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
+Imports Vitens.DynamicBandwidthMonitor.DBMTests
 
 
 ' Assembly title
@@ -43,7 +45,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Sub Main
 
-      Console.Write(LicenseNotice)
+      Console.Write(LicenseNotice & NewLine & "Performance Index: ")
+      Console.WriteLine(Round(PerformanceIndex, 1).ToString)
 
     End Sub
 

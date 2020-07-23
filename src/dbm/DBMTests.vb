@@ -28,6 +28,8 @@ Imports System.DateTime
 Imports System.Double
 Imports System.Globalization
 Imports System.Globalization.CultureInfo
+Imports System.Math
+Imports System.TimeSpan
 Imports Vitens.DynamicBandwidthMonitor.DBM
 Imports Vitens.DynamicBandwidthMonitor.DBMAssert
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
@@ -46,6 +48,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Sub RunUnitTests
 
       Dim i As Integer
+      Dim j As Double
 
       AssertEqual(True, True)
       AssertEqual(Today, Today)
@@ -177,6 +180,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(TInv(0.5267, 15), 0.0681)
 
       AssertAlmostEqual(MeanAbsoluteDeviationScaleFactor, 1.2533)
+      AssertAlmostEqual(MeanAbsoluteDeviationScaleFactor, Sqrt(PI/2), 15) ' LUT
 
       AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(1), 1)
       AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(2), 1.2247)
@@ -199,6 +203,16 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(36), 1.4826)
       AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(38), 1.4826)
 
+      For i = 1 To 30 ' LUT
+        If i < 30 Then
+          AssertAlmostEqual(
+            MedianAbsoluteDeviationScaleFactor(i), 1/TInv(0.75, i), 12)
+        Else
+          AssertAlmostEqual(
+            MedianAbsoluteDeviationScaleFactor(i), 1/NormSInv(0.75), 15)
+        End If
+      Next i
+
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 1), 63.6567)
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 2), 9.9248)
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 4), 4.6041)
@@ -219,6 +233,18 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.90, 30), 1.6449)
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.95, 25), 2.0595)
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.90, 20), 1.7247)
+
+      For i = 1 To 30 ' LUT
+        For Each j In {0.9, 0.95, 0.98, 0.99, 0.9998, 0.9999}
+          If i < 30 Then
+            AssertAlmostEqual(
+              ControlLimitRejectionCriterion(j, i), TInv((j+1)/2, i), 11)
+          Else
+            AssertAlmostEqual(
+              ControlLimitRejectionCriterion(j, i), NormSInv((j+1)/2), 14)
+          End If
+        Next
+      Next i
 
       AssertEqual(NonNaNCount({60}), 1)
       AssertEqual(NonNaNCount({60, 70}), 2)
@@ -1087,6 +1113,41 @@ Namespace Vitens.DynamicBandwidthMonitor
       Next i
 
     End Sub
+
+
+    Public Shared Function PerformanceIndex As Double
+
+      ' Returns the performance of the DBM calculation as a performance index.
+      ' The returned value indicates how many full days per second this system
+      ' can calculate when performing real-time continuous calculations.
+
+      Const DurationTicks As Double = 5*TicksPerSecond ' Measure for 5 seconds.
+
+      Dim InputPointDriver As DBMPointDriverTestModel
+      Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
+      Dim Timestamp, Timer As DateTime
+      Dim Result As DBMResult
+      Dim DBM As New DBM
+      Dim Count As Integer
+
+      InputPointDriver = New DBMPointDriverTestModel(0)
+      CorrelationPoints.Add(New DBMCorrelationPoint(
+        New DBMPointDriverTestModel(5394), False))
+      CorrelationPoints.Add(New DBMCorrelationPoint(
+        New DBMPointDriverTestModel(227), True))
+      Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
+
+      Timer = Now
+      Do While Now.Ticks-Timer.Ticks < DurationTicks
+        Result = DBM.Result(InputPointDriver, CorrelationPoints, Timestamp,
+          New CultureInfo("nl-NL")) ' Use Dutch locale for holidays.
+        If Now.Ticks-Timer.Ticks >= DurationTicks/2 Then Count += 1 ' 2nd half.
+        Timestamp = Timestamp.AddSeconds(CalculationInterval)
+      Loop
+
+      Return 2*Count*TicksPerSecond*CalculationInterval/(24*60*60*DurationTicks)
+
+    End Function
 
 
   End Class
