@@ -40,8 +40,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Inherits AFEventSource
 
 
-    Private PreviousSnapshots As New Dictionary(Of AFAttribute, AFTime)
-    Private DataPipeEvents As New List(Of DataPipeEvent)
+    Private Shared PreviousSnapshots As New Dictionary(Of AFAttribute, AFTime)
+    Private Shared DataPipeEvents As New List(Of DataPipeEvent)
     Private PreviousInterval As AFTime = AFTime.MinValue
 
 
