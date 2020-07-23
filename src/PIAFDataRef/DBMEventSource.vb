@@ -56,24 +56,26 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Structure
 
 
-    Private Shared Sub RetrieveEvent(Attribute As AFAttribute)
+    Private Shared Sub RetrieveEvent(Attribute As Object)
 
-      Dim Snapshot As AFValue
       Dim DataPipeEvent As DataPipeEvent
+      Dim Snapshot As AFValue
 
       ' In a new interval, retrieve snapshot value.
-      Snapshot = Attribute.GetValue
+      DataPipeEvent.Attribute = DirectCast(Attribute, AFAttribute)
+      Snapshot = DataPipeEvent.Attribute.GetValue
 
       Monitor.Enter(PreviousSnapshots) ' Lock
       Try
-        If Not PreviousSnapshots.ContainsKey(Attribute) Then
+        If Not PreviousSnapshots.ContainsKey(DataPipeEvent.Attribute) Then
           ' Store the initial previous snapshot timestamp for this attribute.
-          PreviousSnapshots.Add(Attribute, Snapshot.Timestamp)
+          PreviousSnapshots.Add(DataPipeEvent.Attribute, Snapshot.Timestamp)
         Else
           ' If newer, store snapshot timestamp as previous snapshot timestamp
           ' for this attribute.
-          If Snapshot.Timestamp > PreviousSnapshots.Item(Attribute) Then
-            PreviousSnapshots.Item(Attribute) = Snapshot.Timestamp
+          If Snapshot.Timestamp >
+            PreviousSnapshots.Item(DataPipeEvent.Attribute) Then
+            PreviousSnapshots.Item(DataPipeEvent.Attribute) = Snapshot.Timestamp
           Else
             Snapshot = Nothing ' There is no new event.
           End If
@@ -84,7 +86,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       If Snapshot IsNot Nothing Then
         ' Store new snapshot in shared events list.
-        DataPipeEvent.Attribute = Attribute
         DataPipeEvent.Value = Snapshot
         Monitor.Enter(DataPipeEvents) ' Lock
         Try
