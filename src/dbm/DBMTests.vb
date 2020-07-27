@@ -1064,6 +1064,37 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DBMCorrelationPoint(New DBMPointDriverTestModel(490), False))
       Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
 
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 1, 0, 0, 0)).Count, 1)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 3, 55),
+        New DateTime(2016, 1, 1, 0, 3, 55)).Count, 1)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 1, 0, 5, 0)).Count, 2)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 1, 0, 6, 12)).Count, 2)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 2, 41),
+        New DateTime(2016, 1, 1, 0, 6, 12)).Count, 2)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 1, 0, 10, 0)).Count, 3)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 1, 9),
+        New DateTime(2016, 1, 1, 0, 14, 57)).Count, 3)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 2, 0, 0, 0)).Count, 288)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 8, 0, 0, 0)).Count, 2016)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 2, 1, 0, 0, 0)).Count, 8928)
+
       For i = 0 To 19
         Result = DBM.GetResult(InputPointDriver, CorrelationPoints, Timestamp,
           New CultureInfo("nl-NL")) ' Use Dutch locale for New Year's Day test

@@ -220,7 +220,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       GetResults = New List(Of DBMResult)
       StartTimestamp = AlignTimestamp(StartTimestamp, CalculationInterval)
-      EndTimestamp = NextInterval(EndTimestamp) ' Exclusive.
+      EndTimestamp = NextInterval(EndTimestamp)
 
       ' Use culture used by the current thread if no culture was passed.
       If Culture Is Nothing Then Culture = CurrentThread.CurrentCulture
