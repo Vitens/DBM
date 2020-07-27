@@ -159,16 +159,14 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Sub PrepareData(InputPointDriver As DBMPointDriverAbstract,
+    Private Sub PrepareData(InputPointDriver As DBMPointDriverAbstract,
       CorrelationPoints As List(Of DBMCorrelationPoint),
       StartTimestamp As DateTime, EndTimestamp As DateTime)
 
       ' Will pass start and end timestamps to TryPrepareData method for input
       ' and correlation PointDrivers. The driver can then prepare the dataset
       ' for which calculations are required in the next step. The (aligned) end
-      ' time itself is excluded. Useful for retrieving in bulk and caching in
-      ' memory. Note that some drivers will only return data that has been
-      ' prepared using this method.
+      ' time itself is excluded.
 
       Dim CorrelationPoint As DBMCorrelationPoint
 
@@ -195,16 +193,34 @@ Namespace Vitens.DynamicBandwidthMonitor
       CorrelationPoints As List(Of DBMCorrelationPoint), Timestamp As DateTime,
       Optional Culture As CultureInfo = Nothing) As DBMResult
 
-      ' This is the main function to call to retrieve results for a specific
+      ' This is the main function to call to calculate a result for a specific
       ' timestamp. If a list of DBMCorrelationPoints is passed, events can be
-      ' suppressed if a strong correlation is found. Be sure to call the
-      ' PrepareData method to prepare data in memory before calculating
-      ' DBM results.
+      ' suppressed if a strong correlation is found.
+
+      Return GetResults(
+        InputPointDriver, CorrelationPoints, Timestamp, Timestamp, Culture)(0)
+
+    End Function
+
+
+    Public Function GetResults(InputPointDriver As DBMPointDriverAbstract,
+      CorrelationPoints As List(Of DBMCorrelationPoint),
+      StartTimestamp As DateTime, EndTimestamp As DateTime,
+      Optional Culture As CultureInfo = Nothing) As List(Of DBMResult)
+
+      ' This is the main function to call to calculate results for a time range.
+      ' If a list of DBMCorrelationPoints is passed, events can be suppressed if
+      ' a strong correlation is found.
 
       Dim CorrelationPoint As DBMCorrelationPoint
+      Dim Result As DBMResult
       Dim CorrelationResult As DBMResult
       Dim AbsoluteErrorStatsItem,
         RelativeErrorStatsItem As New DBMStatisticsItem
+
+      GetResults = New List(Of DBMResult)
+      StartTimestamp = AlignTimestamp(StartTimestamp, CalculationInterval)
+      EndTimestamp = NextInterval(EndTimestamp) ' Exclusive.
 
       ' Use culture used by the current thread if no culture was passed.
       If Culture Is Nothing Then Culture = CurrentThread.CurrentCulture
@@ -213,44 +229,54 @@ Namespace Vitens.DynamicBandwidthMonitor
         CorrelationPoints = New List(Of DBMCorrelationPoint)
       End If
 
-      ' Calculate for input point
-      GetResult = Point(InputPointDriver).Result(
-        Timestamp, True, CorrelationPoints.Count > 0, Nothing, Culture)
+      PrepareData(InputPointDriver, CorrelationPoints,
+        StartTimestamp, EndTimestamp) ' Retrieve all data from the data source.
 
-      ' If an event is found and a correlation point is available
-      If CorrelationPoints.Count > 0 Then
-        For Each CorrelationPoint In CorrelationPoints
-          If GetResult.Factor <> 0 Then
+      Do While EndTimestamp > StartTimestamp
 
-            ' If pattern of correlation point contains input point
-            If CorrelationPoint.SubtractSelf Then
-              ' Calculate result for correlation point, subtract input point
-              CorrelationResult = Point(CorrelationPoint.PointDriver).Result(
-                Timestamp, False, True, Point(InputPointDriver), Culture)
-            Else
-              ' Calculate result for correlation point
-              CorrelationResult = Point(CorrelationPoint.PointDriver).Result(
-                Timestamp, False, True, Nothing, Culture)
+        ' Calculate for input point.
+        Result = Point(InputPointDriver).Result(
+          StartTimestamp, True, CorrelationPoints.Count > 0, Nothing, Culture)
+
+        ' If an event is found and a correlation point is available.
+        If CorrelationPoints.Count > 0 Then
+          For Each CorrelationPoint In CorrelationPoints
+            If Result.Factor <> 0 Then
+
+              ' If pattern of correlation point contains input point.
+              If CorrelationPoint.SubtractSelf Then
+                ' Calculate result for correlation point, subtract input point.
+                CorrelationResult = Point(CorrelationPoint.PointDriver).Result(
+                  StartTimestamp, False, True, Point(InputPointDriver), Culture)
+              Else
+                ' Calculate result for correlation point.
+                CorrelationResult = Point(CorrelationPoint.PointDriver).Result(
+                  StartTimestamp, False, True, Nothing, Culture)
+              End If
+
+              ' Calculate statistics of error compared to forecast.
+              AbsoluteErrorStatsItem = Statistics(
+                CorrelationResult.AbsoluteErrors, Result.AbsoluteErrors)
+              RelativeErrorStatsItem = Statistics(
+                CorrelationResult.RelativeErrors, Result.RelativeErrors)
+
+              Result.Factor = Suppress(Result.Factor,
+                AbsoluteErrorStatsItem.ModifiedCorrelation,
+                AbsoluteErrorStatsItem.OriginAngle,
+                RelativeErrorStatsItem.ModifiedCorrelation,
+                RelativeErrorStatsItem.OriginAngle,
+                CorrelationPoint.SubtractSelf) ' Suppress if not a local event.
+
             End If
+          Next
+        End If
 
-            ' Calculate statistics of error compared to forecast
-            AbsoluteErrorStatsItem = Statistics(
-              CorrelationResult.AbsoluteErrors, GetResult.AbsoluteErrors)
-            RelativeErrorStatsItem = Statistics(
-              CorrelationResult.RelativeErrors, GetResult.RelativeErrors)
+        GetResults.Add(Result) ' Add timestamp results.
+        StartTimestamp = NextInterval(StartTimestamp) ' Next interval.
 
-            GetResult.Factor = Suppress(GetResult.Factor,
-              AbsoluteErrorStatsItem.ModifiedCorrelation,
-              AbsoluteErrorStatsItem.OriginAngle,
-              RelativeErrorStatsItem.ModifiedCorrelation,
-              RelativeErrorStatsItem.OriginAngle,
-              CorrelationPoint.SubtractSelf) ' Suppress if not a local event.
+      Loop
 
-          End If
-        Next
-      End If
-
-      Return GetResult
+      Return GetResults
 
     End Function
 
