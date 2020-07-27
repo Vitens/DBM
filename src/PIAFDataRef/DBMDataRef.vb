@@ -453,9 +453,6 @@ Namespace Vitens.DynamicBandwidthMonitor
             TimeSpan.FromSeconds(CalculationInterval/2)) Then
             Try
 
-              ' Every 8 hours, clear all cached data in the DBM object.
-              DBM.ClearCache(8)
-
               ' Align timestamps and determine interval seconds.
               timeRange.StartTime = New AFTime(AlignPreviousInterval(
                 timeRange.StartTime.UtcSeconds, CalculationInterval)) ' Previous

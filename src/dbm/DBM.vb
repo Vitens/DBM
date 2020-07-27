@@ -96,7 +96,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Sub ClearCache(Optional Hours As Integer = 0)
+    Private Sub ClearCache(Optional Hours As Integer = 0)
 
       ' Clear all cached points including their cached data and cached forecast
       ' results. Calling this periodically will make sure that all data is
@@ -219,16 +219,18 @@ Namespace Vitens.DynamicBandwidthMonitor
         RelativeErrorStatsItem As New DBMStatisticsItem
 
       GetResults = New List(Of DBMResult)
+
+      If CorrelationPoints Is Nothing Then ' Empty list if Nothing was passed.
+        CorrelationPoints = New List(Of DBMCorrelationPoint)
+      End If
+
       StartTimestamp = AlignTimestamp(StartTimestamp, CalculationInterval)
       EndTimestamp = AlignTimestamp(EndTimestamp, CalculationInterval)
 
       ' Use culture used by the current thread if no culture was passed.
       If Culture Is Nothing Then Culture = CurrentThread.CurrentCulture
 
-      If CorrelationPoints Is Nothing Then ' Empty list if Nothing was passed.
-        CorrelationPoints = New List(Of DBMCorrelationPoint)
-      End If
-
+      ClearCache(8) ' Every 8 hours, clear all cached data in the DBM object.
       PrepareData(InputPointDriver, CorrelationPoints,
         StartTimestamp, EndTimestamp) ' Retrieve all data from the data source.
 
