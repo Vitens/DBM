@@ -214,13 +214,13 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
 
       ' Calculate for input point
-      Result = Point(InputPointDriver).Result(
+      GetResult = Point(InputPointDriver).Result(
         Timestamp, True, CorrelationPoints.Count > 0, Nothing, Culture)
 
       ' If an event is found and a correlation point is available
       If CorrelationPoints.Count > 0 Then
         For Each CorrelationPoint In CorrelationPoints
-          If Result.Factor <> 0 Then
+          If GetResult.Factor <> 0 Then
 
             ' If pattern of correlation point contains input point
             If CorrelationPoint.SubtractSelf Then
@@ -235,11 +235,11 @@ Namespace Vitens.DynamicBandwidthMonitor
 
             ' Calculate statistics of error compared to forecast
             AbsoluteErrorStatsItem = Statistics(
-              CorrelationResult.AbsoluteErrors, Result.AbsoluteErrors)
+              CorrelationResult.AbsoluteErrors, GetResult.AbsoluteErrors)
             RelativeErrorStatsItem = Statistics(
-              CorrelationResult.RelativeErrors, Result.RelativeErrors)
+              CorrelationResult.RelativeErrors, GetResult.RelativeErrors)
 
-            Result.Factor = Suppress(Result.Factor,
+            GetResult.Factor = Suppress(GetResult.Factor,
               AbsoluteErrorStatsItem.ModifiedCorrelation,
               AbsoluteErrorStatsItem.OriginAngle,
               RelativeErrorStatsItem.ModifiedCorrelation,
@@ -250,7 +250,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Next
       End If
 
-      Return Result
+      Return GetResult
 
     End Function
 
