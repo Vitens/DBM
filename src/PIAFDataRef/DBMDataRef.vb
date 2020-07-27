@@ -475,7 +475,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               Do While timeRange.EndTime > timeRange.StartTime And
                 (AttributeHasFutureData Or Not timeRange.StartTime > Snapshot)
 
-                With DBM.Result(InputPointDriver, CorrelationPoints,
+                With DBM.GetResult(InputPointDriver, CorrelationPoints,
                   timeRange.StartTime.LocalTime)
 
                   If Attribute.Trait Is LimitTarget Then
