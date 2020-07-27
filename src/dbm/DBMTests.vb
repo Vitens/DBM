@@ -1055,9 +1055,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim InputPointDriver As DBMPointDriverTestModel
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim Timestamp As DateTime
+      Dim DBM As New DBM
       Dim i As Integer
       Dim Result As DBMResult
-      Dim DBM As New DBM
 
       InputPointDriver = New DBMPointDriverTestModel(0)
       CorrelationPoints.Add(
