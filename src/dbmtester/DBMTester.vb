@@ -83,6 +83,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim InputPointDriver As DBMPointDriver = Nothing
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim StartTimestamp, EndTimestamp As DateTime
+      Dim Result As DBMResult
       Dim DBM As New DBM
 
       ' Parse command line arguments
@@ -136,7 +137,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             Exit Sub
           End Try
         End If
-      Next
+      Next CommandLineArg
 
       If InputPointDriver IsNot Nothing And
         StartTimestamp > DateTime.MinValue Then
@@ -149,10 +150,10 @@ Namespace Vitens.DynamicBandwidthMonitor
           EndTimestamp = EndTimestamp.AddSeconds(-CalculationInterval)
         End If
 
-        Do While EndTimestamp >= StartTimestamp
+        For Each Result In DBM.GetResults(InputPointDriver, CorrelationPoints,
+          StartTimestamp, EndTimestamp) ' Get results for time range.
 
-          With DBM.GetResult(
-            InputPointDriver, CorrelationPoints, StartTimestamp)
+          With Result
             Console.WriteLine(FormatDateTime(.Timestamp) & Separator &
             FormatNumber(.Factor) & Separator &
             FormatNumber(.ForecastItem.Measurement) & Separator &
@@ -161,10 +162,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             FormatNumber(.ForecastItem.UpperControlLimit))
           End With
 
-          ' Next interval
-          StartTimestamp = StartTimestamp.AddSeconds(CalculationInterval)
-
-        Loop
+        Next Result
 
       End If
 
