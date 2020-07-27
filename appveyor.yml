@@ -42,6 +42,7 @@ after_build:
 test_script:
   cmd: |-
     "%TEMP%\Setup_%product%_v%version%+%commit%.exe" /VERYSILENT /NORESTART
+    "%ProgramFiles(x86)%\%company%\%product%\build\DBMAbout.exe"
     "%ProgramFiles(x86)%\%company%\%product%\samples\runsamples.bat"
     powershell -Command "exit [int]!(Get-FileHash '%ProgramFiles(x86)%\%company%\%product%\samples\sample1.csv' -Algorithm MD5).Hash.ToLower().Equals('0eabfae68d91e43978b3598fb814800b')"
     powershell -Command "exit [int]!(Get-FileHash '%ProgramFiles(x86)%\%company%\%product%\samples\sample2.csv' -Algorithm MD5).Hash.ToLower().Equals('ad9da966b42f153233d57603a4da2088')"
