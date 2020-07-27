@@ -191,7 +191,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Function Result(InputPointDriver As DBMPointDriverAbstract,
+    Public Function GetResult(InputPointDriver As DBMPointDriverAbstract,
       CorrelationPoints As List(Of DBMCorrelationPoint), Timestamp As DateTime,
       Optional Culture As CultureInfo = Nothing) As DBMResult
 
