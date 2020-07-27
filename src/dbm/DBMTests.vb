@@ -1065,7 +1065,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
 
       For i = 0 To 19
-        Result = DBM.Result(InputPointDriver, CorrelationPoints, Timestamp,
+        Result = DBM.GetResult(InputPointDriver, CorrelationPoints, Timestamp,
           New CultureInfo("nl-NL")) ' Use Dutch locale for New Year's Day test
         With Result
           AssertAlmostEqual(.Factor, {0, 0, 0, 0, 0, 0, -11.8493, -22.9119, 0,
@@ -1139,7 +1139,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Timer = Now
       Do While Now.Ticks-Timer.Ticks < DurationTicks
-        Result = DBM.Result(InputPointDriver, CorrelationPoints, Timestamp,
+        Result = DBM.GetResult(InputPointDriver, CorrelationPoints, Timestamp,
           New CultureInfo("nl-NL")) ' Use Dutch locale for holidays.
         If Now.Ticks-Timer.Ticks >= DurationTicks/2 Then Count += 1 ' 2nd half.
         Timestamp = Timestamp.AddSeconds(CalculationInterval)
