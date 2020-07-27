@@ -197,8 +197,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' timestamp. If a list of DBMCorrelationPoints is passed, events can be
       ' suppressed if a strong correlation is found.
 
-      Return GetResults(
-        InputPointDriver, CorrelationPoints, Timestamp, Timestamp, Culture)(0)
+      Return GetResults(InputPointDriver, CorrelationPoints,
+        Timestamp, NextInterval(Timestamp), Culture)(0)
 
     End Function
 
@@ -209,8 +209,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Optional Culture As CultureInfo = Nothing) As List(Of DBMResult)
 
       ' This is the main function to call to calculate results for a time range.
-      ' If a list of DBMCorrelationPoints is passed, events can be suppressed if
-      ' a strong correlation is found.
+      ' The end timestamp is exclusive. If a list of DBMCorrelationPoints is
+      ' passed, events can be suppressed if a strong correlation is found.
 
       Dim CorrelationPoint As DBMCorrelationPoint
       Dim Result As DBMResult
@@ -220,7 +220,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       GetResults = New List(Of DBMResult)
       StartTimestamp = AlignTimestamp(StartTimestamp, CalculationInterval)
-      EndTimestamp = NextInterval(EndTimestamp)
+      EndTimestamp = AlignTimestamp(EndTimestamp, CalculationInterval)
 
       ' Use culture used by the current thread if no culture was passed.
       If Culture Is Nothing Then Culture = CurrentThread.CurrentCulture

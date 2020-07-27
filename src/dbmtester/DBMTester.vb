@@ -143,11 +143,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         StartTimestamp > DateTime.MinValue Then
 
         If EndTimestamp = DateTime.MinValue Then
-          ' No end timestamp, set to start timestamp
-          EndTimestamp = StartTimestamp
-        Else
-          ' Remove one interval from end timestamp
-          EndTimestamp = EndTimestamp.AddSeconds(-CalculationInterval)
+          ' No end timestamp, set one interval after start timestamp.
+          EndTimestamp = NextInterval(StartTimestamp)
         End If
 
         For Each Result In DBM.GetResults(InputPointDriver, CorrelationPoints,
