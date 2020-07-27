@@ -1055,45 +1055,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim InputPointDriver As DBMPointDriverTestModel
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim Timestamp As DateTime
-      Dim DBM As New DBM
       Dim i As Integer
       Dim Result As DBMResult
+      Dim DBM As New DBM
 
       InputPointDriver = New DBMPointDriverTestModel(0)
       CorrelationPoints.Add(
         New DBMCorrelationPoint(New DBMPointDriverTestModel(490), False))
       Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
-
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
-        New DateTime(2016, 1, 1, 0, 0, 0),
-        New DateTime(2016, 1, 1, 0, 0, 0)).Count, 0)
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
-        New DateTime(2016, 1, 1, 0, 0, 0),
-        New DateTime(2016, 1, 1, 0, 5, 0)).Count, 1)
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
-        New DateTime(2016, 1, 1, 0, 0, 0),
-        New DateTime(2016, 1, 1, 0, 6, 12)).Count, 1)
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
-        New DateTime(2016, 1, 1, 0, 3, 55),
-        New DateTime(2016, 1, 1, 0, 8, 55)).Count, 1)
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
-        New DateTime(2016, 1, 1, 0, 0, 0),
-        New DateTime(2016, 1, 1, 0, 10, 0)).Count, 2)
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
-        New DateTime(2016, 1, 1, 0, 2, 41),
-        New DateTime(2016, 1, 1, 0, 10, 0)).Count, 2)
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
-        New DateTime(2016, 1, 1, 0, 1, 9),
-        New DateTime(2016, 1, 1, 0, 14, 57)).Count, 2)
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
-        New DateTime(2016, 1, 1, 0, 0, 0),
-        New DateTime(2016, 1, 2, 0, 0, 0)).Count, 288)
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
-        New DateTime(2016, 1, 1, 0, 0, 0),
-        New DateTime(2016, 1, 8, 0, 0, 0)).Count, 2016)
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
-        New DateTime(2016, 1, 1, 0, 0, 0),
-        New DateTime(2016, 2, 1, 0, 0, 0)).Count, 8928)
 
       For i = 0 To 19
         Result = DBM.GetResult(InputPointDriver, CorrelationPoints, Timestamp,
@@ -1142,6 +1111,37 @@ Namespace Vitens.DynamicBandwidthMonitor
         End With
         Timestamp = Timestamp.AddSeconds(365*24*60*60/20)
       Next i
+
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 1, 0, 0, 0)).Count, 0)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 1, 0, 5, 0)).Count, 1)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 1, 0, 6, 12)).Count, 1)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 3, 55),
+        New DateTime(2016, 1, 1, 0, 8, 55)).Count, 1)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 1, 0, 10, 0)).Count, 2)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 2, 41),
+        New DateTime(2016, 1, 1, 0, 10, 0)).Count, 2)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 1, 9),
+        New DateTime(2016, 1, 1, 0, 14, 57)).Count, 2)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 2, 0, 0, 0)).Count, 288)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 8, 0, 0, 0)).Count, 2016)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 2, 1, 0, 0, 0)).Count, 8928)
 
     End Sub
 
