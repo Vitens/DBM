@@ -1198,9 +1198,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' GetResults Timestamp - check intervals
       For i = 0 To 4
-        AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
-          New DateTime(2016, 1, 1, 0, 0, 0), New DateTime(2016, 1, 1, 1, 0, 0),
-          5)(i), New DateTime(2016, 1, 1, 0, {0, 10, 24, 40, 55}(i), 0))
+        AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints, New
+          DateTime(2016, 1, 1, 0, 0, 0), New DateTime(2016, 1, 1, 1, 0, 0), 5)
+          (i).Timestamp, New DateTime(2016, 1, 1, 0, {0, 10, 25, 40, 55}(i), 0))
       Next i
 
     End Sub
