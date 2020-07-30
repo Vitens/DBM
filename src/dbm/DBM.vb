@@ -214,7 +214,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' passed, events can be suppressed if a strong correlation is found.
 
       Dim CorrelationPoint As DBMCorrelationPoint
-      Dim IntervalSeconds As Double
+      Dim TimeRangeInterval As Double
       Dim Result As DBMResult
       Dim CorrelationResult As DBMResult
       Dim AbsoluteErrorStatsItem,
@@ -228,7 +228,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       StartTimestamp = AlignTimestamp(StartTimestamp, CalculationInterval)
       EndTimestamp = AlignTimestamp(EndTimestamp, CalculationInterval)
-      IntervalSeconds = IntervalSeconds(NumberOfValues,
+      TimeRangeInterval = IntervalSeconds(NumberOfValues,
         (EndTimestamp-StartTimestamp).TotalSeconds)
 
       ' Use culture used by the current thread if no culture was passed.
@@ -278,7 +278,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         End If
 
         GetResults.Add(Result) ' Add timestamp results.
-        StartTimestamp = StartTimestamp.AddSeconds(IntervalSeconds) ' Next intv.
+        StartTimestamp = StartTimestamp.AddSeconds(TimeRangeInterval) ' Next intv.
 
       Loop
 
