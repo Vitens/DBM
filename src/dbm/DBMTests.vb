@@ -1190,19 +1190,19 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0), New DateTime(2016, 1, 2, 0, 0, 0),
-        5).Count, 0)(0).Timestamp, New DateTime(2016, 1, 1, 0, 0, 0))
+        5)(0).Timestamp, New DateTime(2016, 1, 1, 0, 0, 0))
       AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0), New DateTime(2016, 1, 2, 0, 0, 0),
-        5).Count, 0)(1).Timestamp, New DateTime(2016, 1, 1, 0, 10, 0))
+        5)(1).Timestamp, New DateTime(2016, 1, 1, 0, 10, 0))
       AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0), New DateTime(2016, 1, 2, 0, 0, 0),
-        5).Count, 0)(2).Timestamp, New DateTime(2016, 1, 1, 0, 25, 0))
+        5)(2).Timestamp, New DateTime(2016, 1, 1, 0, 25, 0))
       AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0), New DateTime(2016, 1, 2, 0, 0, 0),
-        5).Count, 0)(3).Timestamp, New DateTime(2016, 1, 1, 0, 40, 0))
+        5)(3).Timestamp, New DateTime(2016, 1, 1, 0, 40, 0))
       AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0), New DateTime(2016, 1, 2, 0, 0, 0),
-        5).Count, 0)(4).Timestamp, New DateTime(2016, 1, 1, 0, 55, 0))
+        5)(4).Timestamp, New DateTime(2016, 1, 1, 0, 55, 0))
 
     End Sub
 
