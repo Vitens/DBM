@@ -1058,10 +1058,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim InputPointDriver As DBMPointDriverTestModel
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
+      Dim DBM As New DBM
       Dim Timestamp As DateTime
       Dim i As Integer
       Dim Result As DBMResult
-      Dim DBM As New DBM
 
       InputPointDriver = New DBMPointDriverTestModel(0)
       CorrelationPoints.Add(
@@ -1197,21 +1197,11 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2016, 1, 1, 0, 0, 0), 1000).Count, 0)
 
       ' GetResults Timestamp - check intervals
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
-        New DateTime(2016, 1, 1, 0, 0, 0), New DateTime(2016, 1, 1, 1, 0, 0),
-        5)(0).Timestamp, New DateTime(2016, 1, 1, 0, 0, 0))
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
-        New DateTime(2016, 1, 1, 0, 0, 0), New DateTime(2016, 1, 1, 1, 0, 0),
-        5)(1).Timestamp, New DateTime(2016, 1, 1, 0, 10, 0))
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
-        New DateTime(2016, 1, 1, 0, 0, 0), New DateTime(2016, 1, 1, 1, 0, 0),
-        5)(2).Timestamp, New DateTime(2016, 1, 1, 0, 25, 0))
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
-        New DateTime(2016, 1, 1, 0, 0, 0), New DateTime(2016, 1, 1, 1, 0, 0),
-        5)(3).Timestamp, New DateTime(2016, 1, 1, 0, 40, 0))
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
-        New DateTime(2016, 1, 1, 0, 0, 0), New DateTime(2016, 1, 1, 1, 0, 0),
-        5)(4).Timestamp, New DateTime(2016, 1, 1, 0, 55, 0))
+      For i = 0 To 4
+        AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+          New DateTime(2016, 1, 1, 0, 0, 0), New DateTime(2016, 1, 1, 1, 0, 0),
+          5)(i), New DateTime(2016, 1, 1, 0, {0, 10, 24, 40, 55}(i), 0))
+      Next i
 
     End Sub
 
