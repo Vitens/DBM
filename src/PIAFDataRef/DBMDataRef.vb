@@ -34,9 +34,9 @@ Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Asset.AFAttributeTrait
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Time
+Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
-Imports Vitens.DynamicBandwidthMonitor.DBMMisc
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
@@ -458,7 +458,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                 timeRange.StartTime.UtcSeconds, CalculationInterval)) ' Previous
               timeRange.EndTime = New AFTime(AlignPreviousInterval(
                 timeRange.EndTime.UtcSeconds, -CalculationInterval)) ' Next
-              IntervalSeconds = PIAFIntervalSeconds(numberOfValues,
+              IntervalSeconds = IntervalSeconds(numberOfValues,
                 timeRange.EndTime.UtcSeconds-timeRange.StartTime.UtcSeconds)
 
               ' Retrieve snapshot timestamp.

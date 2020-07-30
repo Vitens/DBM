@@ -34,7 +34,6 @@ Imports Vitens.DynamicBandwidthMonitor.DBM
 Imports Vitens.DynamicBandwidthMonitor.DBMAssert
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
-Imports Vitens.DynamicBandwidthMonitor.DBMMisc
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
 
@@ -751,6 +750,27 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2016, 2, 11, 0, 44, 7), 0),
         New DateTime(2016, 2, 11, 0, 40, 0))
 
+      AssertEqual(IntervalSeconds(-25, 86400)*23, 86100)
+      AssertEqual(IntervalSeconds(6, 3600)*5, 3300)
+      AssertEqual(IntervalSeconds(-14, 3600), 300)
+      AssertEqual(IntervalSeconds(-13, 3600), 300)
+      AssertEqual(IntervalSeconds(-12, 3600), 330)
+      AssertEqual(IntervalSeconds(-10, 3600), 412.5)
+      AssertEqual(IntervalSeconds(-7, 3600), 660)
+      AssertEqual(IntervalSeconds(-3, 3600), 3300)
+      AssertEqual(IntervalSeconds(-2, 3600), 3600)
+      AssertEqual(IntervalSeconds(-1, 3600), 300)
+      AssertEqual(IntervalSeconds(0, 3600), 300)
+      AssertEqual(IntervalSeconds(1, 3600), 3600)
+      AssertEqual(IntervalSeconds(2, 3600), 3300)
+      AssertEqual(IntervalSeconds(3, 3600), 1650)
+      AssertEqual(IntervalSeconds(5, 3600), 825)
+      AssertEqual(IntervalSeconds(9, 3600), 412.5)
+      AssertEqual(IntervalSeconds(11, 3600), 330)
+      AssertEqual(IntervalSeconds(12, 3600), 300)
+      AssertEqual(IntervalSeconds(13, 3600), 300)
+      AssertEqual(IntervalSeconds(14, 3600), 300)
+
       AssertEqual(Computus(1864), New DateTime(1864, 3, 27))
       AssertEqual(Computus(1900), New DateTime(1900, 4, 15))
       AssertEqual(Computus(1933), New DateTime(1933, 4, 16))
@@ -1026,27 +1046,6 @@ Namespace Vitens.DynamicBandwidthMonitor
         End With
       Next i
 
-      AssertEqual(PIAFIntervalSeconds(-25, 86400)*23, 86100)
-      AssertEqual(PIAFIntervalSeconds(6, 3600)*5, 3300)
-      AssertEqual(PIAFIntervalSeconds(-14, 3600), 300)
-      AssertEqual(PIAFIntervalSeconds(-13, 3600), 300)
-      AssertEqual(PIAFIntervalSeconds(-12, 3600), 330)
-      AssertEqual(PIAFIntervalSeconds(-10, 3600), 412.5)
-      AssertEqual(PIAFIntervalSeconds(-7, 3600), 660)
-      AssertEqual(PIAFIntervalSeconds(-3, 3600), 3300)
-      AssertEqual(PIAFIntervalSeconds(-2, 3600), 3600)
-      AssertEqual(PIAFIntervalSeconds(-1, 3600), 300)
-      AssertEqual(PIAFIntervalSeconds(0, 3600), 300)
-      AssertEqual(PIAFIntervalSeconds(1, 3600), 3600)
-      AssertEqual(PIAFIntervalSeconds(2, 3600), 3300)
-      AssertEqual(PIAFIntervalSeconds(3, 3600), 1650)
-      AssertEqual(PIAFIntervalSeconds(5, 3600), 825)
-      AssertEqual(PIAFIntervalSeconds(9, 3600), 412.5)
-      AssertEqual(PIAFIntervalSeconds(11, 3600), 330)
-      AssertEqual(PIAFIntervalSeconds(12, 3600), 300)
-      AssertEqual(PIAFIntervalSeconds(13, 3600), 300)
-      AssertEqual(PIAFIntervalSeconds(14, 3600), 300)
-
     End Sub
 
 
@@ -1142,6 +1141,36 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 8, 0, 0, 0)).Count, 2016)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 2, 0, 0, 0), 0).Count, 288)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 2, 0, 0, 0), 1).Count, 1)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 2, 0, 0, 0), 13).Count, 13)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 2, 0, 0, 0), 24).Count, 24)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 2, 0, 0, 0), -2).Count, 1)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 2, 0, 0, 0), -1).Count, 288)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 2, 0, 0, 0), 287).Count, 287)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 2, 0, 0, 0), 288).Count, 288)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 2, 0, 0, 0), 289).Count, 288)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 1, 0, 0, 0), 1000).Count, 0)
 
     End Sub
 
