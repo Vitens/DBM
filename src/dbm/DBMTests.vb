@@ -1066,8 +1066,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2016, 1, 1, 0, 0, 0)).Timestamp,
         New DateTime(2016, 1, 1, 0, 0, 0))
       AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
-        New DateTime(2016, 1, 1, 0, 0, 0)).Timestamp,
-        New DateTime(2016, 1, 1, 0, 0, 1))
+        New DateTime(2016, 1, 1, 0, 0, 1)).Timestamp,
+        New DateTime(2016, 1, 1, 0, 0, 0))
       AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
         New DateTime(2016, 1, 1, 0, 4, 59)).Timestamp,
         New DateTime(2016, 1, 1, 0, 0, 0))
