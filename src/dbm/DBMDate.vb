@@ -24,6 +24,7 @@ Option Strict
 
 Imports System
 Imports System.Globalization
+Imports System.Math
 Imports System.TimeSpan
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
