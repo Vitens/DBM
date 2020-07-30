@@ -198,7 +198,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' suppressed if a strong correlation is found.
 
       Return GetResults(InputPointDriver, CorrelationPoints,
-        Timestamp, NextInterval(Timestamp), 0, Culture)(0)
+        Timestamp, NextInterval(Timestamp), 1, Culture)(0)
 
     End Function
 
