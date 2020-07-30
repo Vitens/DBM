@@ -49,6 +49,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim i As Integer
       Dim j As Double
 
+      ' DBMAssert
       AssertEqual(True, True)
       AssertEqual(Today, Today)
       AssertEqual(NaN, NaN)
@@ -72,6 +73,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(Hash({8, 4, 7, 3, 2, 6, 5, 7}), 3.6609)
       AssertAlmostEqual(Hash({1, 5, 4, 7, 7, 8, 5, 1}), 1.8084)
 
+      ' DBM
       AssertTrue(HasCorrelation(0.9, 45))
       AssertTrue(HasCorrelation(0.85, 45))
       AssertFalse(HasCorrelation(0.8, 45))
@@ -115,6 +117,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertEqual(Suppress(-0.98, -0.99, -1, 0, 0, False), -0.98)
       AssertEqual(Suppress(-0.98, -0.99, -45, 0, 0, False), 0)
 
+      ' DBMMath
       AssertAlmostEqual(NormSInv(0.95), 1.6449)
       AssertAlmostEqual(NormSInv(0.99), 2.3263)
       AssertAlmostEqual(NormSInv(0.9999), 3.719)
@@ -628,6 +631,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertEqual(AlignPreviousInterval(-531, -56), -504)
       AssertEqual(AlignPreviousInterval(-880, 105), -945)
 
+      ' DBMDate
       AssertEqual(AlignTimestamp(
         New DateTime(2016, 4, 4, 16, 33, 2), 60),
         New DateTime(2016, 4, 4, 16, 33, 0))
@@ -965,6 +969,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2020, 6, 1), New CultureInfo("en-US")),
         New DateTime(2020, 6, 1))
 
+      ' DBMStatistics
       For i = 0 To 19
         With {
           Statistics({3411, 3067, 3159, 2579, 2604, 3549, 2028, 3521, 3629,
@@ -1062,6 +1067,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       CorrelationPoints.Add(
         New DBMCorrelationPoint(New DBMPointDriverTestModel(490), False))
 
+      ' GetResult Timestamp - check alignment
       AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0)).Timestamp,
         New DateTime(2016, 1, 1, 0, 0, 0))
@@ -1078,6 +1084,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2016, 1, 1, 0, 7, 12)).Timestamp,
         New DateTime(2016, 1, 1, 0, 5, 0))
 
+      ' GetResult - check calculation results
       Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
       For i = 0 To 19
         Result = DBM.GetResult(InputPointDriver, CorrelationPoints, Timestamp,
@@ -1127,6 +1134,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Timestamp = Timestamp.AddSeconds(365*24*60*60/20)
       Next i
 
+      ' GetResults Count - check number of results
       AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 1, 0, 0, 0)).Count, 0)
@@ -1188,6 +1196,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 1, 0, 0, 0), 1000).Count, 0)
 
+      ' GetResults Timestamp - check intervals
       AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0), New DateTime(2016, 1, 1, 1, 0, 0),
         5)(0).Timestamp, New DateTime(2016, 1, 1, 0, 0, 0))
