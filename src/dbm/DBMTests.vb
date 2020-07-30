@@ -1061,8 +1061,24 @@ Namespace Vitens.DynamicBandwidthMonitor
       InputPointDriver = New DBMPointDriverTestModel(0)
       CorrelationPoints.Add(
         New DBMCorrelationPoint(New DBMPointDriverTestModel(490), False))
-      Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
 
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0)).Timestamp,
+        New DateTime(2016, 1, 1, 0, 0, 0))
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0)).Timestamp,
+        New DateTime(2016, 1, 1, 0, 0, 1))
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 4, 59)).Timestamp,
+        New DateTime(2016, 1, 1, 0, 0, 0))
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 5, 0)).Timestamp,
+        New DateTime(2016, 1, 1, 0, 5, 0))
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 7, 12)).Timestamp,
+        New DateTime(2016, 1, 1, 0, 5, 0))
+
+      Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
       For i = 0 To 19
         Result = DBM.GetResult(InputPointDriver, CorrelationPoints, Timestamp,
           New CultureInfo("nl-NL")) ' Use Dutch locale for New Year's Day test
@@ -1171,6 +1187,22 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 1, 0, 0, 0), 1000).Count, 0)
+
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0), New DateTime(2016, 1, 2, 0, 0, 0),
+        5).Count, 0)(0).Timestamp, New DateTime(2016, 1, 1, 0, 0, 0))
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0), New DateTime(2016, 1, 2, 0, 0, 0),
+        5).Count, 0)(1).Timestamp, New DateTime(2016, 1, 1, 0, 10, 0))
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0), New DateTime(2016, 1, 2, 0, 0, 0),
+        5).Count, 0)(2).Timestamp, New DateTime(2016, 1, 1, 0, 25, 0))
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0), New DateTime(2016, 1, 2, 0, 0, 0),
+        5).Count, 0)(3).Timestamp, New DateTime(2016, 1, 1, 0, 40, 0))
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0), New DateTime(2016, 1, 2, 0, 0, 0),
+        5).Count, 0)(4).Timestamp, New DateTime(2016, 1, 1, 0, 55, 0))
 
     End Sub
 
