@@ -278,7 +278,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         End If
 
         GetResults.Add(Result) ' Add timestamp results.
-        StartTimestamp = StartTimestamp.AddSeconds(TimeRangeInterval) ' Next intv.
+        StartTimestamp =
+          StartTimestamp.AddSeconds(TimeRangeInterval) ' Next interval.
 
       Loop
 

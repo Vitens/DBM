@@ -383,7 +383,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Element, ParentElement, SiblingElement As AFElement
       Dim InputPointDriver As DBMPointDriver
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
-      Dim IntervalSeconds As Double
+      Dim TimeRangeInterval As Double
       Dim Snapshot As AFTime
 
       GetValues = New AFValues
@@ -458,7 +458,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                 timeRange.StartTime.UtcSeconds, CalculationInterval)) ' Previous
               timeRange.EndTime = New AFTime(AlignPreviousInterval(
                 timeRange.EndTime.UtcSeconds, -CalculationInterval)) ' Next
-              IntervalSeconds = IntervalSeconds(numberOfValues,
+              TimeRangeInterval = IntervalSeconds(numberOfValues,
                 timeRange.EndTime.UtcSeconds-timeRange.StartTime.UtcSeconds)
 
               ' Retrieve snapshot timestamp.
@@ -508,7 +508,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                 End With
 
                 timeRange.StartTime = New AFTime(
-                  timeRange.StartTime.UtcSeconds+IntervalSeconds) ' Next intv.
+                  timeRange.StartTime.UtcSeconds+TimeRangeInterval) ' Next intv.
 
               Loop
 
