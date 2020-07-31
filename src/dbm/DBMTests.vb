@@ -969,26 +969,66 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2020, 6, 1), New CultureInfo("en-US")),
         New DateTime(2020, 6, 1))
 
-Console.WriteLine(DataPreparationTimestamp(New DateTime(2017, 3, 2, 11, 25, 1)))
-Console.WriteLine(DataPreparationTimestamp(New DateTime(2017, 12, 7, 6, 35, 59)))
-Console.WriteLine(DataPreparationTimestamp(New DateTime(2018, 3, 24, 14, 13, 10)))
-Console.WriteLine(DataPreparationTimestamp(New DateTime(2016, 8, 12, 23, 20, 36)))
-Console.WriteLine(DataPreparationTimestamp(New DateTime(2017, 9, 2, 11, 44, 11)))
-Console.WriteLine(DataPreparationTimestamp(New DateTime(2018, 6, 4, 16, 59, 55)))
-Console.WriteLine(DataPreparationTimestamp(New DateTime(2016, 9, 5, 4, 38, 50)))
-Console.WriteLine(DataPreparationTimestamp(New DateTime(2016, 8, 15, 4, 11, 4)))
-Console.WriteLine(DataPreparationTimestamp(New DateTime(2019, 2, 19, 9, 41, 5)))
-Console.WriteLine(DataPreparationTimestamp(New DateTime(2017, 8, 16, 16, 53, 5)))
-Console.WriteLine(DataPreparationTimestamp(New DateTime(2019, 12, 21, 7, 34, 23)))
-Console.WriteLine(DataPreparationTimestamp(New DateTime(2018, 7, 4, 19, 9, 44)))
-Console.WriteLine(DataPreparationTimestamp(New DateTime(2017, 1, 11, 8, 24, 29)))
-Console.WriteLine(DataPreparationTimestamp(New DateTime(2018, 11, 17, 13, 41, 35)))
-Console.WriteLine(DataPreparationTimestamp(New DateTime(2019, 3, 8, 15, 56, 31)))
-Console.WriteLine(DataPreparationTimestamp(New DateTime(2016, 8, 7, 17, 22, 45)))
-Console.WriteLine(DataPreparationTimestamp(New DateTime(2017, 8, 20, 17, 49, 15)))
-Console.WriteLine(DataPreparationTimestamp(New DateTime(2016, 2, 7, 21, 55, 52)))
-Console.WriteLine(DataPreparationTimestamp(New DateTime(2017, 11, 22, 17, 4, 58)))
-Console.WriteLine(DataPreparationTimestamp(New DateTime(2016, 1, 6, 22, 49, 9)))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2017, 3, 2, 11, 25, 1)),
+        New DateTime(2016, 12, 4, 9, 5, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2017, 12, 7, 6, 35, 59)),
+        New DateTime(2017, 9, 10, 4, 15, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2018, 3, 24, 14, 13, 10)),
+        New DateTime(2017, 12, 24, 11, 50, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2016, 8, 12, 23, 20, 36)),
+        New DateTime(2016, 5, 15, 21, 0, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2017, 9, 2, 11, 44, 11)),
+        New DateTime(2017, 6, 4, 9, 20, 0))
+      AssertEqual(DataPreparationTimestamp(
+        ew DateTime(2018, 6, 4, 16, 59, 55)),
+        New DateTime(2018, 3, 11, 14, 35, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2016, 9, 5, 4, 38, 50)),
+        New DateTime(2016, 6, 12, 2, 15, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2016, 8, 15, 4, 11, 4)),
+        New DateTime(2016, 5, 22, 1, 50, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2019, 2, 19, 9, 41, 5)),
+        New DateTime(2018, 11, 25, 7, 20, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2017, 8, 16, 16, 53, 5)),
+        New DateTime(2017, 5, 21, 14, 30, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2019, 12, 21, 7, 34, 23)),
+        New DateTime(2019, 9, 22, 5, 10, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2018, 7, 4, 19, 9, 44)),
+        New DateTime(2018, 4, 8, 16, 45, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2017, 1, 11, 8, 24, 29)),
+        New DateTime(2016, 10, 16, 6, 0, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2018, 11, 17, 13, 41, 35)),
+        New DateTime(2018, 8, 19, 11, 20, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2019, 3, 8, 15, 56, 31)),
+        New DateTime(2018, 12, 9, 13, 35, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2016, 8, 7, 17, 22, 45)),
+        New DateTime(2016, 5, 15, 15, 0, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2017, 8, 20, 17, 49, 15)),
+        New DateTime(2017, 5, 28, 15, 25, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2016, 2, 7, 21, 55, 52)),
+        New DateTime(2015, 11, 15, 19, 35, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2017, 11, 22, 17, 4, 58)),
+        New DateTime(2017, 8, 27, 14, 40, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2016, 1, 6, 22, 49, 9)),
+        New DateTime(2015, 10, 11, 20, 25, 0))
 
       ' DBMStatistics
       For i = 0 To 19
