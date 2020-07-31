@@ -80,7 +80,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private PointsCache As New DBMCache
-    Private LastClearCache As DateTime = Now
 
 
     Private Function Point(PointDriver As DBMPointDriverAbstract) As DBMPoint
@@ -102,38 +101,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       End Try
 
     End Function
-
-
-    Private Sub ClearCache(Optional Hours As Integer = 0)
-
-      ' Clear all cached points including their cached data and cached forecast
-      ' results. Calling this periodically will make sure that all data is
-      ' refreshed and that unused data is removed from memory. Use the Hour
-      ' parameter to only clear the cache after a set amount of hours has
-      ' passed.
-
-      Monitor.Enter(LastClearCache) ' Lock
-      Try
-
-        If (Now-LastClearCache).TotalHours >= Hours Then
-
-          Monitor.Enter(PointsCache) ' Lock
-          Try
-
-            PointsCache.Clear
-            LastClearCache = Now
-
-          Finally
-            Monitor.Exit(PointsCache)
-          End Try
-
-        End If
-
-      Finally
-        Monitor.Exit(LastClearCache)
-      End Try
-
-    End Sub
 
 
     Public Shared Function HasCorrelation(RelErrCorr As Double,
@@ -258,7 +225,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Use culture used by the current thread if no culture was passed.
       If Culture Is Nothing Then Culture = CurrentThread.CurrentCulture
 
-      ClearCache(8) ' Every 8 hours, clear all cached data in the DBM object.
       PrepareData(InputPointDriver, CorrelationPoints,
         StartTimestamp, EndTimestamp) ' Retrieve all data from the data source.
 
