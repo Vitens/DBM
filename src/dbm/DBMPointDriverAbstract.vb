@@ -94,7 +94,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Sub RetrieveData(StartTimestamp As DateTime,
-      EndTimestamp As DateTime) As Dictionary(Of DateTime, Double)
+      EndTimestamp As DateTime)
 
       Dim ShouldPrepareData As Boolean = True
 
