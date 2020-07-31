@@ -150,36 +150,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Private Sub PrepareData(InputPointDriver As DBMPointDriverAbstract,
-      CorrelationPoints As List(Of DBMCorrelationPoint),
-      StartTimestamp As DateTime, EndTimestamp As DateTime)
-
-      ' Will pass start and end timestamps to TryPrepareData method for input
-      ' and correlation PointDrivers. The driver can then prepare the dataset
-      ' for which calculations are required in the next step. The (aligned) end
-      ' time itself is excluded.
-
-      Dim CorrelationPoint As DBMCorrelationPoint
-
-      StartTimestamp = NextInterval(StartTimestamp,
-        -EMAPreviousPeriods-CorrelationPreviousPeriods).
-        AddDays(ComparePatterns*-7)
-      If UseSundayForHolidays Then StartTimestamp =
-        PreviousSunday(StartTimestamp)
-      EndTimestamp = AlignTimestamp(EndTimestamp, CalculationInterval)
-
-      Point(InputPointDriver).PointDriver.
-        TryPrepareData(StartTimestamp, EndTimestamp)
-      If CorrelationPoints IsNot Nothing Then
-        For Each CorrelationPoint In CorrelationPoints
-          Point(CorrelationPoint.PointDriver).PointDriver.
-            TryPrepareData(StartTimestamp, EndTimestamp)
-        Next
-      End If
-
-    End Sub
-
-
     Public Function GetResult(InputPointDriver As DBMPointDriverAbstract,
       CorrelationPoints As List(Of DBMCorrelationPoint), Timestamp As DateTime,
       Optional Culture As CultureInfo = Nothing) As DBMResult
@@ -204,8 +174,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' The end timestamp is exclusive. If a list of DBMCorrelationPoints is
       ' passed, events can be suppressed if a strong correlation is found.
 
-      Dim CorrelationPoint As DBMCorrelationPoint
       Dim TimeRangeInterval As Double
+      Dim CorrelationPoint As DBMCorrelationPoint
       Dim Result As DBMResult
       Dim CorrelationResult As DBMResult
       Dim AbsoluteErrorStatsItem,
@@ -225,8 +195,19 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Use culture used by the current thread if no culture was passed.
       If Culture Is Nothing Then Culture = CurrentThread.CurrentCulture
 
-      PrepareData(InputPointDriver, CorrelationPoints,
-        StartTimestamp, EndTimestamp) ' Retrieve all data from the data source.
+      ' Retrieve all data from the data source. Will pass start and end
+      ' timestamps to TryPrepareData method for input and correlation
+      ' PointDrivers. The driver can then prepare the dataset for which
+      ' calculations are required in the next step. The (aligned) end time
+      ' itself is excluded.
+      Point(InputPointDriver).PointDriver.
+        TryPrepareData(StartTimestamp, EndTimestamp)
+      If CorrelationPoints IsNot Nothing Then
+        For Each CorrelationPoint In CorrelationPoints
+          Point(CorrelationPoint.PointDriver).PointDriver.
+            TryPrepareData(StartTimestamp, EndTimestamp)
+        Next CorrelationPoint
+      End If
 
       Do While EndTimestamp > StartTimestamp
 
@@ -264,7 +245,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                 CorrelationPoint.SubtractSelf) ' Suppress if not a local event.
 
             End If
-          Next
+          Next CorrelationPoint
         End If
 
         GetResults.Add(Result) ' Add timestamp results.

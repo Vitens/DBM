@@ -24,6 +24,8 @@ Option Strict
 
 Imports System
 Imports System.Double
+Imports Vitens.DynamicBandwidthMonitor.DBMDate
+Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -57,6 +59,13 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' The TryPrepareData function is called from the DBM class to retrieve
       ' data using the overridden PrepareData function.
+
+      StartTimestamp = NextInterval(StartTimestamp,
+        -EMAPreviousPeriods-CorrelationPreviousPeriods).
+        AddDays(ComparePatterns*-7)
+      If UseSundayForHolidays Then StartTimestamp =
+        PreviousSunday(StartTimestamp)
+      EndTimestamp = AlignTimestamp(EndTimestamp, CalculationInterval)
 
       Try
         PrepareData(StartTimestamp, EndTimestamp)
