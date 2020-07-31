@@ -23,6 +23,7 @@ Option Strict
 
 
 Imports System
+Imports System.Collections.Generic
 Imports System.Globalization
 Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
@@ -53,16 +54,16 @@ Namespace Vitens.DynamicBandwidthMonitor
       HasCorrelationDBMPoint As Boolean, SubtractPoint As DBMPoint,
       Culture As CultureInfo) As DBMResult
 
-      Return GetResults(Timestamp, NextInterval(Timestamp), IsInputDBMPoint,
-        HasCorrelationDBMPoint, SubtractPoint, Culture)(0)
+      Return GetResults(Timestamp, NextInterval(Timestamp), CalculationInterval,
+        IsInputDBMPoint, HasCorrelationDBMPoint, SubtractPoint, Culture)(0)
 
     End Function
 
 
     Public Function GetResults(StartTimestamp As DateTime,
-      EndTimestamp As DateTime, IsInputDBMPoint As Boolean,
-      HasCorrelationDBMPoint As Boolean, SubtractPoint As DBMPoint,
-      Culture As CultureInfo) As List(Of DBMResult)
+      EndTimestamp As DateTime, TimeRangeInterval As Double,
+      IsInputDBMPoint As Boolean, HasCorrelationDBMPoint As Boolean,
+      SubtractPoint As DBMPoint, Culture As CultureInfo) As List(Of DBMResult)
 
       ' Retrieves data and calculates forecast and control limits for
       ' this point. Also calculates and stores (historic) forecast errors for

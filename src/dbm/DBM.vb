@@ -225,12 +225,12 @@ Namespace Vitens.DynamicBandwidthMonitor
                   If CorrelationPoint.SubtractSelf Then
                     ' Calculate result for correlation point, subtract input.
                     CorrelationResult = Point(CorrelationPoint.PointDriver).
-                      Result(StartTimestamp, False, True,
+                      GetResult(StartTimestamp, False, True,
                       Point(InputPointDriver), Culture)
                   Else
                     ' Calculate result for correlation point.
                     CorrelationResult = Point(CorrelationPoint.PointDriver).
-                      Result(StartTimestamp, False, True, Nothing, Culture)
+                      GetResult(StartTimestamp, False, True, Nothing, Culture)
                   End If
 
                   ' Calculate statistics of error compared to forecast.
