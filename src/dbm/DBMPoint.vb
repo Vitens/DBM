@@ -90,7 +90,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' moving average, previously calculated results will often need to be
       ' included in later calculations.
 
-      Dim PointValues, SubtractPointValues As Dictionary(Of DateTime, Double)
+      Dim PointValues, SubtractPointValues As
+        New Dictionary(Of DateTime, Double)
       Dim Result As DBMResult
       Dim ForecastItemsCache As DBMCache ' Cached forecast results for subtr.pt.
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
