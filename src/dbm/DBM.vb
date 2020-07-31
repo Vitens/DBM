@@ -27,6 +27,7 @@ Imports System.Collections.Generic
 Imports System.DateTime
 Imports System.Globalization
 Imports System.Math
+Imports System.Threading
 Imports System.Threading.Thread
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
@@ -87,11 +88,18 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns DBMPoint object from the cache. If cache does not yet contain
       ' object, it is added.
 
-      If Not PointsCache.HasItem(PointDriver.Point) Then
-        PointsCache.AddItem(PointDriver.Point, New DBMPoint(PointDriver))
-      End If
+      Monitor.Enter(PointsCache) ' Lock
+      Try
 
-      Return DirectCast(PointsCache.GetItem(PointDriver.Point), DBMPoint)
+        If Not PointsCache.HasItem(PointDriver.Point) Then
+          PointsCache.AddItem(PointDriver.Point, New DBMPoint(PointDriver))
+        End If
+
+        Return DirectCast(PointsCache.GetItem(PointDriver.Point), DBMPoint)
+
+      Finally
+        Monitor.Exit(PointsCache)
+      End Try
 
     End Function
 
@@ -104,10 +112,26 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' parameter to only clear the cache after a set amount of hours has
       ' passed.
 
-      If (Now-LastClearCache).TotalHours >= Hours Then
-        PointsCache.Clear
-        LastClearCache = Now
-      End If
+      Monitor.Enter(LastClearCache) ' Lock
+      Try
+
+        If (Now-LastClearCache).TotalHours >= Hours Then
+
+          Monitor.Enter(PointsCache) ' Lock
+          Try
+
+            PointsCache.Clear
+            LastClearCache = Now
+
+          Finally
+            Monitor.Exit(PointsCache)
+          End Try
+
+        End If
+
+      Finally
+        Monitor.Exit(LastClearCache)
+      End Try
 
     End Sub
 
