@@ -55,7 +55,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Private Overrides Sub PrepareData(StartTimestamp As DateTime,
+    Public Overrides Sub PrepareData(StartTimestamp As DateTime,
       EndTimestamp As DateTime)
 
       ' Retrieves information from a CSV file and stores this in memory. Passed

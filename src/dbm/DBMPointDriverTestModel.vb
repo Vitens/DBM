@@ -23,6 +23,7 @@ Option Strict
 
 
 Imports System
+Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -60,7 +61,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Private Overrides Sub PrepareData(StartTimestamp As DateTime,
+    Public Overrides Sub PrepareData(StartTimestamp As DateTime,
       EndTimestamp As DateTime)
 
       Do While EndTimestamp > StartTimestamp

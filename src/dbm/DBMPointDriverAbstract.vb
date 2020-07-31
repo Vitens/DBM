@@ -57,7 +57,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Private Sub AddValue(Timestamp As DateTime, Value As Object)
+    Public Sub AddValue(Timestamp As DateTime, Value As Object)
 
       ' Make sure that the retrieved data type is a Double and also that the
       ' timestamp is not already stored in memory (could happen because of DST

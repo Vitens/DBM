@@ -56,7 +56,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Private Overrides Sub PrepareData(StartTimestamp As DateTime,
+    Public Overrides Sub PrepareData(StartTimestamp As DateTime,
       EndTimestamp As DateTime)
 
       ' Retrieves a value for each interval in the time range from OSIsoft PI AF
