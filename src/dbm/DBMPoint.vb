@@ -49,9 +49,20 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Function Result(Timestamp As DateTime, IsInputDBMPoint As Boolean,
+    Public Function GetResult(Timestamp As DateTime, IsInputDBMPoint As Boolean,
       HasCorrelationDBMPoint As Boolean, SubtractPoint As DBMPoint,
       Culture As CultureInfo) As DBMResult
+
+      Return GetResults(Timestamp, NextInterval(Timestamp), IsInputDBMPoint,
+        HasCorrelationDBMPoint, SubtractPoint, Culture)(0)
+
+    End Function
+
+
+    Public Function GetResults(StartTimestamp As DateTime,
+      EndTimestamp As DateTime, IsInputDBMPoint As Boolean,
+      HasCorrelationDBMPoint As Boolean, SubtractPoint As DBMPoint,
+      Culture As CultureInfo) As List(Of DBMResult)
 
       ' Retrieves data and calculates forecast and control limits for
       ' this point. Also calculates and stores (historic) forecast errors for
@@ -60,6 +71,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' moving average, previously calculated results will often need to be
       ' included in later calculations.
 
+      Dim Result As DBMResult
       Dim ForecastItemsCache As DBMCache ' Cached forecast results for subtr.pt.
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
       Dim ForecastTimestamp, HistoryTimestamp, PatternTimestamp As DateTime
@@ -69,82 +81,92 @@ Namespace Vitens.DynamicBandwidthMonitor
         LowerControlLimits(EMAPreviousPeriods),
         UpperControlLimits(EMAPreviousPeriods) As Double
 
-      Result = New DBMResult
-      Result.Timestamp = AlignTimestamp(Timestamp, CalculationInterval)
+      GetResults = New List(Of DBMResult)
 
-      ' If required, create new cache for this subtract point.
-      If CacheStale.IsStale Then SubtractPointsCache.Clear ' Clear stale cache
-      If Not SubtractPointsCache.HasItem(SubtractPoint) Then
-        SubtractPointsCache.AddItem(SubtractPoint, New DBMCache)
-      End If
-      ForecastItemsCache = DirectCast(SubtractPointsCache.
-        GetItem(SubtractPoint), DBMCache) ' Cache object for this calculation.
+      Do While EndTimestamp > StartTimestamp
 
-      For CorrelationCounter = 0 To CorrelationPreviousPeriods ' Correl. loop
+        Result = New DBMResult
+        Result.Timestamp = AlignTimestamp(StartTimestamp, CalculationInterval)
 
-        ' Retrieve data and calculate forecast. Only do this for the required
-        ' timestamp and only process previous timestamps for calculating
-        ' correlation results if an event was found.
-        If Result.ForecastItem Is Nothing Or (IsInputDBMPoint And
-          Result.Factor <> 0 And HasCorrelationDBMPoint) Or
-          Not IsInputDBMPoint Then
-
-          For EMACounter = 0 To EMAPreviousPeriods ' Filter hi freq. variation
-
-            ForecastTimestamp = Result.Timestamp.AddSeconds(
-              -(EMAPreviousPeriods-EMACounter+CorrelationCounter)*
-              CalculationInterval) ' Timestamp for forecast results
-            ForecastItem = DirectCast(ForecastItemsCache.
-              GetItem(ForecastTimestamp), DBMForecastItem)
-
-            If ForecastItem Is Nothing Then ' Not cached
-
-              HistoryTimestamp = OffsetHoliday(ForecastTimestamp, Culture)
-
-              For PatternCounter = 0 To ComparePatterns ' Data for regression.
-
-                If PatternCounter = ComparePatterns Then
-                  PatternTimestamp = ForecastTimestamp ' Last item: Measurement
-                Else
-                  PatternTimestamp = HistoryTimestamp.
-                    AddDays(-(ComparePatterns-PatternCounter)*7) ' History
-                End If
-
-                Patterns(PatternCounter) =
-                  PointDriver.TryGetData(PatternTimestamp) ' Get data
-                If SubtractPoint IsNot Nothing Then ' Subtract input if req'd
-                  Patterns(PatternCounter) -=
-                    SubtractPoint.PointDriver.TryGetData(PatternTimestamp)
-                End If
-
-              Next PatternCounter
-
-              ForecastItem = Forecast(Patterns)
-              ForecastItemsCache.AddItem(ForecastTimestamp, ForecastItem)
-
-            End If
-
-            With ForecastItem ' Store results in arrays for EMA calculation.
-              Measurements(EMACounter) = .Measurement
-              Forecasts(EMACounter) = .Forecast
-              LowerControlLimits(EMACounter) = .LowerControlLimit
-              UpperControlLimits(EMACounter) = .UpperControlLimit
-            End With
-
-          Next EMACounter
-
-          ' Calculate final result using filtered calculation results.
-          Result.Calculate(CorrelationPreviousPeriods-CorrelationCounter,
-            ExponentialMovingAverage(Measurements),
-            ExponentialMovingAverage(Forecasts),
-            ExponentialMovingAverage(LowerControlLimits),
-            ExponentialMovingAverage(UpperControlLimits))
-
+        ' If required, create new cache for this subtract point.
+        If CacheStale.IsStale Then SubtractPointsCache.Clear ' Clear stale cache
+        If Not SubtractPointsCache.HasItem(SubtractPoint) Then
+          SubtractPointsCache.AddItem(SubtractPoint, New DBMCache)
         End If
+        ForecastItemsCache = DirectCast(SubtractPointsCache.
+          GetItem(SubtractPoint), DBMCache) ' Cache object for this calculation.
 
-      Next CorrelationCounter
+        For CorrelationCounter = 0 To CorrelationPreviousPeriods ' Correl. loop
 
-      Return Result
+          ' Retrieve data and calculate forecast. Only do this for the required
+          ' timestamp and only process previous timestamps for calculating
+          ' correlation results if an event was found.
+          If Result.ForecastItem Is Nothing Or (IsInputDBMPoint And
+            Result.Factor <> 0 And HasCorrelationDBMPoint) Or
+            Not IsInputDBMPoint Then
+
+            For EMACounter = 0 To EMAPreviousPeriods ' Filter hi freq. variation
+
+              ForecastTimestamp = Result.Timestamp.AddSeconds(
+                -(EMAPreviousPeriods-EMACounter+CorrelationCounter)*
+                CalculationInterval) ' Timestamp for forecast results
+              ForecastItem = DirectCast(ForecastItemsCache.
+                GetItem(ForecastTimestamp), DBMForecastItem)
+
+              If ForecastItem Is Nothing Then ' Not cached
+
+                HistoryTimestamp = OffsetHoliday(ForecastTimestamp, Culture)
+
+                For PatternCounter = 0 To ComparePatterns ' Data for regression.
+
+                  If PatternCounter = ComparePatterns Then
+                    PatternTimestamp = ForecastTimestamp ' Last is measurement.
+                  Else
+                    PatternTimestamp = HistoryTimestamp.
+                      AddDays(-(ComparePatterns-PatternCounter)*7) ' History
+                  End If
+
+                  Patterns(PatternCounter) =
+                    PointDriver.TryGetData(PatternTimestamp) ' Get data
+                  If SubtractPoint IsNot Nothing Then ' Subtract input if req'd
+                    Patterns(PatternCounter) -=
+                      SubtractPoint.PointDriver.TryGetData(PatternTimestamp)
+                  End If
+
+                Next PatternCounter
+
+                ForecastItem = Forecast(Patterns)
+                ForecastItemsCache.AddItem(ForecastTimestamp, ForecastItem)
+
+              End If
+
+              With ForecastItem ' Store results in arrays for EMA calculation.
+                Measurements(EMACounter) = .Measurement
+                Forecasts(EMACounter) = .Forecast
+                LowerControlLimits(EMACounter) = .LowerControlLimit
+                UpperControlLimits(EMACounter) = .UpperControlLimit
+              End With
+
+            Next EMACounter
+
+            ' Calculate final result using filtered calculation results.
+            Result.Calculate(CorrelationPreviousPeriods-CorrelationCounter,
+              ExponentialMovingAverage(Measurements),
+              ExponentialMovingAverage(Forecasts),
+              ExponentialMovingAverage(LowerControlLimits),
+              ExponentialMovingAverage(UpperControlLimits))
+
+          End If
+
+        Next CorrelationCounter
+
+        GetResults.Add(Result) ' Add timestamp results.
+        StartTimestamp =
+          StartTimestamp.AddSeconds(TimeRangeInterval) ' Next interval.
+
+      Loop
+
+      Return GetResults
 
     End Function
 

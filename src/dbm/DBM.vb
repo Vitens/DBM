@@ -209,7 +209,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           Do While EndTimestamp > StartTimestamp
 
             ' Calculate for input point.
-            Result = Point(InputPointDriver).Result(StartTimestamp, True,
+            Result = Point(InputPointDriver).GetResult(StartTimestamp, True,
               CorrelationPoints.Count > 0, Nothing, Culture)
 
             ' If an event is found and a correlation point is available.

@@ -34,7 +34,7 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMResult
 
 
-    ' DBMResult is the object passed by DBM.Result and contains the final
+    ' DBMResult is the object passed by DBM.GetResult and contains the final
     ' results for the DBM calculation. It is also used for storing intermediate
     ' results of (correlation) calculation results from a DBMPoint object.
 
