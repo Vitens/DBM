@@ -24,6 +24,7 @@ Option Strict
 
 Imports System
 Imports System.Double
+Imports System.Threading
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
@@ -37,8 +38,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' DBM drivers should inherit from this base class. In Sub New,
     ' MyBase.New(Point) should be called. At a minimum, the GetData function
     ' must be overridden and should return a value for the Timestamp passed.
-    ' If required, PrepareData can be used to retrieve and store values in bulk
-    ' from a source of data, to be used in the GetData function.
+    ' PrepareData is used to retrieve and store values in bulk from a source of
+    ' data, to be used in the GetData function.
 
 
     Public Point As Object
@@ -54,27 +55,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Sub TryPrepareData(StartTimestamp As DateTime,
-      EndTimestamp As DateTime)
-
-      ' The TryPrepareData function is called from the DBM class to retrieve
-      ' data using the overridden PrepareData function.
-
-      StartTimestamp = NextInterval(StartTimestamp,
-        -EMAPreviousPeriods-CorrelationPreviousPeriods).
-        AddDays(ComparePatterns*-7)
-      If UseSundayForHolidays Then StartTimestamp =
-        PreviousSunday(StartTimestamp)
-      EndTimestamp = AlignTimestamp(EndTimestamp, CalculationInterval)
-
-      Try
-        PrepareData(StartTimestamp, EndTimestamp)
-      Catch
-      End Try
-
-    End Sub
-
-
     Public Overridable Sub PrepareData(StartTimestamp As DateTime,
       EndTimestamp As DateTime)
 
@@ -84,19 +64,45 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Function TryGetData(Timestamp As DateTime) As Double
+    Public Function PrepareAndGetData(StartTimestamp As DateTime,
+      EndTimestamp As DateTime) As Double
 
-      ' The TryGetData function is called from the DBMPoint class to retrieve
-      ' data using the overridden GetData function. If there is an exception
-      ' when calling this function, NaN is returned instead.
+      ' The PrepareAndGetData function is called from the DBMPoint class to
+      ' retrieve data using the overridden GetData function. If there is an
+      ' exception when calling this function, NaN is returned instead. Data will
+      ' be prepared for the time range and a value will be returned for the
+      ' start timestamp.
 
+      StartTimestamp = NextInterval(StartTimestamp,
+        -EMAPreviousPeriods-CorrelationPreviousPeriods).
+        AddDays(ComparePatterns*-7)
+      If UseSundayForHolidays Then StartTimestamp =
+        PreviousSunday(StartTimestamp)
+      EndTimestamp = AlignTimestamp(EndTimestamp, CalculationInterval)
+
+      Monitor.Enter(Point) ' Lock
       Try
-        TryGetData = GetData(Timestamp)
-      Catch
-        TryGetData = NaN ' Error getting data, return Not a Number
-      End Try
 
-      Return TryGetData
+        Try
+          ' Retrieve all data from the data source. Will pass start and end
+          ' timestamps. The driver can then prepare the dataset for which
+          ' calculations are required in the next step. The (aligned) end time
+          ' itself is excluded.
+          PrepareData(StartTimestamp, EndTimestamp)
+        Catch
+        End Try
+
+        Try
+          PrepareAndGetData = GetData(StartTimestamp)
+        Catch
+          PrepareAndGetData = NaN ' Error getting data, return Not a Number
+        End Try
+
+        Return PrepareAndGetData
+
+      Finally
+        Monitor.Exit(Point)
+      End Try
 
     End Function
 
