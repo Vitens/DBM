@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2019  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -80,14 +80,14 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Sub Calculate(Index As Integer, MeasurementEMA As Double,
-      ForecastValueEMA As Double, LowerControlLimitEMA As Double,
+      ForecastEMA As Double, LowerControlLimitEMA As Double,
       UpperControlLimitEMA As Double)
 
       ' Calculates and stores forecast errors and initial results.
 
       ' Forecast error (for forecast error correlation calculations).
-      AbsoluteErrors(Index) = ForecastValueEMA-MeasurementEMA
-      RelativeErrors(Index) = ForecastValueEMA/MeasurementEMA-1
+      AbsoluteErrors(Index) = ForecastEMA-MeasurementEMA
+      RelativeErrors(Index) = ForecastEMA/MeasurementEMA-1
 
       If ForecastItem Is Nothing Then
 
@@ -95,7 +95,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ForecastItem = New DBMForecastItem
         With ForecastItem
           .Measurement = MeasurementEMA
-          .ForecastValue = ForecastValueEMA
+          .Forecast = ForecastEMA
           .LowerControlLimit = LowerControlLimitEMA
           .UpperControlLimit = UpperControlLimitEMA
         End With
@@ -107,14 +107,14 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         ' Lower control limit exceeded, calculate factor.
         If MeasurementEMA < LowerControlLimitEMA Then
-          Factor = (ForecastValueEMA-MeasurementEMA)/
-            (LowerControlLimitEMA-ForecastValueEMA)
+          Factor = (ForecastEMA-MeasurementEMA)/
+            (LowerControlLimitEMA-ForecastEMA)
         End If
 
         ' Upper control limit exceeded, calculate factor.
         If MeasurementEMA > UpperControlLimitEMA Then
-          Factor = (MeasurementEMA-ForecastValueEMA)/
-            (UpperControlLimitEMA-ForecastValueEMA)
+          Factor = (MeasurementEMA-ForecastEMA)/
+            (UpperControlLimitEMA-ForecastEMA)
         End If
 
       End If

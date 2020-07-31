@@ -65,7 +65,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim ForecastTimestamp, HistoryTimestamp, PatternTimestamp As DateTime
       Dim ForecastItem As DBMForecastItem = Nothing
       Dim Patterns(ComparePatterns), Measurements(EMAPreviousPeriods),
-        ForecastValues(EMAPreviousPeriods),
+        Forecasts(EMAPreviousPeriods),
         LowerControlLimits(EMAPreviousPeriods),
         UpperControlLimits(EMAPreviousPeriods) As Double
 
@@ -126,7 +126,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
             With ForecastItem ' Store results in arrays for EMA calculation.
               Measurements(EMACounter) = .Measurement
-              ForecastValues(EMACounter) = .ForecastValue
+              Forecasts(EMACounter) = .Forecast
               LowerControlLimits(EMACounter) = .LowerControlLimit
               UpperControlLimits(EMACounter) = .UpperControlLimit
             End With
@@ -136,7 +136,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' Calculate final result using filtered calculation results.
           Result.Calculate(CorrelationPreviousPeriods-CorrelationCounter,
             ExponentialMovingAverage(Measurements),
-            ExponentialMovingAverage(ForecastValues),
+            ExponentialMovingAverage(Forecasts),
             ExponentialMovingAverage(LowerControlLimits),
             ExponentialMovingAverage(UpperControlLimits))
 

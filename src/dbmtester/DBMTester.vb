@@ -155,7 +155,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             Console.WriteLine(FormatDateTime(.Timestamp) & Separator &
             FormatNumber(.Factor) & Separator &
             FormatNumber(.ForecastItem.Measurement) & Separator &
-            FormatNumber(.ForecastItem.ForecastValue) & Separator &
+            FormatNumber(.ForecastItem.Forecast) & Separator &
             FormatNumber(.ForecastItem.LowerControlLimit) & Separator &
             FormatNumber(.ForecastItem.UpperControlLimit))
           End With

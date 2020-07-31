@@ -452,28 +452,26 @@ Namespace Vitens.DynamicBandwidthMonitor
           With Result
 
             If Attribute.Trait Is LimitTarget Then
-              GetValues.Add(New AFValue(.ForecastItem.Measurement,
-              .Timestamp))
+              GetValues.Add(New AFValue(.ForecastItem.Measurement, .Timestamp))
             ElseIf Attribute.Trait Is Forecast Then
-              GetValues.Add(New AFValue(.ForecastItem.ForecastValue,
-              .Timestamp))
+              GetValues.Add(New AFValue(.ForecastItem.Forecast, .Timestamp))
             ElseIf Attribute.Trait Is LimitMinimum Then
-              GetValues.Add(New AFValue(.ForecastItem.ForecastValue-
+              GetValues.Add(New AFValue(.ForecastItem.Forecast-
                 .ForecastItem.Range(pValueMinMax), .Timestamp))
             ElseIf Attribute.Trait Is LimitLoLo Then
                GetValues.Add(New AFValue(.ForecastItem.LowerControlLimit,
                .Timestamp))
             ElseIf Attribute.Trait Is LimitLo Then
-              GetValues.Add(New AFValue(.ForecastItem.ForecastValue-
+              GetValues.Add(New AFValue(.ForecastItem.Forecast-
                 .ForecastItem.Range(pValueLoHi), .Timestamp))
             ElseIf Attribute.Trait Is LimitHi Then
-              GetValues.Add(New AFValue(.ForecastItem.ForecastValue+
+              GetValues.Add(New AFValue(.ForecastItem.Forecast+
                 .ForecastItem.Range(pValueLoHi), .Timestamp))
             ElseIf Attribute.Trait Is LimitHiHi Then
               GetValues.Add(New AFValue(.ForecastItem.UpperControlLimit,
                 .Timestamp))
             ElseIf Attribute.Trait Is LimitMaximum Then
-              GetValues.Add(New AFValue(.ForecastItem.ForecastValue+
+              GetValues.Add(New AFValue(.ForecastItem.Forecast+
                 .ForecastItem.Range(pValueMinMax), .Timestamp))
             Else
               GetValues.Add(New AFValue(.Factor, .Timestamp))

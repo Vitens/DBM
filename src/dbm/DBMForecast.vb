@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2019  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -58,7 +58,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         ' Extrapolate regression by one interval and use this result as a
         ' forecast.
-        .ForecastValue =
+        .Forecast =
           ComparePatterns*StatisticsItem.Slope+StatisticsItem.Intercept
 
         ' Control limits are determined by using measures of process variation
@@ -71,8 +71,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         ' Set upper and lower control limits based on forecast, rejection
         ' criterion and standard error of the regression.
-        .LowerControlLimit = .ForecastValue-Range
-        .UpperControlLimit = .ForecastValue+Range
+        .LowerControlLimit = .Forecast-Range
+        .UpperControlLimit = .Forecast+Range
 
       End With
 
