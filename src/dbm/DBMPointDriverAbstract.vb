@@ -73,13 +73,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' be prepared for the time range and a value will be returned for the
       ' start timestamp.
 
-      StartTimestamp = NextInterval(StartTimestamp,
-        -EMAPreviousPeriods-CorrelationPreviousPeriods).
-        AddDays(ComparePatterns*-7)
-      If UseSundayForHolidays Then StartTimestamp =
-        PreviousSunday(StartTimestamp)
-      EndTimestamp = AlignTimestamp(EndTimestamp, CalculationInterval)
-
       Monitor.Enter(Point) ' Lock
       Try
 
@@ -88,7 +81,8 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' timestamps. The driver can then prepare the dataset for which
           ' calculations are required in the next step. The (aligned) end time
           ' itself is excluded.
-          PrepareData(StartTimestamp, EndTimestamp)
+          PrepareData(DataPreparationTimestamp(StartTimestamp),
+            AlignTimestamp(EndTimestamp, CalculationInterval))
         Catch
         End Try
 

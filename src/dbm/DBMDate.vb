@@ -165,6 +165,20 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Shared Function DataPreparationTimestamp(
+      StartTimestamp As DateTime) As DateTime
+
+      StartTimestamp = NextInterval(StartTimestamp,
+        -EMAPreviousPeriods-CorrelationPreviousPeriods).
+        AddDays(ComparePatterns*-7)
+      If UseSundayForHolidays Then StartTimestamp =
+        PreviousSunday(StartTimestamp)
+
+      Return StartTimestamp
+
+    End Function
+
+
   End Class
 
 

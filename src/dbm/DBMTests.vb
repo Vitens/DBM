@@ -969,6 +969,27 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2020, 6, 1), New CultureInfo("en-US")),
         New DateTime(2020, 6, 1))
 
+Console.WriteLine(DataPreparationTimestamp(New DateTime(2017, 3, 2, 11, 25, 1))
+Console.WriteLine(DataPreparationTimestamp(New DateTime(2017, 12, 7, 6, 35, 59))
+Console.WriteLine(DataPreparationTimestamp(New DateTime(2018, 3, 24, 14, 13, 10))
+Console.WriteLine(DataPreparationTimestamp(New DateTime(2016, 8, 12, 23, 20, 36))
+Console.WriteLine(DataPreparationTimestamp(New DateTime(2017, 9, 2, 11, 44, 11))
+Console.WriteLine(DataPreparationTimestamp(New DateTime(2018, 6, 4, 16, 59, 55))
+Console.WriteLine(DataPreparationTimestamp(New DateTime(2016, 9, 5, 4, 38, 50))
+Console.WriteLine(DataPreparationTimestamp(New DateTime(2016, 8, 15, 4, 11, 4))
+Console.WriteLine(DataPreparationTimestamp(New DateTime(2019, 2, 19, 9, 41, 5))
+Console.WriteLine(DataPreparationTimestamp(New DateTime(2017, 8, 16, 16, 53, 5))
+Console.WriteLine(DataPreparationTimestamp(New DateTime(2019, 12, 21, 7, 34, 23))
+Console.WriteLine(DataPreparationTimestamp(New DateTime(2018, 7, 4, 19, 9, 44))
+Console.WriteLine(DataPreparationTimestamp(New DateTime(2017, 1, 11, 8, 24, 29))
+Console.WriteLine(DataPreparationTimestamp(New DateTime(2018, 11, 17, 13, 41, 35))
+Console.WriteLine(DataPreparationTimestamp(New DateTime(2019, 3, 8, 15, 56, 31))
+Console.WriteLine(DataPreparationTimestamp(New DateTime(2016, 8, 7, 17, 22, 45))
+Console.WriteLine(DataPreparationTimestamp(New DateTime(2017, 8, 20, 17, 49, 15))
+Console.WriteLine(DataPreparationTimestamp(New DateTime(2016, 2, 7, 21, 55, 52))
+Console.WriteLine(DataPreparationTimestamp(New DateTime(2017, 11, 22, 17, 4, 58))
+Console.WriteLine(DataPreparationTimestamp(New DateTime(2016, 1, 6, 22, 49, 9))
+
       ' DBMStatistics
       For i = 0 To 19
         With {
