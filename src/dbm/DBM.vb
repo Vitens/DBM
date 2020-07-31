@@ -175,8 +175,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' passed, events can be suppressed if a strong correlation is found.
 
       Dim TimeRangeInterval As Double
-      Dim CorrelationPoint As DBMCorrelationPoint
       Dim Result As DBMResult
+      Dim CorrelationPoint As DBMCorrelationPoint
       Dim CorrelationResult As DBMResult
       Dim AbsoluteErrorStatsItem,
         RelativeErrorStatsItem As New DBMStatisticsItem
@@ -195,64 +195,71 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Use culture used by the current thread if no culture was passed.
       If Culture Is Nothing Then Culture = CurrentThread.CurrentCulture
 
-      ' Retrieve all data from the data source. Will pass start and end
-      ' timestamps to TryPrepareData method for input and correlation
-      ' PointDrivers. The driver can then prepare the dataset for which
-      ' calculations are required in the next step. The (aligned) end time
-      ' itself is excluded.
-      Point(InputPointDriver).PointDriver.
-        TryPrepareData(StartTimestamp, EndTimestamp)
-      If CorrelationPoints IsNot Nothing Then
-        For Each CorrelationPoint In CorrelationPoints
-          Point(CorrelationPoint.PointDriver).PointDriver.
+      If Monitor.TryEnter(Point(InputPointDriver),
+        TimeSpan.FromSeconds(CalculationInterval)) Then ' Lock
+        Try
+
+          ' Retrieve all data from the data source. Will pass start and end
+          ' timestamps to TryPrepareData method. The driver can then prepare the
+          ' dataset for which calculations are required in the next step. The
+          ' (aligned) end time itself is excluded.
+          Point(InputPointDriver).PointDriver.
             TryPrepareData(StartTimestamp, EndTimestamp)
-        Next CorrelationPoint
-      End If
 
-      Do While EndTimestamp > StartTimestamp
+          Do While EndTimestamp > StartTimestamp
 
-        ' Calculate for input point.
-        Result = Point(InputPointDriver).Result(
-          StartTimestamp, True, CorrelationPoints.Count > 0, Nothing, Culture)
+            ' Calculate for input point.
+            Result = Point(InputPointDriver).Result(StartTimestamp, True,
+              CorrelationPoints.Count > 0, Nothing, Culture)
 
-        ' If an event is found and a correlation point is available.
-        If CorrelationPoints.Count > 0 Then
-          For Each CorrelationPoint In CorrelationPoints
-            If Result.Factor <> 0 Then
+            ' If an event is found and a correlation point is available.
+            If CorrelationPoints.Count > 0 Then
+              For Each CorrelationPoint In CorrelationPoints
+                If Result.Factor <> 0 Then
 
-              ' If pattern of correlation point contains input point.
-              If CorrelationPoint.SubtractSelf Then
-                ' Calculate result for correlation point, subtract input point.
-                CorrelationResult = Point(CorrelationPoint.PointDriver).Result(
-                  StartTimestamp, False, True, Point(InputPointDriver), Culture)
-              Else
-                ' Calculate result for correlation point.
-                CorrelationResult = Point(CorrelationPoint.PointDriver).Result(
-                  StartTimestamp, False, True, Nothing, Culture)
-              End If
+                  ' Retrieve all data from the correlation point data source.
+                  Point(CorrelationPoint.PointDriver).PointDriver.
+                    TryPrepareData(StartTimestamp, EndTimestamp)
 
-              ' Calculate statistics of error compared to forecast.
-              AbsoluteErrorStatsItem = Statistics(
-                CorrelationResult.AbsoluteErrors, Result.AbsoluteErrors)
-              RelativeErrorStatsItem = Statistics(
-                CorrelationResult.RelativeErrors, Result.RelativeErrors)
+                  ' If pattern of correlation point contains input point.
+                  If CorrelationPoint.SubtractSelf Then
+                    ' Calculate result for correlation point, subtract input.
+                    CorrelationResult = Point(CorrelationPoint.PointDriver).
+                      Result(StartTimestamp, False, True,
+                      Point(InputPointDriver), Culture)
+                  Else
+                    ' Calculate result for correlation point.
+                    CorrelationResult = Point(CorrelationPoint.PointDriver).
+                      Result(StartTimestamp, False, True, Nothing, Culture)
+                  End If
 
-              Result.Factor = Suppress(Result.Factor,
-                AbsoluteErrorStatsItem.ModifiedCorrelation,
-                AbsoluteErrorStatsItem.OriginAngle,
-                RelativeErrorStatsItem.ModifiedCorrelation,
-                RelativeErrorStatsItem.OriginAngle,
-                CorrelationPoint.SubtractSelf) ' Suppress if not a local event.
+                  ' Calculate statistics of error compared to forecast.
+                  AbsoluteErrorStatsItem = Statistics(
+                    CorrelationResult.AbsoluteErrors, Result.AbsoluteErrors)
+                  RelativeErrorStatsItem = Statistics(
+                    CorrelationResult.RelativeErrors, Result.RelativeErrors)
 
+                  Result.Factor = Suppress(Result.Factor,
+                    AbsoluteErrorStatsItem.ModifiedCorrelation,
+                    AbsoluteErrorStatsItem.OriginAngle,
+                    RelativeErrorStatsItem.ModifiedCorrelation,
+                    RelativeErrorStatsItem.OriginAngle,
+                    CorrelationPoint.SubtractSelf) ' Suppress if not local event
+
+                End If
+              Next CorrelationPoint
             End If
-          Next CorrelationPoint
-        End If
 
-        GetResults.Add(Result) ' Add timestamp results.
-        StartTimestamp =
-          StartTimestamp.AddSeconds(TimeRangeInterval) ' Next interval.
+            GetResults.Add(Result) ' Add timestamp results.
+            StartTimestamp =
+              StartTimestamp.AddSeconds(TimeRangeInterval) ' Next interval.
 
-      Loop
+          Loop
+
+        Finally
+          Monitor.Exit(Point(InputPointDriver))
+        End Try
+      End If
 
       Return GetResults
 
