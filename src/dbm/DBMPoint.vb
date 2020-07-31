@@ -24,6 +24,7 @@ Option Strict
 
 Imports System
 Imports System.Collections.Generic
+Imports System.Double
 Imports System.Globalization
 Imports System.Math
 Imports System.Threading
@@ -52,7 +53,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private Function GetData(Values As Dictionary(Of DateTime, Double),
-      Timestamp As DateTime)
+      Timestamp As DateTime) As Double
 
       ' Retrieves data from the Values dictionary. If there is no data for the
       ' timestamp, return Not a Number.

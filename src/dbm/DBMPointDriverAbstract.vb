@@ -57,7 +57,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Private Function AddValue(Timestamp As DateTime, Value As Object)
+    Private Sub AddValue(Timestamp As DateTime, Value As Object)
 
       ' Make sure that the retrieved data type is a Double and also that the
       ' timestamp is not already stored in memory (could happen because of DST
@@ -67,10 +67,10 @@ Namespace Vitens.DynamicBandwidthMonitor
         Values.Add(Timestamp, DirectCast(Value, Double))
       End If
 
-    End Function
+    End Sub
 
 
-    Private MustOverride Sub PrepareData(StartTimestamp As DateTime,
+    Public MustOverride Sub PrepareData(StartTimestamp As DateTime,
       EndTimestamp As DateTime)
       ' Retrieve and store values in bulk for the passed time range from a
       ' source of data, to be used in the GetData method. Use AddValue to store
