@@ -66,7 +66,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Do While EndTimestamp > StartTimestamp
 
-        AddValue(StartTimestamp, LeeuwardenModel(StartTimestamp)) ' Add value
+        AddDataStore(StartTimestamp, LeeuwardenModel(StartTimestamp))
         StartTimestamp =
           StartTimestamp.AddSeconds(CalculationInterval) ' Next interval.
 

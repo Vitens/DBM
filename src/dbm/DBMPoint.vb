@@ -52,22 +52,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Private Function GetData(Values As Dictionary(Of DateTime, Double),
-      Timestamp As DateTime) As Double
-
-      ' Retrieves data from the Values dictionary. If there is no data for the
-      ' timestamp, return Not a Number.
-
-      GetData = Nothing
-      If Values.TryGetValue(Timestamp, GetData) Then ' In dictionary.
-        Return GetData ' Return value from dictionary.
-      Else
-        Return NaN ' No data in dictionary for timestamp, return Not a Number.
-      End If
-
-    End Function
-
-
     Public Function GetResult(Timestamp As DateTime, IsInputDBMPoint As Boolean,
       HasCorrelationDBMPoint As Boolean, SubtractPoint As DBMPoint,
       Culture As CultureInfo) As DBMResult
@@ -90,8 +74,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' moving average, previously calculated results will often need to be
       ' included in later calculations.
 
-      Dim PointValues, SubtractPointValues As New Dictionary(
-        Of DateTime, Double)
       Dim Result As DBMResult
       Dim ForecastItemsCache As DBMCache ' Cached forecast results for subtr.pt.
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
@@ -105,10 +87,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       GetResults = New List(Of DBMResult)
 
       ' Get data from data source.
-      PointValues = PointDriver.GetValues(StartTimestamp, EndTimestamp)
+      PointDriver.RetrieveData(StartTimestamp, EndTimestamp)
       If SubtractPoint IsNot Nothing Then
-        SubtractPointValues =
-          SubtractPoint.PointDriver.GetValues(StartTimestamp, EndTimestamp)
+        SubtractPoint.PointDriver.RetrieveData(StartTimestamp, EndTimestamp)
       End If
 
       Do While EndTimestamp > StartTimestamp
@@ -155,10 +136,10 @@ Namespace Vitens.DynamicBandwidthMonitor
                   End If
 
                   Patterns(PatternCounter) =
-                    GetData(PointValues, PatternTimestamp)
+                    PointDriver.GetDataStore(PatternTimestamp)
                   If SubtractPoint IsNot Nothing Then ' Subtract input if req'd
                     Patterns(PatternCounter) -=
-                    GetData(SubtractPointValues, PatternTimestamp)
+                    SubtractPoint.PointDriver.GetDataStore(PatternTimestamp)
                   End If
 
                 Next PatternCounter

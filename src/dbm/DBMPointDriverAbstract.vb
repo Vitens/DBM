@@ -37,12 +37,13 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     ' DBM drivers should inherit from this base class. In Sub New,
-    ' MyBase.New(Point) should be called. GetValues is used to retrieve, store,
-    ' and return values in bulk from a source of data using the AddValue method.
+    ' MyBase.New(Point) should be called. RetrieveData is used to retrieve and
+    ' store data in bulk from a source using the AddDataStore method. Use
+    ' GetDataStore to fetch results from memory.
 
 
     Public Point As Object
-    Private Values As New Dictionary(Of DateTime, Double) ' In-memory data store
+    Private DataStore As New Dictionary(Of DateTime, Double) ' In-memory data
     Private PreviousStartTimestamp As DateTime = DateTime.MaxValue
     Private PreviousEndTimestamp As DateTime = DateTime.MinValue
 
@@ -57,14 +58,14 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Sub AddValue(Timestamp As DateTime, Value As Object)
+    Public Sub AddDataStore(Timestamp As DateTime, Data As Object)
 
       ' Make sure that the retrieved data type is a Double and also that the
       ' timestamp is not already stored in memory (could happen because of DST
       ' time overlap).
-      If TypeOf Value Is Double AndAlso
-        Not Values.ContainsKey(Timestamp) Then
-        Values.Add(Timestamp, DirectCast(Value, Double))
+      If TypeOf Data Is Double AndAlso
+        Not DataStore.ContainsKey(Timestamp) Then
+        DataStore.Add(Timestamp, DirectCast(Data, Double))
       End If
 
     End Sub
@@ -72,12 +73,27 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public MustOverride Sub PrepareData(StartTimestamp As DateTime,
       EndTimestamp As DateTime)
-      ' Retrieve and store values in bulk for the passed time range from a
-      ' source of data, to be used in the GetData method. Use AddValue to store
-      ' values in memory.
+      ' Retrieve and store data in bulk for the passed time range from a source
+      ' of data, to be used in the GetDataStore method. Use AddDataStore to
+      ' store data in memory.
 
 
-    Public Function GetValues(StartTimestamp As DateTime,
+    Public Function GetDataStore(Timestamp As DateTime) As Double
+
+      ' Retrieves data from the DataStore dictionary. If there is no data for
+      ' the timestamp, return Not a Number.
+
+      GetDataStore = Nothing
+      If DataStore.TryGetValue(Timestamp, GetDataStore) Then ' In dictionary.
+        Return GetDataStore ' Return value from dictionary.
+      Else
+        Return NaN ' No data in dictionary for timestamp, return Not a Number.
+      End If
+
+    End Function
+
+
+    Public Sub RetrieveData(StartTimestamp As DateTime,
       EndTimestamp As DateTime) As Dictionary(Of DateTime, Double)
 
       Dim ShouldPrepareData As Boolean = True
@@ -109,7 +125,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           EndTimestamp > PreviousEndTimestamp) Or
           EndTimestamp <= PreviousStartTimestamp Or
           StartTimestamp >= PreviousEndTimestamp Then ' Cases 8, 10a), 10b)
-          Values.Clear ' Clear all
+          DataStore.Clear ' Clear all
           PreviousStartTimestamp = StartTimestamp
           PreviousEndTimestamp = EndTimestamp
         Else If StartTimestamp >= PreviousStartTimestamp And
@@ -120,7 +136,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             Do While EndTimestamp < PreviousEndTimestamp ' Remove forward
               PreviousEndTimestamp = PreviousEndTimestamp.
                 AddSeconds(-CalculationInterval)
-              Values.Remove(PreviousEndTimestamp)
+              DataStore.Remove(PreviousEndTimestamp)
             Loop
           End If
           EndTimestamp = PreviousStartTimestamp ' Add backward
@@ -128,7 +144,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Else If EndTimestamp > PreviousEndTimestamp Then ' Cases 7, 9
           If StartTimestamp > PreviousStartTimestamp Then ' Case 9
             Do While PreviousStartTimestamp < StartTimestamp ' Remove backward
-              Values.Remove(PreviousStartTimestamp)
+              DataStore.Remove(PreviousStartTimestamp)
               PreviousStartTimestamp = PreviousStartTimestamp.
                 AddSeconds(CalculationInterval)
             Loop
@@ -146,13 +162,11 @@ Namespace Vitens.DynamicBandwidthMonitor
         Catch
         End Try
 
-      Return New Dictionary(Of DateTime, Double)(Values) ' Return a copy.
-
       Finally
         Monitor.Exit(Point)
       End Try
 
-    End Function
+    End Sub
 
 
   End Class
