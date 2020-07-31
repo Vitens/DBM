@@ -181,8 +181,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim AbsoluteErrorStatsItem,
         RelativeErrorStatsItem As New DBMStatisticsItem
 
-      GetResults = New List(Of DBMResult)
-
       If CorrelationPoints Is Nothing Then ' Empty list if Nothing was passed.
         CorrelationPoints = New List(Of DBMCorrelationPoint)
       End If
@@ -195,71 +193,49 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Use culture used by the current thread if no culture was passed.
       If Culture Is Nothing Then Culture = CurrentThread.CurrentCulture
 
-      If Monitor.TryEnter(Point(InputPointDriver),
-        TimeSpan.FromSeconds(CalculationInterval)) Then ' Lock
-        Try
+      ' Calculate results for input point.
+      GetResults = Point(InputPointDriver).GetResults(StartTimestamp,
+        EndTimestamp, TimeRangeInterval, True, CorrelationPoints.Count > 0,
+        Nothing, Culture)
 
-          ' Retrieve all data from the data source. Will pass start and end
-          ' timestamps to TryPrepareData method. The driver can then prepare the
-          ' dataset for which calculations are required in the next step. The
-          ' (aligned) end time itself is excluded.
-          Point(InputPointDriver).PointDriver.
-            TryPrepareData(StartTimestamp, EndTimestamp)
+      ' Iterate over input point results for time range.
+      For Each Result In GetResults
 
-          Do While EndTimestamp > StartTimestamp
+        ' If an event is found and a correlation point is available.
+        If CorrelationPoints.Count > 0 Then
+          For Each CorrelationPoint In CorrelationPoints
+            If Result.Factor <> 0 Then
 
-            ' Calculate for input point.
-            Result = Point(InputPointDriver).GetResult(StartTimestamp, True,
-              CorrelationPoints.Count > 0, Nothing, Culture)
+              ' If pattern of correlation point contains input point.
+              If CorrelationPoint.SubtractSelf Then
+                ' Calculate result for correlation point, subtract input.
+                CorrelationResult = Point(CorrelationPoint.PointDriver).
+                  GetResult(Result.Timestamp, False, True,
+                  Point(InputPointDriver), Culture)
+              Else
+                ' Calculate result for correlation point.
+                CorrelationResult = Point(CorrelationPoint.PointDriver).
+                  GetResult(Result.Timestamp, False, True, Nothing, Culture)
+              End If
 
-            ' If an event is found and a correlation point is available.
-            If CorrelationPoints.Count > 0 Then
-              For Each CorrelationPoint In CorrelationPoints
-                If Result.Factor <> 0 Then
+              ' Calculate statistics of error compared to forecast.
+              AbsoluteErrorStatsItem = Statistics(
+                CorrelationResult.AbsoluteErrors, Result.AbsoluteErrors)
+              RelativeErrorStatsItem = Statistics(
+                CorrelationResult.RelativeErrors, Result.RelativeErrors)
 
-                  ' Retrieve all data from the correlation point data source.
-                  Point(CorrelationPoint.PointDriver).PointDriver.
-                    TryPrepareData(StartTimestamp, EndTimestamp)
+              Result.Factor = Suppress(Result.Factor,
+                AbsoluteErrorStatsItem.ModifiedCorrelation,
+                AbsoluteErrorStatsItem.OriginAngle,
+                RelativeErrorStatsItem.ModifiedCorrelation,
+                RelativeErrorStatsItem.OriginAngle,
+                CorrelationPoint.SubtractSelf) ' Suppress if not local event
 
-                  ' If pattern of correlation point contains input point.
-                  If CorrelationPoint.SubtractSelf Then
-                    ' Calculate result for correlation point, subtract input.
-                    CorrelationResult = Point(CorrelationPoint.PointDriver).
-                      GetResult(StartTimestamp, False, True,
-                      Point(InputPointDriver), Culture)
-                  Else
-                    ' Calculate result for correlation point.
-                    CorrelationResult = Point(CorrelationPoint.PointDriver).
-                      GetResult(StartTimestamp, False, True, Nothing, Culture)
-                  End If
-
-                  ' Calculate statistics of error compared to forecast.
-                  AbsoluteErrorStatsItem = Statistics(
-                    CorrelationResult.AbsoluteErrors, Result.AbsoluteErrors)
-                  RelativeErrorStatsItem = Statistics(
-                    CorrelationResult.RelativeErrors, Result.RelativeErrors)
-
-                  Result.Factor = Suppress(Result.Factor,
-                    AbsoluteErrorStatsItem.ModifiedCorrelation,
-                    AbsoluteErrorStatsItem.OriginAngle,
-                    RelativeErrorStatsItem.ModifiedCorrelation,
-                    RelativeErrorStatsItem.OriginAngle,
-                    CorrelationPoint.SubtractSelf) ' Suppress if not local event
-
-                End If
-              Next CorrelationPoint
             End If
+          Next CorrelationPoint
+        End If
 
-            GetResults.Add(Result) ' Add timestamp results.
-            StartTimestamp =
-              StartTimestamp.AddSeconds(TimeRangeInterval) ' Next interval.
-
-          Loop
-
-        Finally
-          Monitor.Exit(Point(InputPointDriver))
-        End Try
-      End If
+      Next Result
 
       Return GetResults
 
