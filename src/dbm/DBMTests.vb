@@ -1120,8 +1120,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim InputPointDriver As DBMPointDriverTestModel
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim DBM As New DBM
-      Dim Timestamp As DateTime
       Dim i As Integer
+      Dim Timestamp As DateTime
       Dim Result As DBMResult
 
       InputPointDriver = New DBMPointDriverTestModel(0)
@@ -1146,19 +1146,20 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2016, 1, 1, 0, 5, 0))
 
       ' GetResult - check calculation results
-      Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
-      For i = 0 To 19
+      For i = -19 To 19
+        Timestamp = New DateTime(2016, 1, 1, 0, 0, 0).
+          AddSeconds(Abs(i)*365*24*60*60/20) ' 19 backwards to 0, forwards to 19
         Result = DBM.GetResult(InputPointDriver, CorrelationPoints, Timestamp,
           New CultureInfo("nl-NL")) ' Use Dutch locale for New Year's Day test
         With Result
           AssertAlmostEqual(.Factor, {0, 0, 0, 0, 0, 0, -11.8493, -22.9119, 0,
-            0, 0, 0, 1.1375, 0, 0, 0, 0, 0, 0, 0}(i))
-          If i = 6 Or i = 7 Or i = 12 Then
+            0, 0, 0, 1.1375, 0, 0, 0, 0, 0, 0, 0}(Abs(i)))
+          If {6, 7, 12}.Contains(Abs(i)) Then
             AssertTrue(.HasEvent)
           Else
             AssertFalse(.HasEvent)
           End If
-          If i = 5 Or i = 14 Then
+          If {5, 14}.Contains(Abs(i)) Then
             AssertTrue(.HasSuppressedEvent)
           Else
             AssertFalse(.HasSuppressedEvent)
@@ -1167,32 +1168,31 @@ Namespace Vitens.DynamicBandwidthMonitor
             1097.1504, 950.9752, 496.1124, 673.6569, 1139.1957, 867.4313,
             504.9407, 656.4434, 1065.7651, 898.9191, 471.2433, 668.1,
             1103.9689, 897.7268, 525.3563, 676.7206, 1183.0887,
-            975.8324}(i))
+            975.8324}(Abs(i)))
           AssertAlmostEqual(.ForecastItem.Forecast, {517.3859, 716.9982,
             1059.0551, 919.4719, 488.6181, 683.6728, 1155.5986, 895.6872,
             503.2566, 655.7115, 1061.2282, 893.3488, 464.4957, 666.2928,
             1084.1527, 901.6546, 523.8671, 666.1729, 1190.3511,
-            975.4264}(i))
+            975.4264}(Abs(i)))
           AssertAlmostEqual(.ForecastItem.Range(0.95), {7.5212, 43.4768,
             57.5299, 51.6959, 28.3939, 0.5641, 0.9146, 0.8148, 5.6816, 7.3282,
             11.0143, 9.3649, 3.9192, 4.4945, 6.9199, 9.2247, 8.3518, 9.6103,
-            20.3862, 15.9607}(i))
+            20.3862, 15.9607}(Abs(i)))
           AssertAlmostEqual(.ForecastItem.Range(BandwidthCI), {11.3834, 65.8024,
             87.0718, 78.2419, 42.9743, 0.8537, 1.3843, 1.2332, 8.5991, 11.0913,
             16.6702, 14.1738, 5.9317, 6.8025, 10.4733, 13.9616, 12.6405,
-            14.5453, 30.8546, 24.1566}(i))
+            14.5453, 30.8546, 24.1566}(Abs(i)))
           AssertAlmostEqual(.ForecastItem.LowerControlLimit, {506.0025,
             651.1959, 971.9833, 841.23, 445.6438, 682.8191, 1154.2143, 894.454,
             494.6574, 644.6202, 1044.558, 879.175, 458.564, 659.4903,
             1073.6794, 887.693, 511.2267, 651.6276, 1159.4964,
-            951.2698}(i))
+            951.2698}(Abs(i)))
           AssertAlmostEqual(.ForecastItem.UpperControlLimit, {528.7693,
             782.8006, 1146.127, 997.7138, 531.5924, 684.5266, 1156.9829,
             896.9205, 511.8557, 666.8028, 1077.8984, 907.5226, 470.4274,
             673.0952, 1094.626, 915.6163, 536.5076, 680.7182, 1221.2057,
-            999.583}(i))
+            999.583}(Abs(i)))
         End With
-        Timestamp = Timestamp.AddSeconds(365*24*60*60/20)
       Next i
 
       ' GetResults Count - check number of results
