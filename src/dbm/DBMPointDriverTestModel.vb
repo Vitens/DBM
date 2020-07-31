@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2019  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -39,7 +39,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Overrides Function GetData(Timestamp As DateTime) As Double
+    Private Function LeeuwardenModel(Timestamp As DateTime) As Double
 
       ' Model based on hourly water usage in Leeuwarden (NL) 2016.
       ' Calculated using polynomial regressions based on hourly (quintic),
@@ -58,6 +58,20 @@ Namespace Vitens.DynamicBandwidthMonitor
       End With
 
     End Function
+
+
+    Private Overrides Sub PrepareData(StartTimestamp As DateTime,
+      EndTimestamp As DateTime)
+
+      Do While EndTimestamp > StartTimestamp
+
+        AddValue(StartTimestamp, LeeuwardenModel(StartTimestamp)) ' Add value
+        StartTimestamp =
+          StartTimestamp.AddSeconds(CalculationInterval) ' Next interval.
+
+      Loop
+
+    End Sub
 
 
   End Class
