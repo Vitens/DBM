@@ -985,7 +985,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2017, 9, 2, 11, 44, 11)),
         New DateTime(2017, 6, 4, 9, 20, 0))
       AssertEqual(DataPreparationTimestamp(
-        ew DateTime(2018, 6, 4, 16, 59, 55)),
+        New DateTime(2018, 6, 4, 16, 59, 55)),
         New DateTime(2018, 3, 11, 14, 35, 0))
       AssertEqual(DataPreparationTimestamp(
         New DateTime(2016, 9, 5, 4, 38, 50)),
