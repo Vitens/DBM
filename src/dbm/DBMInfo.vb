@@ -114,18 +114,18 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' exception occurs if one of the tests fail.
 
       Dim Timer As DateTime
-      Dim UTDuration, ITDuration As Double ' ms
+      Dim UTDurationMs, ITDurationMs As Double ' ms
 
       Timer = Now
       RunUnitTests
-      UTDuration = (Now.Ticks-Timer.Ticks)/TicksPerMillisecond
+      UTDurationMs = (Now.Ticks-Timer.Ticks)/TicksPerMillisecond
 
       Timer = Now
       RunIntegrationTests
-      ITDuration = (Now.Ticks-Timer.Ticks)/TicksPerMillisecond
+      ITDurationMs = (Now.Ticks-Timer.Ticks)/TicksPerMillisecond
 
-      Return "Unit tests: " & Round(UTDuration, 2).ToString & " ms" & NewLine &
-        "Integration tests: " & Round(ITDuration, 2).ToString & " ms"
+      Return "Unit tests: " & Round(UTDurationMs).ToString & " ms" & NewLine &
+        "Integration tests: " & Round(ITDurationMs).ToString & " ms"
 
     End Function
 
