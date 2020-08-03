@@ -124,8 +124,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       RunIntegrationTests
       ITDuration = (Now.Ticks-Timer.Ticks)/TicksPerMillisecond
 
-      Return "Unit tests: " & Round(UTDuration, 2).ToString & " ms") & NewLine &
-        "Integration tests: " & Round(ITDuration, 2).ToString & " ms") & NewLine
+      Return "Unit tests: " & Round(UTDuration, 2).ToString & " ms" & NewLine &
+        "Integration tests: " & Round(ITDuration, 2).ToString & " ms" & NewLine
 
     End Function
 
