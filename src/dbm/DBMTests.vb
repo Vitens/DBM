@@ -581,11 +581,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(SlopeToAngle(-1.6831), -59.2837)
       AssertAlmostEqual(SlopeToAngle(-2.0031), -63.4704)
 
-      For i = 0 To 19
-        AssertTrue(RandomNumber(0, i+1) >= 0)
-        AssertTrue(RandomNumber(0, i+1) <= i+1)
-      Next i
-
       AssertNaN(AlignPreviousInterval(0, 0))
       AssertEqual(AlignPreviousInterval(0, 12), 0)
       AssertEqual(AlignPreviousInterval(0, -12), 0)

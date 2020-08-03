@@ -37,9 +37,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Contains mathematical and statistical functions.
 
 
-    Private Shared Random As New Random
-
-
     Public Shared Function NormSInv(p As Double) As Double
 
       ' Returns the inverse of the standard normal cumulative distribution.
@@ -384,16 +381,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns angle in degrees for Slope.
 
       Return Atan(Slope)/(2*PI)*360
-
-    End Function
-
-
-    Public Shared Function RandomNumber(Min As Integer,
-      Max As Integer) As Integer
-
-      ' Returns a random number between Min (inclusive) and Max (inclusive).
-
-      Return Random.Next(Min, Max+1)
 
     End Function
 
