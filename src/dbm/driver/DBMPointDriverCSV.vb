@@ -43,7 +43,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     '          parameter.
 
 
-    Private Shared SplitChars As Char() = {","c, "	"c} ' Comma and tab
+    Private SplitChars As Char() = {","c, "	"c} ' Comma and tab
 
 
     Public Sub New(Point As Object)
