@@ -31,6 +31,7 @@ Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Asset.AFAttributeTrait
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Time
+Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
@@ -435,9 +436,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         Snapshot = Attribute.Parent.GetValue.Timestamp
 
         ' For attributes without future data, do not return data beyond the
-        ' snapshot timestamp.
+        ' snapshot timestamp interval.
         If Not AttributeHasFutureData And timeRange.EndTime > Snapshot Then
-          timeRange.EndTime = Snapshot
+          timeRange.EndTime = New AFTime(NextInterval(Snapshot.LocalTime))
         End If
 
         ' Get DBM results for time range and iterate over them.
