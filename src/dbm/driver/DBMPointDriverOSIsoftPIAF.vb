@@ -56,24 +56,22 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
+    Public Function SnapshotTimestamp As DateTime
+
+      ' Returns the snapshot timestamp from OSIsoft PI AF.
+
+      Return DirectCast(Point, AFAttribute).GetValue.Timestamp.LocalTime
+
+    End Function
+
+
     Public Overrides Sub PrepareData(StartTimestamp As DateTime,
       EndTimestamp As DateTime)
 
       ' Retrieves a value for each interval in the time range from OSIsoft PI AF
       ' and stores this in memory. The (aligned) end time itself is excluded.
 
-      Dim Snapshot As DateTime = NextInterval(DirectCast(Point, AFAttribute).
-        GetValue.Timestamp.LocalTime) ' Interval after snapshot timestamp
       Dim Value As AFValue
-
-      ' Never retrieve values beyond the snapshot time aligned to the next
-      ' interval.
-      If StartTimestamp > Snapshot Then StartTimestamp = Snapshot
-      If EndTimestamp > Snapshot Then EndTimestamp = Snapshot
-
-      ' Exit this sub if there is no data to retrieve or when the start
-      ' timestamp is not before the end timestamp.
-      If Not StartTimestamp < EndTimestamp Then Exit Sub
 
       For Each Value In DirectCast(Point, AFAttribute).Data.InterpolatedValues(
         New AFTimeRange(New AFTime(StartTimestamp),

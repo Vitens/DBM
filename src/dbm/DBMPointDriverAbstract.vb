@@ -24,6 +24,7 @@ Option Strict
 
 Imports System
 Imports System.Collections.Generic
+Imports System.DateTime
 Imports System.Double
 Imports System.Threading
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
@@ -58,19 +59,41 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
+    Public Overridable Function SnapshotTimestamp As DateTime
+
+      ' Return the latest data timestamp (snapshot) for which the source of data
+      ' had information available. By default, the maximum value is returned so
+      ' there is no limit.
+
+      Return DateTime.MaxValue
+
+    End Function
+
+
     Public MustOverride Sub PrepareData(StartTimestamp As DateTime,
       EndTimestamp As DateTime)
-      ' Retrieve and store data in bulk for the passed time range from a source
-      ' of data, to be used in the DataStore.GetData method. Use
+      ' Must retrieve and store data in bulk for the passed time range from a
+      ' source of data, to be used in the DataStore.GetData method. Use
       ' DataStore.AddData to store data in memory.
 
 
     Public Sub RetrieveData(StartTimestamp As DateTime,
       EndTimestamp As DateTime)
 
+      Dim Snapshot As DateTime = NextInterval(SnapshotTimestamp)
+
       ' Data preparation timestamps
       StartTimestamp = DataPreparationTimestamp(StartTimestamp)
       EndTimestamp = AlignTimestamp(EndTimestamp, CalculationInterval)
+
+      ' Never retrieve values beyond the snapshot time aligned to the next
+      ' interval.
+      If StartTimestamp > Snapshot Then StartTimestamp = Snapshot
+      If EndTimestamp > Snapshot Then EndTimestamp = Snapshot
+
+      ' Exit this sub if there is no data to retrieve or when the start
+      ' timestamp is not before the end timestamp.
+      If Not StartTimestamp < EndTimestamp Then Exit Sub
 
       Monitor.Enter(Point) ' Lock
       Try
