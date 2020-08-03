@@ -78,7 +78,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       With GetFileVersionInfo
         Return .ProductName & " v" & Version & NewLine &
           .Comments & NewLine &
-          .LegalCopyright & NewLine
+          .LegalCopyright
       End With
 
     End Function
@@ -89,7 +89,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns a string containing product name, version number, copyright,
       ' and license notice.
 
-      Return Product &
+      Return Product & NewLine &
         NewLine &
         "This program is free software: you can redistribute it and/or " &
         "modify it under the terms of the GNU General Public License as " &
@@ -103,7 +103,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         NewLine &
         "You should have received a copy of the GNU General Public License " &
         "along with this program.  " &
-        "If not, see <http://www.gnu.org/licenses/>." & NewLine
+        "If not, see <http://www.gnu.org/licenses/>."
 
     End Function
 
@@ -125,7 +125,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ITDuration = (Now.Ticks-Timer.Ticks)/TicksPerMillisecond
 
       Return "Unit tests: " & Round(UTDuration, 2).ToString & " ms" & NewLine &
-        "Integration tests: " & Round(ITDuration, 2).ToString & " ms" & NewLine
+        "Integration tests: " & Round(ITDuration, 2).ToString & " ms"
 
     End Function
 
