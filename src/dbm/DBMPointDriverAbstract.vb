@@ -68,8 +68,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Sub RetrieveData(StartTimestamp As DateTime,
       EndTimestamp As DateTime)
 
-      Dim ShouldPrepareData As Boolean = True
-
       ' Data preparation timestamps
       StartTimestamp = DataPreparationTimestamp(StartTimestamp)
       EndTimestamp = AlignTimestamp(EndTimestamp, CalculationInterval)
@@ -102,7 +100,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           PreviousEndTimestamp = EndTimestamp
         Else If StartTimestamp >= PreviousStartTimestamp And
           EndTimestamp <= PreviousEndTimestamp Then ' Cases 1, 3, 4, 6
-          ShouldPrepareData = False ' Do nothing
+          Exit Sub ' Do nothing
         Else If StartTimestamp < PreviousStartTimestamp Then ' Cases 2, 5
           If EndTimestamp < PreviousEndTimestamp Then ' Case 5
             Do While EndTimestamp < PreviousEndTimestamp ' Remove forward
@@ -130,7 +128,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' timestamps. The driver can then prepare the dataset for which
           ' calculations are required in the next step. The (aligned) end time
           ' itself is excluded.
-          If ShouldPrepareData Then PrepareData(StartTimestamp, EndTimestamp)
+          PrepareData(StartTimestamp, EndTimestamp)
         Catch
         End Try
 
