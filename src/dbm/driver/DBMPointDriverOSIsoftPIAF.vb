@@ -23,14 +23,8 @@ Option Strict
 
 
 Imports System
-Imports System.Collections.Generic
-Imports System.Double
 Imports OSIsoft.AF.Asset
-Imports OSIsoft.AF.Data.AFCalculationBasis
-Imports OSIsoft.AF.Data.AFSummaryTypes
-Imports OSIsoft.AF.Data.AFTimestampCalculation
 Imports OSIsoft.AF.Time
-Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 

@@ -24,10 +24,7 @@ Option Strict
 
 Imports System
 Imports System.Collections.Generic
-Imports System.Double
 Imports System.Globalization
-Imports System.Math
-Imports System.Threading
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters

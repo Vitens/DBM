@@ -23,8 +23,6 @@ Option Strict
 
 
 Imports System
-Imports System.Collections.Generic
-Imports System.Double
 Imports System.IO
 
 

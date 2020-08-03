@@ -23,9 +23,6 @@ Option Strict
 
 
 Imports System
-Imports System.Collections.Generic
-Imports System.DateTime
-Imports System.Double
 Imports System.Threading
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters

@@ -26,8 +26,6 @@ Imports System
 Imports System.Collections.Generic
 Imports System.Double
 Imports System.Threading
-Imports Vitens.DynamicBandwidthMonitor.DBMDate
-Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
 Namespace Vitens.DynamicBandwidthMonitor
