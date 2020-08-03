@@ -91,7 +91,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Try
 
         If Not PointsCache.ContainsKey(PointDriver.Point) Then
-          PointsCache.AddItem(PointDriver.Point, New DBMPoint(PointDriver))
+          PointsCache.Add(PointDriver.Point, New DBMPoint(PointDriver))
         End If
 
         Return PointsCache.Item(PointDriver.Point)
