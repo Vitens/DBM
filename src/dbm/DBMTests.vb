@@ -47,7 +47,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Sub RunUnitTests
 
       Dim i As Integer
-      Dim j As Double
 
       ' DBMAssert
       AssertEqual(True, True)
