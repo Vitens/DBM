@@ -65,7 +65,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' had information available. By default, the maximum value is returned so
       ' there is no limit.
 
-      Return DateTime.MaxValue
+      Return NextInterval(DateTime.MaxValue, -1)
 
     End Function
 
