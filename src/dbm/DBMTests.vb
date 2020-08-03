@@ -182,7 +182,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(TInv(0.5267, 15), 0.0681)
 
       AssertAlmostEqual(MeanAbsoluteDeviationScaleFactor, 1.2533)
-      AssertAlmostEqual(MeanAbsoluteDeviationScaleFactor, Sqrt(PI/2), 15) ' LUT
 
       AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(1), 1)
       AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(2), 1.2247)
@@ -205,16 +204,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(36), 1.4826)
       AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(38), 1.4826)
 
-      For i = 1 To 30 ' LUT
-        If i < 30 Then
-          AssertAlmostEqual(
-            MedianAbsoluteDeviationScaleFactor(i), 1/TInv(0.75, i), 12)
-        Else
-          AssertAlmostEqual(
-            MedianAbsoluteDeviationScaleFactor(i), 1/NormSInv(0.75), 15)
-        End If
-      Next i
-
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 1), 63.6567)
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 2), 9.9248)
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 4), 4.6041)
@@ -235,18 +224,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.90, 30), 1.6449)
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.95, 25), 2.0595)
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.90, 20), 1.7247)
-
-      For i = 1 To 30 ' LUT
-        For Each j In {0.9, 0.95, 0.98, 0.99, 0.9998, 0.9999}
-          If i < 30 Then
-            AssertAlmostEqual(
-              ControlLimitRejectionCriterion(j, i), TInv((j+1)/2, i), 11)
-          Else
-            AssertAlmostEqual(
-              ControlLimitRejectionCriterion(j, i), NormSInv((j+1)/2), 14)
-          End If
-        Next
-      Next i
 
       AssertEqual(NonNaNCount({60}), 1)
       AssertEqual(NonNaNCount({60, 70}), 2)
