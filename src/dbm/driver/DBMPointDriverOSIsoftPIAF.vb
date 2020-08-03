@@ -56,7 +56,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Function SnapshotTimestamp As DateTime
+    Public Overrides Function SnapshotTimestamp As DateTime
 
       ' Returns the snapshot timestamp from OSIsoft PI AF.
 
