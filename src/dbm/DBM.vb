@@ -79,7 +79,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' distribution processes.
 
 
-    Private PointsCache As New Dictionary(Of Object, DBMPoint)
+    Private Points As New Dictionary(Of Object, DBMPoint)
 
 
     Private Function Point(PointDriver As DBMPointDriverAbstract) As DBMPoint
@@ -87,17 +87,17 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns DBMPoint object from the dictionary. If dictionary does not yet
       ' contain object, it is added.
 
-      Monitor.Enter(PointsCache) ' Lock
+      Monitor.Enter(Points) ' Lock
       Try
 
-        If Not PointsCache.ContainsKey(PointDriver.Point) Then
-          PointsCache.Add(PointDriver.Point, New DBMPoint(PointDriver))
+        If Not Points.ContainsKey(PointDriver.Point) Then
+          Points.Add(PointDriver.Point, New DBMPoint(PointDriver))
         End If
 
-        Return PointsCache.Item(PointDriver.Point)
+        Return Points.Item(PointDriver.Point)
 
       Finally
-        Monitor.Exit(PointsCache)
+        Monitor.Exit(Points)
       End Try
 
     End Function
