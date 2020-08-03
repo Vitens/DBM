@@ -45,17 +45,20 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' timestamp is not already stored in memory (could happen because of DST
       ' time overlap).
 
-      Monitor.Enter(DataStore) ' Lock
-      Try
+      If TypeOf Data Is Double Then
 
-        If TypeOf Data Is Double AndAlso
-          Not DataStore.ContainsKey(Timestamp) Then
-          DataStore.Add(Timestamp, DirectCast(Data, Double))
-        End If
+        Monitor.Enter(DataStore) ' Lock
+        Try
 
-      Finally
-        Monitor.Exit(DataStore)
-      End Try
+          If Not DataStore.ContainsKey(Timestamp) Then
+            DataStore.Add(Timestamp, DirectCast(Data, Double))
+          End If
+
+        Finally
+          Monitor.Exit(DataStore)
+        End Try
+
+      End If
 
     End Sub
 
