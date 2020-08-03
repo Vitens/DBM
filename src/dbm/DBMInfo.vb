@@ -114,7 +114,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' exception occurs if one of the tests fail.
 
       Dim Timer As DateTime
-      Dim UTDurationMs, ITDurationMs As Double ' ms
+      Dim UTDurationMs, ITDurationMs As Double
 
       Timer = Now
       RunUnitTests

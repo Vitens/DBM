@@ -38,12 +38,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     ' DBM drivers should inherit from this base class. In Sub New,
     ' MyBase.New(Point) should be called. RetrieveData is used to retrieve and
-    ' store data in bulk from a source using the AddDataStore method. Use
-    ' GetDataStore to fetch results from memory.
+    ' store data in bulk from a source using the DataStore.Add method. Use
+    ' DataStore.Get to fetch results from memory.
 
 
     Public Point As Object
-    Private DataStore As New Dictionary(Of DateTime, Double) ' In-memory data
+    Public DataStore As New DBMDataStore ' In-memory data
     Private PreviousStartTimestamp As DateTime = DateTime.MaxValue
     Private PreviousEndTimestamp As DateTime = DateTime.MinValue
 
@@ -58,39 +58,11 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Sub AddDataStore(Timestamp As DateTime, Data As Object)
-
-      ' Make sure that the retrieved data type is a Double and also that the
-      ' timestamp is not already stored in memory (could happen because of DST
-      ' time overlap).
-      If TypeOf Data Is Double AndAlso
-        Not DataStore.ContainsKey(Timestamp) Then
-        DataStore.Add(Timestamp, DirectCast(Data, Double))
-      End If
-
-    End Sub
-
-
     Public MustOverride Sub PrepareData(StartTimestamp As DateTime,
       EndTimestamp As DateTime)
       ' Retrieve and store data in bulk for the passed time range from a source
-      ' of data, to be used in the GetDataStore method. Use AddDataStore to
+      ' of data, to be used in the DataStore.Get method. Use DataStore.Add to
       ' store data in memory.
-
-
-    Public Function GetDataStore(Timestamp As DateTime) As Double
-
-      ' Retrieves data from the DataStore dictionary. If there is no data for
-      ' the timestamp, return Not a Number.
-
-      GetDataStore = Nothing
-      If DataStore.TryGetValue(Timestamp, GetDataStore) Then ' In dictionary.
-        Return GetDataStore ' Return value from dictionary.
-      Else
-        Return NaN ' No data in dictionary for timestamp, return Not a Number.
-      End If
-
-    End Function
 
 
     Public Sub RetrieveData(StartTimestamp As DateTime,

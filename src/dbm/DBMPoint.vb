@@ -117,10 +117,10 @@ Namespace Vitens.DynamicBandwidthMonitor
                 End If
 
                 Patterns(PatternCounter) =
-                  PointDriver.GetDataStore(PatternTimestamp)
+                  PointDriver.DataStore.Get(PatternTimestamp)
                 If SubtractPoint IsNot Nothing Then ' Subtract input if req'd
                   Patterns(PatternCounter) -=
-                  SubtractPoint.PointDriver.GetDataStore(PatternTimestamp)
+                  SubtractPoint.PointDriver.DataStore.Get(PatternTimestamp)
                 End If
 
               Next PatternCounter
