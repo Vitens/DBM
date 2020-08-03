@@ -87,7 +87,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' If set, never retrieve values beyond the snapshot time aligned to the
       ' next interval.
-      If Snapshot IsNot Nothing Then
+      If Snapshot = DateTime.MinValue Then
         Snapshot = NextInterval(Snapshot)
         If StartTimestamp > Snapshot Then StartTimestamp = Snapshot
         If EndTimestamp > Snapshot Then EndTimestamp = Snapshot
