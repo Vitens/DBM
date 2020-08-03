@@ -74,7 +74,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               If DateTime.TryParse(Substrings(0), Timestamp) Then
                 If Timestamp >= StartTimestamp And Timestamp < EndTimestamp Then
                   If Double.TryParse(Substrings(1), Value) Then
-                    DataStore.Add(Timestamp, Value)
+                    DataStore.AddData(Timestamp, Value)
                   End If
                 End If
               End If

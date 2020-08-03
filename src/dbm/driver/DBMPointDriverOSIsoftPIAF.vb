@@ -81,7 +81,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         New AFTimeSpan(0, 0, 0, 0, 0, CalculationInterval, 0),
         Nothing, Nothing, True) ' Get interpolated values for time range.
 
-        DataStore.Add(Value.Timestamp.LocalTime, Value.Value)
+        DataStore.AddData(Value.Timestamp.LocalTime, Value.Value)
 
       Next
 

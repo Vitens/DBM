@@ -38,8 +38,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     ' DBM drivers should inherit from this base class. In Sub New,
     ' MyBase.New(Point) should be called. RetrieveData is used to retrieve and
-    ' store data in bulk from a source using the DataStore.Add method. Use
-    ' DataStore.Get to fetch results from memory.
+    ' store data in bulk from a source using the DataStore.AddData method. Use
+    ' DataStore.GetData to fetch results from memory.
 
 
     Public Point As Object
@@ -61,8 +61,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public MustOverride Sub PrepareData(StartTimestamp As DateTime,
       EndTimestamp As DateTime)
       ' Retrieve and store data in bulk for the passed time range from a source
-      ' of data, to be used in the DataStore.Get method. Use DataStore.Add to
-      ' store data in memory.
+      ' of data, to be used in the DataStore.GetData method. Use
+      ' DataStore.AddData to store data in memory.
 
 
     Public Sub RetrieveData(StartTimestamp As DateTime,
@@ -97,7 +97,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           EndTimestamp > PreviousEndTimestamp) Or
           EndTimestamp <= PreviousStartTimestamp Or
           StartTimestamp >= PreviousEndTimestamp Then ' Cases 8, 10a), 10b)
-          DataStore.Clear ' Clear all
+          DataStore.ClearData ' Clear all
           PreviousStartTimestamp = StartTimestamp
           PreviousEndTimestamp = EndTimestamp
         Else If StartTimestamp >= PreviousStartTimestamp And
@@ -108,7 +108,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             Do While EndTimestamp < PreviousEndTimestamp ' Remove forward
               PreviousEndTimestamp = PreviousEndTimestamp.
                 AddSeconds(-CalculationInterval)
-              DataStore.Remove(PreviousEndTimestamp)
+              DataStore.RemoveData(PreviousEndTimestamp)
             Loop
           End If
           EndTimestamp = PreviousStartTimestamp ' Add backward
@@ -116,7 +116,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Else If EndTimestamp > PreviousEndTimestamp Then ' Cases 7, 9
           If StartTimestamp > PreviousStartTimestamp Then ' Case 9
             Do While PreviousStartTimestamp < StartTimestamp ' Remove backward
-              DataStore.Remove(PreviousStartTimestamp)
+              DataStore.RemoveData(PreviousStartTimestamp)
               PreviousStartTimestamp = PreviousStartTimestamp.
                 AddSeconds(CalculationInterval)
             Loop

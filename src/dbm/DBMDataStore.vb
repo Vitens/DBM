@@ -39,7 +39,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private DataStore As New Dictionary(Of DateTime, Double) ' In-memory data
 
 
-    Public Sub Add(Timestamp As DateTime, Data As Object)
+    Public Sub AddData(Timestamp As DateTime, Data As Object)
 
       ' Make sure that the retrieved data type is a Double and also that the
       ' timestamp is not already stored in memory (could happen because of DST
@@ -60,7 +60,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Sub Remove(Timestamp As DateTime)
+    Public Sub RemoveData(Timestamp As DateTime)
 
       Monitor.Enter(DataStore) ' Lock
       Try
@@ -74,7 +74,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Sub Clear
+    Public Sub ClearData
 
       Monitor.Enter(DataStore) ' Lock
       Try
@@ -88,18 +88,17 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Function Get(Timestamp As DateTime) As Double
+    Public Function GetData(Timestamp As DateTime) As Double
 
       ' Retrieves data from the DataStore dictionary. If there is no data for
       ' the timestamp, return Not a Number.
 
-      Dim Data As Double = Nothing
-
       Monitor.Enter(DataStore) ' Lock
       Try
 
-        If DataStore.TryGetValue(Timestamp, Data) Then ' In dictionary.
-          Return Data ' Return value from dictionary.
+        GetData = Nothing
+        If DataStore.TryGetValue(Timestamp, GetData) Then ' In dictionary.
+          Return GetData ' Return value from dictionary.
         Else
           Return NaN ' No data in dictionary for timestamp, return Not a Number.
         End If
