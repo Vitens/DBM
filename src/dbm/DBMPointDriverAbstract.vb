@@ -62,10 +62,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overridable Function SnapshotTimestamp As DateTime
 
       ' Return the latest data timestamp (snapshot) for which the source of data
-      ' had information available. By default, the maximum value is returned so
-      ' there is no limit.
+      ' has information available. If there is no limit, return Nothing.
 
-      Return NextInterval(DateTime.MaxValue, -1)
+      Return Nothing
 
     End Function
 
@@ -80,16 +79,19 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Sub RetrieveData(StartTimestamp As DateTime,
       EndTimestamp As DateTime)
 
-      Dim Snapshot As DateTime = NextInterval(SnapshotTimestamp)
+      Dim Snapshot As DateTime = SnapshotTimestamp
 
       ' Data preparation timestamps
       StartTimestamp = DataPreparationTimestamp(StartTimestamp)
       EndTimestamp = AlignTimestamp(EndTimestamp, CalculationInterval)
 
-      ' Never retrieve values beyond the snapshot time aligned to the next
-      ' interval.
-      If StartTimestamp > Snapshot Then StartTimestamp = Snapshot
-      If EndTimestamp > Snapshot Then EndTimestamp = Snapshot
+      ' If set, never retrieve values beyond the snapshot time aligned to the
+      ' next interval.
+      If Snapshot IsNot Nothing Then
+        Snapshot = NextInterval(Snapshot)
+        If StartTimestamp > Snapshot Then StartTimestamp = Snapshot
+        If EndTimestamp > Snapshot Then EndTimestamp = Snapshot
+      End If
 
       ' Exit this sub if there is no data to retrieve or when the start
       ' timestamp is not before the end timestamp.
