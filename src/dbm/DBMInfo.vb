@@ -23,8 +23,11 @@ Option Strict
 
 
 Imports System
+Imports System.DateTime
 Imports System.Diagnostics
 Imports System.Environment
+Imports System.Math
+Imports System.TimeSpan
 Imports Vitens.DynamicBandwidthMonitor.DBMTests
 
 
@@ -84,10 +87,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function LicenseNotice As String
 
       ' Returns a string containing product name, version number, copyright,
-      ' and license notice. An exception occurs if one of the tests fail.
-
-      RunUnitTests
-      RunIntegrationTests
+      ' and license notice.
 
       Return Product &
         NewLine &
@@ -104,6 +104,28 @@ Namespace Vitens.DynamicBandwidthMonitor
         "You should have received a copy of the GNU General Public License " &
         "along with this program.  " &
         "If not, see <http://www.gnu.org/licenses/>." & NewLine
+
+    End Function
+
+
+    Public Shared Function TestResults As String
+
+      ' Run unit and integration tests and return test run duration. An
+      ' exception occurs if one of the tests fail.
+
+      Dim Timer As DateTime
+      Dim UTDuration, ITDuration As Double ' ms
+
+      Timer = Now
+      RunUnitTests
+      UTDuration = (Now.Ticks-Timer.Ticks)/TicksPerMillisecond
+
+      Timer = Now
+      RunIntegrationTests
+      ITDuration = (Now.Ticks-Timer.Ticks)/TicksPerMillisecond
+
+      Return "Unit tests: " & Round(UTDuration, 2).ToString & " ms") & NewLine &
+        "Integration tests: " & Round(ITDuration, 2).ToString & " ms") & NewLine
 
     End Function
 

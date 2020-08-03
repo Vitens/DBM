@@ -1244,41 +1244,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Shared Function PerformanceIndex As Double
-
-      ' Returns the performance of the DBM calculation as a performance index.
-      ' The returned value indicates how many full days per second this system
-      ' can calculate when performing real-time continuous calculations.
-
-      Const DurationTicks As Double = 5*TicksPerSecond ' Measure for 5 seconds.
-
-      Dim InputPointDriver As DBMPointDriverTestModel
-      Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
-      Dim Timestamp, Timer As DateTime
-      Dim Result As DBMResult
-      Dim DBM As New DBM
-      Dim Count As Integer
-
-      InputPointDriver = New DBMPointDriverTestModel(0)
-      CorrelationPoints.Add(New DBMCorrelationPoint(
-        New DBMPointDriverTestModel(5394), False))
-      CorrelationPoints.Add(New DBMCorrelationPoint(
-        New DBMPointDriverTestModel(227), True))
-      Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
-
-      Timer = Now
-      Do While Now.Ticks-Timer.Ticks < DurationTicks
-        Result = DBM.GetResult(InputPointDriver, CorrelationPoints, Timestamp,
-          New CultureInfo("nl-NL")) ' Use Dutch locale for holidays.
-        If Now.Ticks-Timer.Ticks >= DurationTicks/2 Then Count += 1 ' 2nd half.
-        Timestamp = Timestamp.AddSeconds(CalculationInterval)
-      Loop
-
-      Return 2*Count*TicksPerSecond*CalculationInterval/(24*60*60*DurationTicks)
-
-    End Function
-
-
   End Class
 
 
