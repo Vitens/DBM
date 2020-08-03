@@ -26,7 +26,7 @@ Option Strict
 ' returned using the DBM.Version function.
 
 
-<assembly:System.Reflection.AssemblyVersion("1.60.*")>
+<assembly:System.Reflection.AssemblyVersion("1.61.*")>
 
 <assembly:System.Reflection.AssemblyProduct("Dynamic Bandwidth Monitor")>
 
