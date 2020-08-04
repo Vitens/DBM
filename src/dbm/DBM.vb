@@ -203,7 +203,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' If an event is found and a correlation point is available.
         If CorrelationPoints.Count > 0 Then
           For Each CorrelationPoint In CorrelationPoints
-            If Result.Factor <> 0 Then
+            If Abs(Result.Factor) > 0 Then
 
               ' If pattern of correlation point contains input point.
               If CorrelationPoint.SubtractSelf Then

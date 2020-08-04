@@ -25,6 +25,7 @@ Option Strict
 Imports System
 Imports System.Collections.Generic
 Imports System.Globalization
+Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
@@ -96,7 +97,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' timestamp and only process previous timestamps for calculating
           ' correlation results if an event was found.
           If Result.ForecastItem Is Nothing Or (IsInputDBMPoint And
-            Result.Factor <> 0 And HasCorrelationDBMPoint) Or
+            Abs(Result.Factor) > 0 And HasCorrelationDBMPoint) Or
             Not IsInputDBMPoint Then
 
             For EMACounter = 0 To EMAPreviousPeriods ' Filter hi freq. variation
