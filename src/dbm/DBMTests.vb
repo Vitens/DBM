@@ -686,19 +686,19 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2016, 2, 22, 19, 10, 0))
       AssertEqual(NextInterval(
         New DateTime(2015, 9, 13, 22, 48, 17)),
-        New DateTime(2015, 9, 13, 23, 50, 0))
+        New DateTime(2015, 9, 13, 22, 50, 0))
       AssertEqual(NextInterval(
         New DateTime(2016, 10, 20, 2, 47, 48)),
-        New DateTime(2016, 10, 20, 3, 50, 0))
+        New DateTime(2016, 10, 20, 2, 50, 0))
       AssertEqual(NextInterval(
         New DateTime(2014, 2, 8, 23, 12, 34)),
         New DateTime(2014, 2, 8, 23, 15, 0))
       AssertEqual(NextInterval(
         New DateTime(2016, 2, 27, 23, 40, 39)),
-        New DateTime(2016, 2, 28, 0, 45, 0))
+        New DateTime(2016, 2, 27, 23, 45, 0))
       AssertEqual(NextInterval(
         New DateTime(2015, 8, 26, 9, 35, 55)),
-        New DateTime(2015, 8, 26, 8, 40, 0))
+        New DateTime(2015, 8, 26, 9, 40, 0))
       AssertEqual(NextInterval(
         New DateTime(2016, 2, 11, 0, 44, 7)),
         New DateTime(2016, 2, 11, 0, 45, 0))
