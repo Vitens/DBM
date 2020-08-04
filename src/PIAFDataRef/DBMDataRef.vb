@@ -31,7 +31,6 @@ Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Asset.AFAttributeTrait
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Time
-Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
@@ -268,15 +267,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Check if this attribute is properly configured.
       If AttributeConfigurationIsValid Then
 
-        ' Retrieve snapshot timestamp aligned to the previous interval.
-        SnapshotTimestamp = PreviousInterval(
-          New DBMPointDriver(Attribute.Parent).SnapshotTimestamp)
+        ' Retrieve snapshot timestamp.
+        SnapshotTimestamp =
+          New DBMPointDriver(Attribute.Parent).SnapshotTimestamp
 
         If timeContext IsNot Nothing Then
 
-          ' Use passed timestamp aligned to the previous interval.
-          Timestamp = PreviousInterval(
-            DirectCast(timeContext, AFTime).LocalTime)
+          ' Use passed timestamp.
+          Timestamp = DirectCast(timeContext, AFTime).LocalTime
 
           If Not AttributeHasFutureData Then
 
