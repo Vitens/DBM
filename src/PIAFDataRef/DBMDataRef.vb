@@ -476,11 +476,13 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         Next Result
 
-        ' If there are no calculation results, return a CalcFailed state.
-        ' Definition: 'Calculation Failed state.'
+        ' If there are no calculation results, return a NoData state.
+        ' Definition: 'Data-retrieval functions use this state for time periods
+        ' where no archive values for a tag can exist 10 minutes into the future
+        ' or before the oldest mounted archive.'
         If GetValues.Count = 0 Then
           GetValues.Add(AFValue.CreateSystemStateValue(
-            AFSystemStateCode.CalcFailed, timeRange.StartTime))
+            AFSystemStateCode.NoData, timeRange.StartTime))
         End If
 
       Else
