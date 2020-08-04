@@ -66,6 +66,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' this point. Also calculates and stores (historic) forecast errors for
       ' correlation analysis later on.
 
+      Dim SnapshotTimestamp As DateTime
       Dim Result As DBMResult
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
       Dim ForecastTimestamp, HistoryTimestamp, PatternTimestamp As DateTime
@@ -77,6 +78,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       GetResults = New List(Of DBMResult)
 
       ' Get data from data source.
+      SnapshotTimestamp = PointDriver.SnapshotTimestamp
       PointDriver.RetrieveData(StartTimestamp, EndTimestamp)
       If SubtractPoint IsNot Nothing Then
         SubtractPoint.PointDriver.RetrieveData(StartTimestamp, EndTimestamp)
@@ -86,6 +88,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         Result = New DBMResult
         Result.Timestamp = AlignTimestamp(StartTimestamp)
+        Result.IsFutureData = Result.Timestamp > SnapshotTimestamp
 
         For CorrelationCounter = 0 To CorrelationPreviousPeriods ' Corr. loop
 

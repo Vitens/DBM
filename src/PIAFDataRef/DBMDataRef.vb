@@ -376,7 +376,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Element, ParentElement, SiblingElement As AFElement
       Dim InputPointDriver As DBMPointDriver
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
-      Dim SnapshotTimestamp As DateTime
       Dim Result As DBMResult
 
       GetValues = New AFValues
@@ -429,16 +428,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         End If
 
-        ' Retrieve snapshot timestamp.
-        SnapshotTimestamp = InputPointDriver.SnapshotTimestamp
-
-        ' For attributes without future data, do not return data beyond the
-        ' snapshot timestamp interval.
-        If Not AttributeHasFutureData And
-          timeRange.EndTime.LocalTime > SnapshotTimestamp Then
-          timeRange.EndTime = New AFTime(NextInterval(SnapshotTimestamp))
-        End If
-
         ' Get DBM results for time range and iterate over them.
         For Each Result In DBM.GetResults(InputPointDriver, CorrelationPoints,
           timeRange.StartTime.LocalTime, timeRange.EndTime.LocalTime,
@@ -446,30 +435,36 @@ Namespace Vitens.DynamicBandwidthMonitor
 
           With Result
 
-            If Attribute.Trait Is LimitTarget Then
-              GetValues.Add(New AFValue(.ForecastItem.Measurement, .Timestamp))
-            ElseIf Attribute.Trait Is Forecast Then
-              GetValues.Add(New AFValue(.ForecastItem.Forecast, .Timestamp))
-            ElseIf Attribute.Trait Is LimitMinimum Then
-              GetValues.Add(New AFValue(.ForecastItem.Forecast-
-                .ForecastItem.Range(pValueMinMax), .Timestamp))
-            ElseIf Attribute.Trait Is LimitLoLo Then
+            If AttributeHasFutureData Or Not .IsFutureData Then
+
+              If Attribute.Trait Is LimitTarget Then
+                GetValues.Add(New AFValue(.ForecastItem.Measurement,
+                  New AFTime(.Timestamp)))
+              ElseIf Attribute.Trait Is Forecast Then
+                GetValues.Add(New AFValue(.ForecastItem.Forecast,
+                  New AFTime(.Timestamp)))
+              ElseIf Attribute.Trait Is LimitMinimum Then
+                GetValues.Add(New AFValue(.ForecastItem.Forecast-
+                  .ForecastItem.Range(pValueMinMax), New AFTime(.Timestamp)))
+              ElseIf Attribute.Trait Is LimitLoLo Then
                GetValues.Add(New AFValue(.ForecastItem.LowerControlLimit,
-               .Timestamp))
-            ElseIf Attribute.Trait Is LimitLo Then
-              GetValues.Add(New AFValue(.ForecastItem.Forecast-
-                .ForecastItem.Range(pValueLoHi), .Timestamp))
-            ElseIf Attribute.Trait Is LimitHi Then
-              GetValues.Add(New AFValue(.ForecastItem.Forecast+
-                .ForecastItem.Range(pValueLoHi), .Timestamp))
-            ElseIf Attribute.Trait Is LimitHiHi Then
-              GetValues.Add(New AFValue(.ForecastItem.UpperControlLimit,
-                .Timestamp))
-            ElseIf Attribute.Trait Is LimitMaximum Then
-              GetValues.Add(New AFValue(.ForecastItem.Forecast+
-                .ForecastItem.Range(pValueMinMax), .Timestamp))
-            Else
-              GetValues.Add(New AFValue(.Factor, .Timestamp))
+                 New AFTime(.Timestamp)))
+              ElseIf Attribute.Trait Is LimitLo Then
+                GetValues.Add(New AFValue(.ForecastItem.Forecast-
+                  .ForecastItem.Range(pValueLoHi), New AFTime(.Timestamp)))
+              ElseIf Attribute.Trait Is LimitHi Then
+                GetValues.Add(New AFValue(.ForecastItem.Forecast+
+                  .ForecastItem.Range(pValueLoHi), New AFTime(.Timestamp)))
+              ElseIf Attribute.Trait Is LimitHiHi Then
+                GetValues.Add(New AFValue(.ForecastItem.UpperControlLimit,
+                  New AFTime(.Timestamp)))
+              ElseIf Attribute.Trait Is LimitMaximum Then
+                GetValues.Add(New AFValue(.ForecastItem.Forecast+
+                  .ForecastItem.Range(pValueMinMax), New AFTime(.Timestamp)))
+              Else
+                GetValues.Add(New AFValue(.Factor, New AFTime(.Timestamp)))
+              End If
+
             End If
 
           End With

@@ -40,6 +40,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Timestamp As DateTime
+    Public IsFutureData As Boolean
     Public ForecastItem As DBMForecastItem
     Public Factor, AbsoluteErrors(), RelativeErrors() As Double
 
