@@ -38,24 +38,20 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Contains date and time functions.
 
 
-    Public Shared Function AlignTimestamp(Timestamp As DateTime,
-      Optional Seconds As Integer = 0) As DateTime
+    Public Shared Function AlignTimestamp(Timestamp As DateTime) As DateTime
 
       ' Returns a DateTime for the passed timestamp aligned on the previous
-      ' interval (in seconds). The CalculationInterval is used by default.
-
-      If Seconds = 0 Then Seconds = CalculationInterval
+      ' interval.
 
       Return New DateTime(Timestamp.Ticks-Timestamp.Ticks Mod
-        Seconds*TicksPerSecond, Timestamp.Kind)
+        CalculationInterval*TicksPerSecond, Timestamp.Kind)
 
     End Function
 
 
     Public Shared Function NextInterval(Timestamp As DateTime) As DateTime
 
-      Return AlignTimestamp(Timestamp, CalculationInterval).
-        AddSeconds(CalculationInterval)
+      Return AlignTimestamp(Timestamp.AddSeconds(CalculationInterval))
 
     End Function
 
@@ -169,9 +165,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function DataPreparationTimestamp(
       StartTimestamp As DateTime) As DateTime
 
-      StartTimestamp = AlignTimestamp(StartTimestamp.AddSeconds(
-        -(EMAPreviousPeriods+CorrelationPreviousPeriods)*CalculationInterval)).
-        AddDays(ComparePatterns*-7)
+      StartTimestamp = AlignTimestamp(StartTimestamp.AddDays(
+        -7*ComparePatterns).AddSeconds(
+        -(EMAPreviousPeriods+CorrelationPreviousPeriods)*CalculationInterval))
       If UseSundayForHolidays Then StartTimestamp =
         PreviousSunday(StartTimestamp)
 
