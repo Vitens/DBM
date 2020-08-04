@@ -29,7 +29,7 @@ Imports System.Threading
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Time
-Imports Vitens.DynamicBandwidthMonitor.DBMMath
+Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
@@ -42,7 +42,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Shared PreviousSnapshots As New Dictionary(Of AFAttribute, AFTime)
     Private Shared DataPipeEvents As New List(Of DataPipeEvent)
-    Private PreviousInterval As AFTime = AFTime.MinValue
+    Private PreviousInterval As DateTime
 
 
     Private Structure DataPipeEvent
@@ -103,7 +103,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' The GetEvents method is designed to get data pipe events from the System
       ' of record.
 
-      Dim CurrentInterval As AFTime = Now
+      Dim CurrentInterval As DateTime
       Dim Attribute As AFAttribute
       Dim Threads As New List(Of Thread)
       Dim Thread As Thread
@@ -111,8 +111,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Determine the start of the current time interval. For this event source,
       ' we only return at most one new event per attribute.
-      CurrentInterval = New AFTime(AlignPreviousInterval(
-        CurrentInterval.UtcSeconds, CalculationInterval))
+      CurrentInterval = AlignTimestamp(Now, CalculationInterval)
 
       ' Only check for new events once per calculation interval.
       If PreviousInterval < CurrentInterval Then

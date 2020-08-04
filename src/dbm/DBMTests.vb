@@ -580,27 +580,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(SlopeToAngle(-1.6831), -59.2837)
       AssertAlmostEqual(SlopeToAngle(-2.0031), -63.4704)
 
-      AssertNaN(AlignPreviousInterval(0, 0))
-      AssertEqual(AlignPreviousInterval(0, 12), 0)
-      AssertEqual(AlignPreviousInterval(0, -12), 0)
-      AssertEqual(AlignPreviousInterval(353, 84), 336)
-      AssertEqual(AlignPreviousInterval(512, 71), 497)
-      AssertEqual(AlignPreviousInterval(-651, 34), -680)
-      AssertEqual(AlignPreviousInterval(-136, -20), -120)
-      AssertEqual(AlignPreviousInterval(800, -118), 826)
-      AssertEqual(AlignPreviousInterval(-671, 81), -729)
-      AssertEqual(AlignPreviousInterval(-769, -124), -744)
-      AssertEqual(AlignPreviousInterval(-676, -61), -671)
-      AssertEqual(AlignPreviousInterval(627, -14), 630)
-      AssertEqual(AlignPreviousInterval(337, -68), 340)
-      AssertEqual(AlignPreviousInterval(661, 37), 629)
-      AssertEqual(AlignPreviousInterval(228, 57), 228)
-      AssertEqual(AlignPreviousInterval(686, -22), 704)
-      AssertEqual(AlignPreviousInterval(846, -35), 875)
-      AssertEqual(AlignPreviousInterval(571, 108), 540)
-      AssertEqual(AlignPreviousInterval(-531, -56), -504)
-      AssertEqual(AlignPreviousInterval(-880, 105), -945)
-
       ' DBMDate
       AssertEqual(AlignTimestamp(
         New DateTime(2016, 4, 4, 16, 33, 2), 60),

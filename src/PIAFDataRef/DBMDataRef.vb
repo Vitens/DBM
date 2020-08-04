@@ -33,7 +33,6 @@ Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Time
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
-Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
@@ -263,26 +262,24 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' AFAttribute.GetValue Overload methods which will in-turn, invoke this
       ' method.
 
-      Dim Snapshot As AFTime
-      Dim Timestamp As AFTime = Now
+      Dim SnapshotTimestamp As DateTime
+      Dim Timestamp As DateTime = Now
 
       ' Check if this attribute is properly configured.
       If AttributeConfigurationIsValid Then
 
-        ' Retrieve parent attribute snapshot timestamp aligned to the previous
-        ' interval.
-        Snapshot = New AFTime(AlignPreviousInterval(
-          Attribute.Parent.GetValue.Timestamp.UtcSeconds, CalculationInterval))
+        ' Retrieve snapshot timestamp aligned to the previous interval.
+        SnapshotTimestamp = AlignTimestamp(InputPointDriver.SnapshotTimestamp,
+          CalculationInterval)
 
         If timeContext IsNot Nothing Then
 
           ' Use passed timestamp aligned to the previous interval.
-          Timestamp = New AFTime(AlignPreviousInterval(
-            DirectCast(timeContext, AFTime).UtcSeconds, CalculationInterval))
+          Timestamp = AlignTimestamp(DirectCast(timeContext, AFTime).LocalTime)
 
           If Not AttributeHasFutureData Then
 
-            If Timestamp > Snapshot+New AFTimeSpan(0, 0, 0, 0, 10, 0, 0) Then
+            If Timestamp > SnapshotTimestamp.AddMinutes(10) Then
 
               ' For attributes without future data, do not return data beyond 10
               ' minutes past the snapshot timestamp. Return a No Data system
@@ -291,27 +288,27 @@ Namespace Vitens.DynamicBandwidthMonitor
               ' exist 10 minutes into the future or before the oldest mounted
               ' archive.'
               Return AFValue.CreateSystemStateValue(
-                AFSystemStateCode.NoData, Timestamp)
+                AFSystemStateCode.NoData, New AFTime(Timestamp))
 
             End If
 
             ' For attributes without future data, return the snapshot value for
             ' values in the future, unless a No Data system state was already
             ' returned.
-            If Timestamp > Snapshot Then Timestamp = Snapshot
+            If Timestamp > SnapshotTimestamp Then Timestamp = SnapshotTimestamp
 
           End If
 
         Else
 
           ' No passed timestamp, use snapshot timestamp.
-          Timestamp = Snapshot
+          Timestamp = SnapshotTimestamp
 
         End If
 
         ' Returns the single value for the attribute.
-        Return GetValues(Nothing, New AFTimeRange(Timestamp,
-          New AFTime(Timestamp.UtcSeconds+CalculationInterval)), 1,
+        Return GetValues(Nothing, New AFTimeRange(New AFTime(Timestamp),
+          New AFTime(Timestamp.AddSeconds(CalculationInterval))), 1,
           Nothing, Nothing)(0) ' Request a single value
 
       Else
@@ -320,7 +317,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Configure system state. Definition: 'The point configuration has been
         ' rejected as invalid by the data source.'
         Return AFValue.CreateSystemStateValue(
-          AFSystemStateCode.Configure, Timestamp)
+          AFSystemStateCode.Configure, New AFTime(Timestamp))
 
       End If
 
@@ -379,7 +376,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Element, ParentElement, SiblingElement As AFElement
       Dim InputPointDriver As DBMPointDriver
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
-      Dim Snapshot As AFTime
+      Dim SnapshotTimestamp As DateTime
       Dim Result As DBMResult
 
       GetValues = New AFValues
@@ -433,12 +430,13 @@ Namespace Vitens.DynamicBandwidthMonitor
         End If
 
         ' Retrieve snapshot timestamp.
-        Snapshot = Attribute.Parent.GetValue.Timestamp
+        SnapshotTimestamp = InputPointDriver.SnapshotTimestamp
 
         ' For attributes without future data, do not return data beyond the
         ' snapshot timestamp interval.
-        If Not AttributeHasFutureData And timeRange.EndTime > Snapshot Then
-          timeRange.EndTime = New AFTime(NextInterval(Snapshot.LocalTime))
+        If Not AttributeHasFutureData And
+          timeRange.EndTime.LocalTime > SnapshotTimestamp Then
+          timeRange.EndTime = New AFTime(NextInterval(SnapshotTimestamp))
         End If
 
         ' Get DBM results for time range and iterate over them.

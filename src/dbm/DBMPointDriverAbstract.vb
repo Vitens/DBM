@@ -43,7 +43,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Point As Object
     Public DataStore As New DBMDataStore ' In-memory data
     Private PreviousStartTimestamp As DateTime = DateTime.MaxValue
-    Private PreviousEndTimestamp As DateTime = DateTime.MinValue
+    Private PreviousEndTimestamp As DateTime
 
 
     Public Sub New(Point As Object)
@@ -59,9 +59,10 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overridable Function SnapshotTimestamp As DateTime
 
       ' Return the latest data timestamp (snapshot) for which the source of data
-      ' has information available. If there is no limit, return Nothing.
+      ' has information available. If there is no limit, return
+      ' DateTime.MaxValue.
 
-      Return Nothing
+      Return DateTime.MaxValue
 
     End Function
 
@@ -84,11 +85,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' If set, never retrieve values beyond the snapshot time aligned to the
       ' next interval.
-      If Not Snapshot = DateTime.MinValue Then
-        Snapshot = NextInterval(Snapshot)
-        If StartTimestamp > Snapshot Then StartTimestamp = Snapshot
-        If EndTimestamp > Snapshot Then EndTimestamp = Snapshot
-      End If
+      If StartTimestamp > Snapshot Then StartTimestamp = NextInterval(Snapshot)
+      If EndTimestamp > Snapshot Then EndTimestamp = NextInterval(Snapshot)
 
       ' Exit this sub if there is no data to retrieve or when the start
       ' timestamp is not before the end timestamp.
