@@ -184,8 +184,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         CorrelationPoints = New List(Of DBMCorrelationPoint)
       End If
 
-      StartTimestamp = AlignTimestamp(StartTimestamp)
-      EndTimestamp = AlignTimestamp(EndTimestamp)
+      StartTimestamp = PreviousInterval(StartTimestamp)
+      EndTimestamp = PreviousInterval(EndTimestamp)
       TimeRangeInterval = IntervalSeconds(NumberOfValues,
         (EndTimestamp-StartTimestamp).TotalSeconds)
 

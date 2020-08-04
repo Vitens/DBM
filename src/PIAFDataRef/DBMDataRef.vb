@@ -269,13 +269,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       If AttributeConfigurationIsValid Then
 
         ' Retrieve snapshot timestamp aligned to the previous interval.
-        SnapshotTimestamp =
-          AlignTimestamp(New DBMPointDriver(Attribute.Parent).SnapshotTimestamp)
+        SnapshotTimestamp = PreviousInterval(
+          New DBMPointDriver(Attribute.Parent).SnapshotTimestamp)
 
         If timeContext IsNot Nothing Then
 
           ' Use passed timestamp aligned to the previous interval.
-          Timestamp = AlignTimestamp(DirectCast(timeContext, AFTime).LocalTime)
+          Timestamp = PreviousInterval(
+            DirectCast(timeContext, AFTime).LocalTime)
 
           If Not AttributeHasFutureData Then
 

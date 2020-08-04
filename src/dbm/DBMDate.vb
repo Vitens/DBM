@@ -38,7 +38,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Contains date and time functions.
 
 
-    Public Shared Function AlignTimestamp(Timestamp As DateTime) As DateTime
+    Public Shared Function PreviousInterval(Timestamp As DateTime) As DateTime
 
       ' Returns a DateTime for the passed timestamp aligned on the previous
       ' interval.
@@ -51,7 +51,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function NextInterval(Timestamp As DateTime) As DateTime
 
-      Return AlignTimestamp(Timestamp.AddSeconds(CalculationInterval))
+      Return PreviousInterval(Timestamp.AddSeconds(CalculationInterval))
 
     End Function
 
@@ -165,7 +165,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function DataPreparationTimestamp(
       StartTimestamp As DateTime) As DateTime
 
-      StartTimestamp = AlignTimestamp(StartTimestamp.AddDays(
+      StartTimestamp = PreviousInterval(StartTimestamp.AddDays(
         -7*ComparePatterns).AddSeconds(
         -(EMAPreviousPeriods+CorrelationPreviousPeriods)*CalculationInterval))
       If UseSundayForHolidays Then StartTimestamp =

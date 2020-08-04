@@ -42,7 +42,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Shared PreviousSnapshots As New Dictionary(Of AFAttribute, AFTime)
     Private Shared DataPipeEvents As New List(Of DataPipeEvent)
-    Private PreviousInterval As DateTime
+    Private PreviousTimestamp As DateTime
 
 
     Private Structure DataPipeEvent
@@ -103,7 +103,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' The GetEvents method is designed to get data pipe events from the System
       ' of record.
 
-      Dim CurrentInterval As DateTime
+      Dim CurrentTimestamp As DateTime
       Dim Attribute As AFAttribute
       Dim Threads As New List(Of Thread)
       Dim Thread As Thread
@@ -111,10 +111,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Determine the start of the current time interval. For this event source,
       ' we only return at most one new event per attribute.
-      CurrentInterval = AlignTimestamp(Now)
+      CurrentTimestamp = PreviousInterval(Now)
 
       ' Only check for new events once per calculation interval.
-      If PreviousInterval < CurrentInterval Then
+      If PreviousTimestamp < CurrentTimestamp Then
 
         ' Iterate over all signed up attributes in this data pipe. For some
         ' services signing up to many attributes, initialization might take some
@@ -154,7 +154,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         End Try
 
         ' Store current interval as previous interval.
-        PreviousInterval = CurrentInterval
+        PreviousTimestamp = CurrentTimestamp
 
       End If
 
