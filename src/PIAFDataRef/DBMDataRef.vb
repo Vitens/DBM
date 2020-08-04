@@ -264,61 +264,43 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim SnapshotTimestamp As DateTime
       Dim Timestamp As DateTime = Now
 
-      ' Check if this attribute is properly configured.
+      ' Check if this attribute is properly configured. If it is not configured
+      ' properly, return a Configure system state. This will be done in the
+      ' GetValues method.
       If AttributeConfigurationIsValid Then
 
         ' Retrieve snapshot timestamp.
         SnapshotTimestamp =
           New DBMPointDriver(Attribute.Parent).SnapshotTimestamp
 
-        If timeContext IsNot Nothing Then
-
-          ' Use passed timestamp.
-          Timestamp = DirectCast(timeContext, AFTime).LocalTime
-
-          If Not AttributeHasFutureData Then
-
-            If Timestamp > SnapshotTimestamp.AddMinutes(10) Then
-
-              ' For attributes without future data, do not return data beyond 10
-              ' minutes past the snapshot timestamp. Return a No Data system
-              ' state instead. Definition: 'Data-retrieval functions use this
-              ' state for time periods where no archive values for a tag can
-              ' exist 10 minutes into the future or before the oldest mounted
-              ' archive.'
-              Return AFValue.CreateSystemStateValue(
-                AFSystemStateCode.NoData, New AFTime(Timestamp))
-
-            End If
-
-            ' For attributes without future data, return the snapshot value for
-            ' values in the future, unless a No Data system state was already
-            ' returned.
-            If Timestamp > SnapshotTimestamp Then Timestamp = SnapshotTimestamp
-
-          End If
-
-        Else
+        If timeContext Is Nothing Then
 
           ' No passed timestamp, use snapshot timestamp.
           Timestamp = SnapshotTimestamp
 
+        Else
+
+          ' Use passed timestamp.
+          Timestamp = DirectCast(timeContext, AFTime).LocalTime
+
+          ' For attributes without future data, return the snapshot value for
+          ' values in the near future (up to 10 minutes). Do not return data
+          ' beyond 10 minutes past the snapshot timestamp, but return a No Data
+          ' system state instead. This will be done for future data timestamps
+          ' on non-future data attributes in the GetValues method.
+          If Not AttributeHasFutureData And Timestamp > SnapshotTimestamp And
+            Timestamp < SnapshotTimestamp.AddMinutes(10) Then
+            Timestamp = SnapshotTimestamp
+          End If
+
         End If
 
-        ' Returns the single value for the attribute.
-        Return GetValues(Nothing, New AFTimeRange(New AFTime(Timestamp),
-          New AFTime(Timestamp.AddSeconds(CalculationInterval))), 1,
-          Nothing, Nothing)(0) ' Request a single value
-
-      Else
-
-        ' Attribute or parent attribute is not configured properly, return a
-        ' Configure system state. Definition: 'The point configuration has been
-        ' rejected as invalid by the data source.'
-        Return AFValue.CreateSystemStateValue(
-          AFSystemStateCode.Configure, New AFTime(Timestamp))
-
       End If
+
+      ' Returns the single value for the attribute.
+      Return GetValues(Nothing, New AFTimeRange(New AFTime(Timestamp),
+        New AFTime(Timestamp.AddSeconds(CalculationInterval))), 1,
+        Nothing, Nothing)(0) ' Request a single value
 
     End Function
 
