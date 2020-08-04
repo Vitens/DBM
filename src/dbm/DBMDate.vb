@@ -170,7 +170,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       StartTimestamp As DateTime) As DateTime
 
       StartTimestamp = AlignTimestamp(StartTimestamp.AddSeconds(
-        -(EMAPreviousPeriods+CorrelationPreviousPeriods)*CalculationInterval))
+        -(EMAPreviousPeriods+CorrelationPreviousPeriods)*CalculationInterval)).
+        AddDays(ComparePatterns*-7)
       If UseSundayForHolidays Then StartTimestamp =
         PreviousSunday(StartTimestamp)
 
