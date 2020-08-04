@@ -673,35 +673,35 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2014, 10, 25, 8, 26, 4)),
         New DateTime(2014, 10, 25, 8, 30, 0))
       AssertEqual(NextInterval(
-        New DateTime(2015, 6, 2, 18, 36, 24), 1),
+        New DateTime(2015, 6, 2, 18, 36, 24)),
         New DateTime(2015, 6, 2, 18, 40, 0))
       AssertEqual(NextInterval(
-        New DateTime(2016, 11, 21, 16, 24, 27), 2),
-        New DateTime(2016, 11, 21, 16, 30, 0))
+        New DateTime(2016, 11, 21, 16, 24, 27)),
+        New DateTime(2016, 11, 21, 16, 25, 0))
       AssertEqual(NextInterval(
-        New DateTime(2014, 4, 4, 8, 42, 10), 3),
-        New DateTime(2014, 4, 4, 8, 55, 0))
+        New DateTime(2014, 4, 4, 8, 42, 10)),
+        New DateTime(2014, 4, 4, 8, 45, 0))
       AssertEqual(NextInterval(
-        New DateTime(2016, 2, 22, 19, 8, 41), 4),
-        New DateTime(2016, 2, 22, 19, 25, 0))
+        New DateTime(2016, 2, 22, 19, 8, 41)),
+        New DateTime(2016, 2, 22, 19, 10, 0))
       AssertEqual(NextInterval(
-        New DateTime(2015, 9, 13, 22, 48, 17), 5),
-        New DateTime(2015, 9, 13, 23, 10, 0))
+        New DateTime(2015, 9, 13, 22, 48, 17)),
+        New DateTime(2015, 9, 13, 23, 50, 0))
       AssertEqual(NextInterval(
-        New DateTime(2016, 10, 20, 2, 47, 48), 6),
-        New DateTime(2016, 10, 20, 3, 15, 0))
+        New DateTime(2016, 10, 20, 2, 47, 48)),
+        New DateTime(2016, 10, 20, 3, 50, 0))
       AssertEqual(NextInterval(
-        New DateTime(2014, 2, 8, 23, 12, 34), 7),
-        New DateTime(2014, 2, 8, 23, 45, 0))
+        New DateTime(2014, 2, 8, 23, 12, 34)),
+        New DateTime(2014, 2, 8, 23, 15, 0))
       AssertEqual(NextInterval(
-        New DateTime(2016, 2, 27, 23, 40, 39), 8),
-        New DateTime(2016, 2, 28, 0, 20, 0))
+        New DateTime(2016, 2, 27, 23, 40, 39)),
+        New DateTime(2016, 2, 28, 0, 45, 0))
       AssertEqual(NextInterval(
-        New DateTime(2015, 8, 26, 9, 35, 55), -12),
-        New DateTime(2015, 8, 26, 8, 35, 0))
+        New DateTime(2015, 8, 26, 9, 35, 55)),
+        New DateTime(2015, 8, 26, 8, 40, 0))
       AssertEqual(NextInterval(
-        New DateTime(2016, 2, 11, 0, 44, 7), 0),
-        New DateTime(2016, 2, 11, 0, 40, 0))
+        New DateTime(2016, 2, 11, 0, 44, 7)),
+        New DateTime(2016, 2, 11, 0, 45, 0))
 
       AssertEqual(IntervalSeconds(-25, 86400)*23, 86100)
       AssertEqual(IntervalSeconds(6, 3600)*5, 3300)

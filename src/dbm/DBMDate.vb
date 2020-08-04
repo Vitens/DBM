@@ -52,11 +52,10 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function NextInterval(Timestamp As DateTime,
-      Optional Intervals As Integer = 1) As DateTime
+    Public Shared Function NextInterval(Timestamp As DateTime) As DateTime
 
       Return AlignTimestamp(Timestamp, CalculationInterval).
-        AddSeconds(Intervals*CalculationInterval)
+        AddSeconds(CalculationInterval)
 
     End Function
 
@@ -170,9 +169,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function DataPreparationTimestamp(
       StartTimestamp As DateTime) As DateTime
 
-      StartTimestamp = NextInterval(StartTimestamp,
-        -EMAPreviousPeriods-CorrelationPreviousPeriods).
-        AddDays(ComparePatterns*-7)
+      StartTimestamp = AlignTimestamp(StartTimestamp.AddSeconds(
+        -(EMAPreviousPeriods+CorrelationPreviousPeriods)*CalculationInterval))
       If UseSundayForHolidays Then StartTimestamp =
         PreviousSunday(StartTimestamp)
 
