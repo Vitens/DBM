@@ -81,7 +81,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Data preparation timestamps
       StartTimestamp = DataPreparationTimestamp(StartTimestamp)
-      EndTimestamp = AlignTimestamp(EndTimestamp, CalculationInterval)
+      EndTimestamp = AlignTimestamp(EndTimestamp)
 
       ' If set, never retrieve values beyond the snapshot time aligned to the
       ' next interval.

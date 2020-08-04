@@ -603,13 +603,13 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2013, 10, 26, 4, 24, 53), 300),
         New DateTime(2013, 10, 26, 4, 20, 0))
       AssertEqual(AlignTimestamp(
-        New DateTime(2014, 5, 2, 2, 52, 41), 300),
+        New DateTime(2014, 5, 2, 2, 52, 41)),
         New DateTime(2014, 5, 2, 2, 50, 0))
       AssertEqual(AlignTimestamp(
-        New DateTime(2014, 8, 16, 13, 11, 10), 300),
+        New DateTime(2014, 8, 16, 13, 11, 10)),
         New DateTime(2014, 8, 16, 13, 10, 0))
       AssertEqual(AlignTimestamp(
-        New DateTime(2014, 10, 25, 8, 26, 4), 300),
+        New DateTime(2014, 10, 25, 8, 26, 4)),
         New DateTime(2014, 10, 25, 8, 25, 0))
       AssertEqual(AlignTimestamp(
         New DateTime(2015, 6, 2, 18, 36, 24), 3600),

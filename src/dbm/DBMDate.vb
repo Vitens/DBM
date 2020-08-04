@@ -39,10 +39,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Shared Function AlignTimestamp(Timestamp As DateTime,
-      Seconds As Integer) As DateTime
+      Optional Seconds As Integer = 0) As DateTime
 
-      ' Returns a DateTime for the passed timestamp aligned on the
-      ' previous interval (in seconds).
+      ' Returns a DateTime for the passed timestamp aligned on the previous
+      ' interval (in seconds). The CalculationInterval is used by default.
+
+      If Seconds = 0 Then Seconds = CalculationInterval
 
       Return New DateTime(Timestamp.Ticks-Timestamp.Ticks Mod
         Seconds*TicksPerSecond, Timestamp.Kind)

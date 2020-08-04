@@ -85,7 +85,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Do While EndTimestamp > StartTimestamp
 
         Result = New DBMResult
-        Result.Timestamp = AlignTimestamp(StartTimestamp, CalculationInterval)
+        Result.Timestamp = AlignTimestamp(StartTimestamp)
 
         For CorrelationCounter = 0 To CorrelationPreviousPeriods ' Corr. loop
 

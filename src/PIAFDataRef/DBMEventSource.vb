@@ -111,7 +111,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Determine the start of the current time interval. For this event source,
       ' we only return at most one new event per attribute.
-      CurrentInterval = AlignTimestamp(Now, CalculationInterval)
+      CurrentInterval = AlignTimestamp(Now)
 
       ' Only check for new events once per calculation interval.
       If PreviousInterval < CurrentInterval Then
