@@ -1077,7 +1077,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       CorrelationPoints.Add(
         New DBMCorrelationPoint(New DBMPointDriverTestModel(490), False))
 
-      ' GetResult Timestamp - check alignment
+      ' GetResult Timestamp - test alignment
       AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0)).Timestamp,
         New DateTime(2016, 1, 1, 0, 0, 0))
@@ -1094,7 +1094,19 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2016, 1, 1, 0, 7, 12)).Timestamp,
         New DateTime(2016, 1, 1, 0, 5, 0))
 
-      ' GetResult - check calculation results
+      ' GetResult IsFutureData - test future data
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        Now.AddSeconds(-2*CalculationInterval)).IsFutureData, False)
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        Now.AddSeconds(-CalculationInterval)).IsFutureData, False)
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        Now).IsFutureData, False)
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        Now.AddSeconds(CalculationInterval)).IsFutureData, True)
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        Now.AddSeconds(2*CalculationInterval)).IsFutureData, True)
+
+      ' GetResult - test calculation results
       For i = -19 To 19
         Timestamp = New DateTime(2016, 1, 1, 0, 0, 0).
           AddSeconds(Abs(i)*365*24*60*60/20) ' 19 backwards to 0, forwards to 19
@@ -1144,7 +1156,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         End With
       Next i
 
-      ' GetResults Count - check number of results
+      ' GetResults Count - test number of results
       AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 1, 0, 0, 0)).Count, 0)
@@ -1206,7 +1218,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 1, 0, 0, 0), 1000).Count, 0)
 
-      ' GetResults Timestamp - check intervals
+      ' GetResults Timestamp - test intervals
       For i = 0 To 4
         AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
           New DateTime(2016, 1, 1, 0, 0, 0),

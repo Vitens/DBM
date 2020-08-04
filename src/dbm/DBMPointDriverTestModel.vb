@@ -23,6 +23,7 @@ Option Strict
 
 
 Imports System
+Imports System.DateTime
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
@@ -57,6 +58,13 @@ Namespace Vitens.DynamicBandwidthMonitor
           (.Hour+.Minute/60)^4-0.01796*(.Hour+.Minute/60)^3+0.1709*(.Hour+
           .Minute/60)^2-0.5032*(.Hour+.Minute/60)+0.7023)
       End With
+
+    End Function
+
+
+    Public Overrides Function SnapshotTimestamp As DateTime
+
+      Return Now
 
     End Function
 
