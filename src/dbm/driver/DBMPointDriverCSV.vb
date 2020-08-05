@@ -23,8 +23,6 @@ Option Strict
 
 
 Imports System
-Imports System.Collections.Generic
-Imports System.Double
 Imports System.IO
 
 
@@ -45,8 +43,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     '          parameter.
 
 
-    Private Values As New Dictionary(Of DateTime, Double)
-    Private Shared SplitChars As Char() = {","c, "	"c} ' Comma and tab
+    Private SplitChars As Char() = {","c, "	"c} ' Comma and tab
 
 
     Public Sub New(Point As Object)
@@ -59,15 +56,13 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Sub PrepareData(StartTimestamp As DateTime,
       EndTimestamp As DateTime)
 
-      ' Retrieves information from a CSV file and stores this in the Values
-      ' dictionary. Passed timestamps are ignored and all data in the CSV is
-      ' loaded into memory.
+      ' Retrieves information from a CSV file and stores this in memory. Passed
+      ' timestamps are ignored and all data in the CSV is loaded into memory.
 
       Dim Substrings() As String
       Dim Timestamp As DateTime
       Dim Value As Double
 
-      Values.Clear
       If File.Exists(DirectCast(Point, String)) Then
         Using StreamReader As New StreamReader(DirectCast(Point, String))
           Do While Not StreamReader.EndOfStream
@@ -75,9 +70,9 @@ Namespace Vitens.DynamicBandwidthMonitor
             Substrings = StreamReader.ReadLine.Split(SplitChars, 2)
             If Substrings.Length = 2 Then
               If DateTime.TryParse(Substrings(0), Timestamp) Then
-                If Double.TryParse(Substrings(1), Value) Then
-                  If Not Values.ContainsKey(Timestamp) Then
-                    Values.Add(Timestamp, Value) ' Add data to dictionary
+                If Timestamp >= StartTimestamp And Timestamp < EndTimestamp Then
+                  If Double.TryParse(Substrings(1), Value) Then
+                    DataStore.AddData(Timestamp, Value)
                   End If
                 End If
               End If
@@ -91,21 +86,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
 
     End Sub
-
-
-    Public Overrides Function GetData(Timestamp As DateTime) As Double
-
-      ' GetData retrieves data from the Values dictionary. If there is no data
-      ' for the timestamp, return Not a Number.
-
-      GetData = Nothing
-      If Values.TryGetValue(Timestamp, GetData) Then ' In cache
-        Return GetData ' Return value from cache
-      Else
-        Return NaN ' No data in memory for timestamp, return Not a Number.
-      End If
-
-    End Function
 
 
   End Class

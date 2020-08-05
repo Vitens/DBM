@@ -26,17 +26,12 @@ Imports System
 Imports System.Collections.Generic
 Imports System.ComponentModel
 Imports System.DateTime
-Imports System.Double
-Imports System.Math
 Imports System.Runtime.InteropServices
-Imports System.Threading
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Asset.AFAttributeTrait
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Time
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
-Imports Vitens.DynamicBandwidthMonitor.DBMMath
-Imports Vitens.DynamicBandwidthMonitor.DBMMisc
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
@@ -78,8 +73,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const pValueMinMax As Double = 0.9999 ' CI for Minimum and Maximum
 
 
-    Private Shared DBMShared As New DBM ' Use shared DBM object, if available.
-    Private DBMNonShared As New DBM ' Fall back to non-shared object.
+    Private Shared DBM As New DBM
 
 
     Public Shared Function CreateDataPipe As Object
@@ -217,7 +211,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' suitable for displaying to an end-user. It must fully represent all
         ' the configuration information in a format that can also be used to set
         ' the configuration using this property.
-        Return Product
+        Return LicenseNotice
       End Get
 
       Set
@@ -267,66 +261,46 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' AFAttribute.GetValue Overload methods which will in-turn, invoke this
       ' method.
 
-      Dim Snapshot As AFTime
-      Dim Timestamp As AFTime = Now
+      Dim SnapshotTimestamp As DateTime
+      Dim Timestamp As DateTime = Now
 
-      ' Check if this attribute is properly configured.
+      ' Check if this attribute is properly configured. If it is not configured
+      ' properly, return a Configure system state. This will be done in the
+      ' GetValues method.
       If AttributeConfigurationIsValid Then
 
-        ' Retrieve parent attribute snapshot timestamp aligned to the previous
-        ' interval.
-        Snapshot = New AFTime(AlignPreviousInterval(
-          Attribute.Parent.GetValue.Timestamp.UtcSeconds, CalculationInterval))
+        ' Retrieve snapshot timestamp.
+        SnapshotTimestamp =
+          New DBMPointDriver(Attribute.Parent).SnapshotTimestamp
 
-        If timeContext IsNot Nothing Then
+        If timeContext Is Nothing Then
 
-          ' Use passed timestamp aligned to the previous interval.
-          Timestamp = New AFTime(AlignPreviousInterval(
-            DirectCast(timeContext, AFTime).UtcSeconds, CalculationInterval))
-
-          If Not AttributeHasFutureData Then
-
-            If Timestamp > Snapshot+New AFTimeSpan(0, 0, 0, 0, 10, 0, 0) Then
-
-              ' For attributes without future data, do not return data beyond 10
-              ' minutes past the snapshot timestamp. Return a No Data system
-              ' state instead. Definition: 'Data-retrieval functions use this
-              ' state for time periods where no archive values for a tag can
-              ' exist 10 minutes into the future or before the oldest mounted
-              ' archive.'
-              Return AFValue.CreateSystemStateValue(
-                AFSystemStateCode.NoData, Timestamp)
-
-            End If
-
-            ' For attributes without future data, return the snapshot value for
-            ' values in the future, unless a No Data system state was already
-            ' returned.
-            If Timestamp > Snapshot Then Timestamp = Snapshot
-
-          End If
+          ' No passed timestamp, use snapshot timestamp.
+          Timestamp = SnapshotTimestamp
 
         Else
 
-          ' No passed timestamp, use snapshot timestamp.
-          Timestamp = Snapshot
+          ' Use passed timestamp.
+          Timestamp = DirectCast(timeContext, AFTime).LocalTime
+
+          ' For attributes without future data, return the snapshot value for
+          ' values in the near future (up to 10 minutes). Do not return data
+          ' beyond 10 minutes past the snapshot timestamp, but return a No Data
+          ' system state instead. This will be done for future data timestamps
+          ' on non-future data attributes in the GetValues method.
+          If Not AttributeHasFutureData And Timestamp > SnapshotTimestamp And
+            Timestamp < SnapshotTimestamp.AddMinutes(10) Then
+            Timestamp = SnapshotTimestamp
+          End If
 
         End If
 
-        ' Returns the single value for the attribute.
-        Return GetValues(Nothing, New AFTimeRange(Timestamp,
-          New AFTime(Timestamp.UtcSeconds+CalculationInterval)), 1,
-          Nothing, Nothing)(0) ' Request a single value
-
-      Else
-
-        ' Attribute or parent attribute is not configured properly, return a
-        ' Configure system state. Definition: 'The point configuration has been
-        ' rejected as invalid by the data source.'
-        Return AFValue.CreateSystemStateValue(
-          AFSystemStateCode.Configure, Timestamp)
-
       End If
+
+      ' Returns the single value for the attribute.
+      Return GetValues(Nothing, New AFTimeRange(New AFTime(Timestamp),
+        New AFTime(Timestamp.AddSeconds(CalculationInterval))), 1,
+        Nothing, Nothing)(0) ' Request a single value
 
     End Function
 
@@ -383,8 +357,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Element, ParentElement, SiblingElement As AFElement
       Dim InputPointDriver As DBMPointDriver
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
-      Dim IntervalSeconds As Double
-      Dim Snapshot As AFTime
+      Dim Result As DBMResult
 
       GetValues = New AFValues
 
@@ -436,96 +409,65 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         End If
 
-        For Each DBM In {DBMShared, DBMNonShared, New DBM} ' Prefer shared obj.
+        ' Get DBM results for time range and iterate over them.
+        For Each Result In DBM.GetResults(InputPointDriver, CorrelationPoints,
+          timeRange.StartTime.LocalTime, timeRange.EndTime.LocalTime,
+          numberOfValues)
 
-          ' First, try to enter and lock the shared DBM object. This is
-          ' preferred since cached data for all attributes can then be reused.
-          ' If this takes longer than half the calculation interval, fall back
-          ' to a non-shared object specific to this attribute instance. If this
-          ' then still takes too long, longer than the calculation interval,
-          ' just create a new DBM instance and use that. We won't have any cache
-          ' to reuse, but at least the calculation will run. There is a
-          ' trade-off here between having results available quicky and being
-          ' able to reuse already cached data (which requires calculations to be
-          ' processed in serial).
+          With Result
 
-          If Monitor.TryEnter(DBM,
-            TimeSpan.FromSeconds(CalculationInterval/2)) Then
-            Try
+            If AttributeHasFutureData Or Not .IsFutureData Then
 
-              ' Every 8 hours, clear all cached data in the DBM object.
-              DBM.ClearCache(8)
+              If Attribute.Trait Is LimitTarget Then
+                GetValues.Add(New AFValue(.ForecastItem.Measurement,
+                  New AFTime(.Timestamp)))
+              ElseIf Attribute.Trait Is Forecast Then
+                GetValues.Add(New AFValue(.ForecastItem.Forecast,
+                  New AFTime(.Timestamp)))
+              ElseIf Attribute.Trait Is LimitMinimum Then
+                GetValues.Add(New AFValue(.ForecastItem.Forecast-
+                  .ForecastItem.Range(pValueMinMax), New AFTime(.Timestamp)))
+              ElseIf Attribute.Trait Is LimitLoLo Then
+               GetValues.Add(New AFValue(.ForecastItem.LowerControlLimit,
+                 New AFTime(.Timestamp)))
+              ElseIf Attribute.Trait Is LimitLo Then
+                GetValues.Add(New AFValue(.ForecastItem.Forecast-
+                  .ForecastItem.Range(pValueLoHi), New AFTime(.Timestamp)))
+              ElseIf Attribute.Trait Is LimitHi Then
+                GetValues.Add(New AFValue(.ForecastItem.Forecast+
+                  .ForecastItem.Range(pValueLoHi), New AFTime(.Timestamp)))
+              ElseIf Attribute.Trait Is LimitHiHi Then
+                GetValues.Add(New AFValue(.ForecastItem.UpperControlLimit,
+                  New AFTime(.Timestamp)))
+              ElseIf Attribute.Trait Is LimitMaximum Then
+                GetValues.Add(New AFValue(.ForecastItem.Forecast+
+                  .ForecastItem.Range(pValueMinMax), New AFTime(.Timestamp)))
+              Else
+                GetValues.Add(New AFValue(.Factor, New AFTime(.Timestamp)))
+              End If
 
-              ' Align timestamps and determine interval seconds.
-              timeRange.StartTime = New AFTime(AlignPreviousInterval(
-                timeRange.StartTime.UtcSeconds, CalculationInterval)) ' Previous
-              timeRange.EndTime = New AFTime(AlignPreviousInterval(
-                timeRange.EndTime.UtcSeconds, -CalculationInterval)) ' Next
-              IntervalSeconds = PIAFIntervalSeconds(numberOfValues,
-                timeRange.EndTime.UtcSeconds-timeRange.StartTime.UtcSeconds)
+            End If
 
-              ' Retrieve snapshot timestamp and retrieve all data from the data
-              ' source using the driver.
-              Snapshot = Attribute.Parent.GetValue.Timestamp
-              DBM.PrepareData(InputPointDriver, CorrelationPoints,
-                timeRange.StartTime.LocalTime, timeRange.EndTime.LocalTime)
+          End With
 
-              ' Loop through time range. For attributes without future data, do
-              ' not return data beyond the snapshot timestamp.
-              Do While timeRange.EndTime > timeRange.StartTime And
-                (AttributeHasFutureData Or Not timeRange.StartTime > Snapshot)
+        Next Result
 
-                With DBM.Result(InputPointDriver, CorrelationPoints,
-                  timeRange.StartTime.LocalTime)
+        ' If there are no calculation results, return a NoData state.
+        ' Definition: 'Data-retrieval functions use this state for time periods
+        ' where no archive values for a tag can exist 10 minutes into the future
+        ' or before the oldest mounted archive.'
+        If GetValues.Count = 0 Then
+          GetValues.Add(AFValue.CreateSystemStateValue(
+            AFSystemStateCode.NoData, timeRange.StartTime))
+        End If
 
-                  If Attribute.Trait Is LimitTarget Then
-                    GetValues.Add(New AFValue(.ForecastItem.Measurement,
-                      timeRange.StartTime.LocalTime))
-                  ElseIf Attribute.Trait Is Forecast Then
-                    GetValues.Add(New AFValue(.ForecastItem.ForecastValue,
-                      timeRange.StartTime.LocalTime))
-                  ElseIf Attribute.Trait Is LimitMinimum Then
-                    GetValues.Add(New AFValue(.ForecastItem.ForecastValue-
-                      .ForecastItem.Range(pValueMinMax),
-                      timeRange.StartTime.LocalTime))
-                  ElseIf Attribute.Trait Is LimitLoLo Then
-                    GetValues.Add(New AFValue(.ForecastItem.LowerControlLimit,
-                      timeRange.StartTime.LocalTime))
-                  ElseIf Attribute.Trait Is LimitLo Then
-                    GetValues.Add(New AFValue(.ForecastItem.ForecastValue-
-                      .ForecastItem.Range(pValueLoHi),
-                      timeRange.StartTime.LocalTime))
-                  ElseIf Attribute.Trait Is LimitHi Then
-                    GetValues.Add(New AFValue(.ForecastItem.ForecastValue+
-                      .ForecastItem.Range(pValueLoHi),
-                      timeRange.StartTime.LocalTime))
-                  ElseIf Attribute.Trait Is LimitHiHi Then
-                    GetValues.Add(New AFValue(.ForecastItem.UpperControlLimit,
-                      timeRange.StartTime.LocalTime))
-                  ElseIf Attribute.Trait Is LimitMaximum Then
-                    GetValues.Add(New AFValue(.ForecastItem.ForecastValue+
-                      .ForecastItem.Range(pValueMinMax),
-                      timeRange.StartTime.LocalTime))
-                  Else
-                    GetValues.Add(New AFValue(.Factor,
-                      timeRange.StartTime.LocalTime))
-                  End If
+      Else
 
-                End With
-
-                timeRange.StartTime = New AFTime(
-                  timeRange.StartTime.UtcSeconds+IntervalSeconds) ' Next intv.
-
-              Loop
-
-              Exit For ' We have our results, no need to try other DBM objects.
-
-            Finally
-              Monitor.Exit(DBM) ' Ensure that the lock is released.
-            End Try
-          End If
-
-        Next DBM
+        ' Attribute or parent attribute is not configured properly, return a
+        ' Configure system state. Definition: 'The point configuration has been
+        ' rejected as invalid by the data source.'
+        GetValues.Add(AFValue.CreateSystemStateValue(
+          AFSystemStateCode.Configure, timeRange.StartTime))
 
       End If
 

@@ -29,12 +29,10 @@ Imports System.Double
 Imports System.Globalization
 Imports System.Globalization.CultureInfo
 Imports System.Math
-Imports System.TimeSpan
 Imports Vitens.DynamicBandwidthMonitor.DBM
 Imports Vitens.DynamicBandwidthMonitor.DBMAssert
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
-Imports Vitens.DynamicBandwidthMonitor.DBMMisc
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
 
@@ -48,8 +46,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Sub RunUnitTests
 
       Dim i As Integer
-      Dim j As Double
 
+      ' DBMAssert
       AssertEqual(True, True)
       AssertEqual(Today, Today)
       AssertEqual(NaN, NaN)
@@ -73,6 +71,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(Hash({8, 4, 7, 3, 2, 6, 5, 7}), 3.6609)
       AssertAlmostEqual(Hash({1, 5, 4, 7, 7, 8, 5, 1}), 1.8084)
 
+      ' DBM
       AssertTrue(HasCorrelation(0.9, 45))
       AssertTrue(HasCorrelation(0.85, 45))
       AssertFalse(HasCorrelation(0.8, 45))
@@ -116,6 +115,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertEqual(Suppress(-0.98, -0.99, -1, 0, 0, False), -0.98)
       AssertEqual(Suppress(-0.98, -0.99, -45, 0, 0, False), 0)
 
+      ' DBMMath
       AssertAlmostEqual(NormSInv(0.95), 1.6449)
       AssertAlmostEqual(NormSInv(0.99), 2.3263)
       AssertAlmostEqual(NormSInv(0.9999), 3.719)
@@ -180,7 +180,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(TInv(0.5267, 15), 0.0681)
 
       AssertAlmostEqual(MeanAbsoluteDeviationScaleFactor, 1.2533)
-      AssertAlmostEqual(MeanAbsoluteDeviationScaleFactor, Sqrt(PI/2), 15) ' LUT
 
       AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(1), 1)
       AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(2), 1.2247)
@@ -203,16 +202,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(36), 1.4826)
       AssertAlmostEqual(MedianAbsoluteDeviationScaleFactor(38), 1.4826)
 
-      For i = 1 To 30 ' LUT
-        If i < 30 Then
-          AssertAlmostEqual(
-            MedianAbsoluteDeviationScaleFactor(i), 1/TInv(0.75, i), 12)
-        Else
-          AssertAlmostEqual(
-            MedianAbsoluteDeviationScaleFactor(i), 1/NormSInv(0.75), 15)
-        End If
-      Next i
-
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 1), 63.6567)
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 2), 9.9248)
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.99, 4), 4.6041)
@@ -233,18 +222,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.90, 30), 1.6449)
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.95, 25), 2.0595)
       AssertAlmostEqual(ControlLimitRejectionCriterion(0.90, 20), 1.7247)
-
-      For i = 1 To 30 ' LUT
-        For Each j In {0.9, 0.95, 0.98, 0.99, 0.9998, 0.9999}
-          If i < 30 Then
-            AssertAlmostEqual(
-              ControlLimitRejectionCriterion(j, i), TInv((j+1)/2, i), 11)
-          Else
-            AssertAlmostEqual(
-              ControlLimitRejectionCriterion(j, i), NormSInv((j+1)/2), 14)
-          End If
-        Next
-      Next i
 
       AssertEqual(NonNaNCount({60}), 1)
       AssertEqual(NonNaNCount({60, 70}), 2)
@@ -603,92 +580,67 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(SlopeToAngle(-1.6831), -59.2837)
       AssertAlmostEqual(SlopeToAngle(-2.0031), -63.4704)
 
-      For i = 0 To 19
-        AssertTrue(RandomNumber(0, i+1) >= 0)
-        AssertTrue(RandomNumber(0, i+1) <= i+1)
-      Next i
-
-      AssertNaN(AlignPreviousInterval(0, 0))
-      AssertEqual(AlignPreviousInterval(0, 12), 0)
-      AssertEqual(AlignPreviousInterval(0, -12), 0)
-      AssertEqual(AlignPreviousInterval(353, 84), 336)
-      AssertEqual(AlignPreviousInterval(512, 71), 497)
-      AssertEqual(AlignPreviousInterval(-651, 34), -680)
-      AssertEqual(AlignPreviousInterval(-136, -20), -120)
-      AssertEqual(AlignPreviousInterval(800, -118), 826)
-      AssertEqual(AlignPreviousInterval(-671, 81), -729)
-      AssertEqual(AlignPreviousInterval(-769, -124), -744)
-      AssertEqual(AlignPreviousInterval(-676, -61), -671)
-      AssertEqual(AlignPreviousInterval(627, -14), 630)
-      AssertEqual(AlignPreviousInterval(337, -68), 340)
-      AssertEqual(AlignPreviousInterval(661, 37), 629)
-      AssertEqual(AlignPreviousInterval(228, 57), 228)
-      AssertEqual(AlignPreviousInterval(686, -22), 704)
-      AssertEqual(AlignPreviousInterval(846, -35), 875)
-      AssertEqual(AlignPreviousInterval(571, 108), 540)
-      AssertEqual(AlignPreviousInterval(-531, -56), -504)
-      AssertEqual(AlignPreviousInterval(-880, 105), -945)
-
-      AssertEqual(AlignTimestamp(
-        New DateTime(2016, 4, 4, 16, 33, 2), 60),
-        New DateTime(2016, 4, 4, 16, 33, 0))
-      AssertEqual(AlignTimestamp(
-        New DateTime(2015, 7, 15, 2, 29, 58), 60),
-        New DateTime(2015, 7, 15, 2, 29, 0))
-      AssertEqual(AlignTimestamp(
-        New DateTime(2016, 4, 1, 22, 5, 17), 60),
+      ' DBMDate
+      AssertEqual(PreviousInterval(
+        New DateTime(2016, 4, 4, 16, 33, 2)),
+        New DateTime(2016, 4, 4, 16, 30, 0))
+      AssertEqual(PreviousInterval(
+        New DateTime(2015, 7, 15, 2, 29, 58)),
+        New DateTime(2015, 7, 15, 2, 25, 0))
+      AssertEqual(PreviousInterval(
+        New DateTime(2016, 4, 1, 22, 5, 17)),
         New DateTime(2016, 4, 1, 22, 5, 0))
-      AssertEqual(AlignTimestamp(
-        New DateTime(2013, 12, 1, 21, 47, 35), 60),
-        New DateTime(2013, 12, 1, 21, 47, 0))
-      AssertEqual(AlignTimestamp(
-        New DateTime(2016, 11, 22, 0, 22, 17), 60),
-        New DateTime(2016, 11, 22, 0, 22, 0))
-      AssertEqual(AlignTimestamp(
-        New DateTime(2016, 10, 11, 19, 11, 41), 300),
+      AssertEqual(PreviousInterval(
+        New DateTime(2013, 12, 1, 21, 47, 35)),
+        New DateTime(2013, 12, 1, 21, 45, 0))
+      AssertEqual(PreviousInterval(
+        New DateTime(2016, 11, 22, 0, 22, 17)),
+        New DateTime(2016, 11, 22, 0, 20, 0))
+      AssertEqual(PreviousInterval(
+        New DateTime(2016, 10, 11, 19, 11, 41)),
         New DateTime(2016, 10, 11, 19, 10, 0))
-      AssertEqual(AlignTimestamp(
-        New DateTime(2013, 10, 26, 4, 24, 53), 300),
+      AssertEqual(PreviousInterval(
+        New DateTime(2013, 10, 26, 4, 24, 53)),
         New DateTime(2013, 10, 26, 4, 20, 0))
-      AssertEqual(AlignTimestamp(
-        New DateTime(2014, 5, 2, 2, 52, 41), 300),
+      AssertEqual(PreviousInterval(
+        New DateTime(2014, 5, 2, 2, 52, 41)),
         New DateTime(2014, 5, 2, 2, 50, 0))
-      AssertEqual(AlignTimestamp(
-        New DateTime(2014, 8, 16, 13, 11, 10), 300),
+      AssertEqual(PreviousInterval(
+        New DateTime(2014, 8, 16, 13, 11, 10)),
         New DateTime(2014, 8, 16, 13, 10, 0))
-      AssertEqual(AlignTimestamp(
-        New DateTime(2014, 10, 25, 8, 26, 4), 300),
+      AssertEqual(PreviousInterval(
+        New DateTime(2014, 10, 25, 8, 26, 4)),
         New DateTime(2014, 10, 25, 8, 25, 0))
-      AssertEqual(AlignTimestamp(
-        New DateTime(2015, 6, 2, 18, 36, 24), 3600),
-        New DateTime(2015, 6, 2, 18, 0, 0))
-      AssertEqual(AlignTimestamp(
-        New DateTime(2016, 11, 21, 16, 24, 27), 3600),
-        New DateTime(2016, 11, 21, 16, 0, 0))
-      AssertEqual(AlignTimestamp(
-        New DateTime(2014, 4, 4, 8, 42, 10), 3600),
-        New DateTime(2014, 4, 4, 8, 0, 0))
-      AssertEqual(AlignTimestamp(
-        New DateTime(2016, 2, 22, 19, 8, 41), 3600),
-        New DateTime(2016, 2, 22, 19, 0, 0))
-      AssertEqual(AlignTimestamp(
-        New DateTime(2015, 9, 13, 22, 48, 17), 3600),
-        New DateTime(2015, 9, 13, 22, 0, 0))
-      AssertEqual(AlignTimestamp(
-        New DateTime(2016, 10, 20, 2, 47, 48), 86400),
-        New DateTime(2016, 10, 20, 0, 0, 0))
-      AssertEqual(AlignTimestamp(
-        New DateTime(2014, 2, 8, 23, 12, 34), 86400),
-        New DateTime(2014, 2, 8, 0, 0, 0))
-      AssertEqual(AlignTimestamp(
-        New DateTime(2016, 2, 27, 23, 40, 39), 86400),
-        New DateTime(2016, 2, 27, 0, 0, 0))
-      AssertEqual(AlignTimestamp(
-        New DateTime(2015, 8, 26, 9, 35, 55), 86400),
-        New DateTime(2015, 8, 26, 0, 0, 0))
-      AssertEqual(AlignTimestamp(
-        New DateTime(2016, 2, 11, 0, 44, 7), 86400),
-        New DateTime(2016, 2, 11, 0, 0, 0))
+      AssertEqual(PreviousInterval(
+        New DateTime(2015, 6, 2, 18, 36, 24)),
+        New DateTime(2015, 6, 2, 18, 35, 0))
+      AssertEqual(PreviousInterval(
+        New DateTime(2016, 11, 21, 16, 24, 27)),
+        New DateTime(2016, 11, 21, 16, 20, 0))
+      AssertEqual(PreviousInterval(
+        New DateTime(2014, 4, 4, 8, 42, 10)),
+        New DateTime(2014, 4, 4, 8, 40, 0))
+      AssertEqual(PreviousInterval(
+        New DateTime(2016, 2, 22, 19, 8, 41)),
+        New DateTime(2016, 2, 22, 19, 5, 0))
+      AssertEqual(PreviousInterval(
+        New DateTime(2015, 9, 13, 22, 48, 17)),
+        New DateTime(2015, 9, 13, 22, 45, 0))
+      AssertEqual(PreviousInterval(
+        New DateTime(2016, 10, 20, 2, 47, 48)),
+        New DateTime(2016, 10, 20, 2, 45, 0))
+      AssertEqual(PreviousInterval(
+        New DateTime(2014, 2, 8, 23, 12, 34)),
+        New DateTime(2014, 2, 8, 23, 10, 0))
+      AssertEqual(PreviousInterval(
+        New DateTime(2016, 2, 27, 23, 40, 39)),
+        New DateTime(2016, 2, 27, 23, 40, 0))
+      AssertEqual(PreviousInterval(
+        New DateTime(2015, 8, 26, 9, 35, 55)),
+        New DateTime(2015, 8, 26, 9, 35, 0))
+      AssertEqual(PreviousInterval(
+        New DateTime(2016, 2, 11, 0, 44, 7)),
+        New DateTime(2016, 2, 11, 0, 40, 0))
 
       AssertEqual(NextInterval(
         New DateTime(2016, 4, 4, 16, 33, 2)),
@@ -721,35 +673,56 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2014, 10, 25, 8, 26, 4)),
         New DateTime(2014, 10, 25, 8, 30, 0))
       AssertEqual(NextInterval(
-        New DateTime(2015, 6, 2, 18, 36, 24), 1),
+        New DateTime(2015, 6, 2, 18, 36, 24)),
         New DateTime(2015, 6, 2, 18, 40, 0))
       AssertEqual(NextInterval(
-        New DateTime(2016, 11, 21, 16, 24, 27), 2),
-        New DateTime(2016, 11, 21, 16, 30, 0))
+        New DateTime(2016, 11, 21, 16, 24, 27)),
+        New DateTime(2016, 11, 21, 16, 25, 0))
       AssertEqual(NextInterval(
-        New DateTime(2014, 4, 4, 8, 42, 10), 3),
-        New DateTime(2014, 4, 4, 8, 55, 0))
+        New DateTime(2014, 4, 4, 8, 42, 10)),
+        New DateTime(2014, 4, 4, 8, 45, 0))
       AssertEqual(NextInterval(
-        New DateTime(2016, 2, 22, 19, 8, 41), 4),
-        New DateTime(2016, 2, 22, 19, 25, 0))
+        New DateTime(2016, 2, 22, 19, 8, 41)),
+        New DateTime(2016, 2, 22, 19, 10, 0))
       AssertEqual(NextInterval(
-        New DateTime(2015, 9, 13, 22, 48, 17), 5),
-        New DateTime(2015, 9, 13, 23, 10, 0))
+        New DateTime(2015, 9, 13, 22, 48, 17)),
+        New DateTime(2015, 9, 13, 22, 50, 0))
       AssertEqual(NextInterval(
-        New DateTime(2016, 10, 20, 2, 47, 48), 6),
-        New DateTime(2016, 10, 20, 3, 15, 0))
+        New DateTime(2016, 10, 20, 2, 47, 48)),
+        New DateTime(2016, 10, 20, 2, 50, 0))
       AssertEqual(NextInterval(
-        New DateTime(2014, 2, 8, 23, 12, 34), 7),
-        New DateTime(2014, 2, 8, 23, 45, 0))
+        New DateTime(2014, 2, 8, 23, 12, 34)),
+        New DateTime(2014, 2, 8, 23, 15, 0))
       AssertEqual(NextInterval(
-        New DateTime(2016, 2, 27, 23, 40, 39), 8),
-        New DateTime(2016, 2, 28, 0, 20, 0))
+        New DateTime(2016, 2, 27, 23, 40, 39)),
+        New DateTime(2016, 2, 27, 23, 45, 0))
       AssertEqual(NextInterval(
-        New DateTime(2015, 8, 26, 9, 35, 55), -12),
-        New DateTime(2015, 8, 26, 8, 35, 0))
+        New DateTime(2015, 8, 26, 9, 35, 55)),
+        New DateTime(2015, 8, 26, 9, 40, 0))
       AssertEqual(NextInterval(
-        New DateTime(2016, 2, 11, 0, 44, 7), 0),
-        New DateTime(2016, 2, 11, 0, 40, 0))
+        New DateTime(2016, 2, 11, 0, 44, 7)),
+        New DateTime(2016, 2, 11, 0, 45, 0))
+
+      AssertEqual(IntervalSeconds(-25, 86400)*23, 86100)
+      AssertEqual(IntervalSeconds(6, 3600)*5, 3300)
+      AssertEqual(IntervalSeconds(-14, 3600), 300)
+      AssertEqual(IntervalSeconds(-13, 3600), 300)
+      AssertEqual(IntervalSeconds(-12, 3600), 330)
+      AssertEqual(IntervalSeconds(-10, 3600), 412.5)
+      AssertEqual(IntervalSeconds(-7, 3600), 660)
+      AssertEqual(IntervalSeconds(-3, 3600), 3300)
+      AssertEqual(IntervalSeconds(-2, 3600), 3600)
+      AssertEqual(IntervalSeconds(-1, 3600), 300)
+      AssertEqual(IntervalSeconds(0, 3600), 300)
+      AssertEqual(IntervalSeconds(1, 3600), 3600)
+      AssertEqual(IntervalSeconds(2, 3600), 3300)
+      AssertEqual(IntervalSeconds(3, 3600), 1650)
+      AssertEqual(IntervalSeconds(5, 3600), 825)
+      AssertEqual(IntervalSeconds(9, 3600), 412.5)
+      AssertEqual(IntervalSeconds(11, 3600), 330)
+      AssertEqual(IntervalSeconds(12, 3600), 300)
+      AssertEqual(IntervalSeconds(13, 3600), 300)
+      AssertEqual(IntervalSeconds(14, 3600), 300)
 
       AssertEqual(Computus(1864), New DateTime(1864, 3, 27))
       AssertEqual(Computus(1900), New DateTime(1900, 4, 15))
@@ -945,6 +918,68 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2020, 6, 1), New CultureInfo("en-US")),
         New DateTime(2020, 6, 1))
 
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2017, 3, 2, 11, 25, 1)),
+        New DateTime(2016, 12, 4, 9, 5, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2017, 12, 7, 6, 35, 59)),
+        New DateTime(2017, 9, 10, 4, 15, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2018, 3, 24, 14, 13, 10)),
+        New DateTime(2017, 12, 24, 11, 50, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2016, 8, 12, 23, 20, 36)),
+        New DateTime(2016, 5, 15, 21, 0, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2017, 9, 2, 11, 44, 11)),
+        New DateTime(2017, 6, 4, 9, 20, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2018, 6, 4, 16, 59, 55)),
+        New DateTime(2018, 3, 11, 14, 35, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2016, 9, 5, 4, 38, 50)),
+        New DateTime(2016, 6, 12, 2, 15, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2016, 8, 15, 4, 11, 4)),
+        New DateTime(2016, 5, 22, 1, 50, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2019, 2, 19, 9, 41, 5)),
+        New DateTime(2018, 11, 25, 7, 20, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2017, 8, 16, 16, 53, 5)),
+        New DateTime(2017, 5, 21, 14, 30, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2019, 12, 21, 7, 34, 23)),
+        New DateTime(2019, 9, 22, 5, 10, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2018, 7, 4, 19, 9, 44)),
+        New DateTime(2018, 4, 8, 16, 45, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2017, 1, 11, 8, 24, 29)),
+        New DateTime(2016, 10, 16, 6, 0, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2018, 11, 17, 13, 41, 35)),
+        New DateTime(2018, 8, 19, 11, 20, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2019, 3, 8, 15, 56, 31)),
+        New DateTime(2018, 12, 9, 13, 35, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2016, 8, 7, 17, 22, 45)),
+        New DateTime(2016, 5, 15, 15, 0, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2017, 8, 20, 17, 49, 15)),
+        New DateTime(2017, 5, 28, 15, 25, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2016, 2, 7, 21, 55, 52)),
+        New DateTime(2015, 11, 15, 19, 35, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2017, 11, 22, 17, 4, 58)),
+        New DateTime(2017, 8, 27, 14, 40, 0))
+      AssertEqual(DataPreparationTimestamp(
+        New DateTime(2016, 1, 6, 22, 49, 9)),
+        New DateTime(2015, 10, 11, 20, 25, 0))
+
+      ' DBMStatistics
       For i = 0 To 19
         With {
           Statistics({3411, 3067, 3159, 2579, 2604, 3549, 2028, 3521, 3629,
@@ -1026,27 +1061,6 @@ Namespace Vitens.DynamicBandwidthMonitor
         End With
       Next i
 
-      AssertEqual(PIAFIntervalSeconds(-25, 86400)*23, 86100)
-      AssertEqual(PIAFIntervalSeconds(6, 3600)*5, 3300)
-      AssertEqual(PIAFIntervalSeconds(-14, 3600), 300)
-      AssertEqual(PIAFIntervalSeconds(-13, 3600), 300)
-      AssertEqual(PIAFIntervalSeconds(-12, 3600), 330)
-      AssertEqual(PIAFIntervalSeconds(-10, 3600), 412.5)
-      AssertEqual(PIAFIntervalSeconds(-7, 3600), 660)
-      AssertEqual(PIAFIntervalSeconds(-3, 3600), 3300)
-      AssertEqual(PIAFIntervalSeconds(-2, 3600), 3600)
-      AssertEqual(PIAFIntervalSeconds(-1, 3600), 300)
-      AssertEqual(PIAFIntervalSeconds(0, 3600), 300)
-      AssertEqual(PIAFIntervalSeconds(1, 3600), 3600)
-      AssertEqual(PIAFIntervalSeconds(2, 3600), 3300)
-      AssertEqual(PIAFIntervalSeconds(3, 3600), 1650)
-      AssertEqual(PIAFIntervalSeconds(5, 3600), 825)
-      AssertEqual(PIAFIntervalSeconds(9, 3600), 412.5)
-      AssertEqual(PIAFIntervalSeconds(11, 3600), 330)
-      AssertEqual(PIAFIntervalSeconds(12, 3600), 300)
-      AssertEqual(PIAFIntervalSeconds(13, 3600), 300)
-      AssertEqual(PIAFIntervalSeconds(14, 3600), 300)
-
     End Sub
 
 
@@ -1054,28 +1068,59 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim InputPointDriver As DBMPointDriverTestModel
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
-      Dim Timestamp As DateTime
-      Dim i As Integer
-      Dim Result As DBMResult
       Dim DBM As New DBM
+      Dim i As Integer
+      Dim Timestamp As DateTime
+      Dim Result As DBMResult
 
       InputPointDriver = New DBMPointDriverTestModel(0)
       CorrelationPoints.Add(
         New DBMCorrelationPoint(New DBMPointDriverTestModel(490), False))
-      Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
 
-      For i = 0 To 19
-        Result = DBM.Result(InputPointDriver, CorrelationPoints, Timestamp,
+      ' GetResult Timestamp - test alignment
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0)).Timestamp,
+        New DateTime(2016, 1, 1, 0, 0, 0))
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 1)).Timestamp,
+        New DateTime(2016, 1, 1, 0, 0, 0))
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 4, 59)).Timestamp,
+        New DateTime(2016, 1, 1, 0, 0, 0))
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 5, 0)).Timestamp,
+        New DateTime(2016, 1, 1, 0, 5, 0))
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 7, 12)).Timestamp,
+        New DateTime(2016, 1, 1, 0, 5, 0))
+
+      ' GetResult IsFutureData - test future data
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        Now.AddSeconds(-2*CalculationInterval)).IsFutureData, False)
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        Now.AddSeconds(-CalculationInterval)).IsFutureData, False)
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        Now).IsFutureData, False)
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        Now.AddSeconds(CalculationInterval)).IsFutureData, True)
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        Now.AddSeconds(2*CalculationInterval)).IsFutureData, True)
+
+      ' GetResult - test calculation results
+      For i = -19 To 19
+        Timestamp = New DateTime(2016, 1, 1, 0, 0, 0).
+          AddSeconds(Abs(i)*365*24*60*60/20) ' 19 backwards to 0, forwards to 19
+        Result = DBM.GetResult(InputPointDriver, CorrelationPoints, Timestamp,
           New CultureInfo("nl-NL")) ' Use Dutch locale for New Year's Day test
         With Result
           AssertAlmostEqual(.Factor, {0, 0, 0, 0, 0, 0, -11.8493, -22.9119, 0,
-            0, 0, 0, 1.1375, 0, 0, 0, 0, 0, 0, 0}(i))
-          If i = 6 Or i = 7 Or i = 12 Then
+            0, 0, 0, 1.1375, 0, 0, 0, 0, 0, 0, 0}(Abs(i)))
+          If {6, 7, 12}.Contains(Abs(i)) Then
             AssertTrue(.HasEvent)
           Else
             AssertFalse(.HasEvent)
           End If
-          If i = 5 Or i = 14 Then
+          If {5, 14}.Contains(Abs(i)) Then
             AssertTrue(.HasSuppressedEvent)
           Else
             AssertFalse(.HasSuppressedEvent)
@@ -1084,70 +1129,104 @@ Namespace Vitens.DynamicBandwidthMonitor
             1097.1504, 950.9752, 496.1124, 673.6569, 1139.1957, 867.4313,
             504.9407, 656.4434, 1065.7651, 898.9191, 471.2433, 668.1,
             1103.9689, 897.7268, 525.3563, 676.7206, 1183.0887,
-            975.8324}(i))
-          AssertAlmostEqual(.ForecastItem.ForecastValue, {517.2028, 716.9982,
+            975.8324}(Abs(i)))
+          AssertAlmostEqual(.ForecastItem.Forecast, {517.3859, 716.9982,
             1059.0551, 919.4719, 488.6181, 683.6728, 1155.5986, 895.6872,
             503.2566, 655.7115, 1061.2282, 893.3488, 464.4957, 666.2928,
             1084.1527, 901.6546, 523.8671, 666.1729, 1190.3511,
-            975.4264}(i))
-          AssertAlmostEqual(.ForecastItem.Range(0.95), {7.3871, 43.4768,
+            975.4264}(Abs(i)))
+          AssertAlmostEqual(.ForecastItem.Range(0.95), {7.5212, 43.4768,
             57.5299, 51.6959, 28.3939, 0.5641, 0.9146, 0.8148, 5.6816, 7.3282,
             11.0143, 9.3649, 3.9192, 4.4945, 6.9199, 9.2247, 8.3518, 9.6103,
-            20.3862, 15.9607}(i))
-          AssertAlmostEqual(.ForecastItem.Range(BandwidthCI), {11.1804, 65.8024,
+            20.3862, 15.9607}(Abs(i)))
+          AssertAlmostEqual(.ForecastItem.Range(BandwidthCI), {11.3834, 65.8024,
             87.0718, 78.2419, 42.9743, 0.8537, 1.3843, 1.2332, 8.5991, 11.0913,
             16.6702, 14.1738, 5.9317, 6.8025, 10.4733, 13.9616, 12.6405,
-            14.5453, 30.8546, 24.1566}(i))
-          AssertAlmostEqual(.ForecastItem.LowerControlLimit, {506.0224,
+            14.5453, 30.8546, 24.1566}(Abs(i)))
+          AssertAlmostEqual(.ForecastItem.LowerControlLimit, {506.0025,
             651.1959, 971.9833, 841.23, 445.6438, 682.8191, 1154.2143, 894.454,
             494.6574, 644.6202, 1044.558, 879.175, 458.564, 659.4903,
             1073.6794, 887.693, 511.2267, 651.6276, 1159.4964,
-            951.2698}(i))
-          AssertAlmostEqual(.ForecastItem.UpperControlLimit, {528.3832,
+            951.2698}(Abs(i)))
+          AssertAlmostEqual(.ForecastItem.UpperControlLimit, {528.7693,
             782.8006, 1146.127, 997.7138, 531.5924, 684.5266, 1156.9829,
             896.9205, 511.8557, 666.8028, 1077.8984, 907.5226, 470.4274,
             673.0952, 1094.626, 915.6163, 536.5076, 680.7182, 1221.2057,
-            999.583}(i))
+            999.583}(Abs(i)))
         End With
-        Timestamp = Timestamp.AddSeconds(365*24*60*60/20)
+      Next i
+
+      ' GetResults Count - test number of results
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 1, 0, 0, 0)).Count, 0)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 1, 0, 5, 0)).Count, 1)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 1, 0, 6, 12)).Count, 1)
+      AssertEqual(DBM.GetResults(InputPointDriver, Nothing,
+        New DateTime(2016, 1, 1, 0, 3, 55),
+        New DateTime(2016, 1, 1, 0, 8, 55)).Count, 1)
+      AssertEqual(DBM.GetResults(InputPointDriver, Nothing,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 1, 0, 10, 0)).Count, 2)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 2, 41),
+        New DateTime(2016, 1, 1, 0, 10, 0)).Count, 2)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 1, 9),
+        New DateTime(2016, 1, 1, 0, 14, 57)).Count, 2)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 1, 1, 0, 0)).Count, 12)
+      AssertEqual(DBM.GetResults(InputPointDriver, Nothing,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 1, 12, 0, 0)).Count, 144)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 2, 0, 0, 0)).Count, 288)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 2, 0, 0, 0), 0).Count, 288)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 2, 0, 0, 0), 1).Count, 1)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 2, 0, 0, 0), 13).Count, 13)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 2, 0, 0, 0), 24).Count, 24)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 2, 0, 0, 0), -2).Count, 1)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 2, 0, 0, 0), -1).Count, 288)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 2, 0, 0, 0), 287).Count, 287)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 2, 0, 0, 0), 288).Count, 288)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 2, 0, 0, 0), 289).Count, 288)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 1, 0, 0, 0), 1000).Count, 0)
+
+      ' GetResults Timestamp - test intervals
+      For i = 0 To 4
+        AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+          New DateTime(2016, 1, 1, 0, 0, 0),
+          New DateTime(2016, 1, 1, 1, 0, 0), 5)(i).Timestamp,
+          New DateTime(2016, 1, 1, 0, {0, 10, 25, 40, 55}(i), 0))
       Next i
 
     End Sub
-
-
-    Public Shared Function PerformanceIndex As Double
-
-      ' Returns the performance of the DBM calculation as a performance index.
-      ' The returned value indicates how many full days per second this system
-      ' can calculate when performing real-time continuous calculations.
-
-      Const DurationTicks As Double = 5*TicksPerSecond ' Measure for 5 seconds.
-
-      Dim InputPointDriver As DBMPointDriverTestModel
-      Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
-      Dim Timestamp, Timer As DateTime
-      Dim Result As DBMResult
-      Dim DBM As New DBM
-      Dim Count As Integer
-
-      InputPointDriver = New DBMPointDriverTestModel(0)
-      CorrelationPoints.Add(New DBMCorrelationPoint(
-        New DBMPointDriverTestModel(5394), False))
-      CorrelationPoints.Add(New DBMCorrelationPoint(
-        New DBMPointDriverTestModel(227), True))
-      Timestamp = New DateTime(2016, 1, 1, 0, 0, 0)
-
-      Timer = Now
-      Do While Now.Ticks-Timer.Ticks < DurationTicks
-        Result = DBM.Result(InputPointDriver, CorrelationPoints, Timestamp,
-          New CultureInfo("nl-NL")) ' Use Dutch locale for holidays.
-        If Now.Ticks-Timer.Ticks >= DurationTicks/2 Then Count += 1 ' 2nd half.
-        Timestamp = Timestamp.AddSeconds(CalculationInterval)
-      Loop
-
-      Return 2*Count*TicksPerSecond*CalculationInterval/(24*60*60*DurationTicks)
-
-    End Function
 
 
   End Class

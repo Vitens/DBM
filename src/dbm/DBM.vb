@@ -24,9 +24,9 @@ Option Strict
 
 Imports System
 Imports System.Collections.Generic
-Imports System.DateTime
 Imports System.Globalization
 Imports System.Math
+Imports System.Threading
 Imports System.Threading.Thread
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
@@ -78,38 +78,28 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' distribution processes.
 
 
-    Private PointsCache As New DBMCache
-    Private LastClearCache As DateTime = Now
+    Private Points As New Dictionary(Of Object, DBMPoint)
 
 
     Private Function Point(PointDriver As DBMPointDriverAbstract) As DBMPoint
 
-      ' Returns DBMPoint object from the cache. If cache does not yet contain
-      ' object, it is added.
+      ' Returns DBMPoint object from the dictionary. If dictionary does not yet
+      ' contain object, it is added.
 
-      If Not PointsCache.HasItem(PointDriver.Point) Then
-        PointsCache.AddItem(PointDriver.Point, New DBMPoint(PointDriver))
-      End If
+      Monitor.Enter(Points) ' Lock
+      Try
 
-      Return DirectCast(PointsCache.GetItem(PointDriver.Point), DBMPoint)
+        If Not Points.ContainsKey(PointDriver.Point) Then
+          Points.Add(PointDriver.Point, New DBMPoint(PointDriver))
+        End If
+
+        Return Points.Item(PointDriver.Point)
+
+      Finally
+        Monitor.Exit(Points)
+      End Try
 
     End Function
-
-
-    Public Sub ClearCache(Optional Hours As Integer = 0)
-
-      ' Clear all cached points including their cached data and cached forecast
-      ' results. Calling this periodically will make sure that all data is
-      ' refreshed and that unused data is removed from memory. Use the Hour
-      ' parameter to only clear the cache after a set amount of hours has
-      ' passed.
-
-      If (Now-LastClearCache).TotalHours >= Hours Then
-        PointsCache.Clear
-        LastClearCache = Now
-      End If
-
-    End Sub
 
 
     Public Shared Function HasCorrelation(RelErrCorr As Double,
@@ -159,98 +149,100 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Sub PrepareData(InputPointDriver As DBMPointDriverAbstract,
-      CorrelationPoints As List(Of DBMCorrelationPoint),
-      StartTimestamp As DateTime, EndTimestamp As DateTime)
-
-      ' Will pass start and end timestamps to TryPrepareData method for input
-      ' and correlation PointDrivers. The driver can then prepare the dataset
-      ' for which calculations are required in the next step. The (aligned) end
-      ' time itself is excluded. Useful for retrieving in bulk and caching in
-      ' memory. Note that some drivers will only return data that has been
-      ' prepared using this method.
-
-      Dim CorrelationPoint As DBMCorrelationPoint
-
-      StartTimestamp = NextInterval(StartTimestamp,
-        -EMAPreviousPeriods-CorrelationPreviousPeriods).
-        AddDays(ComparePatterns*-7)
-      If UseSundayForHolidays Then StartTimestamp =
-        PreviousSunday(StartTimestamp)
-      EndTimestamp = AlignTimestamp(EndTimestamp, CalculationInterval)
-
-      Point(InputPointDriver).PointDriver.
-        TryPrepareData(StartTimestamp, EndTimestamp)
-      If CorrelationPoints IsNot Nothing Then
-        For Each CorrelationPoint In CorrelationPoints
-          Point(CorrelationPoint.PointDriver).PointDriver.
-            TryPrepareData(StartTimestamp, EndTimestamp)
-        Next
-      End If
-
-    End Sub
-
-
-    Public Function Result(InputPointDriver As DBMPointDriverAbstract,
+    Public Function GetResult(InputPointDriver As DBMPointDriverAbstract,
       CorrelationPoints As List(Of DBMCorrelationPoint), Timestamp As DateTime,
       Optional Culture As CultureInfo = Nothing) As DBMResult
 
-      ' This is the main function to call to retrieve results for a specific
+      ' This is the main function to call to calculate a result for a specific
       ' timestamp. If a list of DBMCorrelationPoints is passed, events can be
-      ' suppressed if a strong correlation is found. Be sure to call the
-      ' PrepareData method to prepare data in memory before calculating
-      ' DBM results.
+      ' suppressed if a strong correlation is found.
 
+      Return GetResults(InputPointDriver, CorrelationPoints,
+        Timestamp, NextInterval(Timestamp), 1, Culture)(0)
+
+    End Function
+
+
+    Public Function GetResults(InputPointDriver As DBMPointDriverAbstract,
+      CorrelationPoints As List(Of DBMCorrelationPoint),
+      StartTimestamp As DateTime, EndTimestamp As DateTime,
+      Optional NumberOfValues As Integer = 0,
+      Optional Culture As CultureInfo = Nothing) As List(Of DBMResult)
+
+      ' This is the main function to call to calculate results for a time range.
+      ' The end timestamp is exclusive. If a list of DBMCorrelationPoints is
+      ' passed, events can be suppressed if a strong correlation is found.
+
+      Dim Result As DBMResult
       Dim CorrelationPoint As DBMCorrelationPoint
       Dim CorrelationResult As DBMResult
       Dim AbsoluteErrorStatsItem,
         RelativeErrorStatsItem As New DBMStatisticsItem
 
-      ' Use culture used by the current thread if no culture was passed.
-      If Culture Is Nothing Then Culture = CurrentThread.CurrentCulture
-
       If CorrelationPoints Is Nothing Then ' Empty list if Nothing was passed.
         CorrelationPoints = New List(Of DBMCorrelationPoint)
       End If
 
-      ' Calculate for input point
-      Result = Point(InputPointDriver).Result(
-        Timestamp, True, CorrelationPoints.Count > 0, Nothing, Culture)
+      ' Use culture used by the current thread if no culture was passed.
+      If Culture Is Nothing Then Culture = CurrentThread.CurrentCulture
 
-      ' If an event is found and a correlation point is available
-      If CorrelationPoints.Count > 0 Then
-        For Each CorrelationPoint In CorrelationPoints
-          If Result.Factor <> 0 Then
+      ' Calculate results for input point.
+      GetResults = Point(InputPointDriver).GetResults(
+        PreviousInterval(StartTimestamp),
+        PreviousInterval(EndTimestamp),
+        IntervalSeconds(NumberOfValues, (PreviousInterval(EndTimestamp)-
+        PreviousInterval(StartTimestamp)).TotalSeconds),
+        True, CorrelationPoints.Count > 0, Nothing, Culture)
 
-            ' If pattern of correlation point contains input point
-            If CorrelationPoint.SubtractSelf Then
-              ' Calculate result for correlation point, subtract input point
-              CorrelationResult = Point(CorrelationPoint.PointDriver).Result(
-                Timestamp, False, True, Point(InputPointDriver), Culture)
-            Else
-              ' Calculate result for correlation point
-              CorrelationResult = Point(CorrelationPoint.PointDriver).Result(
-                Timestamp, False, True, Nothing, Culture)
+      If CorrelationPoints.Count > 0 Then ' If correlation points are available.
+
+        For Each Result In GetResults ' Iterate over results for time range.
+
+          With Result
+
+            If Abs(.Factor) > 0 Then ' If there is an event for this result.
+
+              For Each CorrelationPoint In CorrelationPoints ' Iterate over pts.
+
+                If Abs(.Factor) > 0 Then ' Keep going while event not suppressed
+
+                  ' Calculate result for correlation point.
+                  If CorrelationPoint.SubtractSelf Then
+                    CorrelationResult = Point(CorrelationPoint.PointDriver).
+                      GetResult(.Timestamp, False, True,
+                      Point(InputPointDriver), Culture) ' Subtract input.
+                  Else
+                    CorrelationResult = Point(CorrelationPoint.PointDriver).
+                      GetResult(.Timestamp, False, True, Nothing, Culture)
+                  End If
+
+                  ' Calculate statistics of errors compared to forecast.
+                  AbsoluteErrorStatsItem = Statistics(
+                    CorrelationResult.AbsoluteErrors, .AbsoluteErrors)
+                  RelativeErrorStatsItem = Statistics(
+                    CorrelationResult.RelativeErrors, .RelativeErrors)
+
+                  ' Suppress if not local event.
+                  .Factor = Suppress(.Factor,
+                    AbsoluteErrorStatsItem.ModifiedCorrelation,
+                    AbsoluteErrorStatsItem.OriginAngle,
+                    RelativeErrorStatsItem.ModifiedCorrelation,
+                    RelativeErrorStatsItem.OriginAngle,
+                    CorrelationPoint.SubtractSelf)
+
+                End If
+
+              Next CorrelationPoint
+
             End If
 
-            ' Calculate statistics of error compared to forecast
-            AbsoluteErrorStatsItem = Statistics(
-              CorrelationResult.AbsoluteErrors, Result.AbsoluteErrors)
-            RelativeErrorStatsItem = Statistics(
-              CorrelationResult.RelativeErrors, Result.RelativeErrors)
+          End With
 
-            Result.Factor = Suppress(Result.Factor,
-              AbsoluteErrorStatsItem.ModifiedCorrelation,
-              AbsoluteErrorStatsItem.OriginAngle,
-              RelativeErrorStatsItem.ModifiedCorrelation,
-              RelativeErrorStatsItem.OriginAngle,
-              CorrelationPoint.SubtractSelf) ' Suppress if not a local event.
+        Next Result
 
-          End If
-        Next
       End If
 
-      Return Result
+      Return GetResults
 
     End Function
 

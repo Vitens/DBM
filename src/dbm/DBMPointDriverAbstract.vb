@@ -23,7 +23,9 @@ Option Strict
 
 
 Imports System
-Imports System.Double
+Imports System.Threading
+Imports Vitens.DynamicBandwidthMonitor.DBMDate
+Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -33,13 +35,15 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     ' DBM drivers should inherit from this base class. In Sub New,
-    ' MyBase.New(Point) should be called. At a minimum, the GetData function
-    ' must be overridden and should return a value for the Timestamp passed.
-    ' If required, PrepareData can be used to retrieve and store values in bulk
-    ' from a source of data, to be used in the GetData function.
+    ' MyBase.New(Point) should be called. RetrieveData is used to retrieve and
+    ' store data in bulk from a source using the DataStore.AddData method. Use
+    ' DataStore.GetData to fetch results from memory.
 
 
     Public Point As Object
+    Public DataStore As New DBMDataStore ' In-memory data
+    Private PreviousStartTimestamp As DateTime = DateTime.MaxValue
+    Private PreviousEndTimestamp As DateTime
 
 
     Public Sub New(Point As Object)
@@ -52,49 +56,107 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Sub TryPrepareData(StartTimestamp As DateTime,
-      EndTimestamp As DateTime)
+    Public Overridable Function SnapshotTimestamp As DateTime
 
-      ' The TryPrepareData function is called from the DBM class to retrieve
-      ' data using the overridden PrepareData function.
+      ' Return the latest data timestamp (snapshot) for which the source of data
+      ' has information available. If there is no limit, return
+      ' DateTime.MaxValue.
 
-      Try
-        PrepareData(StartTimestamp, EndTimestamp)
-      Catch
-      End Try
-
-    End Sub
-
-
-    Public Overridable Sub PrepareData(StartTimestamp As DateTime,
-      EndTimestamp As DateTime)
-
-      ' Retrieve and store values in bulk for the passed time range from a
-      ' source of data, to be used in the GetData method.
-
-    End Sub
-
-
-    Public Function TryGetData(Timestamp As DateTime) As Double
-
-      ' The TryGetData function is called from the DBMPoint class to retrieve
-      ' data using the overridden GetData function. If there is an exception
-      ' when calling this function, NaN is returned instead.
-
-      Try
-        TryGetData = GetData(Timestamp)
-      Catch
-        TryGetData = NaN ' Error getting data, return Not a Number
-      End Try
-
-      Return TryGetData
+      Return DateTime.MaxValue
 
     End Function
 
 
-    Public MustOverride Function GetData(Timestamp As DateTime) As Double
-    ' GetData must be overridden and should return a value for the passed
-    ' timestamp.
+    Public MustOverride Sub PrepareData(StartTimestamp As DateTime,
+      EndTimestamp As DateTime)
+      ' Must retrieve and store data in bulk for the passed time range from a
+      ' source of data, to be used in the DataStore.GetData method. Use
+      ' DataStore.AddData to store data in memory.
+
+
+    Public Sub RetrieveData(StartTimestamp As DateTime,
+      EndTimestamp As DateTime)
+
+      Dim Snapshot As DateTime = SnapshotTimestamp
+
+      ' Data preparation timestamps
+      StartTimestamp = DataPreparationTimestamp(StartTimestamp)
+      EndTimestamp = PreviousInterval(EndTimestamp)
+
+      ' If set, never retrieve values beyond the snapshot time aligned to the
+      ' next interval.
+      If StartTimestamp > Snapshot Then StartTimestamp = NextInterval(Snapshot)
+      If EndTimestamp > Snapshot Then EndTimestamp = NextInterval(Snapshot)
+
+      ' Exit this sub if there is no data to retrieve or when the start
+      ' timestamp is not before the end timestamp.
+      If Not StartTimestamp < EndTimestamp Then Exit Sub
+
+      Monitor.Enter(Point) ' Lock
+      Try
+
+        ' Determine what data stored in memory can be reused, what needs to be
+        ' removed, and what needs to be retrieved from the data source and
+        ' stored in memory. Here is a simplified overview of how the different
+        ' cases (S(tart)-E(nd)) are handled, compared to the time range stored
+        ' previously (PS-PE):
+        '             PS*==========*PE  S...PS E...PE Action
+        '   Case 1:     S==========E      =      =    Do nothing
+        '   Case 2:  S++|==========E      <      =    Add backward
+        '   Case 3:     ---S=======E      >      =    Do nothing
+        '   Case 4:     S=======E---      =      <    Do nothing
+        '   Case 5:  S++|=======E---      <      <    Remove forward, add backwd
+        '   Case 6:     ---S====E---      >      <    Do nothing
+        '   Case 7:     S==========|++E   =      >    Add forward
+        '   Case 8:  S++|==========|++E   <      >    Clear all
+        '   Case 9:     ---S=======|++E   >      >    Remove backward, add forwd
+        '   Case 10: S==E a) or b) S==E   E<=PS S>=PE Clear all
+        If (StartTimestamp < PreviousStartTimestamp And
+          EndTimestamp > PreviousEndTimestamp) Or
+          EndTimestamp <= PreviousStartTimestamp Or
+          StartTimestamp >= PreviousEndTimestamp Then ' Cases 8, 10a), 10b)
+          DataStore.ClearData ' Clear all
+          PreviousStartTimestamp = StartTimestamp
+          PreviousEndTimestamp = EndTimestamp
+        Else If StartTimestamp >= PreviousStartTimestamp And
+          EndTimestamp <= PreviousEndTimestamp Then ' Cases 1, 3, 4, 6
+          Exit Sub ' Do nothing
+        Else If StartTimestamp < PreviousStartTimestamp Then ' Cases 2, 5
+          If EndTimestamp < PreviousEndTimestamp Then ' Case 5
+            Do While EndTimestamp < PreviousEndTimestamp ' Remove forward
+              PreviousEndTimestamp = PreviousEndTimestamp.
+                AddSeconds(-CalculationInterval)
+              DataStore.RemoveData(PreviousEndTimestamp)
+            Loop
+          End If
+          EndTimestamp = PreviousStartTimestamp ' Add backward
+          PreviousStartTimestamp = StartTimestamp
+        Else If EndTimestamp > PreviousEndTimestamp Then ' Cases 7, 9
+          If StartTimestamp > PreviousStartTimestamp Then ' Case 9
+            Do While PreviousStartTimestamp < StartTimestamp ' Remove backward
+              DataStore.RemoveData(PreviousStartTimestamp)
+              PreviousStartTimestamp = PreviousStartTimestamp.
+                AddSeconds(CalculationInterval)
+            Loop
+          End If
+          StartTimestamp = PreviousEndTimestamp ' Add forward
+          PreviousEndTimestamp = EndTimestamp
+        End If
+
+        Try
+          ' Retrieve all data from the data source. Will pass start and end
+          ' timestamps. The driver can then prepare the dataset for which
+          ' calculations are required in the next step. The (aligned) end time
+          ' itself is excluded.
+          PrepareData(StartTimestamp, EndTimestamp)
+        Catch
+        End Try
+
+      Finally
+        Monitor.Exit(Point)
+      End Try
+
+    End Sub
 
 
   End Class

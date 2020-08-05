@@ -28,6 +28,7 @@ Imports System.Environment
 Imports System.Globalization.CultureInfo
 Imports System.Text.RegularExpressions
 Imports System.Threading.Thread
+Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
@@ -83,6 +84,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim InputPointDriver As DBMPointDriver = Nothing
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim StartTimestamp, EndTimestamp As DateTime
+      Dim Result As DBMResult
       Dim DBM As New DBM
 
       ' Parse command line arguments
@@ -136,37 +138,29 @@ Namespace Vitens.DynamicBandwidthMonitor
             Exit Sub
           End Try
         End If
-      Next
+      Next CommandLineArg
 
       If InputPointDriver IsNot Nothing And
         StartTimestamp > DateTime.MinValue Then
 
         If EndTimestamp = DateTime.MinValue Then
-          ' No end timestamp, set to start timestamp
-          EndTimestamp = StartTimestamp
-        Else
-          ' Remove one interval from end timestamp
-          EndTimestamp = EndTimestamp.AddSeconds(-CalculationInterval)
+          ' No end timestamp, set one interval after start timestamp.
+          EndTimestamp = NextInterval(StartTimestamp)
         End If
 
-        DBM.PrepareData(InputPointDriver, CorrelationPoints,
-          StartTimestamp, EndTimestamp.AddSeconds(CalculationInterval))
+        For Each Result In DBM.GetResults(InputPointDriver, CorrelationPoints,
+          StartTimestamp, EndTimestamp) ' Get results for time range.
 
-        Do While EndTimestamp >= StartTimestamp
-
-          With DBM.Result(InputPointDriver, CorrelationPoints, StartTimestamp)
+          With Result
             Console.WriteLine(FormatDateTime(.Timestamp) & Separator &
             FormatNumber(.Factor) & Separator &
             FormatNumber(.ForecastItem.Measurement) & Separator &
-            FormatNumber(.ForecastItem.ForecastValue) & Separator &
+            FormatNumber(.ForecastItem.Forecast) & Separator &
             FormatNumber(.ForecastItem.LowerControlLimit) & Separator &
             FormatNumber(.ForecastItem.UpperControlLimit))
           End With
 
-          ' Next interval
-          StartTimestamp = StartTimestamp.AddSeconds(CalculationInterval)
-
-        Loop
+        Next Result
 
       End If
 

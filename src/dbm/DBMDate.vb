@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2019  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -24,6 +24,7 @@ Option Strict
 
 Imports System
 Imports System.Globalization
+Imports System.Math
 Imports System.TimeSpan
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
@@ -37,23 +38,44 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Contains date and time functions.
 
 
-    Public Shared Function AlignTimestamp(Timestamp As DateTime,
-      Seconds As Integer) As DateTime
+    Public Shared Function PreviousInterval(Timestamp As DateTime) As DateTime
 
-      ' Returns a DateTime for the passed timestamp aligned on the
-      ' previous interval (in seconds).
+      ' Returns a DateTime for the passed timestamp aligned on the previous
+      ' interval.
 
       Return New DateTime(Timestamp.Ticks-Timestamp.Ticks Mod
-        Seconds*TicksPerSecond, Timestamp.Kind)
+        CalculationInterval*TicksPerSecond, Timestamp.Kind)
 
     End Function
 
 
-    Public Shared Function NextInterval(Timestamp As DateTime,
-      Optional Intervals As Integer = 1) As DateTime
+    Public Shared Function NextInterval(Timestamp As DateTime) As DateTime
 
-      Return AlignTimestamp(Timestamp, CalculationInterval).
-        AddSeconds(Intervals*CalculationInterval)
+      Return PreviousInterval(Timestamp.AddSeconds(CalculationInterval))
+
+    End Function
+
+
+    Public Shared Function IntervalSeconds(NumberOfValues As Integer,
+      DurationSeconds As Double) As Double
+
+      ' Number of values desired. If =0, all intervals will be returned. If >0,
+      ' that number of values will be returned. If <0, the negative value minus
+      ' 1 number of values will be returned (f.ex. -25 over a 24 hour period
+      ' will return an hourly value). Duration is in seconds. The first value
+      ' returned will then be the first interval in the time range, and the last
+      ' value returned will be the final calculation interval (f.ex. requesting
+      ' 6 values for a duration of 60 minutes with a calculation interval of 5
+      ' minutes will return an interval of 660 seconds which will then return
+      ' values at :00, :11, :22, :33, :44, and :55).
+
+      If NumberOfValues < 0 Then NumberOfValues = -NumberOfValues-1
+      If NumberOfValues = 1 Then
+        Return DurationSeconds ' Return a single value
+      Else
+        Return Max(1, (DurationSeconds/CalculationInterval-1)/
+          (NumberOfValues-1))*CalculationInterval ' Required interval
+      End If
 
     End Function
 
@@ -136,6 +158,20 @@ Namespace Vitens.DynamicBandwidthMonitor
       Else
         Return Timestamp
       End If
+
+    End Function
+
+
+    Public Shared Function DataPreparationTimestamp(
+      StartTimestamp As DateTime) As DateTime
+
+      StartTimestamp = PreviousInterval(StartTimestamp.AddDays(
+        -7*ComparePatterns).AddSeconds(
+        -(EMAPreviousPeriods+CorrelationPreviousPeriods)*CalculationInterval))
+      If UseSundayForHolidays Then StartTimestamp =
+        PreviousSunday(StartTimestamp)
+
+      Return StartTimestamp
 
     End Function
 

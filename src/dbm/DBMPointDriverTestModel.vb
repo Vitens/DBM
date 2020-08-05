@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2019  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -23,6 +23,8 @@ Option Strict
 
 
 Imports System
+Imports System.DateTime
+Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -39,25 +41,41 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Overrides Function GetData(Timestamp As DateTime) As Double
+    Public Overrides Function SnapshotTimestamp As DateTime
 
-      ' Model based on hourly water usage in Leeuwarden (NL) 2016.
-      ' Calculated using polynomial regressions based on hourly (quintic),
-      ' daily (cubic) and monthly (quartic) periodicity.
-
-      If TypeOf Point Is Integer Then ' Point contains offset in hours
-        Timestamp = Timestamp.AddHours(DirectCast(Point, Integer))
-      End If
-
-      With Timestamp
-        Return 790*(-0.00012*.Month^4+0.0035*.Month^3-0.032*.Month^2+0.1*
-          .Month+0.93)*(0.000917*.DayOfWeek^3-0.0155*.DayOfWeek^2+0.0628*
-          .DayOfWeek+0.956)*(-0.00001221*(.Hour+.Minute/60)^5+0.0007805*
-          (.Hour+.Minute/60)^4-0.01796*(.Hour+.Minute/60)^3+0.1709*(.Hour+
-          .Minute/60)^2-0.5032*(.Hour+.Minute/60)+0.7023)
-      End With
+      Return Now
 
     End Function
+
+
+    Public Overrides Sub PrepareData(StartTimestamp As DateTime,
+      EndTimestamp As DateTime)
+
+      Dim OffsetHours As Integer
+
+      If TypeOf Point Is Integer Then OffsetHours = DirectCast(Point, Integer)
+
+      Do While EndTimestamp > StartTimestamp
+
+        With StartTimestamp.AddHours(OffsetHours)
+
+          ' Model based on hourly water usage in Leeuwarden (NL) 2016.
+          ' Calculated using polynomial regressions based on hourly (quintic),
+          ' daily (cubic) and monthly (quartic) periodicity.
+          DataStore.AddData(StartTimestamp, 790*(-0.00012*.Month^4+0.0035*
+            .Month^3-0.032*.Month^2+0.1*.Month+0.93)*(0.000917*.DayOfWeek^3-
+            0.0155*.DayOfWeek^2+0.0628*.DayOfWeek+0.956)*(-0.00001221*(.Hour+
+            .Minute/60)^5+0.0007805*(.Hour+.Minute/60)^4-0.01796*(.Hour+.Minute/
+            60)^3+0.1709*(.Hour+.Minute/60)^2-0.5032*(.Hour+.Minute/60)+0.7023))
+
+        End With
+
+        StartTimestamp =
+          StartTimestamp.AddSeconds(CalculationInterval) ' Next interval.
+
+      Loop
+
+    End Sub
 
 
   End Class

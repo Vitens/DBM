@@ -29,8 +29,7 @@ Imports System.Threading
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Time
-Imports Vitens.DynamicBandwidthMonitor.DBMMath
-Imports Vitens.DynamicBandwidthMonitor.DBMParameters
+Imports Vitens.DynamicBandwidthMonitor.DBMDate
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -42,7 +41,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Shared PreviousSnapshots As New Dictionary(Of AFAttribute, AFTime)
     Private Shared DataPipeEvents As New List(Of DataPipeEvent)
-    Private PreviousInterval As AFTime = AFTime.MinValue
+    Private PreviousTimestamp As DateTime
 
 
     Private Structure DataPipeEvent
@@ -103,7 +102,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' The GetEvents method is designed to get data pipe events from the System
       ' of record.
 
-      Dim CurrentInterval As AFTime = Now
+      Dim CurrentTimestamp As DateTime
       Dim Attribute As AFAttribute
       Dim Threads As New List(Of Thread)
       Dim Thread As Thread
@@ -111,25 +110,16 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Determine the start of the current time interval. For this event source,
       ' we only return at most one new event per attribute.
-      CurrentInterval = New AFTime(AlignPreviousInterval(
-        CurrentInterval.UtcSeconds, CalculationInterval))
+      CurrentTimestamp = PreviousInterval(Now)
 
       ' Only check for new events once per calculation interval.
-      If PreviousInterval < CurrentInterval Then
+      If PreviousTimestamp < CurrentTimestamp Then
 
-        ' Iterate over all signed up attributes in this data pipe. We use
-        ' parallel processing of the attributes, since we need to reuse the DBM
-        ' object to store all cached data. If the shared DBM object cannot be
-        ' locked after half a calculation interval, use the attribute-specific
-        ' instance. If the attribute-specific DBM object cannot be locked as
-        ' well, use a new object. For these last two cases, we need to query the
-        ' attributes in parallel, since we don't want to have the waiting step
-        ' for each attribute in serial. For clients, data is essentially
-        ' retrieved in serial. For some services signing up to many attributes,
-        ' initialization might take some time because of this. After data is
-        ' retrieved for all attributes for the first time, only small amounts of
-        ' new data are needed for all consequent evaluations, greatly speeding
-        ' them up.
+        ' Iterate over all signed up attributes in this data pipe. For some
+        ' services signing up to many attributes, initialization might take some
+        ' time on the first calculation. After all data is retrieved for all
+        ' attributes for the first time, only small amounts of new data are
+        ' needed for all consequent evaluations, greatly speeding them up.
         For Each Attribute In MyBase.Signups
 
           ' Check if we need to perform an action on this attribute. This is
@@ -163,7 +153,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         End Try
 
         ' Store current interval as previous interval.
-        PreviousInterval = CurrentInterval
+        PreviousTimestamp = CurrentTimestamp
 
       End If
 
