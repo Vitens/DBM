@@ -39,7 +39,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const UpdateSeconds As Integer = 60 ' Time limiter for update checking.
 
 
-    Private PreviousTimestamp As DateTime = Now
+    Private PreviousTimestamp As DateTime
     Private PreviousSnapshots As New Dictionary(Of AFAttribute, DateTime)
 
 
