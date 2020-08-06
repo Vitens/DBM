@@ -23,6 +23,7 @@ Option Strict
 
 
 Imports System
+Imports System.DateTime
 Imports System.Collections.Generic
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Data
@@ -35,6 +36,10 @@ Namespace Vitens.DynamicBandwidthMonitor
     Inherits AFEventSource
 
 
+    Const UpdateSeconds As Integer = 60 ' Time limiter for update checking.
+
+
+    Private PreviousTimestamp As DateTime = Now
     Private PreviousSnapshots As New Dictionary(Of AFAttribute, DateTime)
 
 
@@ -45,6 +50,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim Attribute As AFAttribute
       Dim Snapshot As AFValue
+
+      ' Limit update checking to once every minute.
+      If (Now-PreviousTimestamp).TotalSeconds < UpdateSeconds Then Exit Function
+      PreviousTimestamp = Now
 
       ' Iterate over all signed up attributes in this data pipe. For some
       ' services signing up to many attributes, initialization might take some
