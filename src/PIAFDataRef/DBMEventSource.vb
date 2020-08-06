@@ -52,7 +52,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Snapshot As AFValue
 
       ' Limit update checking to once every minute.
-      If (Now-PreviousTimestamp).TotalSeconds < UpdateSeconds Then Exit Function
+      If (Now-PreviousTimestamp).TotalSeconds < UpdateSeconds Then Return False
       PreviousTimestamp = Now
 
       ' Iterate over all signed up attributes in this data pipe. For some
