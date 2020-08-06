@@ -187,12 +187,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       If Culture Is Nothing Then Culture = CurrentThread.CurrentCulture
 
       ' Calculate results for input point.
-      GetResults = Point(InputPointDriver).GetResults(
-        PreviousInterval(StartTimestamp),
-        PreviousInterval(EndTimestamp),
-        IntervalSeconds(NumberOfValues, (PreviousInterval(EndTimestamp)-
-        PreviousInterval(StartTimestamp)).TotalSeconds),
-        True, CorrelationPoints.Count > 0, Nothing, Culture)
+      GetResults = Point(InputPointDriver).GetResults(StartTimestamp,
+        EndTimestamp, NumberOfValues, True, CorrelationPoints.Count > 0,
+        Nothing, Culture)
 
       If CorrelationPoints.Count > 0 Then ' If correlation points are available.
 
@@ -206,14 +203,19 @@ Namespace Vitens.DynamicBandwidthMonitor
 
                 If Abs(.Factor) > 0 Then ' Keep going while event not suppressed
 
-                  ' Calculate result for correlation point.
+                  ' Calculate result for correlation point. We call the
+                  ' GetResults method for the entire remaining time range (but
+                  ' only request a single result), so that we already have all
+                  ' required data for any next intervals we might need this for
+                  ' (Case 3 instead of Case 9).
                   If CorrelationPoint.SubtractSelf Then
                     CorrelationResult = Point(CorrelationPoint.PointDriver).
-                      GetResult(.Timestamp, False, True,
-                      Point(InputPointDriver), Culture) ' Subtract input.
+                      GetResults(.Timestamp, EndTimestamp, 1, False, True,
+                      Point(InputPointDriver), Culture)(0) ' Subtract input.
                   Else
                     CorrelationResult = Point(CorrelationPoint.PointDriver).
-                      GetResult(.Timestamp, False, True, Nothing, Culture)
+                      GetResults(.Timestamp, EndTimestamp, 1, False, True,
+                      Nothing, Culture)(0)
                   End If
 
                   ' Calculate statistics of errors compared to forecast.

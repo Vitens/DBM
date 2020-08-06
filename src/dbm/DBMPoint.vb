@@ -48,18 +48,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Function GetResult(Timestamp As DateTime, IsInputDBMPoint As Boolean,
-      HasCorrelationDBMPoint As Boolean, SubtractPoint As DBMPoint,
-      Culture As CultureInfo) As DBMResult
-
-      Return GetResults(Timestamp, NextInterval(Timestamp), CalculationInterval,
-        IsInputDBMPoint, HasCorrelationDBMPoint, SubtractPoint, Culture)(0)
-
-    End Function
-
-
     Public Function GetResults(StartTimestamp As DateTime,
-      EndTimestamp As DateTime, TimeRangeInterval As Double,
+      EndTimestamp As DateTime, NumberOfValues As Integer,
       IsInputDBMPoint As Boolean, HasCorrelationDBMPoint As Boolean,
       SubtractPoint As DBMPoint, Culture As CultureInfo) As List(Of DBMResult)
 
@@ -67,6 +57,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' this point. Also calculates and stores (historic) forecast errors for
       ' correlation analysis later on.
 
+      Dim TimeRangeInterval As Double
       Dim SnapshotTimestamp As DateTime
       Dim Result As DBMResult
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
@@ -77,6 +68,12 @@ Namespace Vitens.DynamicBandwidthMonitor
         UpperControlLimits(EMAPreviousPeriods) As Double
 
       GetResults = New List(Of DBMResult)
+
+      ' Align timestamps and determine interval.
+      StartTimestamp = PreviousInterval(StartTimestamp)
+      EndTimestamp = PreviousInterval(EndTimestamp)
+      TimeRangeInterval = IntervalSeconds(NumberOfValues,
+        (EndTimestamp-StartTimestamp).TotalSeconds)
 
       ' Get data from data source.
       SnapshotTimestamp = PointDriver.SnapshotTimestamp
