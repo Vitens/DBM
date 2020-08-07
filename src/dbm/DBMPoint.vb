@@ -132,7 +132,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                 Next PatternCounter
 
                 ' Calculate and store forecast for this timestamp.
-                ForecastItems.AddItem(ForecastTimestamp, Forecast(Patterns))
+                ForecastItems.Add(ForecastTimestamp, Forecast(Patterns))
 
               End If
 
