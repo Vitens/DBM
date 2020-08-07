@@ -55,13 +55,17 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Retrieves data and calculates forecast and control limits for
       ' this point. Also calculates and stores (historic) forecast errors for
-      ' correlation analysis later on.
+      ' correlation analysis later on. Forecast results are cached and then
+      ' reused when possible. This is important because, due to the use of a
+      ' moving average, previously calculated results will often need to be
+      ' included in later calculations.
 
       Dim TimeRangeInterval As Double
       Dim SnapshotTimestamp As DateTime
       Dim Result As DBMResult
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
       Dim ForecastTimestamp, HistoryTimestamp, PatternTimestamp As DateTime
+      Dim ForecastItems As New Dictionary(Of DateTime, DBMForecastItem)
       Dim Patterns(ComparePatterns), Measurements(EMAPreviousPeriods),
         Forecasts(EMAPreviousPeriods),
         LowerControlLimits(EMAPreviousPeriods),
@@ -88,7 +92,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Result.Timestamp = PreviousInterval(StartTimestamp)
         Result.IsFutureData = Result.Timestamp > SnapshotTimestamp
 
-        For CorrelationCounter = 0 To CorrelationPreviousPeriods ' Corr. loop
+        For CorrelationCounter = 0 To CorrelationPreviousPeriods ' Corr. loop.
 
           ' Retrieve data and calculate forecast. Only do this for the required
           ' timestamp and only process previous timestamps for calculating
@@ -103,27 +107,36 @@ Namespace Vitens.DynamicBandwidthMonitor
                 -(EMAPreviousPeriods-EMACounter+CorrelationCounter)*
                 CalculationInterval) ' Timestamp for forecast results
 
-              HistoryTimestamp = OffsetHoliday(ForecastTimestamp, Culture)
+              ' Calculate forecast for this timestamp if there is none yet.
+              If Not ForecastItems.ContainsKey(ForecastTimestamp) Then
 
-              For PatternCounter = 0 To ComparePatterns ' Data for regression.
+                HistoryTimestamp = OffsetHoliday(ForecastTimestamp, Culture)
 
-                If PatternCounter = ComparePatterns Then
-                  PatternTimestamp = ForecastTimestamp ' Last is measurement.
-                Else
-                  PatternTimestamp = HistoryTimestamp.
-                    AddDays(-(ComparePatterns-PatternCounter)*7) ' History
-                End If
+                For PatternCounter = 0 To ComparePatterns ' Data for regression.
 
-                Patterns(PatternCounter) =
-                  PointDriver.DataStore.GetData(PatternTimestamp)
-                If SubtractPoint IsNot Nothing Then ' Subtract input if req'd
-                  Patterns(PatternCounter) -=
-                  SubtractPoint.PointDriver.DataStore.GetData(PatternTimestamp)
-                End If
+                  If PatternCounter = ComparePatterns Then
+                    PatternTimestamp = ForecastTimestamp ' Last is measurement.
+                  Else
+                    PatternTimestamp = HistoryTimestamp.
+                      AddDays(-(ComparePatterns-PatternCounter)*7) ' History.
+                  End If
 
-              Next PatternCounter
+                  Patterns(PatternCounter) =
+                    PointDriver.DataStore.GetData(PatternTimestamp)
+                  If SubtractPoint IsNot Nothing Then ' Subtract input if req'd.
+                    Patterns(PatternCounter) -=
+                      SubtractPoint.PointDriver.DataStore.
+                      GetData(PatternTimestamp)
+                  End If
 
-              With Forecast(Patterns) ' Store results in arrays for EMA calc.
+                Next PatternCounter
+
+                ' Calculate and store forecast for this timestamp.
+                ForecastItems.Add(ForecastTimestamp, Forecast(Patterns))
+
+              End If
+
+              With ForecastItems.Item(ForecastTimestamp) ' To arrays for EMA.
                 Measurements(EMACounter) = .Measurement
                 Forecasts(EMACounter) = .Forecast
                 LowerControlLimits(EMACounter) = .LowerControlLimit
