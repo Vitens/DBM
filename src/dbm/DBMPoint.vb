@@ -92,7 +92,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Result.Timestamp = PreviousInterval(StartTimestamp)
         Result.IsFutureData = Result.Timestamp > SnapshotTimestamp
 
-        For CorrelationCounter = 0 To CorrelationPreviousPeriods ' Corr. loop
+        For CorrelationCounter = 0 To CorrelationPreviousPeriods ' Corr. loop.
 
           ' Retrieve data and calculate forecast. Only do this for the required
           ' timestamp and only process previous timestamps for calculating
@@ -118,7 +118,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                     PatternTimestamp = ForecastTimestamp ' Last is measurement.
                   Else
                     PatternTimestamp = HistoryTimestamp.
-                      AddDays(-(ComparePatterns-PatternCounter)*7) ' History
+                      AddDays(-(ComparePatterns-PatternCounter)*7) ' History.
                   End If
 
                   Patterns(PatternCounter) =
@@ -136,7 +136,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
               End If
 
-              With ForecastItems.Item(ForecastTimestamp)
+              With ForecastItems.Item(ForecastTimestamp) ' To arrays for EMA.
                 Measurements(EMACounter) = .Measurement
                 Forecasts(EMACounter) = .Forecast
                 LowerControlLimits(EMACounter) = .LowerControlLimit
