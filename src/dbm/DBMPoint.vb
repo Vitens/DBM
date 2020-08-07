@@ -65,7 +65,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Result As DBMResult
       Dim CorrelationCounter, EMACounter, PatternCounter As Integer
       Dim ForecastTimestamp, HistoryTimestamp, PatternTimestamp As DateTime
-      Dim ForecastItems As New Dictionary(Of DateTime, ForecastItem)
+      Dim ForecastItems As New Dictionary(Of DateTime, DBMForecastItem)
       Dim Patterns(ComparePatterns), Measurements(EMAPreviousPeriods),
         Forecasts(EMAPreviousPeriods),
         LowerControlLimits(EMAPreviousPeriods),
