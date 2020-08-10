@@ -156,7 +156,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         Next CorrelationCounter
 
-        GetResults.Add(Result) ' Add timestamp results.
+        ' Add results only for valid timestamps. This fixes an issue where, when
+        ' DST goes in effect, there is a missing hour in local time.
+        If Not TimeZoneInfo.Local.IsInvalidTime(Result.Timestamp) Then
+          GetResults.Add(Result)
+        End If
+
         StartTimestamp =
           StartTimestamp.AddSeconds(TimeRangeInterval) ' Next interval.
 
