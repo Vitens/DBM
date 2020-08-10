@@ -24,6 +24,7 @@ Option Strict
 
 Imports System
 Imports System.Collections.Generic
+Imports System.Convert
 Imports System.Environment
 Imports System.Globalization.CultureInfo
 Imports System.Text.RegularExpressions
@@ -104,27 +105,29 @@ Namespace Vitens.DynamicBandwidthMonitor
               CorrelationPoints.Add(
                 New DBMCorrelationPoint(New DBMPointDriver(Value), True))
             ElseIf Parameter.Equals("iv") Then
-              CalculationInterval = Convert.ToInt32(Value)
+              CalculationInterval = ToInt32(Value)
             ElseIf Parameter.Equals("us") Then
-              UseSundayForHolidays = Convert.ToBoolean(Value)
+              UseSundayForHolidays = ToBoolean(Value)
             ElseIf Parameter.Equals("p") Then
-              ComparePatterns = Convert.ToInt32(Value)
+              ComparePatterns = ToInt32(Value)
             ElseIf Parameter.Equals("ep") Then
-              EMAPreviousPeriods = Convert.ToInt32(Value)
+              EMAPreviousPeriods = ToInt32(Value)
             ElseIf Parameter.Equals("oi") Then
-              OutlierCI = Convert.ToDouble(Value)
+              OutlierCI = ToDouble(Value)
             ElseIf Parameter.Equals("bi") Then
-              BandwidthCI = Convert.ToDouble(Value)
+              BandwidthCI = ToDouble(Value)
             ElseIf Parameter.Equals("cp") Then
-              CorrelationPreviousPeriods = Convert.ToInt32(Value)
+              CorrelationPreviousPeriods = ToInt32(Value)
             ElseIf Parameter.Equals("ct") Then
-              CorrelationThreshold = Convert.ToDouble(Value)
+              CorrelationThreshold = ToDouble(Value)
             ElseIf Parameter.Equals("ra") Then
-              RegressionAngleRange = Convert.ToDouble(Value)
+              RegressionAngleRange = ToDouble(Value)
             ElseIf Parameter.Equals("st") Then
-              StartTimestamp = Convert.ToDateTime(Value)
+              StartTimestamp = DateTime.SpecifyKind(ToDateTime(Value),
+                DateTimeKind.Local)
             ElseIf Parameter.Equals("et") Then
-              EndTimestamp = Convert.ToDateTime(Value)
+              EndTimestamp = DateTime.SpecifyKind(ToDateTime(Value),
+                DateTimeKind.Local)
             ElseIf Parameter.Equals("f") Then
               If Value.ToLower.Equals("local") Then
                 InternationalFormat = False
