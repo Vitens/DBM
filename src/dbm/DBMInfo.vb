@@ -51,7 +51,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Returns the build date based on FileBuildPart.
 
-      Return New DateTime(2000, 1, 1).AddDays(GetFileVersionInfo.FileBuildPart)
+      Return New DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Local).
+        AddDays(GetFileVersionInfo.FileBuildPart)
 
     End Function
 
