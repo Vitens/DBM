@@ -68,14 +68,12 @@ Namespace Vitens.DynamicBandwidthMonitor
           Do While Not StreamReader.EndOfStream
             ' Comma and tab delimiters; split timestamp and value
             Substrings = StreamReader.ReadLine.Split(SplitChars, 2)
-            If Substrings.Length = 2 Then
-              If DateTime.TryParse(Substrings(0), Timestamp) Then
-                If Timestamp >= StartTimestamp And Timestamp < EndTimestamp Then
-                  If Double.TryParse(Substrings(1), Value) Then
-                    DataStore.AddData(Timestamp, Value)
-                  End If
-                End If
-              End If
+            If Substrings.Length = 2 AndAlso
+              DateTime.TryParse(Substrings(0), Timestamp) AndAlso
+              (Timestamp >= StartTimestamp And Timestamp < EndTimestamp) AndAlso
+              Double.TryParse(Substrings(1), Value) Then
+              DataStore.AddData(
+                DateTime.SpecifyKind(Timestamp, DateTimeKind.Local), Value)
             End If
           Loop
         End Using ' Close CSV file
@@ -92,3 +90,4 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
 End Namespace
+
