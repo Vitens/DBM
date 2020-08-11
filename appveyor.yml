@@ -44,10 +44,10 @@ test_script:
     "%TEMP%\Setup_%product%_v%version%+%commit%.exe" /VERYSILENT /NORESTART
     "%ProgramFiles(x86)%\%company%\%product%\build\DBMAbout.exe"
     "%ProgramFiles(x86)%\%company%\%product%\samples\runsamples.bat"
-    powershell -Command "exit [int]!(Get-FileHash '%ProgramFiles(x86)%\%company%\%product%\samples\sample1.csv' -Algorithm MD5).Hash.ToLower().Equals('0eabfae68d91e43978b3598fb814800b')"
-    powershell -Command "exit [int]!(Get-FileHash '%ProgramFiles(x86)%\%company%\%product%\samples\sample2.csv' -Algorithm MD5).Hash.ToLower().Equals('ad9da966b42f153233d57603a4da2088')"
-    powershell -Command "exit [int]!(Get-FileHash '%ProgramFiles(x86)%\%company%\%product%\samples\sample3.csv' -Algorithm MD5).Hash.ToLower().Equals('da689c74982ab2f6cd98e41b07bc01d6')"
-    powershell -Command "exit [int]!(Get-FileHash '%ProgramFiles(x86)%\%company%\%product%\samples\sample4.csv' -Algorithm MD5).Hash.ToLower().Equals('481f46dfbfb4ef38ceed92d3a2d28b25')"
+    powershell -Command "exit [int]!(Get-FileHash '%ProgramFiles(x86)%\%company%\%product%\samples\sample1.csv' -Algorithm MD5).Hash.ToLower().Equals('803d8e67c7aa1a7e2610096e167d8b21')"
+    powershell -Command "exit [int]!(Get-FileHash '%ProgramFiles(x86)%\%company%\%product%\samples\sample2.csv' -Algorithm MD5).Hash.ToLower().Equals('6d2671702c05ab051f7e705bcc127577')"
+    powershell -Command "exit [int]!(Get-FileHash '%ProgramFiles(x86)%\%company%\%product%\samples\sample3.csv' -Algorithm MD5).Hash.ToLower().Equals('bb3e0bea35ca0fa2a56d307053fd595b')"
+    powershell -Command "exit [int]!(Get-FileHash '%ProgramFiles(x86)%\%company%\%product%\samples\sample4.csv' -Algorithm MD5).Hash.ToLower().Equals('d43382b707a563493a4265646d185af5')"
 
 deploy:
   tag: 'v$(version)+$(commit)'

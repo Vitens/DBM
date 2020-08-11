@@ -46,23 +46,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' calculate DBM results using the CSV driver.
 
 
-    Private Shared InternationalFormat As Boolean = False
-
-
-    Private Shared Function FormatDateTime(Timestamp As DateTime) As String
-
-      If InternationalFormat Then
-        Return Timestamp.ToUniversalTime.ToString("s") & "Z" ' ISO 8601 UTC
-      Else
-        Return Timestamp.ToString("s") ' ISO 8601
-      End If
-
-    End Function
-
-
     Private Shared Function Separator As String
 
-      If InternationalFormat Then
+      If CurrentThread.CurrentCulture Is InvariantCulture Then
         Return ","
       Else
         Return "	" ' Tab character
@@ -126,10 +112,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             ElseIf Parameter.Equals("et") Then
               EndTimestamp = Convert.ToDateTime(Value)
             ElseIf Parameter.Equals("f") Then
-              If Value.ToLower.Equals("local") Then
-                InternationalFormat = False
-              ElseIf Value.ToLower.Equals("intl") Then
-                InternationalFormat = True
+              If Value.ToLower.Equals("intl") Then
                 CurrentThread.CurrentCulture = InvariantCulture
               End If
             End If
@@ -152,7 +135,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           StartTimestamp, EndTimestamp) ' Get results for time range.
 
           With Result
-            Console.WriteLine(FormatDateTime(.Timestamp) & Separator &
+            Console.WriteLine(.Timestamp.ToString("s") & Separator &
             FormatNumber(.Factor) & Separator &
             FormatNumber(.ForecastItem.Measurement) & Separator &
             FormatNumber(.ForecastItem.Forecast) & Separator &
