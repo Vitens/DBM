@@ -78,23 +78,23 @@ DBM can be configured using several parameters. The values for these parameters 
 ### DBMTester
 DBMTester is a command line utility that can be used to quickly calculate DBM results using the CSV driver. The following arguments are available:
 
-| Argument | Count  | Description                                                                                                         |
-| -------- | ------ | ------------------------------------------------------------------------------------------------------------------- |
-| `-i=`    | 1      | Specifies the input point (CSV file).                                                                               |
-| `-c=`    | 0..n   | Adds a correlation point (CSV file).                                                                                |
-| `-cs=`   | 0..n   | Adds a correlation point (CSV file) from which the input point is subtracted.                                       |
-| `-iv=`   | 0..1   | Changes the `CalculationInterval` parameter.                                                                        |
-| `-us=`   | 0..1   | Changes the `UseSundayForHolidays` parameter.                                                                       |
-| `-p=`    | 0..1   | Changes the `ComparePatterns` parameter.                                                                            |
-| `-ep=`   | 0..1   | Changes the `EMAPreviousPeriods` parameter.                                                                         |
-| `-oi=`   | 0..1   | Changes the `OutlierCI` parameter.                                                                                  |
-| `-bi=`   | 0..1   | Changes the `BandwidthCI` parameter.                                                                                |
-| `-cp=`   | 0..1   | Changes the `CorrelationPreviousPeriods` parameter.                                                                 |
-| `-ct=`   | 0..1   | Changes the `CorrelationThreshold` parameter.                                                                       |
-| `-ra=`   | 0..1   | Changes the `RegressionAngleRange` parameter.                                                                       |
-| `-st=`   | 1      | Start timestamp for calculations.                                                                                   |
-| `-et=`   | 0..1   | End timestamp for calculations, all intervals in between are calculated.                                            |
-| `-f=`    | 0..1   | Output format. `local` (default) for local formatting, `intl` for UTC time and international formatting (ISO 8601). |
+| Argument | Count  | Description                                                                       |
+| -------- | ------ | --------------------------------------------------------------------------------- |
+| `-i=`    | 1      | Specifies the input point (CSV file).                                             |
+| `-c=`    | 0..n   | Adds a correlation point (CSV file).                                              |
+| `-cs=`   | 0..n   | Adds a correlation point (CSV file) from which the input point is subtracted.     |
+| `-iv=`   | 0..1   | Changes the `CalculationInterval` parameter.                                      |
+| `-us=`   | 0..1   | Changes the `UseSundayForHolidays` parameter.                                     |
+| `-p=`    | 0..1   | Changes the `ComparePatterns` parameter.                                          |
+| `-ep=`   | 0..1   | Changes the `EMAPreviousPeriods` parameter.                                       |
+| `-oi=`   | 0..1   | Changes the `OutlierCI` parameter.                                                |
+| `-bi=`   | 0..1   | Changes the `BandwidthCI` parameter.                                              |
+| `-cp=`   | 0..1   | Changes the `CorrelationPreviousPeriods` parameter.                               |
+| `-ct=`   | 0..1   | Changes the `CorrelationThreshold` parameter.                                     |
+| `-ra=`   | 0..1   | Changes the `RegressionAngleRange` parameter.                                     |
+| `-st=`   | 1      | Start timestamp for calculations.                                                 |
+| `-et=`   | 0..1   | End timestamp for calculations, all intervals in between are calculated.          |
+| `-f=`    | 0..1   | Output format. Default for local formatting, `intl` for international formatting. |
 
 ### DBMDataRef
 DBMDataRef is a custom OSIsoft PI Asset Framework data reference which integrates DBM with PI AF. The `register.bat` script automatically registers the data reference and support assemblies when run on the PI AF server. The data reference uses the parent attribute as input and automatically uses attributes from sibling and parent elements based on the same template containing good data for correlation calculations, unless the `NoCorrelation` category is applied to the output attribute. The value returned from the DBM calculation is determined by the applied property/trait:
