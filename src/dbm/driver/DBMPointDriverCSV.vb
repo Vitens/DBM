@@ -72,8 +72,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               DateTime.TryParse(Substrings(0), Timestamp) AndAlso
               Timestamp >= StartTimestamp And Timestamp < EndTimestamp And
               Double.TryParse(Substrings(1), Value) Then
-              DataStore.AddData(
-                DateTime.SpecifyKind(Timestamp, DateTimeKind.Local), Value)
+              DataStore.AddData(Timestamp, Value)
             End If
           Loop
         End Using ' Close CSV file

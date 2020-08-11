@@ -24,7 +24,6 @@ Option Strict
 
 Imports System
 Imports System.Collections.Generic
-Imports System.Convert
 Imports System.Environment
 Imports System.Globalization.CultureInfo
 Imports System.Text.RegularExpressions
@@ -91,29 +90,27 @@ Namespace Vitens.DynamicBandwidthMonitor
               CorrelationPoints.Add(
                 New DBMCorrelationPoint(New DBMPointDriver(Value), True))
             ElseIf Parameter.Equals("iv") Then
-              CalculationInterval = ToInt32(Value)
+              CalculationInterval = Convert.ToInt32(Value)
             ElseIf Parameter.Equals("us") Then
-              UseSundayForHolidays = ToBoolean(Value)
+              UseSundayForHolidays = Convert.ToBoolean(Value)
             ElseIf Parameter.Equals("p") Then
-              ComparePatterns = ToInt32(Value)
+              ComparePatterns = Convert.ToInt32(Value)
             ElseIf Parameter.Equals("ep") Then
-              EMAPreviousPeriods = ToInt32(Value)
+              EMAPreviousPeriods = Convert.ToInt32(Value)
             ElseIf Parameter.Equals("oi") Then
-              OutlierCI = ToDouble(Value)
+              OutlierCI = Convert.ToDouble(Value)
             ElseIf Parameter.Equals("bi") Then
-              BandwidthCI = ToDouble(Value)
+              BandwidthCI = Convert.ToDouble(Value)
             ElseIf Parameter.Equals("cp") Then
-              CorrelationPreviousPeriods = ToInt32(Value)
+              CorrelationPreviousPeriods = Convert.ToInt32(Value)
             ElseIf Parameter.Equals("ct") Then
-              CorrelationThreshold = ToDouble(Value)
+              CorrelationThreshold = Convert.ToDouble(Value)
             ElseIf Parameter.Equals("ra") Then
-              RegressionAngleRange = ToDouble(Value)
+              RegressionAngleRange = Convert.ToDouble(Value)
             ElseIf Parameter.Equals("st") Then
-              StartTimestamp = DateTime.SpecifyKind(ToDateTime(Value),
-                DateTimeKind.Local)
+              StartTimestamp = Convert.ToDateTime(Value)
             ElseIf Parameter.Equals("et") Then
-              EndTimestamp = DateTime.SpecifyKind(ToDateTime(Value),
-                DateTimeKind.Local)
+              EndTimestamp = Convert.ToDateTime(Value)
             ElseIf Parameter.Equals("f") Then
               If Value.ToLower.Equals("intl") Then
                 CurrentThread.CurrentCulture = InvariantCulture

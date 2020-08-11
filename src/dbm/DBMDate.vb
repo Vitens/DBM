@@ -93,8 +93,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       i = H-H\28-(H\28)*(29\H+1)*(21-Year Mod 19)\11
       L = i-(Year+Year\4+i+2-Year\100+Year\400) Mod 7
 
-      Return New DateTime(Year, 3+(L+40)\44, L+28-31*((172+L)\176), 0, 0, 0,
-        DateTimeKind.Local)
+      Return New DateTime(Year, 3+(L+40)\44, L+28-31*((172+L)\176))
 
     End Function
 
