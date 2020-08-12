@@ -68,7 +68,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           Do While Not StreamReader.EndOfStream
             ' Comma and tab delimiters; split timestamp and value
             Substrings = StreamReader.ReadLine.Split(SplitChars, 2)
-            If Substrings.Length = 2 And
+            If Substrings.Length = 2 AndAlso
               DateTime.TryParse(Substrings(0), Timestamp) AndAlso
               Timestamp >= StartTimestamp And Timestamp < EndTimestamp And
               Double.TryParse(Substrings(1), Value) Then
