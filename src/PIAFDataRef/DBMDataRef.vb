@@ -144,8 +144,11 @@ Namespace Vitens.DynamicBandwidthMonitor
         SupportedDataMethods = AFDataMethods.RecordedValue Or
           AFDataMethods.RecordedValues Or AFDataMethods.PlotValues Or
           AFDataMethods.Summary Or AFDataMethods.Summaries
-        If Not AttributeHasFutureData Then SupportedDataMethods =
-          SupportedDataMethods Or AFDataMethods.DataPipe ' Support datapipe
+        If AttributeHasFutureData Then
+          SupportedDataMethods = SupportedDataMethods Or AFDataMethods.Future
+        Else
+          SupportedDataMethods = SupportedDataMethods Or AFDataMethods.DataPipe
+        End If
         Return SupportedDataMethods
       End Get
 
