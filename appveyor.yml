@@ -27,6 +27,12 @@ environment:
   certpw:
     secure: ++tUtFqUQwnWMoqYt6dbNgASvTKp+GBKC8fhU1ydg/8qsS04tl+MeAn4BSryhUDH
 
+install:
+  ps: |-
+    iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1'))
+  cmd: |-
+    appveyor-tools\secure-file -decrypt src\res\certificate.pfx.secret -secret %sfsecret% -salt %sfsalt% -out "%TEMP%\certificate.pfx"
+
 before_build:
   cmd: |-
     set PIHOME=%TEMP%
