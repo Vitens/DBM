@@ -19,6 +19,14 @@
 
 skip_tags: true
 
+environment:
+  sfsecret:
+    secure: JtaHKfJlMN0jHpEMoRkZToY6EWzsIBFbX+6CxSqCkl3QJN2/RYxIPp9zhzS4yEK9
+  sfsalt:
+    secure: ImaLkIXP7w8kRynj0LP4o2uWVfOdShGuN7A0SZUCWsNnD9nP6MxI3sldOEGl3X2OT71sUu8Wt+Qk725LLz3kRQ==
+  certpw:
+    secure: ++tUtFqUQwnWMoqYt6dbNgASvTKp+GBKC8fhU1ydg/8qsS04tl+MeAn4BSryhUDH
+
 before_build:
   cmd: |-
     set PIHOME=%TEMP%
