@@ -32,6 +32,7 @@ install:
     iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1'))
   cmd: |-
     appveyor-tools\secure-file -decrypt src\res\certificate.pfx.secret -secret %sfsecret% -salt %sfsalt% -out "%TEMP%\certificate.pfx"
+    rmdir /S /Q appveyor-tools
 
 before_build:
   cmd: |-
