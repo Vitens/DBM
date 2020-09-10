@@ -32,7 +32,6 @@ install:
     powershell -Command "iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1'))"
     appveyor-tools\secure-file -decrypt src\res\certificate.pfx.enc -secret %sfsecret% -salt %sfsalt% -out "%TEMP%\certificate.pfx"
     rmdir /S /Q appveyor-tools
-    powershell -Command "Import-PfxCertificate -FilePath '%TEMP%\certificate.pfx' -CertStoreLocation Cert:\CurrentUser\Root -Password (ConvertTo-SecureString "%certpw%" -AsPlainText -Force)"
 
 before_build:
   cmd: |-
