@@ -75,14 +75,14 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function CertificateInfo As String
 
-      Dim Certificate As X509Certificate = X509Certificate.CreateFromSignedFile(
-        Assembly.GetExecutingAssembly.Location)
-
-      If Certificate Is Nothing Then
+      Try
+        With X509Certificate.CreateFromSignedFile(
+          Assembly.GetExecutingAssembly.Location)
+          Return .Subject & " (" & .Issuer & ")"
+        End With
+      Catch
         Return "Unsigned"
-      Else
-        Return Certificate.Subject & " (" & Certificate.Issuer & ")"
-      End If
+      End Try
 
     End Function
 
