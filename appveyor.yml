@@ -29,7 +29,7 @@ environment:
 
 install:
   cmd: |-
-    powershell -Command "iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1'))"
+    powershell -Command "iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1')) | Out-Null"
     if defined sfsecret if defined sfsalt appveyor-tools\secure-file -decrypt src\res\certificate.pfx.enc -secret %sfsecret% -salt %sfsalt% -out "%TEMP%\certificate.pfx"
     rmdir /S /Q appveyor-tools
 
@@ -44,7 +44,7 @@ before_build:
 build_script:
   cmd: |-
     build.bat
-    if exist "%TEMP%\certificate.pfx" if defined certpw sign.bat "%TEMP%\certificate.pfx" "%certpw%"
+    if exist "%TEMP%\certificate.pfx" if defined certpw sign.bat "%TEMP%\certificate.pfx" "%certpw%" > NUL
 
 after_build:
   cmd: |-
