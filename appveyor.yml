@@ -44,7 +44,7 @@ before_build:
 build_script:
   cmd: |-
     build.bat
-    if exist "%TEMP%\certificate.pfx" if defined certpassword sign.bat "%TEMP%\certificate.pfx" "%certpassword%"
+    if exist "%TEMP%\certificate.pfx" if defined certpassword sign.bat "%TEMP%\certificate.pfx" "%certpassword%" > NUL
 
 after_build:
   cmd: |-
@@ -52,7 +52,7 @@ after_build:
     for /f "delims=" %%i in ('powershell -Command "(Get-Item build\DBM.dll).VersionInfo.ProductVersion"') do set version=%%i
     for /f "delims=" %%i in ('powershell -Command "(Get-Item build\DBM.dll).VersionInfo.CompanyName"') do set company=%%i
     "%ProgramFiles(x86)%\Inno Setup 5\ISCC.exe" /FSetup_%product%_v%version%+%commit% /Q src\res\dbm.iss
-    if exist "%TEMP%\certificate.pfx" if defined certpassword sign.bat "%TEMP%\certificate.pfx" "%certpassword%" src\res\Output\Setup_%product%_v%version%+%commit%.exe
+    if exist "%TEMP%\certificate.pfx" if defined certpassword sign.bat "%TEMP%\certificate.pfx" "%certpassword%" src\res\Output\Setup_%product%_v%version%+%commit%.exe > NUL
     appveyor PushArtifact src\res\Output\Setup_%product%_v%version%+%commit%.exe
 
 test_script:
