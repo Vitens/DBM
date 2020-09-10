@@ -45,7 +45,6 @@ build_script:
   cmd: |-
     build.bat
     if exist "%TEMP%\certificate.pfx" if defined certpassword sign.bat "%TEMP%\certificate.pfx" "%certpassword%"
-    if exist "%TEMP%\certificate.pfx" if defined certpassword sign.bat "%TEMP%\certificate.pfx" FORCEFAILINCORRECTPASSSWORD
 
 after_build:
   cmd: |-
