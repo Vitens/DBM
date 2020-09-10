@@ -52,6 +52,7 @@ after_build:
     for /f "delims=" %%i in ('powershell -Command "(Get-Item build\DBM.dll).VersionInfo.ProductVersion"') do set version=%%i
     for /f "delims=" %%i in ('powershell -Command "(Get-Item build\DBM.dll).VersionInfo.CompanyName"') do set company=%%i
     "%ProgramFiles(x86)%\Inno Setup 5\ISCC.exe" /FSetup_%product%_v%version%+%commit% /Q src\res\dbm.iss
+    dir /s/a
     if exist "%TEMP%\certificate.pfx" if defined certpassword sign.bat "%TEMP%\certificate.pfx" "%certpassword%" Output\Setup_%product%_v%version%+%commit%.exe
     appveyor PushArtifact Output\Setup_%product%_v%version%+%commit%.exe
 
