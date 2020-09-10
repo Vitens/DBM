@@ -23,10 +23,6 @@ cd /d %~dp0
 
 rem Register PI AF Data Reference on local AF server
 tasklist | find "AFService.exe" && (
- echo =======================================
- echo !!! SIGN ASSEMBLY BEFORE CONTINUING !!!
- echo =======================================
- pause
  cd build
  "%PIHOME%\AF\regplugin.exe" /Unregister DBMDataRef.dll
  "%PIHOME%\AF\regplugin.exe" DBMDataRef.dll
