@@ -73,10 +73,10 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function CertificateSubject As String
+    Public Shared Function CertificateIssuer As String
 
       Return X509Certificate.CreateFromSignedFile(
-        Assembly.GetExecutingAssembly.Location).Subject
+        Assembly.GetExecutingAssembly.Location).Issuer
 
     End Function
 
@@ -89,7 +89,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Return .ProductName & " v" & Version & NewLine &
           .Comments & NewLine &
           .LegalCopyright & NewLine &
-          CertificateSubject
+          CertificateIssuer
       End With
 
     End Function
