@@ -27,6 +27,8 @@ Imports System.DateTime
 Imports System.Diagnostics
 Imports System.Environment
 Imports System.Math
+Imports System.Reflection
+Imports System.Security.Cryptography.X509Certificates
 Imports System.TimeSpan
 Imports Vitens.DynamicBandwidthMonitor.DBMTests
 
@@ -41,8 +43,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Returns FileVersionInfo for assembly.
 
-      Return FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.
-        GetExecutingAssembly.Location)
+      Return FileVersionInfo.GetVersionInfo(
+        Assembly.GetExecutingAssembly.Location)
 
     End Function
 
@@ -71,6 +73,20 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Shared Function CertificateInfo As String
+
+      Dim Certificate As X509Certificate = X509Certificate.CreateFromSignedFile(
+        Assembly.GetExecutingAssembly.Location)
+
+      If Certificate Is Nothing Then
+        Return "Unsigned"
+      Else
+        Return Certificate.Subject & " (" & Certificate.Issuer & ")"
+      End If
+
+    End Function
+
+
     Public Shared Function Product As String
 
       ' Returns the name of and information about the product.
@@ -78,7 +94,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       With GetFileVersionInfo
         Return .ProductName & " v" & Version & NewLine &
           .Comments & NewLine &
-          .LegalCopyright
+          .LegalCopyright & NewLine &
+          CertificateInfo
       End With
 
     End Function
