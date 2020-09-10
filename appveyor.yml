@@ -20,17 +20,17 @@
 skip_tags: true
 
 environment:
-  sfsecret:
+  certsecret:
     secure: JtaHKfJlMN0jHpEMoRkZToY6EWzsIBFbX+6CxSqCkl3QJN2/RYxIPp9zhzS4yEK9
-  sfsalt:
+  certsalt:
     secure: ImaLkIXP7w8kRynj0LP4o2uWVfOdShGuN7A0SZUCWsNnD9nP6MxI3sldOEGl3X2OT71sUu8Wt+Qk725LLz3kRQ==
-  certpw:
+  certpassword:
     secure: ++tUtFqUQwnWMoqYt6dbNgASvTKp+GBKC8fhU1ydg/8qsS04tl+MeAn4BSryhUDH
 
 install:
   cmd: |-
     powershell -Command "iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1')) | Out-Null"
-    if defined sfsecret if defined sfsalt appveyor-tools\secure-file -decrypt src\res\certificate.pfx.enc -secret %sfsecret% -salt %sfsalt% -out "%TEMP%\certificate.pfx"
+    if defined certsecret if defined certsalt appveyor-tools\secure-file -decrypt src\res\certificate.pfx.enc -secret %certsecret% -salt %certsalt% -out "%TEMP%\certificate.pfx"
     rmdir /S /Q appveyor-tools
     set PIHOME=%TEMP%
     mkdir "%PIHOME%\AF\PublicAssemblies\4.0"
@@ -44,7 +44,7 @@ before_build:
 build_script:
   cmd: |-
     build.bat
-    if exist "%TEMP%\certificate.pfx" if defined certpw sign.bat "%TEMP%\certificate.pfx" "%certpw%" > NUL
+    if exist "%TEMP%\certificate.pfx" if defined certpassword sign.bat "%TEMP%\certificate.pfx" "%certpassword%" > NUL
 
 after_build:
   cmd: |-
