@@ -44,7 +44,7 @@ before_build:
 build_script:
   cmd: |-
     build.bat
-    sign.bat "%TEMP%\certificate.pfx" %certpw%
+    sign.bat "%TEMP%\certificate.pfx" "%certpw%"
 
 after_build:
   cmd: |-
