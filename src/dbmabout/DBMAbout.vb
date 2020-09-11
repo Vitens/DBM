@@ -24,7 +24,6 @@ Option Strict
 
 Imports System
 Imports System.Environment
-Imports System.Security.Cryptography.X509Certificates
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
 
 
@@ -47,22 +46,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       Console.WriteLine(LicenseNotice)
       Console.WriteLine(NewLine & TestResults)
       Console.WriteLine("Certificate: " & CertificateInfo)
-
-      With X509Certificate2(X509Certificate.CreateFromSignedFile(
-        Assembly.GetExecutingAssembly.Location))
-        Console.WriteLine("{0}Subject: {1}{0}", Environment.NewLine, .Subject);
-        Console.WriteLine("{0}Issuer: {1}{0}", Environment.NewLine, .Issuer);
-        Console.WriteLine("{0}Version: {1}{0}", Environment.NewLine, .Version);
-        Console.WriteLine("{0}Valid Date: {1}{0}", Environment.NewLine, .NotBefore);
-        Console.WriteLine("{0}Expiry Date: {1}{0}", Environment.NewLine, .NotAfter);
-        Console.WriteLine("{0}Thumbprint: {1}{0}", Environment.NewLine, .Thumbprint);
-        Console.WriteLine("{0}Serial Number: {1}{0}", Environment.NewLine, .SerialNumber);
-        Console.WriteLine("{0}Friendly Name: {1}{0}", Environment.NewLine, .PublicKey.Oid.FriendlyName);
-        Console.WriteLine("{0}Public Key Format: {1}{0}", Environment.NewLine, .PublicKey.EncodedKeyValue.Format(true));
-        Console.WriteLine("{0}Raw Data Length: {1}{0}", Environment.NewLine, .RawData.Length);
-        Console.WriteLine("{0}Certificate to string: {1}{0}", Environment.NewLine, .ToString(true));
-        Console.WriteLine("{0}Certificate to XML String: {1}{0}", Environment.NewLine, .PublicKey.Key.ToXmlString(false));
-      End With
 
     End Sub
 
