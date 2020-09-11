@@ -40,7 +40,7 @@ install:
     if defined PIAFSDKSECRET if defined PIAFSDKSALT appveyor-tools\secure-file -decrypt enc\OSIsoft.AFSDK.dll.enc -secret %PIAFSDKSECRET% -salt %PIAFSDKSALT% -out "%PIAFSDKPATH%\OSIsoft.AFSDK.dll"
     set CERTIFICATE=%TEMP%\certificate.pfx
     if defined CERTSECRET if defined CERTSALT appveyor-tools\secure-file -decrypt enc\certificate.pfx.enc -secret %CERTSECRET% -salt %CERTSALT% -out "%CERTIFICATE%"
-    powershell -Command "Import-PfxCertificate -FilePath '%CERTIFICATE%' -CertStoreLocation Cert:\LocalMachine\My -Password (ConvertTo-SecureString %CERTPASSWORD% -AsPlainText -Force)"
+    if exist "%CERTIFICATE%" if defined CERTPASSWORD powershell -Command "Import-PfxCertificate -FilePath '%CERTIFICATE%' -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString %CERTPASSWORD% -AsPlainText -Force)"
     rmdir /S /Q appveyor-tools
 
 before_build:
