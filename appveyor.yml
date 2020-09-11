@@ -20,6 +20,10 @@
 skip_tags: true
 
 environment:
+  PIAFSDKSECRET:
+    secure: U6mCnueqqfX1Ykv8Gki8A2nRcZ+R8AlDKMA7IumC7oeC7uCPaHqA1ExWeejJipB3
+  PIAFSDKSALT:
+    secure: +sv+8rzvigIHMUyI8yz5ISB+YmM1tYoXWiHgxPYz5Oa8YSm6oLWkzzf0GCVzYlNfGm/snIORVJ4aUpBl/J7d3Q==
   CERTSECRET:
     secure: JtaHKfJlMN0jHpEMoRkZToY6EWzsIBFbX+6CxSqCkl3QJN2/RYxIPp9zhzS4yEK9
   CERTSALT:
@@ -29,13 +33,13 @@ environment:
 
 install:
   cmd: |-
+    powershell -Command "iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1')) | Out-Null"
     set PIHOME=%TEMP%
     set PIAFSDKPATH=%PIHOME%\AF\PublicAssemblies\4.0
     mkdir "%PIAFSDKPATH%"
-    git show 635d59fdc8fb7f0de98d57b40ae83d5ebb37c683:OSIsoft.AFSDK.dll > "%PIAFSDKPATH%\OSIsoft.AFSDK.dll"
-    powershell -Command "iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1')) | Out-Null"
+    if defined PIAFSDKSECRET if defined PIAFSDKSALT appveyor-tools\secure-file -decrypt src\res\enc\OSIsoft.AFSDK.dll.enc -secret %PIAFSDKSECRET% -salt %PIAFSDKSALT% -out "%PIAFSDKPATH%\OSIsoft.AFSDK.dll"
     set CERTIFICATE=%TEMP%\certificate.pfx
-    if defined CERTSECRET if defined CERTSALT appveyor-tools\secure-file -decrypt src\res\certificate.pfx.enc -secret %CERTSECRET% -salt %CERTSALT% -out "%CERTIFICATE%"
+    if defined CERTSECRET if defined CERTSALT appveyor-tools\secure-file -decrypt src\res\enc\certificate.pfx.enc -secret %CERTSECRET% -salt %CERTSALT% -out "%CERTIFICATE%"
     rmdir /S /Q appveyor-tools
 
 before_build:
