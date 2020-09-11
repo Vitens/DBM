@@ -40,7 +40,6 @@ install:
     if defined PIAFSDKSECRET if defined PIAFSDKSALT appveyor-tools\secure-file -decrypt enc\OSIsoft.AFSDK.dll.enc -secret %PIAFSDKSECRET% -salt %PIAFSDKSALT% -out "%PIAFSDKPATH%\OSIsoft.AFSDK.dll"
     set CERTIFICATE=%TEMP%\certificate.pfx
     if defined CERTSECRET if defined CERTSALT appveyor-tools\secure-file -decrypt enc\certificate.pfx.enc -secret %CERTSECRET% -salt %CERTSALT% -out "%CERTIFICATE%"
-    rmdir /S /Q appveyor-tools
 
 before_build:
   cmd: |-
