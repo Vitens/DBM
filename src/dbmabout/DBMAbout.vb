@@ -48,7 +48,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Console.WriteLine(NewLine & TestResults)
       Console.WriteLine("Certificate: " & CertificateInfo)
 
-      With X509Certificate2(X509Certificate.CreateFromSignedFile(
+      With New X509Certificate2(X509Certificate.CreateFromSignedFile(
         Assembly.GetExecutingAssembly.Location))
         Console.WriteLine("{0}Subject: {1}{0}", Environment.NewLine, .Subject);
         Console.WriteLine("{0}Issuer: {1}{0}", Environment.NewLine, .Issuer);
