@@ -37,9 +37,9 @@ install:
     set PIHOME=%TEMP%
     set PIAFSDKPATH=%PIHOME%\AF\PublicAssemblies\4.0
     mkdir "%PIAFSDKPATH%"
-    if defined PIAFSDKSECRET if defined PIAFSDKSALT appveyor-tools\secure-file -decrypt src\res\enc\OSIsoft.AFSDK.dll.enc -secret %PIAFSDKSECRET% -salt %PIAFSDKSALT% -out "%PIAFSDKPATH%\OSIsoft.AFSDK.dll"
+    if defined PIAFSDKSECRET if defined PIAFSDKSALT appveyor-tools\secure-file -decrypt enc\OSIsoft.AFSDK.dll.enc -secret %PIAFSDKSECRET% -salt %PIAFSDKSALT% -out "%PIAFSDKPATH%\OSIsoft.AFSDK.dll"
     set CERTIFICATE=%TEMP%\certificate.pfx
-    if defined CERTSECRET if defined CERTSALT appveyor-tools\secure-file -decrypt src\res\enc\certificate.pfx.enc -secret %CERTSECRET% -salt %CERTSALT% -out "%CERTIFICATE%"
+    if defined CERTSECRET if defined CERTSALT appveyor-tools\secure-file -decrypt enc\certificate.pfx.enc -secret %CERTSECRET% -salt %CERTSALT% -out "%CERTIFICATE%"
     rmdir /S /Q appveyor-tools
 
 before_build:
