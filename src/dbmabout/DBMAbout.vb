@@ -44,7 +44,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Sub Main
 
       Console.WriteLine(LicenseNotice & NewLine)
-      Console.WriteLine("Certificate: " & CertificateInfo)
+      Console.WriteLine(CertificateInfo)
       Console.WriteLine(TestResults)
 
     End Sub

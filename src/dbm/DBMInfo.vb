@@ -137,7 +137,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Try
         With X509Certificate.CreateFromSignedFile(
           Assembly.GetExecutingAssembly.Location)
-          Return .Subject & " (" & .Issuer & ")"
+          Return "Certificate: " & .Subject & " (" & .Issuer & ")"
         End With
       Catch
         Return "Unsigned"

@@ -44,6 +44,7 @@ before_build:
 build_script:
   cmd: |-
     build.bat
+    build\DBMAbout.exe
     if exist "%TEMP%\certificate.pfx" if defined certpassword sign.bat "%TEMP%\certificate.pfx" "%certpassword%" > NUL
 
 after_build:
