@@ -47,10 +47,10 @@ In this example, an event causes the measured value (black) to cross the lower c
 ## Program information
 
 ### Requirements
-| Priority  | Requirement                                                     |
-| --------- | --------------------------------------------------------------- |
-| Mandatory | Microsoft .NET Framework                                        |
-| Optional  | OSIsoft PI Asset Framework Software Development Kit (PI AF SDK) |
+| Priority  | Requirement                                                     | Version    |
+| --------- | --------------------------------------------------------------- | ---------- |
+| Mandatory | Microsoft .NET Framework                                        | 4.0.30319  |
+| Optional  | OSIsoft PI Asset Framework Software Development Kit (PI AF SDK) | 2.10.7.283 |
 
 ### Drivers
 DBM uses drivers to read information from a source of data. The following drivers are included:
