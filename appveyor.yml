@@ -20,61 +20,61 @@
 skip_tags: true
 
 environment:
-  PIAFSDKSECRET:
+  piafsdksecret:
     secure: U6mCnueqqfX1Ykv8Gki8A2nRcZ+R8AlDKMA7IumC7oeC7uCPaHqA1ExWeejJipB3
-  PIAFSDKSALT:
+  piafsdksalt:
     secure: +sv+8rzvigIHMUyI8yz5ISB+YmM1tYoXWiHgxPYz5Oa8YSm6oLWkzzf0GCVzYlNfGm/snIORVJ4aUpBl/J7d3Q==
-  CERTSECRET:
+  certsecret:
     secure: JtaHKfJlMN0jHpEMoRkZToY6EWzsIBFbX+6CxSqCkl3QJN2/RYxIPp9zhzS4yEK9
-  CERTSALT:
+  certsalt:
     secure: ImaLkIXP7w8kRynj0LP4o2uWVfOdShGuN7A0SZUCWsNnD9nP6MxI3sldOEGl3X2OT71sUu8Wt+Qk725LLz3kRQ==
-  CERTPASSWORD:
+  certpassword:
     secure: ++tUtFqUQwnWMoqYt6dbNgASvTKp+GBKC8fhU1ydg/8qsS04tl+MeAn4BSryhUDH
 
 install:
   cmd: |-
     powershell -Command "iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1')) | Out-Null"
     set PIHOME=%TEMP%
-    set PIAFSDKPATH=%PIHOME%\AF\PublicAssemblies\4.0
-    mkdir "%PIAFSDKPATH%"
-    if defined PIAFSDKSECRET if defined PIAFSDKSALT appveyor-tools\secure-file -decrypt enc\OSIsoft.AFSDK.dll.enc -secret %PIAFSDKSECRET% -salt %PIAFSDKSALT% -out "%PIAFSDKPATH%\OSIsoft.AFSDK.dll"
-    set CERTIFICATE=%TEMP%\certificate.pfx
-    if defined CERTSECRET if defined CERTSALT appveyor-tools\secure-file -decrypt enc\certificate.pfx.enc -secret %CERTSECRET% -salt %CERTSALT% -out "%CERTIFICATE%"
+    set piafsdkpath=%PIHOME%\AF\PublicAssemblies\4.0
+    mkdir "%piafsdkpath%"
+    if defined piafsdksecret if defined piafsdksalt appveyor-tools\secure-file -decrypt enc\OSIsoft.AFSDK.dll.enc -secret %piafsdksecret% -salt %piafsdksalt% -out "%piafsdkpath%\OSIsoft.AFSDK.dll"
+    set certificate=%TEMP%\certificate.pfx
+    if defined certsecret if defined certsalt appveyor-tools\secure-file -decrypt enc\certificate.pfx.enc -secret %certsecret% -salt %certsalt% -out "%certificate%"
 
 before_build:
   cmd: |-
-    for /f "delims=" %%I in ('git rev-parse --short HEAD') do set COMMIT=%%I
-    powershell -Command "(Get-Content src\dbm\DBMInfo.vb) -replace 'Const GITHASH As String = \".*?\"', 'Const GITHASH As String = \"%COMMIT%\"' | Set-Content src\dbm\DBMInfo.vb"
+    for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
+    powershell -Command "(Get-Content src\dbm\DBMInfo.vb) -replace 'Const GITHASH As String = \".*?\"', 'Const GITHASH As String = \"%commit%\"' | Set-Content src\dbm\DBMInfo.vb"
 
 build_script:
   cmd: |-
     build.bat
-    if exist "%CERTIFICATE%" if defined CERTPASSWORD sign.bat "%CERTIFICATE%" "%CERTPASSWORD%" > NUL
+    if exist "%certificate%" if defined certpassword sign.bat "%certificate%" "%certpassword%" > NUL
 
 after_build:
   cmd: |-
-    set PRODUCT=DBM
-    for /f "delims=" %%I in ('powershell -Command "(Get-Item build\DBM.dll).VersionInfo.ProductVersion"') do set VERSION=%%I
-    for /f "delims=" %%I in ('powershell -Command "(Get-Item build\DBM.dll).VersionInfo.CompanyName"') do set COMPANY=%%I
-    set INSTALLER=Setup_%PRODUCT%_v%VERSION%+%COMMIT%.exe
-    "%ProgramFiles(x86)%\Inno Setup 5\ISCC.exe" /O"%TEMP%" /F%INSTALLER:~,-4% /Q src\res\dbm.iss
-    if exist "%CERTIFICATE%" if defined CERTPASSWORD sign.bat "%CERTIFICATE%" "%CERTPASSWORD%" "%TEMP%\%INSTALLER%" > NUL
-    appveyor PushArtifact "%TEMP%\%INSTALLER%"
+    set product=DBM
+    for /f "delims=" %%i in ('powershell -Command "(Get-Item build\DBM.dll).VersionInfo.ProductVersion"') do set version=%%i
+    for /f "delims=" %%i in ('powershell -Command "(Get-Item build\DBM.dll).VersionInfo.CompanyName"') do set COMPANY=%%i
+    set installer=Setup_%product%_v%version%+%commit%.exe
+    "%ProgramFiles(x86)%\Inno Setup 5\ISCC.exe" /O"%TEMP%" /F%installer:~,-4% /Q src\res\dbm.iss
+    if exist "%certificate%" if defined certpassword sign.bat "%certificate%" "%certpassword%" "%TEMP%\%installer%" > NUL
+    appveyor PushArtifact "%TEMP%\%installer%"
 
 test_script:
   cmd: |-
-    "%TEMP%\%INSTALLER%" /VERYSILENT /NORESTART
-    set INSTALLATIONPATH=%ProgramFiles(x86)%\%COMPANY%\%PRODUCT%
-    "%INSTALLATIONPATH%\build\DBMAbout.exe"
-    "%INSTALLATIONPATH%\samples\runsamples.bat"
-    powershell -Command "exit [int]!(Get-FileHash '%INSTALLATIONPATH%\samples\sample1.csv' -Algorithm MD5).Hash.ToLower().Equals('803d8e67c7aa1a7e2610096e167d8b21')"
-    powershell -Command "exit [int]!(Get-FileHash '%INSTALLATIONPATH%\samples\sample2.csv' -Algorithm MD5).Hash.ToLower().Equals('6d2671702c05ab051f7e705bcc127577')"
-    powershell -Command "exit [int]!(Get-FileHash '%INSTALLATIONPATH%\samples\sample3.csv' -Algorithm MD5).Hash.ToLower().Equals('bb3e0bea35ca0fa2a56d307053fd595b')"
-    powershell -Command "exit [int]!(Get-FileHash '%INSTALLATIONPATH%\samples\sample4.csv' -Algorithm MD5).Hash.ToLower().Equals('d43382b707a563493a4265646d185af5')"
+    "%TEMP%\%installer%" /VERYSILENT /NORESTART
+    set installationpath=%ProgramFiles(x86)%\%COMPANY%\%product%
+    "%installationpath%\build\DBMAbout.exe"
+    "%installationpath%\samples\runsamples.bat"
+    powershell -Command "exit [int]!(Get-FileHash '%installationpath%\samples\sample1.csv' -Algorithm MD5).Hash.ToLower().Equals('803d8e67c7aa1a7e2610096e167d8b21')"
+    powershell -Command "exit [int]!(Get-FileHash '%installationpath%\samples\sample2.csv' -Algorithm MD5).Hash.ToLower().Equals('6d2671702c05ab051f7e705bcc127577')"
+    powershell -Command "exit [int]!(Get-FileHash '%installationpath%\samples\sample3.csv' -Algorithm MD5).Hash.ToLower().Equals('bb3e0bea35ca0fa2a56d307053fd595b')"
+    powershell -Command "exit [int]!(Get-FileHash '%installationpath%\samples\sample4.csv' -Algorithm MD5).Hash.ToLower().Equals('d43382b707a563493a4265646d185af5')"
 
 deploy:
-  tag: 'v$(VERSION)+$(COMMIT)'
-  release: '$(PRODUCT) v$(VERSION)+$(COMMIT)'
+  tag: 'v$(version)+$(commit)'
+  release: '$(product) v$(version)+$(commit)'
   description: '$(APPVEYOR_REPO_COMMIT_MESSAGE)'
   provider: GitHub
   auth_token:

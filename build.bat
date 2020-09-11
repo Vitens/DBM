@@ -22,8 +22,8 @@ rem along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 cd /d %~dp0
 
 rem Variables
-set VBC="%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\Vbc.exe" /win32icon:src\res\dbm.ico /optimize+ /nologo /novbruntimeref
-set PIAFREF=%PIHOME%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll
+set vbc="%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\Vbc.exe" /win32icon:src\res\dbm.ico /optimize+ /nologo /novbruntimeref
+set piafref=%PIHOME%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll
 
 rem Set up build directory
 if not exist build mkdir build
@@ -31,11 +31,11 @@ del /Q build\*
 copy LICENSE build > NUL
 
 rem Build
-%VBC% /target:library /out:build\DBM.dll src\dbm\*.vb
-%VBC% /reference:build\DBM.dll /out:build\DBMAbout.exe src\dbm\DBMManifest.vb src\dbmabout\*.vb
-%VBC% /reference:build\DBM.dll /target:library /out:build\DBMPointDriverCSV.dll src\dbm\DBMManifest.vb src\dbm\driver\DBMPointDriverCSV.vb
-%VBC% /reference:build\DBM.dll,build\DBMPointDriverCSV.dll /out:build\DBMTester.exe src\dbm\DBMManifest.vb src\dbmtester\*.vb
-if exist "%PIAFREF%" (
- %VBC% /reference:"%PIAFREF%",build\DBM.dll /target:library /out:build\DBMPointDriverOSIsoftPIAF.dll src\dbm\DBMManifest.vb src\dbm\driver\DBMPointDriverOSIsoftPIAF.vb
- %VBC% /reference:"%PIAFREF%",build\DBM.dll,build\DBMPointDriverOSIsoftPIAF.dll /target:library /out:build\DBMDataRef.dll src\dbm\DBMManifest.vb src\PIAFDataRef\*.vb
+%vbc% /target:library /out:build\DBM.dll src\dbm\*.vb
+%vbc% /reference:build\DBM.dll /out:build\DBMAbout.exe src\dbm\DBMManifest.vb src\dbmabout\*.vb
+%vbc% /reference:build\DBM.dll /target:library /out:build\DBMPointDriverCSV.dll src\dbm\DBMManifest.vb src\dbm\driver\DBMPointDriverCSV.vb
+%vbc% /reference:build\DBM.dll,build\DBMPointDriverCSV.dll /out:build\DBMTester.exe src\dbm\DBMManifest.vb src\dbmtester\*.vb
+if exist "%piafref%" (
+ %vbc% /reference:"%piafref%",build\DBM.dll /target:library /out:build\DBMPointDriverOSIsoftPIAF.dll src\dbm\DBMManifest.vb src\dbm\driver\DBMPointDriverOSIsoftPIAF.vb
+ %vbc% /reference:"%piafref%",build\DBM.dll,build\DBMPointDriverOSIsoftPIAF.dll /target:library /out:build\DBMDataRef.dll src\dbm\DBMManifest.vb src\PIAFDataRef\*.vb
 )

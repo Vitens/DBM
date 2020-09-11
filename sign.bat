@@ -23,6 +23,6 @@ cd /d %~dp0
 
 rem Sign
 rem arguments: pfx file, password(, file)
-set FILES=%3
-if "%~3" == "" set FILES=build\*.dll build\*.exe
-for %%F in (%FILES%) do powershell -Command "Set-AuthenticodeSignature -Certificate (New-Object System.Security.Cryptography.X509Certificates.X509Certificate2('%1', '%2')) -TimestampServer http://timestamp.digicert.com -HashAlgorithm SHA256 -FilePath '%%~F'"
+set files=%3
+if "%~3" == "" set files=build\*.dll build\*.exe
+for %%f in (%files%) do powershell -Command "Set-AuthenticodeSignature -Certificate (New-Object System.Security.Cryptography.X509Certificates.X509Certificate2('%1', '%2')) -TimestampServer http://timestamp.digicert.com -HashAlgorithm SHA256 -FilePath '%%~f'"
