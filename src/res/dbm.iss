@@ -17,10 +17,10 @@
 ; You should have received a copy of the GNU General Public License
 ; along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
-#define Product GetEnv("product")
-#define Version GetEnv("version")
-#define Commit GetEnv("commit")
-#define Company GetEnv("company")
+#define Product GetEnv("PRODUCT")
+#define Version GetEnv("VERSION")
+#define Commit GetEnv("COMMIT")
+#define Company GetEnv("COMPANY")
 #define Copyright GetFileCopyright("..\..\build\DBM.dll")
 
 [Setup]
