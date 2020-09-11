@@ -110,6 +110,23 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Shared Function CertificateInfo As String
+
+      ' Returns a string containing the certificate Subject and Issuer, if
+      ' available. Else returns 'Unsigned'.
+
+      Try
+        With X509Certificate.CreateFromSignedFile(
+          Assembly.GetExecutingAssembly.Location)
+          Return "Certificate: " & .Subject & " (" & .Issuer & ")"
+        End With
+      Catch
+        Return "Unsigned"
+      End Try
+
+    End Function
+
+
     Public Shared Function TestResults As String
 
       ' Run unit and integration tests and return test run duration. An
@@ -128,20 +145,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Return "Unit tests: " & Round(UTDurationMs).ToString & " ms" & NewLine &
         "Integration tests: " & Round(ITDurationMs).ToString & " ms"
-
-    End Function
-
-
-    Public Shared Function CertificateInfo As String
-
-      Try
-        With X509Certificate.CreateFromSignedFile(
-          Assembly.GetExecutingAssembly.Location)
-          Return "Certificate: " & .Subject & " (" & .Issuer & ")"
-        End With
-      Catch
-        Return "Unsigned"
-      End Try
 
     End Function
 
