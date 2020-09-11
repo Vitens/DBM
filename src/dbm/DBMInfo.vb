@@ -73,6 +73,23 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Shared Function CertificateInfo As String
+
+      ' Returns a string containing the certificate Subject and Issuer, if
+      ' available. Else returns 'Unsigned'.
+
+      Try
+        With X509Certificate.CreateFromSignedFile(
+          Assembly.GetExecutingAssembly.Location)
+          Return "Certificate: " & .Subject & " (" & .Issuer & ")"
+        End With
+      Catch
+        Return "Unsigned"
+      End Try
+
+    End Function
+
+
     Public Shared Function Product As String
 
       ' Returns the name of and information about the product.
@@ -80,7 +97,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       With GetFileVersionInfo
         Return .ProductName & " v" & Version & NewLine &
           .Comments & NewLine &
-          .LegalCopyright
+          .LegalCopyright & NewLine &
+          CertificateInfo
       End With
 
     End Function
@@ -106,23 +124,6 @@ Namespace Vitens.DynamicBandwidthMonitor
         "You should have received a copy of the GNU General Public License " &
         "along with this program.  " &
         "If not, see <http://www.gnu.org/licenses/>."
-
-    End Function
-
-
-    Public Shared Function CertificateInfo As String
-
-      ' Returns a string containing the certificate Subject and Issuer, if
-      ' available. Else returns 'Unsigned'.
-
-      Try
-        With X509Certificate.CreateFromSignedFile(
-          Assembly.GetExecutingAssembly.Location)
-          Return "Certificate: " & .Subject & " (" & .Issuer & ")"
-        End With
-      Catch
-        Return "Unsigned"
-      End Try
 
     End Function
 
