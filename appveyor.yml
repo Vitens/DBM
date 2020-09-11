@@ -40,6 +40,7 @@ install:
     if defined PIAFSDKSECRET if defined PIAFSDKSALT appveyor-tools\secure-file -decrypt enc\OSIsoft.AFSDK.dll.enc -secret %PIAFSDKSECRET% -salt %PIAFSDKSALT% -out "%PIAFSDKPATH%\OSIsoft.AFSDK.dll"
     set CERTIFICATE=%TEMP%\certificate.pfx
     if defined CERTSECRET if defined CERTSALT appveyor-tools\secure-file -decrypt enc\certificate.pfx.enc -secret %CERTSECRET% -salt %CERTSALT% -out "%CERTIFICATE%"
+    powershell -Command "Import-PfxCertificate -FilePath '%CERTIFICATE%' -CertStoreLocation Cert:\LocalMachine\My -Password (ConvertTo-SecureString %CERTPASSWORD% -AsPlainText -Force)"
     rmdir /S /Q appveyor-tools
 
 before_build:
@@ -50,7 +51,7 @@ before_build:
 build_script:
   cmd: |-
     build.bat
-    if exist "%CERTIFICATE%" if defined CERTPASSWORD sign.bat "%CERTIFICATE%" "%CERTPASSWORD%" > NUL
+    if exist "%CERTIFICATE%" if defined CERTPASSWORD sign.bat "%CERTIFICATE%" "%CERTPASSWORD%"
 
 after_build:
   cmd: |-
@@ -59,7 +60,7 @@ after_build:
     for /f "delims=" %%I in ('powershell -Command "(Get-Item build\DBM.dll).VersionInfo.CompanyName"') do set COMPANY=%%I
     set INSTALLER=Setup_%PRODUCT%_v%VERSION%+%COMMIT%.exe
     "%ProgramFiles(x86)%\Inno Setup 5\ISCC.exe" /O"%TEMP%" /F%INSTALLER:~,-4% /Q src\res\dbm.iss
-    if exist "%CERTIFICATE%" if defined CERTPASSWORD sign.bat "%CERTIFICATE%" "%CERTPASSWORD%" "%TEMP%\%INSTALLER%" > NUL
+    if exist "%CERTIFICATE%" if defined CERTPASSWORD sign.bat "%CERTIFICATE%" "%CERTPASSWORD%" "%TEMP%\%INSTALLER%"
     appveyor PushArtifact "%TEMP%\%INSTALLER%"
 
 test_script:
