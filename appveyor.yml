@@ -50,7 +50,7 @@ before_build:
 build_script:
   cmd: |-
     build.bat
-    if exist "%CERTIFICATE%" if defined CERTPASSWORD sign.bat "%CERTIFICATE%" "%CERTPASSWORD%"
+    if exist "%CERTIFICATE%" if defined CERTPASSWORD sign.bat "%CERTIFICATE%" "%CERTPASSWORD%" > NUL
 
 after_build:
   cmd: |-
@@ -59,7 +59,7 @@ after_build:
     for /f "delims=" %%I in ('powershell -Command "(Get-Item build\DBM.dll).VersionInfo.CompanyName"') do set COMPANY=%%I
     set INSTALLER=Setup_%PRODUCT%_v%VERSION%+%COMMIT%.exe
     "%ProgramFiles(x86)%\Inno Setup 5\ISCC.exe" /O"%TEMP%" /F%INSTALLER:~,-4% /Q src\res\dbm.iss
-    if exist "%CERTIFICATE%" if defined CERTPASSWORD sign.bat "%CERTIFICATE%" "%CERTPASSWORD%" "%TEMP%\%INSTALLER%"
+    if exist "%CERTIFICATE%" if defined CERTPASSWORD sign.bat "%CERTIFICATE%" "%CERTPASSWORD%" "%TEMP%\%INSTALLER%" > NUL
     appveyor PushArtifact "%TEMP%\%INSTALLER%"
 
 test_script:
