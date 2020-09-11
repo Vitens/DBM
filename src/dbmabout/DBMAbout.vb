@@ -24,6 +24,7 @@ Option Strict
 
 Imports System
 Imports System.Environment
+Imports System.Reflection
 Imports System.Security.Cryptography.X509Certificates
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
 
