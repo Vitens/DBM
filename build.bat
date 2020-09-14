@@ -23,7 +23,7 @@ cd /d %~dp0
 
 rem Variables
 set vbc="%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\Vbc.exe" /win32icon:src\res\dbm.ico /optimize+ /nologo /novbruntimeref
-set piafref=%PIHOME%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll
+set PIAFRef=%PIHOME%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll
 
 rem Set up build directory
 if not exist build mkdir build
@@ -35,7 +35,7 @@ rem Build
 %vbc% /reference:build\DBM.dll /out:build\DBMAbout.exe src\dbm\DBMManifest.vb src\dbmabout\*.vb
 %vbc% /reference:build\DBM.dll /target:library /out:build\DBMPointDriverCSV.dll src\dbm\DBMManifest.vb src\dbm\driver\DBMPointDriverCSV.vb
 %vbc% /reference:build\DBM.dll,build\DBMPointDriverCSV.dll /out:build\DBMTester.exe src\dbm\DBMManifest.vb src\dbmtester\*.vb
-if exist "%piafref%" (
- %vbc% /reference:"%piafref%",build\DBM.dll /target:library /out:build\DBMPointDriverOSIsoftPIAF.dll src\dbm\DBMManifest.vb src\dbm\driver\DBMPointDriverOSIsoftPIAF.vb
- %vbc% /reference:"%piafref%",build\DBM.dll,build\DBMPointDriverOSIsoftPIAF.dll /target:library /out:build\DBMDataRef.dll src\dbm\DBMManifest.vb src\PIAFDataRef\*.vb
+if exist "%PIAFRef%" (
+ %vbc% /reference:"%PIAFRef%",build\DBM.dll /target:library /out:build\DBMPointDriverOSIsoftPIAF.dll src\dbm\DBMManifest.vb src\dbm\driver\DBMPointDriverOSIsoftPIAF.vb
+ %vbc% /reference:"%PIAFRef%",build\DBM.dll,build\DBMPointDriverOSIsoftPIAF.dll /target:library /out:build\DBMDataRef.dll src\dbm\DBMManifest.vb src\PIAFDataRef\*.vb
 )
