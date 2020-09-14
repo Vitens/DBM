@@ -43,12 +43,15 @@ DisableReadyPage=yes
 UninstallDisplayIcon={app}\src\res\dbm.ico
 
 [Files]
-Source: "..\..\*"; Excludes: "\.git"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
+Source: "..\..\*"; Excludes: "\.git,\enc,\appveyor-tools"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
 
 [Icons]
 Name: "{group}\Files"; Filename: "{app}"; IconFilename: "{app}\src\res\dbm.ico"
 Name: "{group}\About"; Filename: "{cmd}"; Parameters: "/k DBMAbout.exe"; WorkingDir: "{app}\build"; IconFilename: "{app}\src\res\dbm.ico"
 Name: "{group}\Uninstall"; Filename: "{uninstallexe}"
+
+[Run]
+Filename: "{app}\register.bat"; StatusMsg: "Registering PI AF Data Reference on local AF server ..."; Flags: runhidden
 
 [UninstallDelete]
 Type: files; Name: "{app}\samples\sample?.csv"

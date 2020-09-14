@@ -19,35 +19,58 @@
 
 skip_tags: true
 
+environment:
+  piafsdksecret:
+    secure: U6mCnueqqfX1Ykv8Gki8A2nRcZ+R8AlDKMA7IumC7oeC7uCPaHqA1ExWeejJipB3
+  piafsdksalt:
+    secure: +sv+8rzvigIHMUyI8yz5ISB+YmM1tYoXWiHgxPYz5Oa8YSm6oLWkzzf0GCVzYlNfGm/snIORVJ4aUpBl/J7d3Q==
+  certsecret:
+    secure: JtaHKfJlMN0jHpEMoRkZToY6EWzsIBFbX+6CxSqCkl3QJN2/RYxIPp9zhzS4yEK9
+  certsalt:
+    secure: ImaLkIXP7w8kRynj0LP4o2uWVfOdShGuN7A0SZUCWsNnD9nP6MxI3sldOEGl3X2OT71sUu8Wt+Qk725LLz3kRQ==
+  certpassword:
+    secure: ++tUtFqUQwnWMoqYt6dbNgASvTKp+GBKC8fhU1ydg/8qsS04tl+MeAn4BSryhUDH
+
+install:
+  cmd: |-
+    powershell -Command "iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1')) | Out-Null"
+    set PIHOME=%TEMP%
+    set piafsdkpath=%PIHOME%\AF\PublicAssemblies\4.0
+    mkdir "%piafsdkpath%"
+    if defined piafsdksecret if defined piafsdksalt appveyor-tools\secure-file -decrypt enc\OSIsoft.AFSDK.dll.enc -secret %piafsdksecret% -salt %piafsdksalt% -out "%piafsdkpath%\OSIsoft.AFSDK.dll"
+    set certificate=%TEMP%\certificate.pfx
+    if defined certsecret if defined certsalt appveyor-tools\secure-file -decrypt enc\certificate.pfx.enc -secret %certsecret% -salt %certsalt% -out "%certificate%"
+
 before_build:
   cmd: |-
-    set PIHOME=%TEMP%
-    mkdir "%PIHOME%\AF\PublicAssemblies\4.0"
-    git show 635d59fdc8fb7f0de98d57b40ae83d5ebb37c683:OSIsoft.AFSDK.dll > "%PIHOME%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll"
     for /f "delims=" %%i in ('git rev-parse --short HEAD') do set commit=%%i
     powershell -Command "(Get-Content src\dbm\DBMInfo.vb) -replace 'Const GITHASH As String = \".*?\"', 'Const GITHASH As String = \"%commit%\"' | Set-Content src\dbm\DBMInfo.vb"
 
 build_script:
   cmd: |-
     build.bat
+    if exist "%certificate%" if defined certpassword sign.bat "%certificate%" "%certpassword%" > NUL
 
 after_build:
   cmd: |-
     set product=DBM
     for /f "delims=" %%i in ('powershell -Command "(Get-Item build\DBM.dll).VersionInfo.ProductVersion"') do set version=%%i
     for /f "delims=" %%i in ('powershell -Command "(Get-Item build\DBM.dll).VersionInfo.CompanyName"') do set company=%%i
-    "%ProgramFiles(x86)%\Inno Setup 5\ISCC.exe" /O"%TEMP%" /FSetup_%product%_v%version%+%commit% /Q src\res\dbm.iss
-    appveyor PushArtifact "%TEMP%\Setup_%product%_v%version%+%commit%.exe"
+    set installer=Setup_%product%_v%version%+%commit%.exe
+    "%ProgramFiles(x86)%\Inno Setup 5\ISCC.exe" /O"%TEMP%" /F%installer:~,-4% /Q src\res\dbm.iss
+    if exist "%certificate%" if defined certpassword sign.bat "%certificate%" "%certpassword%" "%TEMP%\%installer%" > NUL
+    appveyor PushArtifact "%TEMP%\%installer%"
 
 test_script:
   cmd: |-
-    "%TEMP%\Setup_%product%_v%version%+%commit%.exe" /VERYSILENT /NORESTART
-    "%ProgramFiles(x86)%\%company%\%product%\build\DBMAbout.exe"
-    "%ProgramFiles(x86)%\%company%\%product%\samples\runsamples.bat"
-    powershell -Command "exit [int]!(Get-FileHash '%ProgramFiles(x86)%\%company%\%product%\samples\sample1.csv' -Algorithm MD5).Hash.ToLower().Equals('803d8e67c7aa1a7e2610096e167d8b21')"
-    powershell -Command "exit [int]!(Get-FileHash '%ProgramFiles(x86)%\%company%\%product%\samples\sample2.csv' -Algorithm MD5).Hash.ToLower().Equals('6d2671702c05ab051f7e705bcc127577')"
-    powershell -Command "exit [int]!(Get-FileHash '%ProgramFiles(x86)%\%company%\%product%\samples\sample3.csv' -Algorithm MD5).Hash.ToLower().Equals('bb3e0bea35ca0fa2a56d307053fd595b')"
-    powershell -Command "exit [int]!(Get-FileHash '%ProgramFiles(x86)%\%company%\%product%\samples\sample4.csv' -Algorithm MD5).Hash.ToLower().Equals('d43382b707a563493a4265646d185af5')"
+    "%TEMP%\%installer%" /VERYSILENT /NORESTART
+    set installationpath=%ProgramFiles(x86)%\%company%\%product%
+    "%installationpath%\build\DBMAbout.exe"
+    "%installationpath%\samples\runsamples.bat"
+    powershell -Command "exit [int]!(Get-FileHash '%installationpath%\samples\sample1.csv' -Algorithm MD5).Hash.ToLower().Equals('803d8e67c7aa1a7e2610096e167d8b21')"
+    powershell -Command "exit [int]!(Get-FileHash '%installationpath%\samples\sample2.csv' -Algorithm MD5).Hash.ToLower().Equals('6d2671702c05ab051f7e705bcc127577')"
+    powershell -Command "exit [int]!(Get-FileHash '%installationpath%\samples\sample3.csv' -Algorithm MD5).Hash.ToLower().Equals('bb3e0bea35ca0fa2a56d307053fd595b')"
+    powershell -Command "exit [int]!(Get-FileHash '%installationpath%\samples\sample4.csv' -Algorithm MD5).Hash.ToLower().Equals('d43382b707a563493a4265646d185af5')"
 
 deploy:
   tag: 'v$(version)+$(commit)'
