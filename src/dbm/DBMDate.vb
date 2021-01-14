@@ -26,6 +26,7 @@ Imports System
 Imports System.Globalization
 Imports System.Math
 Imports System.TimeSpan
+Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
