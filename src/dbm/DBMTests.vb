@@ -997,8 +997,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertEqual(EMATimeOffsetIntervals(152), 52)
       AssertEqual(EMATimeOffsetIntervals(747), 256)
       AssertEqual(EMATimeOffsetIntervals(826), 283)
-      AssertEqual(EMATimeOffsetIntervals(38000), 19235)
-      AssertEqual(EMATimeOffsetIntervals(56000), 13052)
+      AssertEqual(EMATimeOffsetIntervals(38000), 13052)
+      AssertEqual(EMATimeOffsetIntervals(56000), 19235)
 
       ' DBMStatistics
       For i = 0 To 19
