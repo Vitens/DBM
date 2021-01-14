@@ -183,7 +183,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' calculated data. To compensate for this, an offset should be applied
       ' based on exponentially decreasing weighting factors.
 
-      Return CInt(Floor(Count/2.91136)) ' Fast approximation
+      Return CInt(Floor((Count-1)/2.91136)) ' Fast approximation
       ' Return CInt(Round(Count-ExponentialMovingAverage(
       '   Enumerable.Range(1, Count).[Select](Function(x) CDbl(x)).ToArray)))
 
