@@ -979,6 +979,27 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2016, 1, 6, 22, 49, 9)),
         New DateTime(2015, 10, 11, 20, 25, 0))
 
+      AssertEqual(EMATimeOffsetIntervals(1), 0)
+      AssertEqual(EMATimeOffsetIntervals(2), 0.25)
+      AssertAlmostEqual(EMATimeOffsetIntervals(3), 0.5714)
+      AssertAlmostEqual(EMATimeOffsetIntervals(4), 0.9044)
+      AssertAlmostEqual(EMATimeOffsetIntervals(5), 1.2417)
+      AssertAlmostEqual(EMATimeOffsetIntervals(6), 1.5811)
+      AssertAlmostEqual(EMATimeOffsetIntervals(7), 1.9217)
+      AssertAlmostEqual(EMATimeOffsetIntervals(8), 2.263)
+      AssertAlmostEqual(EMATimeOffsetIntervals(9), 2.6048)
+      AssertAlmostEqual(EMATimeOffsetIntervals(10), 2.9469)
+      AssertAlmostEqual(EMATimeOffsetIntervals(11), 3.2893)
+      AssertAlmostEqual(EMATimeOffsetIntervals(12), 3.6319)
+      AssertAlmostEqual(EMATimeOffsetIntervals(13), 3.9746)
+      AssertAlmostEqual(EMATimeOffsetIntervals(14), 4.3174)
+      AssertAlmostEqual(EMATimeOffsetIntervals(15), 4.6603)
+      AssertAlmostEqual(EMATimeOffsetIntervals(16), 5.0033)
+      AssertAlmostEqual(EMATimeOffsetIntervals(17), 5.3463)
+      AssertAlmostEqual(EMATimeOffsetIntervals(18), 5.6894)
+      AssertAlmostEqual(EMATimeOffsetIntervals(19), 6.0325)
+      AssertAlmostEqual(EMATimeOffsetIntervals(EMAPreviousPeriods+1), 1.5810)
+
       ' DBMStatistics
       For i = 0 To 19
         With {
