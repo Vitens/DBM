@@ -81,6 +81,17 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Function CompensatedTimestamp As DateTime
+
+      ' Returns the timestamp in which the exponential moving average (EMA)
+      ' time shift has been compensated.
+
+      Return Timestamp.AddSeconds(
+        -EMATimeOffsetIntervals(EMAPreviousPeriods+1)*CalculationInterval)
+
+    End Function
+
+
     Public Sub Calculate(Index As Integer, MeasurementEMA As Double,
       ForecastEMA As Double, LowerControlLimitEMA As Double,
       UpperControlLimitEMA As Double)
@@ -122,17 +133,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
 
     End Sub
-
-
-    Public Function CompensatedTimestamp As DateTime
-
-      ' Returns the timestamp in which the exponential moving average (EMA)
-      ' time shift has been compensated.
-
-      Return Timestamp.AddSeconds(
-        -EMATimeOffsetIntervals(EMAPreviousPeriods+1)*CalculationInterval)
-
-    End Function
 
 
   End Class
