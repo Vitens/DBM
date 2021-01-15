@@ -87,7 +87,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' time shift has been compensated.
 
       Return Timestamp.AddSeconds(
-        -EMATimeOffsetIntervals(EMAPreviousPeriods+1)*CalculationInterval)
+        EMATimeOffsetIntervals(EMAPreviousPeriods+1)*CalculationInterval)
 
     End Function
 
