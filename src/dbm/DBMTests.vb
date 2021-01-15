@@ -1146,6 +1146,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           Else
             AssertFalse(.HasSuppressedEvent)
           End If
+          AssertEqual(.CompensatedTimestamp, Timestamp.AddSeconds(-2*CalculationInterval))
           AssertAlmostEqual(.ForecastItem.Measurement, {527.5796, 687.0052,
             1097.1504, 950.9752, 496.1124, 673.6569, 1139.1957, 867.4313,
             504.9407, 656.4434, 1065.7651, 898.9191, 471.2433, 668.1,
