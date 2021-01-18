@@ -1117,6 +1117,20 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' GetResult IsFutureData - test future data
       AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        InputPointDriver.SnapshotTimestamp.AddSeconds(
+        -2*CalculationInterval)).IsFutureData, False)
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        InputPointDriver.SnapshotTimestamp.AddSeconds(
+        -CalculationInterval)).IsFutureData, True)
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        InputPointDriver.SnapshotTimestamp).IsFutureData, True)
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        InputPointDriver.SnapshotTimestamp.AddSeconds(
+        CalculationInterval)).IsFutureData, True)
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        InputPointDriver.SnapshotTimestamp.AddSeconds(
+        2*CalculationInterval)).IsFutureData, True)
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
         InputPointDriver.CalculationTimestamp.AddSeconds(
         -2*CalculationInterval)).IsFutureData, False)
       AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
