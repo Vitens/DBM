@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -183,6 +183,14 @@ Namespace Vitens.DynamicBandwidthMonitor
         CorrelationPoints = New List(Of DBMCorrelationPoint)
       End If
 
+      ' Shift the start and end timestamps into the future using the negative
+      ' EMA time offset. Then later on, shift the resulting timestamps back to
+      ' the original value.
+      StartTimestamp = StartTimestamp.
+        AddSeconds(-EMATimeOffset(EMAPreviousPeriods+1))
+      EndTimestamp = EndTimestamp.
+        AddSeconds(-EMATimeOffset(EMAPreviousPeriods+1))
+
       ' Use culture used by the current thread if no culture was passed.
       If Culture Is Nothing Then Culture = CurrentThread.CurrentCulture
 
@@ -243,6 +251,14 @@ Namespace Vitens.DynamicBandwidthMonitor
         Next Result
 
       End If
+
+      ' Shift the resulting timestamps back to the original value since they
+      ' were moved into the future before to compensate for exponential moving
+      ' average (EMA) time shifting.
+      For Each Result In GetResults
+        Result.Timestamp = Result.Timestamp.
+          AddSeconds(EMATimeOffset(EMAPreviousPeriods+1))
+      Next Result
 
       Return GetResults
 

@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -25,7 +25,6 @@ Option Strict
 Imports System
 Imports System.Double
 Imports System.Math
-Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
@@ -77,16 +76,6 @@ Namespace Vitens.DynamicBandwidthMonitor
           (.Measurement < .LowerControlLimit Or
           .Measurement > .UpperControlLimit)
       End With
-
-    End Function
-
-
-    Public Function CompensatedTimestamp As DateTime
-
-      ' Returns the timestamp for which the exponential moving average (EMA)
-      ' time shift has been compensated.
-
-      Return Timestamp.AddSeconds(EMATimeOffset(EMAPreviousPeriods+1))
 
     End Function
 
