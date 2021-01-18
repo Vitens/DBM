@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -63,6 +63,17 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' DateTime.MaxValue.
 
       Return DateTime.MaxValue
+
+    End Function
+
+
+    Public Function CalculationTimestamp As DateTime
+
+      ' Return the latest possible calculation timestamp for which the source of
+      ' data has information available. Compensated for exponential moving
+      ' average (EMA) time shift.
+
+      Return SnapshotTimestamp.AddSeconds(EMATimeOffset(EMAPreviousPeriods+1))
 
     End Function
 

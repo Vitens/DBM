@@ -1117,15 +1117,31 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' GetResult IsFutureData - test future data
       AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
-        Now.AddSeconds(-2*CalculationInterval)).IsFutureData, False)
+        InputPointDriver.CalculationTimestamp.AddSeconds(
+        -4*CalculationInterval)).IsFutureData, False)
       AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
-        Now.AddSeconds(-CalculationInterval)).IsFutureData, False)
+        InputPointDriver.CalculationTimestamp.AddSeconds(
+        -3*CalculationInterval)).IsFutureData, False)
       AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
-        Now).IsFutureData, False)
+        InputPointDriver.CalculationTimestamp.AddSeconds(
+        -2*CalculationInterval)).IsFutureData, False)
       AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
-        Now.AddSeconds(CalculationInterval)).IsFutureData, True)
+        InputPointDriver.CalculationTimestamp.AddSeconds(
+        -CalculationInterval)).IsFutureData, False)
       AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
-        Now.AddSeconds(2*CalculationInterval)).IsFutureData, True)
+        InputPointDriver.CalculationTimestamp).IsFutureData, False)
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        InputPointDriver.CalculationTimestamp.AddSeconds(
+        CalculationInterval)).IsFutureData, True)
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        InputPointDriver.CalculationTimestamp.AddSeconds(
+        2*CalculationInterval)).IsFutureData, True)
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        InputPointDriver.CalculationTimestamp.AddSeconds(
+        3*CalculationInterval)).IsFutureData, True)
+      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+        InputPointDriver.CalculationTimestamp.AddSeconds(
+        4*CalculationInterval)).IsFutureData, True)
 
       ' GetResult - test calculation results
       For i = -19 To 19

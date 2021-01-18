@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -264,7 +264,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' AFAttribute.GetValue Overload methods which will in-turn, invoke this
       ' method.
 
-      Dim SnapshotTimestamp As DateTime
+      Dim CalculationTimestamp As DateTime
       Dim Timestamp As DateTime = Now
 
       ' Check if this attribute is properly configured. If it is not configured
@@ -273,13 +273,13 @@ Namespace Vitens.DynamicBandwidthMonitor
       If AttributeConfigurationIsValid Then
 
         ' Retrieve snapshot timestamp.
-        SnapshotTimestamp =
-          New DBMPointDriver(Attribute.Parent).SnapshotTimestamp
+        CalculationTimestamp =
+          New DBMPointDriver(Attribute.Parent).CalculationTimestamp
 
         If timeContext Is Nothing Then
 
           ' No passed timestamp, use snapshot timestamp.
-          Timestamp = SnapshotTimestamp
+          Timestamp = CalculationTimestamp
 
         Else
 
@@ -291,9 +291,9 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' beyond 10 minutes past the snapshot timestamp, but return a No Data
           ' system state instead. This will be done for future data timestamps
           ' on non-future data attributes in the GetValues method.
-          If Not AttributeHasFutureData And Timestamp > SnapshotTimestamp And
-            Timestamp < SnapshotTimestamp.AddMinutes(10) Then
-            Timestamp = SnapshotTimestamp
+          If Not AttributeHasFutureData And Timestamp > CalculationTimestamp And
+            Timestamp < CalculationTimestamp.AddMinutes(10) Then
+            Timestamp = CalculationTimestamp
           End If
 
         End If
