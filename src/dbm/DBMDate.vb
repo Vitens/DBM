@@ -176,15 +176,15 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function EMATimeOffsetIntervals(Count As Integer) As Integer
+    Public Shared Function EMATimeOffset(Count As Integer) As Integer
 
       ' The use of an exponential moving average (EMA) time shifts the resulting
       ' calculated data. To compensate for this, an offset should be applied
-      ' based on exponentially decreasing weighting factors.
+      ' based on exponentially decreasing weighting factors. The returned value
+      ' is in seconds and is only shifted in whole intervals.
 
-      Return -CInt(Floor(Count/2.91136)) ' Fast approximation
-      ' Return -CInt(Round(Count-ExponentialMovingAverage(
-      '   Enumerable.Range(1, Count).[Select](Function(x) CDbl(x)).ToArray)))
+      ' Floor(n/2.91136) is a fast approximation of Round(n-EMA(1..n)).
+      Return -CInt(Floor(Count/2.91136)*CalculationInterval)
 
     End Function
 
