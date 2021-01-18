@@ -180,7 +180,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' The use of an exponential moving average (EMA) time shifts the resulting
       ' calculated data. To compensate for this, an offset should be applied
-      ' based on exponentially decreasing weighting factors. The returned value
+      ' based on exponentially increasing weighting factors. The returned value
       ' is in seconds and is only shifted in whole intervals.
 
       ' Floor(n/2.91136) is a fast approximation of Round(n-EMA(1..n)).
