@@ -184,7 +184,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' is in seconds and is only shifted in whole intervals.
 
       ' Floor(n/2.91136) is a fast approximation of Round(n-EMA(1..n)).
-      Return -CInt(Floor(Count/2.91136)*CalculationInterval)
+      Return CInt(-Floor(Count/2.91136)*CalculationInterval)
 
     End Function
 
