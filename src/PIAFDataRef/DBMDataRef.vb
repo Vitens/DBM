@@ -274,8 +274,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       If AttributeConfigurationIsValid Then
 
         ' Retrieve current calculation timestamp.
-        CurrentTimestamp =
-          New DBMPointDriver(Attribute.Parent).CurrentTimestamp
+        CurrentTimestamp = New DBMPointDriver(Attribute.Parent).CurrentTimestamp
 
         If timeContext Is Nothing Then
 
