@@ -463,8 +463,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               ElseIf IsNaN(.ForecastItem.Measurement) Then
                 ' Replace missing historic Target data with Forecast data,
                 ' marked as substituted.
-                GetValues.Item(GetValues.Count-1) =
-                  New AFValue(.ForecastItem.Forecast, New AFTime(.Timestamp))
+                GetValues.Item(GetValues.Count-1).Value = .ForecastItem.Forecast
                 GetValues.Item(GetValues.Count-1).Substituted = True
               End If
             End If
