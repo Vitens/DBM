@@ -110,18 +110,18 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
-    Private Function AttributeHasFutureData As Boolean
+    Private Function SupportsFutureData As Boolean
 
-      ' Returns a boolean indicating if this attribute has future data, f.ex.
-      ' when it returns a forecast. We should not enable the data pipe for these
-      ' attributes as services like the Analyses Service will not be able to use
-      ' future data because the snapshot timestamp is seen as the last available
-      ' timestamp.
+      ' Returns a boolean indicating if this attribute supports future data,
+      ' f.ex. when it returns a forecast. We should not enable the data pipe for
+      ' these attributes as services like the Analyses Service will not be able
+      ' to use future data because the snapshot timestamp is seen as the last
+      ' available timestamp.
 
-      Return Attribute.Trait Is Forecast Or Attribute.Trait Is LimitMinimum Or
-        Attribute.Trait Is LimitLoLo Or Attribute.Trait Is LimitLo Or
-        Attribute.Trait Is LimitHi Or Attribute.Trait Is LimitHiHi Or
-        Attribute.Trait Is LimitMaximum
+      Return Attribute.Trait Is LimitTarget Or Attribute.Trait Is Forecast Or
+        Attribute.Trait Is LimitMinimum Or Attribute.Trait Is LimitLoLo Or
+        Attribute.Trait Is LimitLo Or Attribute.Trait Is LimitHi Or
+        Attribute.Trait Is LimitHiHi Or Attribute.Trait Is LimitMaximum
 
     End Function
 
@@ -145,9 +145,12 @@ Namespace Vitens.DynamicBandwidthMonitor
         SupportedDataMethods = AFDataMethods.RecordedValue Or
           AFDataMethods.RecordedValues Or AFDataMethods.PlotValues Or
           AFDataMethods.Summary Or AFDataMethods.Summaries
-        If AttributeHasFutureData Then
+        If SupportsFutureData Then
+          ' Support future data if available.
           SupportedDataMethods = SupportedDataMethods Or AFDataMethods.Future
-        Else
+        End If
+        If Not SupportsFutureData Or Attribute.Trait Is LimitTarget Then
+          ' Support data pipe for non-future data, as well as for Target.
           SupportedDataMethods = SupportedDataMethods Or AFDataMethods.DataPipe
         End If
         Return SupportedDataMethods
@@ -291,7 +294,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' beyond 10 minutes past the snapshot timestamp, but return a No Data
           ' system state instead. This will be done for future data timestamps
           ' on non-future data attributes in the GetValues method.
-          If Not AttributeHasFutureData And Timestamp > CurrentTimestamp And
+          If Not SupportsFutureData And Timestamp > CurrentTimestamp And
             Timestamp < CurrentTimestamp.AddMinutes(10) Then
             Timestamp = CurrentTimestamp
           End If
@@ -419,7 +422,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
           With Result
 
-            If AttributeHasFutureData Or Not .IsFutureData Then
+            If SupportsFutureData Or Not .IsFutureData Then
 
               If Attribute.Trait Is LimitTarget Then
                 GetValues.Add(New AFValue(.ForecastItem.Measurement,
@@ -453,17 +456,14 @@ Namespace Vitens.DynamicBandwidthMonitor
 
             ' Augment Trait data with Forecast data.
             If Attribute.Trait Is LimitTarget Then
-              If .IsFutureData Then
-                ' Append Forecast data to Target in the future, marked as
-                ' questionable.
-                GetValues.Add(New AFValue(.ForecastItem.Forecast,
-                  New AFTime(.Timestamp)))
-                GetValues.Item(GetValues.Count-1).Questionable = True
-              ElseIf IsNaN(.ForecastItem.Measurement) Then
+              If IsNaN(.ForecastItem.Measurement) Or .IsFutureData Then
                 ' Replace missing historic Target data with Forecast data,
-                ' marked as substituted.
+                ' marked as substituted. Append Forecast data to Target in the
+                ' future, marked as questionable.
                 GetValues.Item(GetValues.Count-1).Value = .ForecastItem.Forecast
-                GetValues.Item(GetValues.Count-1).Substituted = True
+                GetValues.Item(GetValues.Count-1).Substituted =
+                  IsNaN(.ForecastItem.Measurement)
+                GetValues.Item(GetValues.Count-1).Questionable = .IsFutureData
               End If
             End If
 
