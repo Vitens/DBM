@@ -265,7 +265,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' AFAttribute.GetValue Overload methods which will in-turn, invoke this
       ' method.
 
-      Dim CalculationTimestamp As DateTime
+      Dim CurrentTimestamp As DateTime
       Dim Timestamp As DateTime = Now
 
       ' Check if this attribute is properly configured. If it is not configured
@@ -273,14 +273,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' GetValues method.
       If AttributeConfigurationIsValid Then
 
-        ' Retrieve snapshot timestamp.
-        CalculationTimestamp =
-          New DBMPointDriver(Attribute.Parent).CalculationTimestamp
+        ' Retrieve current calculation timestamp.
+        CurrentTimestamp =
+          New DBMPointDriver(Attribute.Parent).CurrentTimestamp
 
         If timeContext Is Nothing Then
 
-          ' No passed timestamp, use snapshot timestamp.
-          Timestamp = CalculationTimestamp
+          ' No passed timestamp, use current calculation timestamp.
+          Timestamp = CurrentTimestamp
 
         Else
 
@@ -292,9 +292,9 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' beyond 10 minutes past the snapshot timestamp, but return a No Data
           ' system state instead. This will be done for future data timestamps
           ' on non-future data attributes in the GetValues method.
-          If Not AttributeHasFutureData And Timestamp > CalculationTimestamp And
-            Timestamp < CalculationTimestamp.AddMinutes(10) Then
-            Timestamp = CalculationTimestamp
+          If Not AttributeHasFutureData And Timestamp > CurrentTimestamp And
+            Timestamp < CurrentTimestamp.AddMinutes(10) Then
+            Timestamp = CurrentTimestamp
           End If
 
         End If

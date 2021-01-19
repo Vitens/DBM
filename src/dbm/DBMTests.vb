@@ -1131,18 +1131,18 @@ Namespace Vitens.DynamicBandwidthMonitor
         InputPointDriver.SnapshotTimestamp.AddSeconds(
         2*CalculationInterval)).IsFutureData, True)
       AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
-        InputPointDriver.CalculationTimestamp.AddSeconds(
+        InputPointDriver.CurrentTimestamp.AddSeconds(
         -2*CalculationInterval)).IsFutureData, False)
       AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
-        InputPointDriver.CalculationTimestamp.AddSeconds(
+        InputPointDriver.CurrentTimestamp.AddSeconds(
         -CalculationInterval)).IsFutureData, False)
       AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
-        InputPointDriver.CalculationTimestamp).IsFutureData, False)
+        InputPointDriver.CurrentTimestamp).IsFutureData, False)
       AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
-        InputPointDriver.CalculationTimestamp.AddSeconds(
+        InputPointDriver.CurrentTimestamp.AddSeconds(
         CalculationInterval)).IsFutureData, True)
       AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
-        InputPointDriver.CalculationTimestamp.AddSeconds(
+        InputPointDriver.CurrentTimestamp.AddSeconds(
         2*CalculationInterval)).IsFutureData, True)
 
       ' GetResult - test calculation results
