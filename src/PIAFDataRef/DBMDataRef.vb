@@ -462,7 +462,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                 ' future, marked as questionable.
                 GetValues.Item(GetValues.Count-1).Value = .ForecastItem.Forecast
                 GetValues.Item(GetValues.Count-1).Substituted =
-                  IsNaN(.ForecastItem.Measurement)
+                  IsNaN(.ForecastItem.Measurement) And Not .IsFutureData
                 GetValues.Item(GetValues.Count-1).Questionable = .IsFutureData
               End If
             End If
