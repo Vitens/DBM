@@ -26,6 +26,7 @@ Imports System
 Imports System.Collections.Generic
 Imports System.ComponentModel
 Imports System.DateTime
+Imports System.Double
 Imports System.Runtime.InteropServices
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Asset.AFAttributeTrait
@@ -58,7 +59,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' returned from the DBM calculation is determined by the applied
     ' property/trait:
     '   None      Factor
-    '   Target    Measured value
+    '   Target    Measured value, forecast if not available
     '   Forecast  Forecast value
     '   Minimum   Lower control limit (p = 0.9999)
     '   LoLo      Lower control limit (default)
@@ -449,6 +450,23 @@ Namespace Vitens.DynamicBandwidthMonitor
                 GetValues.Add(New AFValue(.Factor, New AFTime(.Timestamp)))
               End If
 
+            End If
+
+            ' Augment Trait data with Forecast data.
+            If Attribute.Trait Is LimitTarget Then
+              If .IsFutureData Then
+                ' Append Forecast data to Target in the future, marked as
+                ' questionable.
+                GetValues.Add(New AFValue(.ForecastItem.Forecast,
+                  New AFTime(.Timestamp)))
+                GetValues.Item(GetValues.Count-1).Questionable = True
+              ElseIf IsNaN(.ForecastItem.Measurement) Then
+                ' Replace missing historic Target data with Forecast data,
+                ' marked as substituted.
+                GetValues.Item(GetValues.Count-1) =
+                  New AFValue(.ForecastItem.Forecast, New AFTime(.Timestamp))
+                GetValues.Item(GetValues.Count-1).Substituted = True
+              End If
             End If
 
           End With
