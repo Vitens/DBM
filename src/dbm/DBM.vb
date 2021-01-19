@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -173,6 +173,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' The end timestamp is exclusive. If a list of DBMCorrelationPoints is
       ' passed, events can be suppressed if a strong correlation is found.
 
+      Dim Offset As Integer = EMATimeOffset(EMAPreviousPeriods+1)
       Dim Result As DBMResult
       Dim CorrelationPoint As DBMCorrelationPoint
       Dim CorrelationResult As DBMResult
@@ -182,6 +183,12 @@ Namespace Vitens.DynamicBandwidthMonitor
       If CorrelationPoints Is Nothing Then ' Empty list if Nothing was passed.
         CorrelationPoints = New List(Of DBMCorrelationPoint)
       End If
+
+      ' Shift the start and end timestamps into the future using the negative
+      ' EMA time offset. Then later on, shift the resulting timestamps back to
+      ' the original value.
+      StartTimestamp = StartTimestamp.AddSeconds(-Offset)
+      EndTimestamp = EndTimestamp.AddSeconds(-Offset)
 
       ' Use culture used by the current thread if no culture was passed.
       If Culture Is Nothing Then Culture = CurrentThread.CurrentCulture
@@ -243,6 +250,13 @@ Namespace Vitens.DynamicBandwidthMonitor
         Next Result
 
       End If
+
+      ' Shift the resulting timestamps back to the original value since they
+      ' were moved into the future before to compensate for exponential moving
+      ' average (EMA) time shifting.
+      For Each Result In GetResults
+        Result.Timestamp = Result.Timestamp.AddSeconds(Offset)
+      Next Result
 
       Return GetResults
 

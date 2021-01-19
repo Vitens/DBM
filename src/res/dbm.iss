@@ -1,6 +1,6 @@
 ; Dynamic Bandwidth Monitor
 ; Leak detection method implemented in a real-time data historian
-; Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
+; Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
 ;
 ; This file is part of DBM.
 ;
@@ -52,6 +52,3 @@ Name: "{group}\Uninstall"; Filename: "{uninstallexe}"
 
 [Run]
 Filename: "{app}\register.bat"; StatusMsg: "Registering PI AF Data Reference on local AF server ..."; Flags: runhidden
-
-[UninstallDelete]
-Type: files; Name: "{app}\samples\sample?.csv"

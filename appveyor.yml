@@ -1,6 +1,6 @@
 # Dynamic Bandwidth Monitor
 # Leak detection method implemented in a real-time data historian
-# Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
+# Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
 #
 # This file is part of DBM.
 #
@@ -66,11 +66,6 @@ test_script:
     "%TEMP%\%installer%" /VERYSILENT /NORESTART
     set installationpath=%ProgramFiles(x86)%\%company%\%product%
     "%installationpath%\build\DBMAbout.exe"
-    "%installationpath%\samples\runsamples.bat"
-    powershell -Command "exit [int]!(Get-FileHash '%installationpath%\samples\sample1.csv' -Algorithm MD5).Hash.ToLower().Equals('803d8e67c7aa1a7e2610096e167d8b21')"
-    powershell -Command "exit [int]!(Get-FileHash '%installationpath%\samples\sample2.csv' -Algorithm MD5).Hash.ToLower().Equals('6d2671702c05ab051f7e705bcc127577')"
-    powershell -Command "exit [int]!(Get-FileHash '%installationpath%\samples\sample3.csv' -Algorithm MD5).Hash.ToLower().Equals('bb3e0bea35ca0fa2a56d307053fd595b')"
-    powershell -Command "exit [int]!(Get-FileHash '%installationpath%\samples\sample4.csv' -Algorithm MD5).Hash.ToLower().Equals('d43382b707a563493a4265646d185af5')"
 
 deploy:
   tag: 'v$(version)+$(commit)'

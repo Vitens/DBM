@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -172,6 +172,19 @@ Namespace Vitens.DynamicBandwidthMonitor
         PreviousSunday(StartTimestamp)
 
       Return StartTimestamp
+
+    End Function
+
+
+    Public Shared Function EMATimeOffset(Count As Integer) As Integer
+
+      ' The use of an exponential moving average (EMA) time shifts the resulting
+      ' calculated data. To compensate for this, an offset should be applied
+      ' based on exponentially increasing weighting factors. The returned value
+      ' is in seconds and is only shifted in whole intervals.
+
+      ' Floor(n/2.91136) is a fast approximation of Round(n-EMA(1..n)).
+      Return CInt(-Floor(Count/2.91136)*CalculationInterval)
 
     End Function
 
