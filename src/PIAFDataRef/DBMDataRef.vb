@@ -196,8 +196,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' are treated discretely and adjacent values are not interpolated.
 
       Get
-        ' Returns True if the value for this AFDataReference is stepped.
-        Return True
+        ' Returns True if the value for this AFDataReference is stepped. The
+        ' value is inherited from the parent attribute when the configuration
+        ' is valid, or is set to False when the configuration is invalid.
+        If AttributeConfigurationIsValid Then
+          Return Attribute.Parent.Step
+        Else
+          Return False
+        End If
       End Get
 
     End Property
