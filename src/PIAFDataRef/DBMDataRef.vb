@@ -208,7 +208,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
-    Private Function AttributeConfigurationIsValid As Boolean
+    Private Function ConfigurationIsValid As Boolean
 
       ' Check if this attribute is properly configured. The attribute and it's
       ' parent (input source) need to be an instance of an object, and the data
@@ -237,7 +237,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Returns True if the value for this AFDataReference is stepped. The
         ' value is inherited from the parent attribute when the configuration
         ' is valid, or set to False when the configuration is invalid.
-        If AttributeConfigurationIsValid Then
+        If ConfigurationIsValid Then
           Return Attribute.Parent.Step
         Else
           Return False
@@ -280,7 +280,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Check if this attribute is properly configured. If it is not configured
       ' properly, return a Configure system state. This will be done in the
       ' GetValues method.
-      If AttributeConfigurationIsValid Then
+      If ConfigurationIsValid Then
 
         ' Retrieve current calculation timestamp.
         CurrentTimestamp = New DBMPointDriver(Attribute.Parent).CurrentTimestamp
@@ -374,7 +374,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       GetValues = New AFValues
 
       ' Check if this attribute is properly configured.
-      If AttributeConfigurationIsValid Then
+      If ConfigurationIsValid Then
 
         Element = DirectCast(Attribute.Element, AFElement)
         InputPointDriver = New DBMPointDriver(Attribute.Parent) ' Parent attrib.
