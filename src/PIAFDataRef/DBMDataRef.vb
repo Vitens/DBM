@@ -198,7 +198,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Get
         ' Returns True if the value for this AFDataReference is stepped. The
         ' value is inherited from the parent attribute when the configuration
-        ' is valid, or is set to False when the configuration is invalid.
+        ' is valid, or set to False when the configuration is invalid.
         If AttributeConfigurationIsValid Then
           Return Attribute.Parent.Step
         Else
@@ -467,8 +467,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               ' as substituted, and append Forecast data to Target in the
               ' future, marked as questionable.
               GetValues.Item(GetValues.Count-1).Value = .ForecastItem.Forecast
-              GetValues.Item(GetValues.Count-1).Substituted =
-                IsNaN(.ForecastItem.Measurement) And Not .IsFutureData
+              GetValues.Item(GetValues.Count-1).Substituted = Not .IsFutureData
               GetValues.Item(GetValues.Count-1).Questionable = .IsFutureData
             End If
 
