@@ -184,31 +184,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
-    Public Overrides Readonly Property [Step] As Boolean
-
-      ' https://techsupport.osisoft.com/Documentation/PI-AF-SDK/html/P_OSIsoft_A
-      ' F_Asset_AFDataReference_Step.htm
-      ' This property returns True if the value returned for this
-      ' AFDataReference is stepped.
-      ' The step attribute defines how the values are to be interpolated. When
-      ' set to False, the values are treated as a continuous signal, and
-      ' adjacent values are linearly interpolated. When set to True, the values
-      ' are treated discretely and adjacent values are not interpolated.
-
-      Get
-        ' Returns True if the value for this AFDataReference is stepped. The
-        ' value is inherited from the parent attribute when the configuration
-        ' is valid, or set to False when the configuration is invalid.
-        If AttributeConfigurationIsValid Then
-          Return Attribute.Parent.Step
-        Else
-          Return False
-        End If
-      End Get
-
-    End Property
-
-
     Public Overrides Property ConfigString As String
 
       ' https://techsupport.osisoft.com/Documentation/PI-AF-SDK/html/P_OSIsoft_A
@@ -245,6 +220,31 @@ Namespace Vitens.DynamicBandwidthMonitor
         Attribute.Parent.Type Is GetType(Double)
 
     End Function
+
+
+    Public Overrides Readonly Property [Step] As Boolean
+
+      ' https://techsupport.osisoft.com/Documentation/PI-AF-SDK/html/P_OSIsoft_A
+      ' F_Asset_AFDataReference_Step.htm
+      ' This property returns True if the value returned for this
+      ' AFDataReference is stepped.
+      ' The step attribute defines how the values are to be interpolated. When
+      ' set to False, the values are treated as a continuous signal, and
+      ' adjacent values are linearly interpolated. When set to True, the values
+      ' are treated discretely and adjacent values are not interpolated.
+
+      Get
+        ' Returns True if the value for this AFDataReference is stepped. The
+        ' value is inherited from the parent attribute when the configuration
+        ' is valid, or set to False when the configuration is invalid.
+        If AttributeConfigurationIsValid Then
+          Return Attribute.Parent.Step
+        Else
+          Return False
+        End If
+      End Get
+
+    End Property
 
 
     Public Overrides Function GetValue(context As Object,
