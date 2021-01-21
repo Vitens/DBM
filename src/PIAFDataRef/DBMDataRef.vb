@@ -184,25 +184,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
-    Public Overrides Readonly Property [Step] As Boolean
-
-      ' https://techsupport.osisoft.com/Documentation/PI-AF-SDK/html/P_OSIsoft_A
-      ' F_Asset_AFDataReference_Step.htm
-      ' This property returns True if the value returned for this
-      ' AFDataReference is stepped.
-      ' The step attribute defines how the values are to be interpolated. When
-      ' set to False, the values are treated as a continuous signal, and
-      ' adjacent values are linearly interpolated. When set to True, the values
-      ' are treated discretely and adjacent values are not interpolated.
-
-      Get
-        ' Returns True if the value for this AFDataReference is stepped.
-        Return True
-      End Get
-
-    End Property
-
-
     Public Overrides Property ConfigString As String
 
       ' https://techsupport.osisoft.com/Documentation/PI-AF-SDK/html/P_OSIsoft_A
@@ -227,7 +208,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
-    Private Function AttributeConfigurationIsValid As Boolean
+    Private Function ConfigurationIsValid As Boolean
 
       ' Check if this attribute is properly configured. The attribute and it's
       ' parent (input source) need to be an instance of an object, and the data
@@ -239,6 +220,27 @@ Namespace Vitens.DynamicBandwidthMonitor
         Attribute.Parent.Type Is GetType(Double)
 
     End Function
+
+
+    Public Overrides Readonly Property [Step] As Boolean
+
+      ' https://techsupport.osisoft.com/Documentation/PI-AF-SDK/html/P_OSIsoft_A
+      ' F_Asset_AFDataReference_Step.htm
+      ' This property returns True if the value returned for this
+      ' AFDataReference is stepped.
+      ' The step attribute defines how the values are to be interpolated. When
+      ' set to False, the values are treated as a continuous signal, and
+      ' adjacent values are linearly interpolated. When set to True, the values
+      ' are treated discretely and adjacent values are not interpolated.
+
+      Get
+        ' Returns True if the value for this AFDataReference is stepped. The
+        ' value is inherited from the parent attribute when the configuration
+        ' is valid, or set to False when the configuration is invalid.
+        Return ConfigurationIsValid AndAlso Attribute.Parent.Step
+      End Get
+
+    End Property
 
 
     Public Overrides Function GetValue(context As Object,
@@ -274,7 +276,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Check if this attribute is properly configured. If it is not configured
       ' properly, return a Configure system state. This will be done in the
       ' GetValues method.
-      If AttributeConfigurationIsValid Then
+      If ConfigurationIsValid Then
 
         ' Retrieve current calculation timestamp.
         CurrentTimestamp = New DBMPointDriver(Attribute.Parent).CurrentTimestamp
@@ -368,7 +370,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       GetValues = New AFValues
 
       ' Check if this attribute is properly configured.
-      If AttributeConfigurationIsValid Then
+      If ConfigurationIsValid Then
 
         Element = DirectCast(Attribute.Element, AFElement)
         InputPointDriver = New DBMPointDriver(Attribute.Parent) ' Parent attrib.
@@ -461,8 +463,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               ' as substituted, and append Forecast data to Target in the
               ' future, marked as questionable.
               GetValues.Item(GetValues.Count-1).Value = .ForecastItem.Forecast
-              GetValues.Item(GetValues.Count-1).Substituted =
-                IsNaN(.ForecastItem.Measurement) And Not .IsFutureData
+              GetValues.Item(GetValues.Count-1).Substituted = Not .IsFutureData
               GetValues.Item(GetValues.Count-1).Questionable = .IsFutureData
             End If
 
