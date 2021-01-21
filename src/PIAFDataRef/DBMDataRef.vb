@@ -237,11 +237,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Returns True if the value for this AFDataReference is stepped. The
         ' value is inherited from the parent attribute when the configuration
         ' is valid, or set to False when the configuration is invalid.
-        If ConfigurationIsValid Then
-          Return Attribute.Parent.Step
-        Else
-          Return False
-        End If
+        Return ConfigurationIsValid AndAlso Attribute.Parent.Step
       End Get
 
     End Property
