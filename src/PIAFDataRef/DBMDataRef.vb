@@ -27,6 +27,7 @@ Imports System.Collections.Generic
 Imports System.ComponentModel
 Imports System.DateTime
 Imports System.Double
+Imports System.Math
 Imports System.Runtime.InteropServices
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Asset.AFAttributeTrait
@@ -471,9 +472,11 @@ Namespace Vitens.DynamicBandwidthMonitor
                   GetValues.Item(GetValues.Count-1).
                     Substituted = Not .IsFutureData
                 End If
-                ' Mark events and forecast data as questionable.
-                GetValues.Item(GetValues.Count-1).
-                  Questionable = .HasEvent Or .IsFutureData
+                ' Mark events (exceeding LimitMinimum and LimitMaximum control
+                ' limits) and forecast data as questionable.
+                GetValues.Item(GetValues.Count-1).Questionable = Abs(
+                  .ForecastItem.Measurement-.ForecastItem.Forecast) >
+                  .ForecastItem.Range(pValueMinMax) Or .IsFutureData
               End If
 
             End If
