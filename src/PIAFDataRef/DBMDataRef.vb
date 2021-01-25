@@ -27,6 +27,7 @@ Imports System.Collections.Generic
 Imports System.ComponentModel
 Imports System.DateTime
 Imports System.Double
+Imports System.Math
 Imports System.Runtime.InteropServices
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Asset.AFAttributeTrait
@@ -375,10 +376,12 @@ Namespace Vitens.DynamicBandwidthMonitor
         Element = DirectCast(Attribute.Element, AFElement)
         InputPointDriver = New DBMPointDriver(Attribute.Parent) ' Parent attrib.
 
-        ' Retrieve correlation points from AF hierarchy for non-root elements
-        ' only when calculating the DBM factor value and if correlation
-        ' calculations are not disabled using categories.
-        If Not Element.IsRoot And Attribute.Trait Is Nothing And
+        ' Retrieve correlation points from AF hierarchy for first-level child
+        ' attributes in non-root elements only when calculating the DBM factor
+        ' value and if correlation calculations are not disabled using
+        ' categories.
+        If Not Element.IsRoot And Attribute.Parent.Parent Is Nothing And
+          Attribute.Trait Is Nothing And
           Not Attribute.CategoriesString.Contains(CategoryNoCorrelation) Then
 
           ParentElement = Element.Parent
@@ -424,47 +427,58 @@ Namespace Vitens.DynamicBandwidthMonitor
 
           With Result
 
-            If SupportsFutureData Or Not .IsFutureData Then
+            If .TimestampIsValid Then
 
-              If Attribute.Trait Is LimitTarget Then
-                GetValues.Add(New AFValue(.ForecastItem.Measurement,
-                  New AFTime(.Timestamp)))
-              ElseIf Attribute.Trait Is Forecast Then
-                GetValues.Add(New AFValue(.ForecastItem.Forecast,
-                  New AFTime(.Timestamp)))
-              ElseIf Attribute.Trait Is LimitMinimum Then
-                GetValues.Add(New AFValue(.ForecastItem.Forecast-
-                  .ForecastItem.Range(pValueMinMax), New AFTime(.Timestamp)))
-              ElseIf Attribute.Trait Is LimitLoLo Then
-               GetValues.Add(New AFValue(.ForecastItem.LowerControlLimit,
-                 New AFTime(.Timestamp)))
-              ElseIf Attribute.Trait Is LimitLo Then
-                GetValues.Add(New AFValue(.ForecastItem.Forecast-
-                  .ForecastItem.Range(pValueLoHi), New AFTime(.Timestamp)))
-              ElseIf Attribute.Trait Is LimitHi Then
-                GetValues.Add(New AFValue(.ForecastItem.Forecast+
-                  .ForecastItem.Range(pValueLoHi), New AFTime(.Timestamp)))
-              ElseIf Attribute.Trait Is LimitHiHi Then
-                GetValues.Add(New AFValue(.ForecastItem.UpperControlLimit,
-                  New AFTime(.Timestamp)))
-              ElseIf Attribute.Trait Is LimitMaximum Then
-                GetValues.Add(New AFValue(.ForecastItem.Forecast+
-                  .ForecastItem.Range(pValueMinMax), New AFTime(.Timestamp)))
-              Else
-                GetValues.Add(New AFValue(.Factor, New AFTime(.Timestamp)))
+              If SupportsFutureData Or Not .IsFutureData Then
+
+                If Attribute.Trait Is LimitTarget Then
+                  GetValues.Add(New AFValue(.ForecastItem.Measurement,
+                    New AFTime(.Timestamp)))
+                ElseIf Attribute.Trait Is Forecast Then
+                  GetValues.Add(New AFValue(.ForecastItem.Forecast,
+                    New AFTime(.Timestamp)))
+                ElseIf Attribute.Trait Is LimitMinimum Then
+                  GetValues.Add(New AFValue(.ForecastItem.Forecast-
+                    .ForecastItem.Range(pValueMinMax), New AFTime(.Timestamp)))
+                ElseIf Attribute.Trait Is LimitLoLo Then
+                  GetValues.Add(New AFValue(.ForecastItem.LowerControlLimit,
+                    New AFTime(.Timestamp)))
+                ElseIf Attribute.Trait Is LimitLo Then
+                  GetValues.Add(New AFValue(.ForecastItem.Forecast-
+                    .ForecastItem.Range(pValueLoHi), New AFTime(.Timestamp)))
+                ElseIf Attribute.Trait Is LimitHi Then
+                  GetValues.Add(New AFValue(.ForecastItem.Forecast+
+                    .ForecastItem.Range(pValueLoHi), New AFTime(.Timestamp)))
+                ElseIf Attribute.Trait Is LimitHiHi Then
+                  GetValues.Add(New AFValue(.ForecastItem.UpperControlLimit,
+                    New AFTime(.Timestamp)))
+                ElseIf Attribute.Trait Is LimitMaximum Then
+                  GetValues.Add(New AFValue(.ForecastItem.Forecast+
+                    .ForecastItem.Range(pValueMinMax), New AFTime(.Timestamp)))
+                Else
+                  GetValues.Add(New AFValue(.Factor, New AFTime(.Timestamp)))
+                End If
+
               End If
 
-            End If
+              ' Augment target data with forecast.
+              If Attribute.Trait Is LimitTarget Then
+                If IsNaN(.ForecastItem.Measurement) Or .IsFutureData Then
+                  ' Replace missing data with forecast, append forecast data to
+                  ' the future.
+                  GetValues.Item(GetValues.Count-1).
+                    Value = .ForecastItem.Forecast
+                  ' Mark replaced data as substituted.
+                  GetValues.Item(GetValues.Count-1).
+                    Substituted = Not .IsFutureData
+                End If
+                ' Mark events (exceeding LimitMinimum and LimitMaximum control
+                ' limits) and forecast data as questionable.
+                GetValues.Item(GetValues.Count-1).Questionable = Abs(
+                  .ForecastItem.Measurement-.ForecastItem.Forecast) >
+                  .ForecastItem.Range(pValueMinMax) Or .IsFutureData
+              End If
 
-            ' Augment Trait data with Forecast data.
-            If Attribute.Trait Is LimitTarget And
-              (IsNaN(.ForecastItem.Measurement) Or .IsFutureData) Then
-              ' Replace missing historic Target data with Forecast data, marked
-              ' as substituted, and append Forecast data to Target in the
-              ' future, marked as questionable.
-              GetValues.Item(GetValues.Count-1).Value = .ForecastItem.Forecast
-              GetValues.Item(GetValues.Count-1).Substituted = Not .IsFutureData
-              GetValues.Item(GetValues.Count-1).Questionable = .IsFutureData
             End If
 
           End With
