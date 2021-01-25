@@ -427,7 +427,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
           With Result
 
-            If Not TimeZoneInfo.Local.IsInvalidTime(.Timestamp) Then ' DST
+            If .TimestampIsValid Then
 
               If SupportsFutureData Or Not .IsFutureData Then
 

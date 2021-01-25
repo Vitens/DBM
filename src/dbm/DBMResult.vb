@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -76,6 +76,16 @@ Namespace Vitens.DynamicBandwidthMonitor
           (.Measurement < .LowerControlLimit Or
           .Measurement > .UpperControlLimit)
       End With
+
+    End Function
+
+
+    Public Function TimestampIsValid As Boolean
+
+      ' Returns true if the timestamp is valid. When DST goes in effect, there
+      ' is a missing hour in local time.
+
+      Return Not TimeZoneInfo.Local.IsInvalidTime(Timestamp)
 
     End Function
 
