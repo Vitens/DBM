@@ -427,51 +427,56 @@ Namespace Vitens.DynamicBandwidthMonitor
 
           With Result
 
-            If SupportsFutureData Or Not .IsFutureData Then
+            If Not TimeZoneInfo.Local.IsInvalidTime(.Timestamp) Then ' DST
 
+              If SupportsFutureData Or Not .IsFutureData Then
+
+                If Attribute.Trait Is LimitTarget Then
+                  GetValues.Add(New AFValue(.ForecastItem.Measurement,
+                    New AFTime(.Timestamp)))
+                ElseIf Attribute.Trait Is Forecast Then
+                  GetValues.Add(New AFValue(.ForecastItem.Forecast,
+                    New AFTime(.Timestamp)))
+                ElseIf Attribute.Trait Is LimitMinimum Then
+                  GetValues.Add(New AFValue(.ForecastItem.Forecast-
+                    .ForecastItem.Range(pValueMinMax), New AFTime(.Timestamp)))
+                ElseIf Attribute.Trait Is LimitLoLo Then
+                  GetValues.Add(New AFValue(.ForecastItem.LowerControlLimit,
+                    New AFTime(.Timestamp)))
+                ElseIf Attribute.Trait Is LimitLo Then
+                  GetValues.Add(New AFValue(.ForecastItem.Forecast-
+                    .ForecastItem.Range(pValueLoHi), New AFTime(.Timestamp)))
+                ElseIf Attribute.Trait Is LimitHi Then
+                  GetValues.Add(New AFValue(.ForecastItem.Forecast+
+                    .ForecastItem.Range(pValueLoHi), New AFTime(.Timestamp)))
+                ElseIf Attribute.Trait Is LimitHiHi Then
+                  GetValues.Add(New AFValue(.ForecastItem.UpperControlLimit,
+                    New AFTime(.Timestamp)))
+                ElseIf Attribute.Trait Is LimitMaximum Then
+                  GetValues.Add(New AFValue(.ForecastItem.Forecast+
+                    .ForecastItem.Range(pValueMinMax), New AFTime(.Timestamp)))
+                Else
+                  GetValues.Add(New AFValue(.Factor, New AFTime(.Timestamp)))
+                End If
+
+              End If
+
+              ' Augment target data with forecast.
               If Attribute.Trait Is LimitTarget Then
-                GetValues.Add(New AFValue(.ForecastItem.Measurement,
-                  New AFTime(.Timestamp)))
-              ElseIf Attribute.Trait Is Forecast Then
-                GetValues.Add(New AFValue(.ForecastItem.Forecast,
-                  New AFTime(.Timestamp)))
-              ElseIf Attribute.Trait Is LimitMinimum Then
-                GetValues.Add(New AFValue(.ForecastItem.Forecast-
-                  .ForecastItem.Range(pValueMinMax), New AFTime(.Timestamp)))
-              ElseIf Attribute.Trait Is LimitLoLo Then
-               GetValues.Add(New AFValue(.ForecastItem.LowerControlLimit,
-                 New AFTime(.Timestamp)))
-              ElseIf Attribute.Trait Is LimitLo Then
-                GetValues.Add(New AFValue(.ForecastItem.Forecast-
-                  .ForecastItem.Range(pValueLoHi), New AFTime(.Timestamp)))
-              ElseIf Attribute.Trait Is LimitHi Then
-                GetValues.Add(New AFValue(.ForecastItem.Forecast+
-                  .ForecastItem.Range(pValueLoHi), New AFTime(.Timestamp)))
-              ElseIf Attribute.Trait Is LimitHiHi Then
-                GetValues.Add(New AFValue(.ForecastItem.UpperControlLimit,
-                  New AFTime(.Timestamp)))
-              ElseIf Attribute.Trait Is LimitMaximum Then
-                GetValues.Add(New AFValue(.ForecastItem.Forecast+
-                  .ForecastItem.Range(pValueMinMax), New AFTime(.Timestamp)))
-              Else
-                GetValues.Add(New AFValue(.Factor, New AFTime(.Timestamp)))
-              End If
-
-            End If
-
-            ' Augment target data with forecast.
-            If Attribute.Trait Is LimitTarget Then
-              If IsNaN(.ForecastItem.Measurement) Or .IsFutureData Then
-                ' Replace missing data with forecast, append forecast data to
-                ' the future.
-                GetValues.Item(GetValues.Count-1).Value = .ForecastItem.Forecast
-                ' Mark replaced data as substituted.
+                If IsNaN(.ForecastItem.Measurement) Or .IsFutureData Then
+                  ' Replace missing data with forecast, append forecast data to
+                  ' the future.
+                  GetValues.Item(GetValues.Count-1).
+                    Value = .ForecastItem.Forecast
+                  ' Mark replaced data as substituted.
+                  GetValues.Item(GetValues.Count-1).
+                    Substituted = Not .IsFutureData
+                End If
+                ' Mark events and forecast data as questionable.
                 GetValues.Item(GetValues.Count-1).
-                  Substituted = Not .IsFutureData
+                  Questionable = .HasEvent Or .IsFutureData
               End If
-              ' Mark events and forecast data as questionable.
-              GetValues.Item(GetValues.Count-1).
-                Questionable = .HasEvent Or .IsFutureData
+
             End If
 
           End With
