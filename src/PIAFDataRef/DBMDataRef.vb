@@ -456,15 +456,19 @@ Namespace Vitens.DynamicBandwidthMonitor
 
             End If
 
-            ' Augment Trait data with Forecast data.
-            If Attribute.Trait Is LimitTarget And
-              (IsNaN(.ForecastItem.Measurement) Or .IsFutureData) Then
-              ' Replace missing historic Target data with Forecast data, marked
-              ' as substituted, and append Forecast data to Target in the
-              ' future, marked as questionable.
-              GetValues.Item(GetValues.Count-1).Value = .ForecastItem.Forecast
-              GetValues.Item(GetValues.Count-1).Substituted = Not .IsFutureData
-              GetValues.Item(GetValues.Count-1).Questionable = .IsFutureData
+            ' Augment target data with forecast.
+            If Attribute.Trait Is LimitTarget Then
+              If IsNaN(.ForecastItem.Measurement) Or .IsFutureData Then
+                ' Replace missing data with forecast, append forecast data to
+                ' the future.
+                GetValues.Item(GetValues.Count-1).Value = .ForecastItem.Forecast
+                ' Mark replaced data as substituted.
+                GetValues.Item(GetValues.Count-1).
+                  Substituted = Not .IsFutureData
+              End If
+              ' Mark events and forecast data as questionable.
+              GetValues.Item(GetValues.Count-1).
+                Questionable = .Factor.HasEvent Or .IsFutureData
             End If
 
           End With
