@@ -468,7 +468,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               End If
               ' Mark events and forecast data as questionable.
               GetValues.Item(GetValues.Count-1).
-                Questionable = .Factor.HasEvent Or .IsFutureData
+                Questionable = .HasEvent Or .IsFutureData
             End If
 
           End With
