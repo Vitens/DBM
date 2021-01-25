@@ -376,9 +376,10 @@ Namespace Vitens.DynamicBandwidthMonitor
         InputPointDriver = New DBMPointDriver(Attribute.Parent) ' Parent attrib.
 
         ' Retrieve correlation points from AF hierarchy for non-root elements
-        ' only when calculating the DBM factor value and if correlation
-        ' calculations are not disabled using categories.
-        If Not Element.IsRoot And Attribute.Trait Is Nothing And
+        ' only when calculating the DBM factor value or target, and if
+        ' correlation calculations are not disabled using categories.
+        If Not Element.IsRoot And
+          (Attribute.Trait Is Nothing Or Attribute.Trait Is LimitTarget) And
           Not Attribute.CategoriesString.Contains(CategoryNoCorrelation) Then
 
           ParentElement = Element.Parent
