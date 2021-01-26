@@ -365,10 +365,15 @@ Namespace Vitens.DynamicBandwidthMonitor
       ExponentialMovingAverage = 0
       Weight = 1 ' Initial weight
       For Each Value In Values ' Least significant value first
-        ExponentialMovingAverage += Value*Weight
-        TotalWeight += Weight
+        If Not IsNaN(Value) Then ' Exclude NaN values.
+          ExponentialMovingAverage += Value*Weight
+          TotalWeight += Weight
+        End If
         Weight /= 1-2/(Values.Length+1) ' Increase weight for more recent values
       Next
+
+      If TotalWeight = 0 Then Return NaN ' No non-NaN values.
+
       ExponentialMovingAverage /= TotalWeight
 
       Return ExponentialMovingAverage
