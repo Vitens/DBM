@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -348,6 +348,28 @@ Namespace Vitens.DynamicBandwidthMonitor
       Next i
 
       Return FilteredValues
+
+    End Function
+
+
+    Public Shared Function ExponentialWeights(Count As Integer) As Double()
+
+      Dim Weight, Weights(Count-1), TotalWeight As Double
+      Dim i As Integer
+
+      Weight = 1 ' Initial weight.
+
+      For i = 1 To Count
+        Weights(i-1) = Weight
+        TotalWeight += Weight
+        Weight /= 1-2/(Count+1) ' Increase weight.
+      Next i
+
+      For i = 1 To Count
+        Weights(i-1) /= TotalWeight ' Normalise weights.
+      Next i
+
+      Return Weights
 
     End Function
 
