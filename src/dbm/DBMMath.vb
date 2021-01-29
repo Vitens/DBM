@@ -383,19 +383,21 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' exponentially.
 
       Dim i As Integer
-      Dim Value, TotalWeight As Double
       Dim Weights() As Double = ExponentialWeights(Values.Length)
-
-      If NonNaNCount(Values) = 0 Then Return NaN ' No non-NaN values.
+      Dim TotalWeight As Double
 
       For i = 0 To Values.Length-1
         If Not IsNaN(Values(i)) Then ' Exclude NaN values.
-          Value += Values(i)*Weights(i)
+          ExponentialMovingAverage += Values(i)*Weights(i)
           TotalWeight += Weights(i) ' Used to correct for NaN values.
         End If
       Next i
 
-      Return Value/TotalWeight
+      If TotalWeight = 0 Then Return NaN ' No non-NaN values.
+
+      ExponentialMovingAverage /= TotalWeight
+
+      Return ExponentialMovingAverage
 
     End Function
 
