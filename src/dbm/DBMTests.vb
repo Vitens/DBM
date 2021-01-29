@@ -523,8 +523,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         {NaN, 10, NaN, 10, NaN, 10, NaN, 30, 20, NaN, 999}),
         {NaN, 10, NaN, 10, NaN, 10, NaN, 30, 20, NaN, NaN})
 
-      AssertAlmostEqual(ExponentialWeights(1)(0), 1)
-      AssertAlmostEqual(ExponentialWeights(2)(1), 0.75)
+      AssertEqual(ExponentialWeights(1)(0), 1)
+      AssertEqual(ExponentialWeights(2)(1), 0.75)
       AssertAlmostEqual(ExponentialWeights(3)(2), 0.5714)
       AssertAlmostEqual(ExponentialWeights(4)(3), 0.4596)
       AssertAlmostEqual(ExponentialWeights(5)(4), 0.3839)
