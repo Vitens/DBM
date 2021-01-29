@@ -362,7 +362,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       For i = 1 To Count
         Weights(i-1) = Weight
         TotalWeight += Weight
-        Weight /= 1-2/(Count+1) ' Increase weight.
+        Weight /= 1-2/(Count+1) ' Increase weight using alpha.
       Next i
 
       For i = 1 To Count
@@ -382,23 +382,20 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' response filter that applies weighting factors which increase
       ' exponentially.
 
-      Dim Weight, TotalWeight, Value As Double
+      Dim i As Integer
+      Dim Value, TotalWeight As Double
+      Dim Weights() As Double = ExponentialWeights(Values.Length)
 
-      ExponentialMovingAverage = 0
-      Weight = 1 ' Initial weight
-      For Each Value In Values ' Least significant value first
-        If Not IsNaN(Value) Then ' Exclude NaN values.
-          ExponentialMovingAverage += Value*Weight
-          TotalWeight += Weight
+      If NonNaNCount(Values) = 0 Then Return NaN ' No non-NaN values.
+
+      For i = 0 To Values.Length-1
+        If Not IsNaN(Values(i)) Then ' Exclude NaN values.
+          Value += Values(i)*Weights(i)
+          TotalWeight += Weights(i) ' Used to correct for NaN values.
         End If
-        Weight /= 1-2/(Values.Length+1) ' Increase weight for more recent values
-      Next
+      Next i
 
-      If TotalWeight = 0 Then Return NaN ' No non-NaN values.
-
-      ExponentialMovingAverage /= TotalWeight
-
-      Return ExponentialMovingAverage
+      Return Value/TotalWeight
 
     End Function
 
