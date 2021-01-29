@@ -354,19 +354,20 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function ExponentialWeights(Count As Integer) As Double()
 
-      Dim Weight, Weights(Count-1), TotalWeight As Double
+      Dim Alpha, Weight, Weights(Count-1), TotalWeight As Double
       Dim i As Integer
 
-      Weight = 1 ' Initial weight.
+      Alpha = 2/(Count+1) ' Smoothing factor
+      Weight = 1 ' Initial weight
 
       For i = 1 To Count
         Weights(i-1) = Weight
         TotalWeight += Weight
-        Weight /= 1-2/(Count+1) ' Increase weight using alpha.
+        Weight /= 1-Alpha ' Increase weight
       Next i
 
       For i = 1 To Count
-        Weights(i-1) /= TotalWeight ' Normalise weights.
+        Weights(i-1) /= TotalWeight ' Normalise weights
       Next i
 
       Return Weights
