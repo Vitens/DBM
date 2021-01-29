@@ -554,7 +554,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         {4.5353, 41.4033, 86.2619}), 61.7699)
       AssertAlmostEqual(ExponentialMovingAverage(
         {79.048, 37.3536, 96.1953}), 76.9338)
-      AssertEqual(ExponentialMovingAverage({87.1446, 5.6237, 94.9557}), 68.3164)
+      AssertAlmostEqual(ExponentialMovingAverage(
+        {87.1446, 5.6237, 94.9557}), 68.3164)
       AssertAlmostEqual(ExponentialMovingAverage(
         {36.4019, 52.4868, 76.7112}), 64.0315)
       AssertAlmostEqual(ExponentialMovingAverage(
