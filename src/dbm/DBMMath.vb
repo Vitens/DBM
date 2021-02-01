@@ -394,7 +394,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         End If
       Next i
 
-      If TotalWeight = 0 Then Return NaN ' No non-NaN values.
+      ' Return NaN if there are no non-NaN values, or if the most recent value
+      ' is NaN.
+      If TotalWeight = 0 Or IsNaN(Values(Values.Length-1)) Then Return NaN
 
       ExponentialMovingAverage /= TotalWeight
 
