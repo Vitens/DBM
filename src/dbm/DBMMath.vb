@@ -360,14 +360,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       Alpha = 2/(Count+1) ' Smoothing factor
       Weight = 1 ' Initial weight
 
-      For i = 1 To Count
-        Weights(i-1) = Weight
+      For i = 0 To Count-1
+        Weights(i) = Weight
         TotalWeight += Weight
         Weight /= 1-Alpha ' Increase weight
       Next i
 
-      For i = 1 To Count
-        Weights(i-1) /= TotalWeight ' Normalise weights
+      For i = 0 To Count-1
+        Weights(i) /= TotalWeight ' Normalise weights
       Next i
 
       Return Weights
