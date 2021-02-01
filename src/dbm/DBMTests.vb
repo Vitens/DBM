@@ -523,6 +523,27 @@ Namespace Vitens.DynamicBandwidthMonitor
         {NaN, 10, NaN, 10, NaN, 10, NaN, 30, 20, NaN, 999}),
         {NaN, 10, NaN, 10, NaN, 10, NaN, 30, 20, NaN, NaN})
 
+      AssertEqual(ExponentialWeights(1)(0), 1)
+      AssertAlmostEqual(ExponentialWeights(2)(0), 0.25)
+      AssertAlmostEqual(ExponentialWeights(3)(1), 0.2857)
+      AssertAlmostEqual(ExponentialWeights(4)(2), 0.2757)
+      AssertAlmostEqual(ExponentialWeights(5)(3), 0.2559)
+      AssertAlmostEqual(ExponentialWeights(6)(4), 0.2353)
+      AssertAlmostEqual(ExponentialWeights(7)(1), 0.0685)
+      AssertAlmostEqual(ExponentialWeights(8)(3), 0.0939)
+      AssertAlmostEqual(ExponentialWeights(9)(1), 0.0484)
+      AssertAlmostEqual(ExponentialWeights(10)(3), 0.063)
+      AssertAlmostEqual(ExponentialWeights(11)(0), 0.0311)
+      AssertAlmostEqual(ExponentialWeights(12)(1), 0.0335)
+      AssertAlmostEqual(ExponentialWeights(13)(3), 0.0412)
+      AssertAlmostEqual(ExponentialWeights(14)(7), 0.0653)
+      AssertAlmostEqual(ExponentialWeights(15)(0), 0.0223)
+      AssertAlmostEqual(ExponentialWeights(16)(9), 0.0642)
+      AssertAlmostEqual(ExponentialWeights(17)(4), 0.0313)
+      AssertAlmostEqual(ExponentialWeights(18)(15), 0.0974)
+      AssertAlmostEqual(ExponentialWeights(19)(11), 0.0553)
+      AssertAlmostEqual(ExponentialWeights(20)(16), 0.0816)
+
       AssertEqual(ExponentialMovingAverage({70.5547}), 70.5547)
       AssertAlmostEqual(ExponentialMovingAverage({53.3424, 57.9519}), 56.7995)
       AssertAlmostEqual(ExponentialMovingAverage({28.9562, 30.1948}), 29.8852)
@@ -533,7 +554,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         {4.5353, 41.4033, 86.2619}), 61.7699)
       AssertAlmostEqual(ExponentialMovingAverage(
         {79.048, 37.3536, 96.1953}), 76.9338)
-      AssertEqual(ExponentialMovingAverage({87.1446, 5.6237, 94.9557}), 68.3164)
+      AssertAlmostEqual(ExponentialMovingAverage(
+        {87.1446, 5.6237, 94.9557}), 68.3164)
       AssertAlmostEqual(ExponentialMovingAverage(
         {36.4019, 52.4868, 76.7112}), 64.0315)
       AssertAlmostEqual(ExponentialMovingAverage(

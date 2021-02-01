@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -352,6 +352,29 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Shared Function ExponentialWeights(Count As Integer) As Double()
+
+      Dim Alpha, Weight, Weights(Count-1), TotalWeight As Double
+      Dim i As Integer
+
+      Alpha = 2/(Count+1) ' Smoothing factor
+      Weight = 1 ' Initial weight
+
+      For i = 0 To Count-1
+        Weights(i) = Weight
+        TotalWeight += Weight
+        Weight /= 1-Alpha ' Increase weight
+      Next i
+
+      For i = 0 To Count-1
+        Weights(i) /= TotalWeight ' Normalise weights
+      Next i
+
+      Return Weights
+
+    End Function
+
+
     Public Shared Function ExponentialMovingAverage(
       Values() As Double) As Double
 
@@ -360,17 +383,16 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' response filter that applies weighting factors which increase
       ' exponentially.
 
-      Dim Weight, TotalWeight, Value As Double
+      Dim i As Integer
+      Dim Weights() As Double = ExponentialWeights(Values.Length)
+      Dim TotalWeight As Double
 
-      ExponentialMovingAverage = 0
-      Weight = 1 ' Initial weight
-      For Each Value In Values ' Least significant value first
-        If Not IsNaN(Value) Then ' Exclude NaN values.
-          ExponentialMovingAverage += Value*Weight
-          TotalWeight += Weight
+      For i = 0 To Values.Length-1
+        If Not IsNaN(Values(i)) Then ' Exclude NaN values.
+          ExponentialMovingAverage += Values(i)*Weights(i)
+          TotalWeight += Weights(i) ' Used to correct for NaN values.
         End If
-        Weight /= 1-2/(Values.Length+1) ' Increase weight for more recent values
-      Next
+      Next i
 
       If TotalWeight = 0 Then Return NaN ' No non-NaN values.
 
