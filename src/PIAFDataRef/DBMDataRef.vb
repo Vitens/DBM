@@ -62,13 +62,26 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' property/trait:
     '   None      Factor
     '   Target    Measured value, forecast if not available
+    '             Indicates the aimed-for measurement value or process output.
     '   Forecast  Forecast value
     '   Minimum   Lower control limit (p = 0.9999)
+    '             Indicates the very lowest possible measurement value or
+    '             process output.
     '   LoLo      Lower control limit (default)
+    '             Indicates a very low measurement value or process output,
+    '             typically an abnormal one that initiates an alarm.
     '   Lo        Lower control limit (p = 0.95)
+    '             Indicates a low measurement value or process output, typically
+    '             one that initiates a warning.
     '   Hi        Upper control limit (p = 0.95)
+    '             Indicates a high measurement value or process output,
+    '             typically one that initiates a warning.
     '   HiHi      Upper control limit (default)
+    '             Indicates a very high measurement value or process output,
+    '             typically an abnormal one that initiates an alarm.
     '   Maximum   Upper control limit (p = 0.9999)
+    '             Indicates the very highest possible measurement value or
+    '             process output.
 
 
     Const CategoryNoCorrelation As String = "NoCorrelation"

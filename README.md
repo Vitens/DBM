@@ -99,17 +99,17 @@ DBMTester is a command line utility that can be used to quickly calculate DBM re
 ### DBMDataRef
 DBMDataRef is a custom OSIsoft PI Asset Framework data reference which integrates DBM with PI AF. The `register.bat` script automatically registers the data reference and support assemblies when run on the PI AF server. The data reference uses the parent attribute as input and automatically uses attributes from sibling and parent elements based on the same template containing good data for correlation calculations, unless the `NoCorrelation` category is applied to the output attribute. The value returned from the DBM calculation is determined by the applied property/trait:
 
-| Property/trait | Return value                              |
-| -------------- | ----------------------------------------- |
-| None           | Factor                                    |
-| `Target`       | Measured value, forecast if not available |
-| `Forecast`     | Forecast value                            |
-| `Minimum`      | Lower control limit (p = 0.9999)          |
-| `LoLo`         | Lower control limit (default)             |
-| `Lo`           | Lower control limit (p = 0.95)            |
-| `Hi`           | Upper control limit (p = 0.95)            |
-| `HiHi`         | Upper control limit (default)             |
-| `Maximum`      | Upper control limit (p = 0.9999)          |
+| Property/trait | Return value                              | Description                                                                                                   |
+| -------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| None           | Factor                                    |                                                                                                               |
+| `Target`       | Measured value, forecast if not available | Indicates the aimed-for measurement value or process output.                                                  |
+| `Forecast`     | Forecast value                            |                                                                                                               |
+| `Minimum`      | Lower control limit (p = 0.9999)          | Indicates the very lowest possible measurement value or process output.                                       |
+| `LoLo`         | Lower control limit (default)             | Indicates a very low measurement value or process output, typically an abnormal one that initiates an alarm.  |
+| `Lo`           | Lower control limit (p = 0.95)            | Indicates a low measurement value or process output, typically one that initiates a warning.                  |
+| `Hi`           | Upper control limit (p = 0.95)            | Indicates a high measurement value or process output, typically one that initiates a warning.                 |
+| `HiHi`         | Upper control limit (default)             | Indicates a very high measurement value or process output, typically an abnormal one that initiates an alarm. |
+| `Maximum`      | Upper control limit (p = 0.9999)          | Indicates the very highest possible measurement value or process output.                                      |
 
 Beginning with PI AF 2018 SP3 Patch 2, all AF plugins must be signed with a valid certificate. Users must ensure any 3rd party or custom plugins are signed with a valid certificate. Digitally signing plugins increases the users' confidence that it is from a trusted entity. AF data references that are not signed could have been tampered with and are potentially dangerous. Therefore, in order to protect its users, OSIsoft software enforces that all AF 2.x data reference plugins be signed. Use `sign.bat` to sign the data reference and support assemblies with your pfx certificate file before registering the data reference with PI AF.
 
