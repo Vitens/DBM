@@ -461,13 +461,10 @@ Namespace Vitens.DynamicBandwidthMonitor
                     (i > 0 AndAlso Not RawValues.Item(i-1).IsGood) Or
                     (i = RawValues.Count And .IsFutureData) Then
                     If IsNaN(.ForecastItem.Forecast) Then
-                      ' If there are no calculation results, return a NoData
-                      ' state. Definition: 'Data-retrieval functions use this
-                      ' state for time periods where no archive values for a tag
-                      ' can exist 10 minutes into the future or before the
-                      ' oldest mounted archive.'
+                      ' If there is no valid forecast result, return an
+                      ' InvalidData state. Definition: 'Invalid Data state.'
                       GetValues.Add(AFValue.CreateSystemStateValue(
-                        AFSystemStateCode.NoData, New AFTime(.Timestamp)))
+                        AFSystemStateCode.InvalidData, New AFTime(.Timestamp)))
                     Else
                       ' Replace bad values with forecast, append forecast values
                       ' to the future.
