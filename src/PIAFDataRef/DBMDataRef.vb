@@ -460,20 +460,30 @@ Namespace Vitens.DynamicBandwidthMonitor
                     Not RawValues.Item(i).IsGood) Or
                     (i > 0 AndAlso Not RawValues.Item(i-1).IsGood) Or
                     (i = RawValues.Count And .IsFutureData) Then
-                    ' Replace bad values with forecast, append forecast values
-                    ' to the future.
-                    GetValues.Add(New AFValue(.ForecastItem.Forecast,
-                      New AFTime(.Timestamp)))
-                    ' Mark replaced (not good) values as substituted.
-                    GetValues.Item(GetValues.Count-1).Substituted =
-                      Not i = RawValues.Count Or Not .IsFutureData
-                    ' Mark forecast values as questionable.
-                    GetValues.Item(GetValues.Count-1).Questionable =
-                      i = RawValues.Count And .IsFutureData
+                    If IsNaN(.ForecastItem.Forecast) Then
+                      ' If there are no calculation results, return a NoData
+                      ' state. Definition: 'Data-retrieval functions use this
+                      ' state for time periods where no archive values for a tag
+                      ' can exist 10 minutes into the future or before the
+                      ' oldest mounted archive.'
+                      GetValues.Add(AFValue.CreateSystemStateValue(
+                        AFSystemStateCode.NoData, New AFTime(.Timestamp)))
+                    Else
+                      ' Replace bad values with forecast, append forecast values
+                      ' to the future.
+                      GetValues.Add(New AFValue(.ForecastItem.Forecast,
+                        New AFTime(.Timestamp)))
+                      ' Mark replaced (not good) values as substituted.
+                      GetValues.Item(GetValues.Count-1).Substituted =
+                        Not i = RawValues.Count Or Not .IsFutureData
+                      ' Mark forecast values as questionable.
+                      GetValues.Item(GetValues.Count-1).Questionable =
+                        i = RawValues.Count And .IsFutureData
+                    End If
                   End If
 
                   ' Include valid raw values. Raw values are appended while
-                  ' there are still values available and any of two conditions
+                  ' there are still values available, and any of two conditions
                   ' is true:
                   '  1) The raw value timestamp is before the next interval.
                   '  2) The raw value timestamp is on or after the interval
