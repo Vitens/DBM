@@ -286,7 +286,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             New DBMPointDriver(Attribute.Parent).SnapshotTimestamp
         Else
           SourceTimestamp =
-            New DBMPointDriver(Attribute.Parent).CurrentTimestamp
+            New DBMPointDriver(Attribute.Parent).CalculationTimestamp
         End If
 
         If timeContext Is Nothing Then
