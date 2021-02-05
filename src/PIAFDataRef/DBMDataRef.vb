@@ -466,8 +466,8 @@ Namespace Vitens.DynamicBandwidthMonitor
                   '       forecast.
                   '  2) For the first raw value, if this value is not good. The
                   '       forecast is returned because either this value is
-                  '       before this timestamp, or there are no values before
-                  '       this value.
+                  '       before this result, or there are no values before this
+                  '       value.
                   '  3) For all but the first raw value, if the previous raw
                   '       value is not good. While this value is not good, the
                   '       forecast is returned.
