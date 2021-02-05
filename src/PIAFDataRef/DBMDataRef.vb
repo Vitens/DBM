@@ -460,14 +460,16 @@ Namespace Vitens.DynamicBandwidthMonitor
                     GetValues(timeRange, numberOfValues, Nothing)
 
                   ' Augment raw values with forecast. This is done if any of
-                  ' three conditions is true:
-                  '  1) For the first raw value, if the raw value is not good.
-                  '  2) For all but the first raw value, if the previous raw
+                  ' four conditions is true:
+                  '  1) There are now raw values for the time period.
+                  '  2) For the first raw value, if the raw value is not good.
+                  '  3) For all but the first raw value, if the previous raw
                   '       value is not good.
-                  '  3) If there are no more raw values and the forecast is
+                  '  4) If there are no more raw values and the forecast is
                   '       future data.
-                  If Not RawValues.Item(Max(0, i-1)).IsGood Or
-                    (i = RawValues.Count And .IsFutureData) Then
+                  If RawValues.Count = 0 OrElse
+                    (Not RawValues.Item(Max(0, i-1)).IsGood Or
+                    (i = RawValues.Count And .IsFutureData)) Then
                     If IsNaN(.ForecastItem.Forecast) Then
                       ' If there is no valid forecast result, return an
                       ' InvalidData state. Definition: 'Invalid Data state.'
