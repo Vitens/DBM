@@ -461,7 +461,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
                   ' Augment raw values with forecast. This is done if any of
                   ' four conditions is true:
-                  '  1) There are now raw values for the time period.
+                  '  1) There are no raw values for the time period.
                   '  2) For the first raw value, if the raw value is not good.
                   '  3) For all but the first raw value, if the previous raw
                   '       value is not good.
