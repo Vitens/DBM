@@ -461,15 +461,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
                   ' Augment raw values with forecast. This is done if any of
                   ' three conditions is true:
-                  '  1) For the first raw value, if the timestamp is on or
-                  '       before the forecast timestamp and the value is not
-                  '       good.
+                  '  1) For the first raw value, if the raw value is not good.
                   '  2) For all but the first raw value, if the previous raw
                   '       value is not good.
                   '  3) If there are no more raw values and the forecast is
                   '       future data.
-                  If (i = 0 AndAlso RawValues.Item(i).Timestamp.LocalTime <=
-                    .Timestamp AndAlso Not RawValues.Item(i).IsGood) OrElse
+                  If (i = 0 AndAlso Not RawValues.Item(i).IsGood) OrElse
                     (i > 0 AndAlso Not RawValues.Item(i-1).IsGood) OrElse
                     (i = RawValues.Count And .IsFutureData) Then
                     If IsNaN(.ForecastItem.Forecast) Then
@@ -499,7 +496,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                   '       previous to the end timestamp.
                   Do While i < RawValues.Count AndAlso
                     (RawValues.Item(i).Timestamp.LocalTime <
-                    NextInterval(.Timestamp) Or
+                    NextInterval(.Timestamp) OrElse
                     RawValues.Item(i).Timestamp.LocalTime >=
                     PreviousInterval(timeRange.EndTime.LocalTime))
                     If RawValues.Item(i).IsGood Then ' Only include good values.
