@@ -455,9 +455,18 @@ Namespace Vitens.DynamicBandwidthMonitor
 
                 If Attribute.Trait Is LimitTarget Then
 
-                  ' Retrieve raw values.
-                  If RawValues Is Nothing Then RawValues = Attribute.Parent.
-                    GetValues(timeRange, numberOfValues, Nothing)
+                  If RawValues Is Nothing Then
+                    ' Retrieve raw values. Only do this if the start timestamp
+                    ' for this time range is before the next interval after the
+                    ' snapshot timestamp.
+                    If timeRange.StartTime.LocalTime <
+                      NextInterval(InputPointDriver.SnapshotTimestamp) Then
+                      RawValues = Attribute.Parent.
+                        GetValues(timeRange, numberOfValues, Nothing)
+                    Else
+                      RawValues = New AFValues ' Future data, no raw values.
+                    End If
+                  End If
 
                   ' Augment raw values with forecast. This is done if any of
                   ' four conditions is true:
