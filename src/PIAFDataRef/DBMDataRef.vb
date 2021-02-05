@@ -466,8 +466,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                   '       value is not good.
                   '  3) If there are no more raw values and the forecast is
                   '       future data.
-                  If (i = 0 AndAlso Not RawValues.Item(i).IsGood) OrElse
-                    (i > 0 AndAlso Not RawValues.Item(i-1).IsGood) OrElse
+                  If Not RawValues.Item(Max(0, i-1)).IsGood OrElse
                     (i = RawValues.Count And .IsFutureData) Then
                     If IsNaN(.ForecastItem.Forecast) Then
                       ' If there is no valid forecast result, return an
