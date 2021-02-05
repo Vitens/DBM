@@ -475,8 +475,8 @@ Namespace Vitens.DynamicBandwidthMonitor
                   '       the snapshot timestamp. This appends forecast values
                   '       to the future.
                   If RawValues.Count = 0 OrElse
-                    (Not RawValues.Item(Max(0, i-1)).IsGood Or
-                    (i = RawValues.Count And .IsFutureData)) Then
+                    (Not RawValues.Item(Max(0, i-1)).IsGood OrElse
+                    (i = RawValues.Count AndAlso .IsFutureData)) Then
                     If IsNaN(.ForecastItem.Forecast) Then
                       ' If there is no valid forecast result, return an
                       ' InvalidData state. Definition: 'Invalid Data state.'
@@ -506,7 +506,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                   '       remaining values after the last result.
                   Do While i < RawValues.Count AndAlso
                     (RawValues.Item(i).Timestamp.LocalTime <
-                    NextInterval(.Timestamp) Or
+                    NextInterval(.Timestamp) OrElse
                     RawValues.Item(i).Timestamp.LocalTime >=
                     PreviousInterval(timeRange.EndTime.LocalTime))
                     If RawValues.Item(i).IsGood Then ' Only include good values.
