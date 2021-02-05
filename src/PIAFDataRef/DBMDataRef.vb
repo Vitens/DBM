@@ -461,12 +461,19 @@ Namespace Vitens.DynamicBandwidthMonitor
 
                   ' Augment raw values with forecast. This is done if any of
                   ' four conditions is true:
-                  '  1) There are no raw values for the time period.
-                  '  2) For the first raw value, if the raw value is not good.
+                  '  1) There are no raw values for the time period. Since there
+                  '       are no values, the best we can do is return the
+                  '       forecast.
+                  '  2) For the first raw value, if this value is not good. The
+                  '       forecast is returned because either this value is
+                  '       before this timestamp, or there are no values before
+                  '       this value.
                   '  3) For all but the first raw value, if the previous raw
-                  '       value is not good.
-                  '  4) If there are no more raw values and the forecast is
-                  '       future data.
+                  '       value is not good. While this value is not good, the
+                  '       forecast is returned.
+                  '  4) If there are no more raw values and the forecast is past
+                  '       the snapshot timestamp. This appends forecast values
+                  '       to the future.
                   If RawValues.Count = 0 OrElse
                     (Not RawValues.Item(Max(0, i-1)).IsGood Or
                     (i = RawValues.Count And .IsFutureData)) Then
@@ -493,8 +500,10 @@ Namespace Vitens.DynamicBandwidthMonitor
                   ' there are still values available, and any of two conditions
                   ' is true:
                   '  1) The raw value timestamp is before the next interval.
+                  '       This includes all values in the current interval.
                   '  2) The raw value timestamp is on or after the interval
-                  '       previous to the end timestamp.
+                  '       previous to the end timestamp. This includes all
+                  '       remaining values after the last result.
                   Do While i < RawValues.Count AndAlso
                     (RawValues.Item(i).Timestamp.LocalTime <
                     NextInterval(.Timestamp) Or
