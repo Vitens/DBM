@@ -483,7 +483,11 @@ Namespace Vitens.DynamicBandwidthMonitor
                   '       can be on the exact same timestamp as this result.
                   '  4) If the timestamp is past the last raw value and the
                   '       forecast is past the calculation timestamp. This
-                  '       appends forecast values to the future.
+                  '       appends forecast values to the future. Note that
+                  '       Archive values do not return any values between the
+                  '       snapshot timestamp and now, while Plot values do
+                  '       return the forecast between the snapshot timestamp and
+                  '       now.
                   If RawValues.Count = 0 OrElse
                     Not RawValues.Item(Max(0, i-1)).IsGood OrElse
                     (.Timestamp > RawValues.Item(RawValues.Count-1).
