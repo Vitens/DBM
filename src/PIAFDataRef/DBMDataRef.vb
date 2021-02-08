@@ -503,10 +503,10 @@ Namespace Vitens.DynamicBandwidthMonitor
                         New AFTime(.Timestamp)))
                       ' Mark replaced (not good) values as substituted.
                       GetValues.Item(GetValues.Count-1).Substituted =
-                        Not i = RawValues.Count Or Not .IsFutureData
+                        Not .IsFutureData
                       ' Mark forecast values as questionable.
                       GetValues.Item(GetValues.Count-1).Questionable =
-                        i = RawValues.Count And .IsFutureData
+                        .IsFutureData
                     End If
                   End If
 
