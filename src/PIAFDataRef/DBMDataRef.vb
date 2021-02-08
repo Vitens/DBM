@@ -386,6 +386,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Element, ParentElement, SiblingElement As AFElement
       Dim InputPointDriver As DBMPointDriver
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
+      Dim RawSnapshot As DateTime
       Dim RawValues As AFValues = Nothing
       Dim Result As DBMResult
       Dim i As Integer
@@ -442,12 +443,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         End If
 
-        ' Retrieve raw values for Target trait. Only do this if the start
-        ' timestamp for this time range is before the next interval after the
-        ' snapshot timestamp.
+        ' Retrieve raw snapshot timestamp and raw values for Target trait. Only
+        ' retrieve values if the start timestamp for this time range is before
+        ' the next interval after the snapshot timestamp.
         If Attribute.Trait Is LimitTarget Then
-          If timeRange.StartTime.LocalTime <
-            NextInterval(InputPointDriver.SnapshotTimestamp) Then
+          RawSnapshot = InputPointDriver.SnapshotTimestamp
+          If timeRange.StartTime.LocalTime < NextInterval(RawSnapshot) Then
             RawValues = Attribute.Parent.
               GetValues(timeRange, numberOfValues, Nothing)
           Else
@@ -481,16 +482,11 @@ Namespace Vitens.DynamicBandwidthMonitor
                   '       value is not good. While this value is not good, the
                   '       forecast is returned. Note that the previous raw value
                   '       can be on the exact same timestamp as this result.
-                  '  4) If the timestamp is past the last raw value. This
-                  '       appends forecast values to the future. Note that
-                  '       Archive values do not return any values between the
-                  '       snapshot timestamp and now, while Plot values do
-                  '       return the forecast between the snapshot timestamp and
-                  '       now.
+                  '  4) If the timestamp is past the raw snapshot timestamp.
+                  '       This appends forecast values to the future.
                   If RawValues.Count = 0 OrElse
                     Not RawValues.Item(Max(0, i-1)).IsGood OrElse
-                    .Timestamp > RawValues.Item(RawValues.Count-1).
-                    Timestamp.LocalTime Then
+                    .Timestamp > RawSnapshot Then
                     If IsNaN(.ForecastItem.Forecast) Then
                       ' If there is no valid forecast result, return an
                       ' InvalidData state. Definition: 'Invalid Data state.'
@@ -511,8 +507,8 @@ Namespace Vitens.DynamicBandwidthMonitor
                   End If
 
                   ' Include valid raw values. Raw values are appended while
-                  ' there are still values available, and any of two conditions
-                  ' is true:
+                  ' there are still values available before or on the raw
+                  ' snapshot timestamp, and any of two conditions is true:
                   '  1) The raw value timestamp is on or before the next
                   '       interval. This includes all values in the current
                   '       interval and, if available, the first value in the
@@ -521,6 +517,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                   '       to the end timestamp. This includes all remaining
                   '       values after the last result.
                   Do While i < RawValues.Count AndAlso
+                    RawValues.Item(i).Timestamp.LocalTime <= RawSnapshot AndAlso
                     (RawValues.Item(i).Timestamp.LocalTime <=
                     NextInterval(.Timestamp) OrElse
                     RawValues.Item(i).Timestamp.LocalTime >
