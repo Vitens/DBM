@@ -508,13 +508,15 @@ Namespace Vitens.DynamicBandwidthMonitor
                   ' Include valid raw values. Raw values are appended while
                   ' there are still values available, and any of two conditions
                   ' is true:
-                  '  1) The raw value timestamp is before the next interval.
-                  '       This includes all values in the current interval.
+                  '  1) The raw value timestamp is on or before the next
+                  '       interval. This includes all values in the current
+                  '       interval and, if available, the first value in the
+                  '       next interval.
                   '  2) The raw value timestamp is on or after the interval
                   '       previous to the end timestamp. This includes all
                   '       remaining values after the last result.
                   Do While i < RawValues.Count AndAlso
-                    (RawValues.Item(i).Timestamp.LocalTime <
+                    (RawValues.Item(i).Timestamp.LocalTime <=
                     NextInterval(.Timestamp) OrElse
                     RawValues.Item(i).Timestamp.LocalTime >=
                     PreviousInterval(timeRange.EndTime.LocalTime))
