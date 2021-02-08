@@ -386,8 +386,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Element, ParentElement, SiblingElement As AFElement
       Dim InputPointDriver As DBMPointDriver
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
-      Dim Result As DBMResult
       Dim RawValues As AFValues = Nothing
+      Dim Result As DBMResult
       Dim i As Integer
 
       GetValues = New AFValues
@@ -442,6 +442,19 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         End If
 
+        ' Retrieve raw values for Target trait. Only do this if the start
+        ' timestamp for this time range is before the next interval after the
+        ' snapshot timestamp.
+        If Attribute.Trait Is LimitTarget Then
+          If timeRange.StartTime.LocalTime <
+            NextInterval(InputPointDriver.SnapshotTimestamp) Then
+            RawValues = Attribute.Parent.
+              GetValues(timeRange, numberOfValues, Nothing)
+          Else
+            RawValues = New AFValues ' Future data, no raw values.
+          End If
+        End If
+
         ' Get DBM results for time range and iterate over them.
         For Each Result In DBM.GetResults(InputPointDriver, CorrelationPoints,
           timeRange.StartTime.LocalTime, timeRange.EndTime.LocalTime,
@@ -454,19 +467,6 @@ Namespace Vitens.DynamicBandwidthMonitor
               If SupportsFutureData Or Not .IsFutureData Then
 
                 If Attribute.Trait Is LimitTarget Then
-
-                  If RawValues Is Nothing Then
-                    ' Retrieve raw values. Only do this if the start timestamp
-                    ' for this time range is before the next interval after the
-                    ' snapshot timestamp.
-                    If timeRange.StartTime.LocalTime <
-                      NextInterval(InputPointDriver.SnapshotTimestamp) Then
-                      RawValues = Attribute.Parent.
-                        GetValues(timeRange, numberOfValues, Nothing)
-                    Else
-                      RawValues = New AFValues ' Future data, no raw values.
-                    End If
-                  End If
 
                   ' Augment raw values with forecast. This is done if any of
                   ' four conditions is true:
