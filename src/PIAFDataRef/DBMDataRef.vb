@@ -479,13 +479,14 @@ Namespace Vitens.DynamicBandwidthMonitor
                   '       value.
                   '  3) For all but the first raw value, if the previous raw
                   '       value is not good. While this value is not good, the
-                  '       forecast is returned.
+                  '       forecast is returned. Note that the previous raw value
+                  '       can be on the exact same timestamp as this result.
                   '  4) If there are no more raw values and the forecast is past
                   '       the snapshot timestamp. This appends forecast values
                   '       to the future.
                   If RawValues.Count = 0 OrElse
-                    (Not RawValues.Item(Max(0, i-1)).IsGood OrElse
-                    (i = RawValues.Count AndAlso .IsFutureData)) Then
+                    Not RawValues.Item(Max(0, i-1)).IsGood OrElse
+                    (i = RawValues.Count And .IsFutureData) Then
                     If IsNaN(.ForecastItem.Forecast) Then
                       ' If there is no valid forecast result, return an
                       ' InvalidData state. Definition: 'Invalid Data state.'
