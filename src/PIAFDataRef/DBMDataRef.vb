@@ -386,10 +386,11 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Element, ParentElement, SiblingElement As AFElement
       Dim InputPointDriver As DBMPointDriver
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
+      Dim Results As List(Of DBMResult)
       Dim RawSnapshot As DateTime
       Dim RawValues As AFValues = Nothing
       Dim Result As DBMResult
-      Dim i As Integer
+      Dim iR As Integer ' Iterator for raw values
 
       GetValues = New AFValues
 
@@ -443,6 +444,11 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         End If
 
+        ' Get DBM results for time range.
+        Results = DBM.GetResults(InputPointDriver, CorrelationPoints,
+          timeRange.StartTime.LocalTime, timeRange.EndTime.LocalTime,
+          numberOfValues)
+
         ' Retrieve raw snapshot timestamp and raw values for Target trait. Only
         ' retrieve values if the start timestamp for this time range is before
         ' the next interval after the snapshot timestamp.
@@ -456,10 +462,8 @@ Namespace Vitens.DynamicBandwidthMonitor
           End If
         End If
 
-        ' Get DBM results for time range and iterate over them.
-        For Each Result In DBM.GetResults(InputPointDriver, CorrelationPoints,
-          timeRange.StartTime.LocalTime, timeRange.EndTime.LocalTime,
-          numberOfValues)
+        ' Iterate over DBM results for time range.
+        For Each Result In Results
 
           With Result
 
@@ -485,7 +489,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                   '  4) If the timestamp is past the raw snapshot timestamp.
                   '       This appends forecast values to the future.
                   If RawValues.Count = 0 OrElse
-                    Not RawValues.Item(Max(0, i-1)).IsGood OrElse
+                    Not RawValues.Item(Max(0, iR-1)).IsGood OrElse
                     .Timestamp > RawSnapshot Then
                     If IsNaN(.ForecastItem.Forecast) Then
                       ' If there is no valid forecast result, return an
@@ -516,21 +520,22 @@ Namespace Vitens.DynamicBandwidthMonitor
                   '  2) The raw value timestamp is after the interval previous
                   '       to the end timestamp. This includes all remaining
                   '       values after the last result.
-                  Do While i < RawValues.Count AndAlso
-                    RawValues.Item(i).Timestamp.LocalTime <= RawSnapshot AndAlso
-                    (RawValues.Item(i).Timestamp.LocalTime <=
+                  Do While iR < RawValues.Count AndAlso
+                    RawValues.Item(iR).Timestamp.LocalTime <=
+                    RawSnapshot AndAlso
+                    (RawValues.Item(iR).Timestamp.LocalTime <=
                     NextInterval(.Timestamp) OrElse
-                    RawValues.Item(i).Timestamp.LocalTime >
+                    RawValues.Item(iR).Timestamp.LocalTime >
                     PreviousInterval(timeRange.EndTime.LocalTime))
-                    If RawValues.Item(i).IsGood Then ' Only include good values.
-                      GetValues.Add(RawValues.Item(i))
+                    If RawValues.Item(iR).IsGood Then ' Only include good values
+                      GetValues.Add(RawValues.Item(iR))
                       ' Mark events (exceeding LimitMinimum and LimitMaximum
                       ' control limits) as questionable.
                       GetValues.Item(GetValues.Count-1).Questionable =
                         Abs(.ForecastItem.Measurement-.ForecastItem.Forecast) >
                         .ForecastItem.Range(pValueMinMax)
                     End If
-                    i += 1 ' Move index to next raw value.
+                    iR += 1 ' Move index to next raw value.
                   Loop
 
                 ElseIf Attribute.Trait Is Forecast Then
