@@ -390,7 +390,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim RawSnapshot As DateTime
       Dim RawValues As AFValues = Nothing
       Dim Result As DBMResult
-      Dim iR As Integer ' Iterator for raw values
+      Dim iR, iD As Integer ' Iterators for raw values and DBM results.
 
       GetValues = New AFValues
 
@@ -509,24 +509,25 @@ Namespace Vitens.DynamicBandwidthMonitor
                         .Timestamp > RawSnapshot
                     End If
                   End If
+                  iD += 1 ' Move iterator to next DBM result.
 
                   ' Include valid raw values. Raw values are appended while
                   ' there are still values available before or on the raw
-                  ' snapshot timestamp, and any of two conditions is true:
-                  '  1) The raw value timestamp is on or before the next
-                  '       interval. This includes all values in the current
-                  '       interval and, if available, the first value in the
-                  '       next interval.
-                  '  2) The raw value timestamp is after the interval previous
-                  '       to the end timestamp. This includes all remaining
-                  '       values after the last result.
+                  ' snapshot timestamp, and if any of two conditions is true:
+                  '  1) If there is a next DBM result, and the raw value
+                  '       timestamp is on or before this result. This includes
+                  '       all values until the timestamp of the next DBM result
+                  '       (inclusive).
+                  '  2) The raw value timestamp is after the last DBM result.
+                  '       This includes all remaining values after the last
+                  '       result.
                   Do While iR < RawValues.Count AndAlso
                     RawValues.Item(iR).Timestamp.LocalTime <=
                     RawSnapshot AndAlso
-                    (RawValues.Item(iR).Timestamp.LocalTime <=
-                    NextInterval(.Timestamp) OrElse
+                    ((iD < Results.Count AndAlso RawValues.Item(iR).
+                    Timestamp.LocalTime <= Results.Item(iD).Timestamp) OrElse
                     RawValues.Item(iR).Timestamp.LocalTime >
-                    PreviousInterval(timeRange.EndTime.LocalTime))
+                    Results.Item(Results.Count-1).Timestamp)
                     If RawValues.Item(iR).IsGood Then ' Only include good values
                       GetValues.Add(RawValues.Item(iR))
                       ' Mark events (exceeding LimitMinimum and LimitMaximum
@@ -535,7 +536,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                         Abs(.ForecastItem.Measurement-.ForecastItem.Forecast) >
                         .ForecastItem.Range(pValueMinMax)
                     End If
-                    iR += 1 ' Move index to next raw value.
+                    iR += 1 ' Move iterator to next raw value.
                   Loop
 
                 ElseIf Attribute.Trait Is Forecast Then
