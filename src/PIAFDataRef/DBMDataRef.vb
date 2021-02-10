@@ -518,15 +518,15 @@ Namespace Vitens.DynamicBandwidthMonitor
                   '       timestamp is on or before this result. This includes
                   '       all values until the timestamp of the next DBM result
                   '       (inclusive).
-                  '  2) The raw value timestamp is after the last DBM result.
-                  '       This includes all remaining values after the last
-                  '       result.
+                  '  2) The raw value timestamp is on or after the last DBM
+                  '       result. This includes all remaining values after the
+                  '       last result.
                   Do While iR < RawValues.Count AndAlso
                     RawValues.Item(iR).Timestamp.LocalTime <=
                     RawSnapshot AndAlso
                     ((iD < Results.Count AndAlso RawValues.Item(iR).
                     Timestamp.LocalTime <= Results.Item(iD).Timestamp) OrElse
-                    RawValues.Item(iR).Timestamp.LocalTime >
+                    RawValues.Item(iR).Timestamp.LocalTime >=
                     Results.Item(Results.Count-1).Timestamp)
                     If RawValues.Item(iR).IsGood Then ' Only include good values
                       GetValues.Add(RawValues.Item(iR))
