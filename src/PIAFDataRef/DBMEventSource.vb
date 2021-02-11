@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -36,6 +36,10 @@ Namespace Vitens.DynamicBandwidthMonitor
     Inherits AFEventSource
 
 
+    Const UpdateSeconds As Integer = 60 ' Time limiter for update checking.
+
+
+    Private PreviousTimestamp As DateTime
     Private PreviousSnapshots As New Dictionary(Of AFAttribute, DateTime)
 
 
@@ -46,6 +50,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim Attribute As AFAttribute
       Dim Snapshot As AFValue
+
+      ' Limit update checking to once every minute.
+      If (Now-PreviousTimestamp).TotalSeconds < UpdateSeconds Then Return False
+      PreviousTimestamp = Now
 
       ' Iterate over all signed up attributes in this data pipe. For some
       ' services signing up to many attributes, initialization might take some
