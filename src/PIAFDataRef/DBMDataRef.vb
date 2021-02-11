@@ -33,6 +33,7 @@ Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Asset.AFAttributeTrait
 Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Time
+Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
@@ -61,13 +62,26 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' property/trait:
     '   None      Factor
     '   Target    Measured value, forecast if not available
+    '             Indicates the aimed-for measurement value or process output.
     '   Forecast  Forecast value
     '   Minimum   Lower control limit (p = 0.9999)
+    '             Indicates the very lowest possible measurement value or
+    '             process output.
     '   LoLo      Lower control limit (default)
+    '             Indicates a very low measurement value or process output,
+    '             typically an abnormal one that initiates an alarm.
     '   Lo        Lower control limit (p = 0.95)
+    '             Indicates a low measurement value or process output, typically
+    '             one that initiates a warning.
     '   Hi        Upper control limit (p = 0.95)
+    '             Indicates a high measurement value or process output,
+    '             typically one that initiates a warning.
     '   HiHi      Upper control limit (default)
+    '             Indicates a very high measurement value or process output,
+    '             typically an abnormal one that initiates an alarm.
     '   Maximum   Upper control limit (p = 0.9999)
+    '             Indicates the very highest possible measurement value or
+    '             process output.
 
 
     Const CategoryNoCorrelation As String = "NoCorrelation"
@@ -271,7 +285,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' AFAttribute.GetValue Overload methods which will in-turn, invoke this
       ' method.
 
-      Dim CurrentTimestamp As DateTime
+      Dim SourceTimestamp As DateTime
       Dim Timestamp As DateTime = Now
 
       ' Check if this attribute is properly configured. If it is not configured
@@ -280,12 +294,18 @@ Namespace Vitens.DynamicBandwidthMonitor
       If ConfigurationIsValid Then
 
         ' Retrieve current calculation timestamp.
-        CurrentTimestamp = New DBMPointDriver(Attribute.Parent).CurrentTimestamp
+        If Attribute.Trait Is LimitTarget Then
+          SourceTimestamp =
+            New DBMPointDriver(Attribute.Parent).SnapshotTimestamp
+        Else
+          SourceTimestamp =
+            New DBMPointDriver(Attribute.Parent).CalculationTimestamp
+        End If
 
         If timeContext Is Nothing Then
 
           ' No passed timestamp, use current calculation timestamp.
-          Timestamp = CurrentTimestamp
+          Timestamp = SourceTimestamp
 
         Else
 
@@ -297,9 +317,9 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' beyond 10 minutes past the snapshot timestamp, but return a No Data
           ' system state instead. This will be done for future data timestamps
           ' on non-future data attributes in the GetValues method.
-          If Not SupportsFutureData And Timestamp > CurrentTimestamp And
-            Timestamp < CurrentTimestamp.AddMinutes(10) Then
-            Timestamp = CurrentTimestamp
+          If Not SupportsFutureData And Timestamp > SourceTimestamp And
+            Timestamp < SourceTimestamp.AddMinutes(10) Then
+            Timestamp = SourceTimestamp
           End If
 
         End If
@@ -366,7 +386,11 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Element, ParentElement, SiblingElement As AFElement
       Dim InputPointDriver As DBMPointDriver
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
+      Dim Results As List(Of DBMResult)
+      Dim RawSnapshot As DateTime
+      Dim RawValues As AFValues = Nothing
       Dim Result As DBMResult
+      Dim iR, iD As Integer ' Iterators for raw values and DBM results.
 
       GetValues = New AFValues
 
@@ -420,10 +444,26 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         End If
 
-        ' Get DBM results for time range and iterate over them.
-        For Each Result In DBM.GetResults(InputPointDriver, CorrelationPoints,
+        ' Get DBM results for time range.
+        Results = DBM.GetResults(InputPointDriver, CorrelationPoints,
           timeRange.StartTime.LocalTime, timeRange.EndTime.LocalTime,
           numberOfValues)
+
+        ' Retrieve raw snapshot timestamp and raw values for Target trait. Only
+        ' retrieve values if the start timestamp for this time range is before
+        ' the next interval after the snapshot timestamp.
+        If Attribute.Trait Is LimitTarget Then
+          RawSnapshot = InputPointDriver.SnapshotTimestamp
+          If timeRange.StartTime.LocalTime < NextInterval(RawSnapshot) Then
+            RawValues = Attribute.Parent.
+              GetValues(timeRange, numberOfValues, Nothing)
+          Else
+            RawValues = New AFValues ' Future data, no raw values.
+          End If
+        End If
+
+        ' Iterate over DBM results for time range.
+        For Each Result In Results
 
           With Result
 
@@ -432,8 +472,80 @@ Namespace Vitens.DynamicBandwidthMonitor
               If SupportsFutureData Or Not .IsFutureData Then
 
                 If Attribute.Trait Is LimitTarget Then
-                  GetValues.Add(New AFValue(.ForecastItem.Measurement,
-                    New AFTime(.Timestamp)))
+
+                  ' The Target trait returns the original, valid raw
+                  ' measurements, augmented with forecast data for invalid and
+                  ' future data. Data quality is marked as Substituted for
+                  ' invalid data replaced by forecast data, or Questionable for
+                  ' future forecast data or data exceeding LimitMinimum and
+                  ' LimitMaximum control limits.
+
+                  ' Augment raw values with forecast. This is done if any of
+                  ' four conditions is true:
+                  '  1) There are no raw values for the time period. Since there
+                  '       are no values, the best we can do is return the
+                  '       forecast.
+                  '  2) For the first raw value, if this value is not good. The
+                  '       forecast is returned because either this value is
+                  '       before this result, or there are no values before this
+                  '       value.
+                  '  3) For all but the first raw value, if the previous raw
+                  '       value is not good. While this value is not good, the
+                  '       forecast is returned. Note that the previous raw value
+                  '       can be on the exact same timestamp as this result.
+                  '  4) If the timestamp is past the raw snapshot timestamp.
+                  '       This appends forecast values to the future.
+                  If RawValues.Count = 0 OrElse
+                    Not RawValues.Item(Max(0, iR-1)).IsGood OrElse
+                    .Timestamp > RawSnapshot Then
+                    If IsNaN(.ForecastItem.Forecast) Then
+                      ' If there is no valid forecast result, return an
+                      ' InvalidData state. Definition: 'Invalid Data state.'
+                      GetValues.Add(AFValue.CreateSystemStateValue(
+                        AFSystemStateCode.InvalidData, New AFTime(.Timestamp)))
+                    Else
+                      ' Replace bad values with forecast, append forecast values
+                      ' to the future.
+                      GetValues.Add(New AFValue(.ForecastItem.Forecast,
+                        New AFTime(.Timestamp)))
+                      ' Mark replaced (not good) values as substituted.
+                      GetValues.Item(GetValues.Count-1).Substituted =
+                        .Timestamp <= RawSnapshot
+                      ' Mark forecast values as questionable.
+                      GetValues.Item(GetValues.Count-1).Questionable =
+                        .Timestamp > RawSnapshot
+                    End If
+                  End If
+                  iD += 1 ' Move iterator to next DBM result.
+
+                  ' Include valid raw values. Raw values are appended while
+                  ' there are still values available before or on the raw
+                  ' snapshot timestamp, and if any of two conditions is true:
+                  '  1) If there is a next DBM result, and the raw value
+                  '       timestamp is on or before this result. This includes
+                  '       all values until the timestamp of the next DBM result
+                  '       (inclusive).
+                  '  2) The raw value timestamp is on or after the last DBM
+                  '       result. This includes all remaining values after the
+                  '       last result.
+                  Do While iR < RawValues.Count AndAlso
+                    RawValues.Item(iR).Timestamp.LocalTime <=
+                    RawSnapshot AndAlso
+                    ((iD < Results.Count AndAlso RawValues.Item(iR).
+                    Timestamp.LocalTime <= Results.Item(iD).Timestamp) OrElse
+                    RawValues.Item(iR).Timestamp.LocalTime >=
+                    Results.Item(Results.Count-1).Timestamp)
+                    If RawValues.Item(iR).IsGood Then ' Only include good values
+                      GetValues.Add(RawValues.Item(iR))
+                      ' Mark events (exceeding LimitMinimum and LimitMaximum
+                      ' control limits) as questionable.
+                      GetValues.Item(GetValues.Count-1).Questionable =
+                        Abs(.ForecastItem.Measurement-.ForecastItem.Forecast) >
+                        .ForecastItem.Range(pValueMinMax)
+                    End If
+                    iR += 1 ' Move iterator to next raw value.
+                  Loop
+
                 ElseIf Attribute.Trait Is Forecast Then
                   GetValues.Add(New AFValue(.ForecastItem.Forecast,
                     New AFTime(.Timestamp)))
@@ -459,24 +571,6 @@ Namespace Vitens.DynamicBandwidthMonitor
                   GetValues.Add(New AFValue(.Factor, New AFTime(.Timestamp)))
                 End If
 
-              End If
-
-              ' Augment target data with forecast.
-              If Attribute.Trait Is LimitTarget Then
-                If IsNaN(.ForecastItem.Measurement) Or .IsFutureData Then
-                  ' Replace missing data with forecast, append forecast data to
-                  ' the future.
-                  GetValues.Item(GetValues.Count-1).
-                    Value = .ForecastItem.Forecast
-                  ' Mark replaced data as substituted.
-                  GetValues.Item(GetValues.Count-1).
-                    Substituted = Not .IsFutureData
-                End If
-                ' Mark events (exceeding LimitMinimum and LimitMaximum control
-                ' limits) and forecast data as questionable.
-                GetValues.Item(GetValues.Count-1).Questionable = Abs(
-                  .ForecastItem.Measurement-.ForecastItem.Forecast) >
-                  .ForecastItem.Range(pValueMinMax) Or .IsFutureData
               End If
 
             End If

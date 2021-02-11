@@ -67,7 +67,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Function CurrentTimestamp As DateTime
+    Public Function CalculationTimestamp As DateTime
 
       ' Return the latest possible calculation timestamp for which the source of
       ' data has information available. Compensated for exponential moving
