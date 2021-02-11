@@ -112,6 +112,7 @@ DBMDataRef is a custom OSIsoft PI Asset Framework data reference which integrate
 | `Maximum`      | Upper control limit (p = 0.9999)          | Indicates the very highest possible measurement value or process output.                                      |
 
 The `Target` trait returns the original, valid raw measurements, augmented with forecast data for invalid and future data. Data quality is marked as `Substituted` for invalid data replaced by forecast data, or `Questionable` for future forecast data or data exceeding `LimitMinimum` and `LimitMaximum` control limits.
+![Augmented](img/augmented.png)
 
 Beginning with PI AF 2018 SP3 Patch 2, all AF plugins must be signed with a valid certificate. Users must ensure any 3rd party or custom plugins are signed with a valid certificate. Digitally signing plugins increases the users' confidence that it is from a trusted entity. AF data references that are not signed could have been tampered with and are potentially dangerous. Therefore, in order to protect its users, OSIsoft software enforces that all AF 2.x data reference plugins be signed. Use `sign.bat` to sign the data reference and support assemblies with your pfx certificate file before registering the data reference with PI AF.
 
