@@ -473,6 +473,13 @@ Namespace Vitens.DynamicBandwidthMonitor
 
                 If Attribute.Trait Is LimitTarget Then
 
+                  ' The Target trait returns the original, valid raw
+                  ' measurements, augmented with forecast data for invalid and
+                  ' future data. Data quality is marked as Substituted for
+                  ' invalid data replaced by forecast data, or Questionable for
+                  ' future forecast data or data exceeding LimitMinimum and
+                  ' LimitMaximum control limits.
+
                   ' Augment raw values with forecast. This is done if any of
                   ' four conditions is true:
                   '  1) There are no raw values for the time period. Since there
