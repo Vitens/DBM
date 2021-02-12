@@ -477,8 +477,8 @@ Namespace Vitens.DynamicBandwidthMonitor
                   ' measurements, augmented with forecast data for invalid and
                   ' future data. Data quality is marked as Substituted for
                   ' invalid data replaced by forecast data, or Questionable for
-                  ' future forecast data or data exceeding LimitMinimum and
-                  ' LimitMaximum control limits.
+                  ' future forecast data or data exceeding Minimum and Maximum
+                  ' control limits.
 
                   ' Augment raw values with forecast. This is done if any of
                   ' four conditions is true:
@@ -537,8 +537,8 @@ Namespace Vitens.DynamicBandwidthMonitor
                     Results.Item(Results.Count-1).Timestamp)
                     If RawValues.Item(iR).IsGood Then ' Only include good values
                       GetValues.Add(RawValues.Item(iR))
-                      ' Mark events (exceeding LimitMinimum and LimitMaximum
-                      ' control limits) as questionable.
+                      ' Mark events (exceeding Minimum and Maximum control
+                      ' limits) as questionable.
                       GetValues.Item(GetValues.Count-1).Questionable =
                         Abs(.ForecastItem.Measurement-.ForecastItem.Forecast) >
                         .ForecastItem.Range(pValueMinMax)
