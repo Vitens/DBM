@@ -312,12 +312,13 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' Use passed timestamp.
           Timestamp = DirectCast(timeContext, AFTime).LocalTime
 
-          ' For attributes without future data, return the snapshot value for
-          ' values in the near future (up to 10 minutes). Do not return data
+          ' For attributes without future data, as well as for Target, return
+          ' the snapshot value for timestamps up to 10 minutes into the future.
+          ' Attributes not supporting future data will not return any values
           ' beyond 10 minutes past the snapshot timestamp, but return a No Data
-          ' system state instead. This will be done for future data timestamps
-          ' on non-future data attributes in the GetValues method.
-          If Not SupportsFutureData And Timestamp > SourceTimestamp And
+          ' system state instead.
+          If (Not SupportsFutureData Or Attribute.Trait Is LimitTarget) And
+            Timestamp > SourceTimestamp And
             Timestamp < SourceTimestamp.AddMinutes(10) Then
             Timestamp = SourceTimestamp
           End If
