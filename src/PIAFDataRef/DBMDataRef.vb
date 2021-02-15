@@ -312,12 +312,13 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' Use passed timestamp.
           Timestamp = DirectCast(timeContext, AFTime).LocalTime
 
-          ' For attributes without future data, return the snapshot value for
-          ' values in the near future (up to 10 minutes). Do not return data
+          ' For attributes without future data, as well as for Target, return
+          ' the snapshot value for timestamps up to 10 minutes into the future.
+          ' Attributes not supporting future data will not return any values
           ' beyond 10 minutes past the snapshot timestamp, but return a No Data
-          ' system state instead. This will be done for future data timestamps
-          ' on non-future data attributes in the GetValues method.
-          If Not SupportsFutureData And Timestamp > SourceTimestamp And
+          ' system state instead.
+          If (Not SupportsFutureData Or Attribute.Trait Is LimitTarget) And
+            Timestamp > SourceTimestamp And
             Timestamp < SourceTimestamp.AddMinutes(10) Then
             Timestamp = SourceTimestamp
           End If
@@ -457,6 +458,9 @@ Namespace Vitens.DynamicBandwidthMonitor
           If timeRange.StartTime.LocalTime < NextInterval(RawSnapshot) Then
             RawValues = Attribute.Parent.
               GetValues(timeRange, numberOfValues, Nothing)
+            ' If there are no DBM results to iterate over, and there are raw
+            ' values for this time range, return the raw values directly.
+            If Results.Count = 0 And RawValues.Count > 0 Then Return RawValues
           Else
             RawValues = New AFValues ' Future data, no raw values.
           End If
@@ -477,8 +481,8 @@ Namespace Vitens.DynamicBandwidthMonitor
                   ' measurements, augmented with forecast data for invalid and
                   ' future data. Data quality is marked as Substituted for
                   ' invalid data replaced by forecast data, or Questionable for
-                  ' future forecast data or data exceeding LimitMinimum and
-                  ' LimitMaximum control limits.
+                  ' future forecast data or data exceeding Minimum and Maximum
+                  ' control limits.
 
                   ' Augment raw values with forecast. This is done if any of
                   ' four conditions is true:
@@ -537,8 +541,8 @@ Namespace Vitens.DynamicBandwidthMonitor
                     Results.Item(Results.Count-1).Timestamp)
                     If RawValues.Item(iR).IsGood Then ' Only include good values
                       GetValues.Add(RawValues.Item(iR))
-                      ' Mark events (exceeding LimitMinimum and LimitMaximum
-                      ' control limits) as questionable.
+                      ' Mark events (exceeding Minimum and Maximum control
+                      ' limits) as questionable.
                       GetValues.Item(GetValues.Count-1).Questionable =
                         Abs(.ForecastItem.Measurement-.ForecastItem.Forecast) >
                         .ForecastItem.Range(pValueMinMax)
