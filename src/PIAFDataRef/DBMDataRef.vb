@@ -458,6 +458,9 @@ Namespace Vitens.DynamicBandwidthMonitor
           If timeRange.StartTime.LocalTime < NextInterval(RawSnapshot) Then
             RawValues = Attribute.Parent.
               GetValues(timeRange, numberOfValues, Nothing)
+            ' If there are no DBM results to iterate over, and there are raw
+            ' values for this time range, return the raw values directly.
+            If Results.Count = 0 And RawValues.Count > 0 Then Return RawValues
           Else
             RawValues = New AFValues ' Future data, no raw values.
           End If
