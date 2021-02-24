@@ -2,7 +2,7 @@
 
 rem Dynamic Bandwidth Monitor
 rem Leak detection method implemented in a real-time data historian
-rem Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
+rem Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
 rem
 rem This file is part of DBM.
 rem
@@ -21,11 +21,12 @@ rem along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 cd /d %~dp0
 
-rem Register PI AF Data Reference on local AF server
-tasklist | find "AFService.exe" && (
- cd build
- "%PIHOME%\AF\regplugin.exe" /Unregister DBMDataRef.dll
- "%PIHOME%\AF\regplugin.exe" DBMDataRef.dll
- "%PIHOME%\AF\regplugin.exe" /Owner:DBMDataRef.dll * /Exclude:DBMDataRef.dll
- cd ..
-)
+rem Variables
+if not "%1" == "" set PIAFServer=/PISystem:%1
+
+rem Register PI AF Data Reference on AF server
+cd build
+"%PIHOME%\AF\regplugin.exe" %PIAFServer% /Unregister DBMDataRef.dll
+"%PIHOME%\AF\regplugin.exe" %PIAFServer% DBMDataRef.dll
+"%PIHOME%\AF\regplugin.exe" %PIAFServer% /Owner:DBMDataRef.dll * /Exclude:DBMDataRef.dll
+cd ..
