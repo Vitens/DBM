@@ -29,7 +29,7 @@ cache:
 build:
   stage: build
   script:
-    - (Get-Content src\dbm\DBMInfo.vb) -replace 'Const GITHASH As String = \".*?\"', 'Const GITHASH As String = \"' + $Enc:CI_COMMIT_SHORT_SHA + '\"' | Set-Content src\dbm\DBMInfo.vb
+    - (Get-Content src\dbm\DBMInfo.vb) -replace 'Const GITHASH As String = \".*?\"', 'Const GITHASH As String = \"' + $Env:CI_COMMIT_SHORT_SHA + '\"' | Set-Content src\dbm\DBMInfo.vb
     - .\build.bat
     - Get-ChildItem -Path build\* -Include *.dll, *.exe | Foreach-Object {C:\GitLab-Runner\software\Vitens\Certificate\sign.ps1 $_.FullName}
   artifacts:
