@@ -45,4 +45,3 @@ deploy:
   stage: deploy
   script:
     - .\register.bat (&{if ($Env:CI_COMMIT_REF_NAME -eq 'master') {'piaf'} else {'piaf-t'}})
-
