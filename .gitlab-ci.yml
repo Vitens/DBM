@@ -39,7 +39,7 @@ build:
 test:
   stage: test
   script:
-    - .\build\DBMAbout.exe
+    - build\DBMAbout.exe
 
 deploy:
   stage: deploy
