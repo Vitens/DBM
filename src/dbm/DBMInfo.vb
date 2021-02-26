@@ -118,7 +118,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Try
         With X509Certificate.CreateFromSignedFile(
           Assembly.GetExecutingAssembly.Location)
-          Return "Certificate: " & .Subject & " (" & .Issuer & ")"
+          Return .Subject & " (" & .Issuer & ")"
         End With
       Catch
         Return "Unsigned"
@@ -143,7 +143,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       RunIntegrationTests
       ITDurationMs = (Now.Ticks-Timer.Ticks)/TicksPerMillisecond
 
-      Return CertificateInfo & NewLine &
+      Return "Certificate: " & CertificateInfo & NewLine &
         "Unit tests: " & Round(UTDurationMs).ToString & " ms" & NewLine &
         "Integration tests: " & Round(ITDurationMs).ToString & " ms"
 
