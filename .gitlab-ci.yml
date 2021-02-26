@@ -30,9 +30,10 @@ build:
   stage: build
   before_script:
     - (Get-Content src\dbm\DBMInfo.vb) -replace 'Const GITHASH As String = ".*?"', ('Const GITHASH As String = "' + $Env:CI_COMMIT_SHORT_SHA + '"') | Set-Content src\dbm\DBMInfo.vb
+    - $Env:certpassword = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR((('01000000d08c9ddf0115d1118c7a00c04fc297eb01000000f9dc49c57f4cba4e87b1c2438e3506320000000002000000000003660000c0000000100000002ba86ff87ed5485e422ff0d5d16acff40000000004800000a00000001000000065a578006d453a0416983e2466b7d41f60000000c334c6c260d0c2b3220266a471fafb4f34a84126a66733c5a0974a9497731e7f3f43829ee7db45544b16e0dfff299d530f45b6067b4ca7447630b6a861588411e49d74cfa761d12c9b6d52c0c49456af7be219641c6d1c221ab87f4bcdaa003214000000634940cd087c43e7cea07160a5763b6c411eaaf0' | ConvertTo-SecureString))))
   script:
     - .\build.bat
-    - .\sign.bat C:\GitLab-Runner\software\Vitens\Certificate\certificate.pfx """[Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR((('01000000d08c9ddf0115d1118c7a00c04fc297eb01000000f9dc49c57f4cba4e87b1c2438e3506320000000002000000000003660000c0000000100000002ba86ff87ed5485e422ff0d5d16acff40000000004800000a00000001000000065a578006d453a0416983e2466b7d41f60000000c334c6c260d0c2b3220266a471fafb4f34a84126a66733c5a0974a9497731e7f3f43829ee7db45544b16e0dfff299d530f45b6067b4ca7447630b6a861588411e49d74cfa761d12c9b6d52c0c49456af7be219641c6d1c221ab87f4bcdaa003214000000634940cd087c43e7cea07160a5763b6c411eaaf0' | ConvertTo-SecureString))))"""
+    - .\sign.bat C:\GitLab-Runner\software\Vitens\Certificate\certificate.pfx """$Env:certpassword"""
   artifacts:
     paths:
       - build
