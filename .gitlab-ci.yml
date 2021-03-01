@@ -30,11 +30,11 @@ build:
   stage: build
   before_script:
     - (Get-Content src\dbm\DBMInfo.vb) -replace 'Const GITHASH As String = ".*?"', ('Const GITHASH As String = "' + $Env:CI_COMMIT_SHORT_SHA + '"') | Set-Content src\dbm\DBMInfo.vb
-    - ([System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String([Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR((((Get-Content enc\certificate.pfx.ss) | ConvertTo-SecureString))))))) | Set-Content certificate.pfx
+    - ([System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String([Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR((((Get-Content enc\certificate.pfx.ss) | ConvertTo-SecureString))))))) | Set-Content $Env:TEMP\certificate.pfx
     - $Env:CERTPASSWORD = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR((((Get-Content enc\password.txt.ss) | ConvertTo-SecureString))))
   script:
     - .\build.bat
-    - .\sign.bat certificate.pfx """$Env:CERTPASSWORD"""
+    - .\sign.bat $Env:TEMP\certificate.pfx """$Env:CERTPASSWORD"""
   artifacts:
     paths:
       - build
