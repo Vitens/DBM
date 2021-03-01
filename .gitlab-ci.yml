@@ -34,7 +34,7 @@ build:
     - $Env:CERTPASSWORD = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR((((Get-Content enc\password.txt.ss) | ConvertTo-SecureString))))
   script:
     - .\build.bat
-    - .\sign.bat $Env:TEMP\certificate.pfx """$Env:CERTPASSWORD"""
+    - .\sign.bat """$Env:TEMP\certificate.pfx""" """$Env:CERTPASSWORD"""
   artifacts:
     paths:
       - build
