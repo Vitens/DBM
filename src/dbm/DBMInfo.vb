@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -27,6 +27,8 @@ Imports System.DateTime
 Imports System.Diagnostics
 Imports System.Environment
 Imports System.Math
+Imports System.Reflection
+Imports System.Security.Cryptography.X509Certificates
 Imports System.TimeSpan
 Imports Vitens.DynamicBandwidthMonitor.DBMTests
 
@@ -41,8 +43,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Returns FileVersionInfo for assembly.
 
-      Return FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.
-        GetExecutingAssembly.Location)
+      Return FileVersionInfo.GetVersionInfo(
+        Assembly.GetExecutingAssembly.Location)
 
     End Function
 
@@ -61,7 +63,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns a string containing the full version number including, if set,
       ' Git hash. Use Semantic Versioning Specification (SemVer).
 
-      Const GITHASH As String = "#######" ' Updated by CI script (appveyor.yml).
+      Const GITHASH As String = "#######" ' Updated by CI/CD tools.
 
       With GetFileVersionInfo
         Return .FileMajorPart.ToString & "." & .FileMinorPart.ToString & ".0+" &
@@ -108,6 +110,23 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Shared Function CertificateInfo As String
+
+      ' Returns a string containing the certificate Subject and Issuer, if
+      ' available. Else returns 'Unsigned'.
+
+      Try
+        With X509Certificate.CreateFromSignedFile(
+          Assembly.GetExecutingAssembly.Location)
+          Return .Subject & " (" & .Issuer & ")"
+        End With
+      Catch
+        Return "Unsigned"
+      End Try
+
+    End Function
+
+
     Public Shared Function TestResults As String
 
       ' Run unit and integration tests and return test run duration. An
@@ -124,7 +143,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       RunIntegrationTests
       ITDurationMs = (Now.Ticks-Timer.Ticks)/TicksPerMillisecond
 
-      Return "Unit tests: " & Round(UTDurationMs).ToString & " ms" & NewLine &
+      Return "Certificate: " & CertificateInfo & NewLine &
+        "Unit tests: " & Round(UTDurationMs).ToString & " ms" & NewLine &
         "Integration tests: " & Round(ITDurationMs).ToString & " ms"
 
     End Function
