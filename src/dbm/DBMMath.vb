@@ -432,7 +432,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim i, Count As Integer
 
       If Values.Length = 0 Or Forecasts.Length = 0 Or
-        Values.Length <> Forecasts.Length Then Return NaN ' Equal, non-zero len.
+        Values.Length <> Forecasts.Length Then Return NaN ' Empty or non equal.
 
       For i = 0 To Values.Length-1
         If Not IsNaN(Values(i)) And Not IsNaN(Forecasts(i)) Then ' Exclude NaNs.
