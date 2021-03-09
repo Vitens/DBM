@@ -609,6 +609,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertNaN(RMSE({1, 2}, {NaN, NaN}))
       AssertNaN(RMSE({NaN, NaN}, {1, 2}))
       AssertNaN(RMSE({1, NaN}, {NaN, 2}))
+      AssertEqual(RMSE({1, 2}, {1, 2}), 0)
       AssertAlmostEqual(RMSE({22.9209, 38.4266, 68.0724, 99.5133, 137.5343},
         {6.312, 26.1236, 46.4224, 51.6031, 82.2753}), 35.3409)
       AssertAlmostEqual(RMSE({36.0669, 56.3126, 87.0465, 90.3358, 121.6257},
@@ -625,6 +626,12 @@ Namespace Vitens.DynamicBandwidthMonitor
         {9.5769, 34.5098, 70.9659, 108.1606, 120.9939}), 27.6036)
       AssertAlmostEqual(RMSE({22.7011, 48.1137, 76.1351, 92.5158, 97.2741},
         {22.3235, 47.6603, 49.3894, 88.389, 91.1577}), 12.4107)
+      AssertAlmostEqual(RMSE({18.8711, 38.2954, NaN, 85.4236, 99.999},
+        {33.2514, 36.3659, 41.5289, 67.0192, 68.2669}), 19.7241)
+      AssertAlmostEqual(RMSE({16.4998, 40.5346, 50.6114, NaN, 108.2397},
+        {NaN, 28.7668, 34.6964, 37.897, 39.1058}), 41.5181)
+      AssertAlmostEqual(RMSE({16.1989, NaN, 51.0796, 72.0766, NaN},
+        {4.2429, NaN, NaN, 81.3421, 89.191}), 10.6957)
 
       ' DBMDate
       AssertEqual(PreviousInterval(
