@@ -414,6 +414,42 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Shared Function RMSE(Values() As Double,
+      Forecasts() As Double) As Double
+
+      ' The root-mean-square deviation (RMSD) or root-mean-square error (RMSE)
+      ' is a frequently used measure of the differences between values (sample
+      ' or population values) predicted by a model or an estimator and the
+      ' values observed. The RMSD represents the square root of the second
+      ' sample moment of the differences between predicted values and observed
+      ' values or the quadratic mean of these differences. These deviations are
+      ' called residuals when the calculations are performed over the data
+      ' sample that was used for estimation and are called errors (or prediction
+      ' errors) when computed out-of-sample. The RMSD serves to aggregate the
+      ' magnitudes of the errors in predictions for various data points into a
+      ' single measure of predictive power.
+
+      Dim i, Count As Integer
+
+      If Values.Length = 0 Or Forecasts.Length = 0 Or
+        Values.Length <> Forecasts.Length Then Return NaN ' Equal, non-zero len.
+
+      For i = 0 To Values.Length-1
+        If Not IsNaN(Values(i)) And Not IsNaN(Forecasts(i)) Then ' Exclude NaNs.
+          RMSE += (Forecasts(i)-Values(i))^2
+          Count += 1
+        End If
+      Next i
+
+      If Count = 0 Then Return NaN ' No non-NaN pairs.
+
+      RMSE = Sqrt(RMSE/Count)
+
+      Return RMSE
+
+    End Function
+
+
   End Class
 
 
