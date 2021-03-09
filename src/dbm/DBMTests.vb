@@ -601,6 +601,15 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(SlopeToAngle(-1.6831), -59.2837)
       AssertAlmostEqual(SlopeToAngle(-2.0031), -63.4704)
 
+      AssertNaN(RMSE({}, {}))
+      AssertNaN(RMSE({1}, {}))
+      AssertNaN(RMSE({}, {1}))
+      AssertNaN(RMSE({1}, {1, 2}))
+      AssertNaN(RMSE({NaN}, {NaN}))
+      AssertNaN(RMSE({1, 2}, {NaN, NaN}))
+      AssertNaN(RMSE({NaN, NaN}, {1, 2}))
+      AssertNaN(RMSE({1, NaN}, {NaN, 2}))
+
       ' DBMDate
       AssertEqual(PreviousInterval(
         New DateTime(2016, 4, 4, 16, 33, 2)),
