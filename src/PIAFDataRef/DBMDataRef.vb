@@ -565,7 +565,8 @@ Namespace Vitens.DynamicBandwidthMonitor
                   ' Annotate the last result with the RMSE.
                   If iD = Results.Count And iR = RawValues.Count Then
                     Annotations.Clear
-                    Annotations.Add("RMSE", RMSE(Measurements, Forecasts))
+                    Annotations.Add("Annotation#1",
+                      "RMSE: " & RMSE(Measurements, Forecasts).ToString)
                     GetValues.Item(GetValues.Count-1).SetAnnotation(Annotations)
                   End If
 
