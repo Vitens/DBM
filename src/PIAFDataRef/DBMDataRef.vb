@@ -264,7 +264,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Gets the annotation associated with a single historical event.
 
-      Return value.GetAnnotation
+      Return Nothing
 
     End Function
 
