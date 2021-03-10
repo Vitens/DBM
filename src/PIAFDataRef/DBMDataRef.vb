@@ -35,6 +35,7 @@ Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Time
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
+Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
@@ -388,6 +389,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim InputPointDriver As DBMPointDriver
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim Results As List(Of DBMResult)
+      Dim Measurements(), Forecasts() As Double
       Dim RawSnapshot As DateTime
       Dim RawValues As AFValues = Nothing
       Dim Result As DBMResult
@@ -450,6 +452,10 @@ Namespace Vitens.DynamicBandwidthMonitor
           timeRange.StartTime.LocalTime, timeRange.EndTime.LocalTime,
           numberOfValues)
 
+        ' Resize arrays to store results for RMSE calculation.
+        ReDim Measurements(Results.Count-1)
+        ReDim Forecasts(Results.Count-1)
+
         ' Retrieve raw snapshot timestamp and raw values for Target trait. Only
         ' retrieve values if the start timestamp for this time range is before
         ' the next interval after the snapshot timestamp.
@@ -476,6 +482,10 @@ Namespace Vitens.DynamicBandwidthMonitor
               If SupportsFutureData Or Not .IsFutureData Then
 
                 If Attribute.Trait Is LimitTarget Then
+
+                  ' Store results for RMSE calculation.
+                  Measurements(iD) = .ForecastItem.Measurement
+                  Forecasts(iD) = .ForecastItem.Forecast
 
                   ' The Target trait returns the original, valid raw
                   ' measurements, augmented with forecast data for invalid and
@@ -549,6 +559,12 @@ Namespace Vitens.DynamicBandwidthMonitor
                     End If
                     iR += 1 ' Move iterator to next raw value.
                   Loop
+
+                  ' Annotate the last result with the RMSE.
+                  If iD = Results.Count And iR = RawValues.Count Then
+                    GetValues.Item(GetValues.Count-1).SetAnnotation("RMSE: " &
+                      RMSE(Measurements, Forecasts).ToString("0.####"))
+                  End If
 
                 ElseIf Attribute.Trait Is Forecast Then
                   GetValues.Add(New AFValue(.ForecastItem.Forecast,
