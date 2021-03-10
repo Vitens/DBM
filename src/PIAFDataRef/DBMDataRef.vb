@@ -264,12 +264,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Gets the annotation associated with a single historical event.
 
-      Dim Annotations As New AFAnnotations
-      Dim Annotation As AFAnnotation
-
-      Annotation = Annotations.Add("Test", 123)
-
-      Return Annotations
+      Return value.GetAnnotation
 
     End Function
 
