@@ -414,7 +414,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function RMSE(Values() As Double,
+    Public Shared Function RMSE(Measurements() As Double,
       Forecasts() As Double) As Double
 
       ' The root-mean-square deviation (RMSD) or root-mean-square error (RMSE)
@@ -431,12 +431,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim i, Count As Integer
 
-      If Values.Length = 0 Or Forecasts.Length = 0 Or
-        Values.Length <> Forecasts.Length Then Return NaN ' Empty or non equal.
+      If Measurements.Length = 0 Or Forecasts.Length = 0 Or
+        Measurements.Length <> Forecasts.Length Then Return NaN ' Empty/non eql.
 
-      For i = 0 To Values.Length-1
-        If Not IsNaN(Values(i)) And Not IsNaN(Forecasts(i)) Then ' Exclude NaNs.
-          RMSE += (Forecasts(i)-Values(i))^2
+      For i = 0 To Measurements.Length-1
+        If Not IsNaN(Measurements(i)) And Not IsNaN(Forecasts(i)) Then ' Exc NaN
+          RMSE += (Forecasts(i)-Measurements(i))^2
           Count += 1
         End If
       Next i
