@@ -260,6 +260,15 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
+    Public Overrides Function GetAnnotation(value As AFValue) As Object
+
+      ' Gets the annotation associated with a single historical event.
+
+      Return "Test"
+
+    End Function
+
+
     Public Overrides Function GetValue(context As Object,
       timeContext As Object, inputAttributes As AFAttributeList,
       inputValues As AFValues) As AFValue
