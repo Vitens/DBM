@@ -563,16 +563,12 @@ Namespace Vitens.DynamicBandwidthMonitor
                     iR += 1 ' Move iterator to next raw value.
                   Loop
 
-                  ' Annotate the last result with the RMSE.
-                  If iD = Results.Count And iR = RawValues.Count Then
+                  ' Annotate the last value with the RMSE.
+                  If iD = Results.Count Then
                     Annotations.Clear
                     Annotation = Annotations.Add(
                       "RMSE", RMSE(Measurements, Forecasts))
-                    Annotation.Description = "Description"
                     GetValues.Item(GetValues.Count-1).SetAnnotation(Annotations)
-                    Attribute.Data.UpdateValue(
-                      GetValues.Item(GetValues.Count-1),
-                      AFUpdateOption.InsertNoCompression)
                   End If
 
                 ElseIf Attribute.Trait Is Forecast Then
