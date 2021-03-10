@@ -160,7 +160,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' enumeration values logically ORed together. The default value is None.
         SupportedDataMethods = AFDataMethods.RecordedValue Or
           AFDataMethods.RecordedValues Or AFDataMethods.PlotValues Or
-          AFDataMethods.Summary Or AFDataMethods.Summaries
+          AFDataMethods.Annotations Or AFDataMethods.Summary Or
+          AFDataMethods.Summaries
         If SupportsFutureData Then
           ' Support future data if available.
           SupportedDataMethods = SupportedDataMethods Or AFDataMethods.Future
@@ -562,8 +563,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
                   ' Annotate the last result with the RMSE.
                   If iD = Results.Count And iR = RawValues.Count Then
-                    GetValues.Item(GetValues.Count-1).SetAnnotation("RMSE: " &
-                      RMSE(Measurements, Forecasts).ToString("0.####"))
+                    GetValues.Item(GetValues.Count-1).SetAnnotation(
+                      "RMSE: " & RMSE(Measurements, Forecasts).ToString)
                   End If
 
                 ElseIf Attribute.Trait Is Forecast Then
