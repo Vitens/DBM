@@ -396,6 +396,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Result As DBMResult
       Dim iR, iD As Integer ' Iterators for raw values and DBM results.
       Dim Annotations As New AFAnnotations
+      Dim Annotation As AFAnnotation
 
       GetValues = New AFValues
 
@@ -565,8 +566,9 @@ Namespace Vitens.DynamicBandwidthMonitor
                   ' Annotate the last result with the RMSE.
                   If iD = Results.Count And iR = RawValues.Count Then
                     Annotations.Clear
-                    Annotations.Add("Annotation#1",
-                      "RMSE: " & RMSE(Measurements, Forecasts).ToString)
+                    Annotation =  Annotations.Add(
+                      "RMSE", RMSE(Measurements, Forecasts))
+                    Annotation.Description = "Description"
                     GetValues.Item(GetValues.Count-1).SetAnnotation(Annotations)
                   End If
 
