@@ -261,7 +261,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
-    Public Overrides Function SetAnnotation(value As AFValue,
+    Public Overrides Sub SetAnnotation(value As AFValue,
       annotation As Object) As Object
 
       ' Associates the annotation with the passed in value.
@@ -272,7 +272,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       StoredAnnotations.Add(value.Timestamp.LocalTime, annotation)
 
-    End Function
+    End Sub
 
 
     Public Overrides Function GetAnnotation(value As AFValue) As Object
