@@ -91,6 +91,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private Shared DBM As New DBM
+    Private StoredAnnotations As New Dictionary(Of DateTime, Object)
 
 
     Public Shared Function CreateDataPipe As Object
@@ -260,11 +261,31 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
+    Public Overrides Function SetAnnotation(value As AFValue,
+      annotation As Object) As Object
+
+      ' Associates the annotation with the passed in value.
+
+      If StoredAnnotations.ContainsKey(value.Timestamp.LocalTime) Then
+        StoredAnnotations.Remove(value.Timestamp.LocalTime)
+      End If
+
+      StoredAnnotations.Add(value.Timestamp.LocalTime, annotation)
+
+    End Function
+
+
     Public Overrides Function GetAnnotation(value As AFValue) As Object
 
       ' Gets the annotation associated with a single historical event.
 
-      Return Nothing
+      GetAnnotation = Nothing
+      If StoredAnnotations.TryGetValue(
+        value.Timestamp.LocalTime, GetAnnotation) Then
+        Return GetAnnotation
+      Else
+        Return NaN
+      End If
 
     End Function
 
