@@ -284,7 +284,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         value.Timestamp.LocalTime, GetAnnotation) Then
         Return GetAnnotation
       Else
-        Return NaN
+        Return Nothing
       End If
 
     End Function
