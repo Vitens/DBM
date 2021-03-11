@@ -262,7 +262,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Overrides Sub SetAnnotation(value As AFValue,
-      annotation As Object) As Object
+      annotation As Object)
 
       ' Associates the annotation with the passed in value.
 
