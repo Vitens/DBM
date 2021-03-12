@@ -414,8 +414,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function RMSE(Measurements() As Double,
-      Forecasts() As Double) As Double
+    Public Shared Function RMSD(Measurements() As Double,
+      Forecasts() As Double, Optional Normalized As Boolean = False) As Double
 
       ' The root-mean-square deviation (RMSD) or root-mean-square error (RMSE)
       ' is a frequently used measure of the differences between values (sample
@@ -430,22 +430,39 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' single measure of predictive power.
 
       Dim i, Count As Integer
+      Dim Total As Double
 
       If Measurements.Length = 0 Or Forecasts.Length = 0 Or
         Measurements.Length <> Forecasts.Length Then Return NaN ' Empty/non eql.
 
       For i = 0 To Measurements.Length-1
         If Not IsNaN(Measurements(i)) And Not IsNaN(Forecasts(i)) Then ' Exc NaN
-          RMSE += (Forecasts(i)-Measurements(i))^2
+          RMSD += (Forecasts(i)-Measurements(i))^2
+          Total += Measurements(i)
           Count += 1
         End If
       Next i
 
       If Count = 0 Then Return NaN ' No non-NaN pairs.
 
-      RMSE = Sqrt(RMSE/Count)
+      RMSD = Sqrt(RMSD/Count)
 
-      Return RMSE
+      ' Normalizing the RMSD facilitates the comparison between datasets or
+      ' models with different scales. Though there is no consistent means of
+      ' normalization in the literature, common choices are the mean or the
+      ' range (defined as the maximum value minus the minimum value) of the
+      ' measured data. This value is commonly referred to as the normalized
+      ' root-mean-square deviation or error (NRMSD or NRMSE), and often
+      ' expressed as a percentage, where lower values indicate less residual
+      ' variance. In many cases, especially for smaller samples, the sample
+      ' range is likely to be affected by the size of sample which would hamper
+      ' comparisons. When normalizing by the mean value of the measurements, the
+      ' term coefficient of variation of the RMSD, CV(RMSD) may be used to avoid
+      ' ambiguity. This is analogous to the coefficient of variation with the
+      ' RMSD taking the place of the standard deviation.
+      If Normalized Then RMSD /= Total/Count
+
+      Return RMSD
 
     End Function
 

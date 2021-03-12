@@ -485,7 +485,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           timeRange.StartTime.LocalTime, timeRange.EndTime.LocalTime,
           numberOfValues)
 
-        ' Resize arrays to store results for RMSE calculation.
+        ' Resize arrays to store results for RMSD calculation.
         ReDim Measurements(Results.Count-1)
         ReDim Forecasts(Results.Count-1)
 
@@ -516,7 +516,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
                 If Attribute.Trait Is LimitTarget Then
 
-                  ' Store results for RMSE calculation.
+                  ' Store results for RMSD calculation.
                   Measurements(iD) = .ForecastItem.Measurement
                   Forecasts(iD) = .ForecastItem.Forecast
 
@@ -593,11 +593,11 @@ Namespace Vitens.DynamicBandwidthMonitor
                     iR += 1 ' Move iterator to next raw value.
                   Loop
 
-                  ' Annotate the last value with the RMSE.
+                  ' Annotate the last value with the RMSD.
                   If iD = Results.Count Then
                     Annotations.Clear
                     Annotation = Annotations.Add(
-                      "RMSE", RMSE(Measurements, Forecasts))
+                      "CV(RMSD)", RMSD(Measurements, Forecasts, True))
                     GetValues.Item(GetValues.Count-1).SetAnnotation(Annotations)
                   End If
 

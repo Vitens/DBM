@@ -601,37 +601,37 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(SlopeToAngle(-1.6831), -59.2837)
       AssertAlmostEqual(SlopeToAngle(-2.0031), -63.4704)
 
-      AssertNaN(RMSE({}, {}))
-      AssertNaN(RMSE({1}, {}))
-      AssertNaN(RMSE({}, {1}))
-      AssertNaN(RMSE({1}, {1, 2}))
-      AssertNaN(RMSE({NaN}, {NaN}))
-      AssertNaN(RMSE({1, 2}, {NaN, NaN}))
-      AssertNaN(RMSE({NaN, NaN}, {1, 2}))
-      AssertNaN(RMSE({1, NaN}, {NaN, 2}))
-      AssertEqual(RMSE({1, 2}, {1, 2}), 0)
-      AssertAlmostEqual(RMSE({22.9209, 38.4266, 68.0724, 99.5133, 137.5343},
+      AssertNaN(RMSD({}, {}))
+      AssertNaN(RMSD({1}, {}))
+      AssertNaN(RMSD({}, {1}))
+      AssertNaN(RMSD({1}, {1, 2}))
+      AssertNaN(RMSD({NaN}, {NaN}))
+      AssertNaN(RMSD({1, 2}, {NaN, NaN}))
+      AssertNaN(RMSD({NaN, NaN}, {1, 2}))
+      AssertNaN(RMSD({1, NaN}, {NaN, 2}))
+      AssertEqual(RMSD({1, 2}, {1, 2}), 0)
+      AssertAlmostEqual(RMSD({22.9209, 38.4266, 68.0724, 99.5133, 137.5343},
         {6.312, 26.1236, 46.4224, 51.6031, 82.2753}), 35.3409)
-      AssertAlmostEqual(RMSE({36.0669, 56.3126, 87.0465, 90.3358, 121.6257},
+      AssertAlmostEqual(RMSD({36.0669, 56.3126, 87.0465, 90.3358, 121.6257},
         {21.1303, 50.5925, 75.5125, 98.2478, 106.5677}), 11.6464)
-      AssertAlmostEqual(RMSE({1.0778, 15.4275, 33.4357, 35.0669, 39.1254},
+      AssertAlmostEqual(RMSD({1.0778, 15.4275, 33.4357, 35.0669, 39.1254},
         {4.5849, 5.8702, 24.2946, 51.1991, 56.0207}), 12.107)
-      AssertAlmostEqual(RMSE({14.4002, 46.6372, 67.8622, 68.4366, 105.8508},
+      AssertAlmostEqual(RMSD({14.4002, 46.6372, 67.8622, 68.4366, 105.8508},
         {37.4782, 60.2742, 90.5246, 118.0239, 144.4999}), 32.2019)
-      AssertAlmostEqual(RMSE({29.5289, 65.0544, 93.8844, 95.8158, 108.4096},
-        {1.6749, 10.5653, 46.1936, 62.9573, 89.4832}), 38.6192)
-      AssertAlmostEqual(RMSE({36.4355, 71.794, 111.4153, 135.912, 157.2526},
-        {29.2101, 52.4227, 87.7501, 123.2186, 133.9783}), 18.3865)
-      AssertAlmostEqual(RMSE({33.6119, 71.478, 108.3694, 125.8594, 133.3706},
-        {9.5769, 34.5098, 70.9659, 108.1606, 120.9939}), 27.6036)
-      AssertAlmostEqual(RMSE({22.7011, 48.1137, 76.1351, 92.5158, 97.2741},
-        {22.3235, 47.6603, 49.3894, 88.389, 91.1577}), 12.4107)
-      AssertAlmostEqual(RMSE({18.8711, 38.2954, NaN, 85.4236, 99.999},
+      AssertAlmostEqual(RMSD({29.5289, 65.0544, 93.8844, 95.8158, 108.4096},
+        {1.6749, 10.5653, 46.1936, 62.9573, 89.4832}, False), 38.6192)
+      AssertAlmostEqual(RMSD({36.4355, 71.794, 111.4153, 135.912, 157.2526},
+        {29.2101, 52.4227, 87.7501, 123.2186, 133.9783}, False), 18.3865)
+      AssertAlmostEqual(RMSD({33.6119, 71.478, 108.3694, 125.8594, 133.3706},
+        {9.5769, 34.5098, 70.9659, 108.1606, 120.9939}, True), 0.292)
+      AssertAlmostEqual(RMSD({22.7011, 48.1137, 76.1351, 92.5158, 97.2741},
+        {22.3235, 47.6603, 49.3894, 88.389, 91.1577}, True), 0.1843)
+      AssertAlmostEqual(RMSD({18.8711, 38.2954, NaN, 85.4236, 99.999},
         {33.2514, 36.3659, 41.5289, 67.0192, 68.2669}), 19.7241)
-      AssertAlmostEqual(RMSE({16.4998, 40.5346, 50.6114, NaN, 108.2397},
-        {NaN, 28.7668, 34.6964, 37.897, 39.1058}), 41.5181)
-      AssertAlmostEqual(RMSE({16.1989, NaN, 51.0796, 72.0766, NaN},
-        {4.2429, NaN, NaN, 81.3421, 89.191}), 10.6957)
+      AssertAlmostEqual(RMSD({16.4998, 40.5346, 50.6114, NaN, 108.2397},
+        {NaN, 28.7668, 34.6964, 37.897, 39.1058}, False), 41.5181)
+      AssertAlmostEqual(RMSD({16.1989, NaN, 51.0796, 72.0766, NaN},
+        {4.2429, NaN, NaN, 81.3421, 89.191}, True), 0.2303)
 
       ' DBMDate
       AssertEqual(PreviousInterval(
