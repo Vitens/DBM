@@ -430,7 +430,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' single measure of predictive power.
 
       Dim i, Count As Integer
-      Dim Total As Double
+      Dim Mean As Double
 
       If Measurements.Length = 0 Or Forecasts.Length = 0 Or
         Measurements.Length <> Forecasts.Length Then Return NaN ' Empty/non eql.
@@ -438,7 +438,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       For i = 0 To Measurements.Length-1
         If Not IsNaN(Measurements(i)) And Not IsNaN(Forecasts(i)) Then ' Exc NaN
           RMSD += (Forecasts(i)-Measurements(i))^2
-          Total += Measurements(i)
+          Mean += Measurements(i)
           Count += 1
         End If
       Next i
@@ -446,6 +446,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       If Count = 0 Then Return NaN ' No non-NaN pairs.
 
       RMSD = Sqrt(RMSD/Count)
+      Mean = Mean/Count
 
       ' Normalizing the RMSD facilitates the comparison between datasets or
       ' models with different scales. Though there is no consistent means of
@@ -460,7 +461,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' term coefficient of variation of the RMSD, CV(RMSD) may be used to avoid
       ' ambiguity. This is analogous to the coefficient of variation with the
       ' RMSD taking the place of the standard deviation.
-      If Normalized Then RMSD /= Total/Count
+      If Normalized Then RMSD /= Mean
 
       Return RMSD
 

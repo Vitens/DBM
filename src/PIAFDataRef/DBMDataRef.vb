@@ -590,7 +590,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                     iR += 1 ' Move iterator to next raw value.
                   Loop
 
-                  ' Annotate the last value with the RMSD.
+                  ' Annotate the last value with the RMSD and CV(RMSD).
                   If iD = Results.Count Then
                     Annotations.Clear
                     Annotation = Annotations.Add(
