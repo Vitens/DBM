@@ -594,9 +594,11 @@ Namespace Vitens.DynamicBandwidthMonitor
                   If iD = Results.Count Then
                     Annotations.Clear
                     Annotation = Annotations.Add(
-                      "RMSD", RMSD(Measurements, Forecasts))
+                      "Root-mean-square deviation",
+                      RMSD(Measurements, Forecasts))
                     Annotation = Annotations.Add(
-                      "CV(RMSD)", RMSD(Measurements, Forecasts, True))
+                      "Coefficient of variation of the RMSD",
+                      RMSD(Measurements, Forecasts, True))
                     GetValues.Item(GetValues.Count-1).SetAnnotation(Annotations)
                   End If
 
