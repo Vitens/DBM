@@ -631,7 +631,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(RMSD({16.4998, 40.5346, 50.6114, NaN, 108.2397},
         {NaN, 28.7668, 34.6964, 37.897, 39.1058}, False), 41.5181)
       AssertAlmostEqual(RMSD({16.1989, NaN, 51.0796, 72.0766, NaN},
-        {4.2429, NaN, NaN, 81.3421, 89.191}, True), 0.2303)
+        {4.2429, NaN, NaN, 81.3421, 89.191}, True), 0.2423)
 
       ' DBMDate
       AssertEqual(PreviousInterval(
