@@ -280,12 +280,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Gets the annotation associated with a single historical event.
 
       GetAnnotation = Nothing
-      If StoredAnnotations.TryGetValue(
-        value.Timestamp.LocalTime, GetAnnotation) Then
-        Return GetAnnotation
-      Else
-        Return Nothing
-      End If
+      StoredAnnotations.TryGetValue(value.Timestamp.LocalTime, GetAnnotation)
+
+      Return GetAnnotation
 
     End Function
 
@@ -596,6 +593,8 @@ Namespace Vitens.DynamicBandwidthMonitor
                   ' Annotate the last value with the RMSD.
                   If iD = Results.Count Then
                     Annotations.Clear
+                    Annotation = Annotations.Add(
+                      "RMSD", RMSD(Measurements, Forecasts))
                     Annotation = Annotations.Add(
                       "CV(RMSD)", RMSD(Measurements, Forecasts, True))
                     GetValues.Item(GetValues.Count-1).SetAnnotation(Annotations)
