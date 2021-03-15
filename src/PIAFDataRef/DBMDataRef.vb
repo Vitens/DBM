@@ -597,6 +597,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                       "RMSD", RMSD(Measurements, Forecasts))
                     Annotation = Annotations.Add(
                       "CV(RMSD)", RMSD(Measurements, Forecasts, True))
+                    GetValues.Item(GetValues.Count-1).SetAnnotation(Annotations)
                     SetAnnotation(
                       GetValues.Item(GetValues.Count-1), Annotations)
                   End If
