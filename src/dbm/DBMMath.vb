@@ -432,18 +432,17 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim i, Count As Integer
       Dim Mean As Double
 
-      If Measurements.Length = 0 Or Forecasts.Length = 0 Or
-        Measurements.Length <> Forecasts.Length Then Return NaN ' Empty/non eql.
+      If Measurements.Length > 0 And Measurements.Length = Forecasts.Length Then
+        For i = 0 To Measurements.Length-1
+          If Not IsNaN(Measurements(i)) And Not IsNaN(Forecasts(i)) Then
+            RMSD += (Forecasts(i)-Measurements(i))^2
+            Mean += Measurements(i)
+            Count += 1
+          End If
+        Next i
+      End If
 
-      For i = 0 To Measurements.Length-1
-        If Not IsNaN(Measurements(i)) And Not IsNaN(Forecasts(i)) Then ' Exc NaN
-          RMSD += (Forecasts(i)-Measurements(i))^2
-          Mean += Measurements(i)
-          Count += 1
-        End If
-      Next i
-
-      If Count = 0 Then Return NaN ' No non-NaN pairs.
+      If Count = 0 Then Return NaN ' Empty, non-equal, or no non-NaN pairs.
 
       RMSD = Sqrt(RMSD/Count)
       Mean = Mean/Count
