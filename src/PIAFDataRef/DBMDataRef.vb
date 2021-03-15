@@ -279,7 +279,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Gets the annotation associated with a single historical event.
 
-      GetAnnotation = Nothing
+      GetAnnotation = "Undefined"
       StoredAnnotations.TryGetValue(value.Timestamp.LocalTime, GetAnnotation)
 
       Return GetAnnotation
