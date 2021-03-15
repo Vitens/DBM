@@ -285,6 +285,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         GetAnnotation = "Undefined"
       End If
 
+      value.AdditionalInfo = GetAnnotation
+
       Return GetAnnotation
 
     End Function
