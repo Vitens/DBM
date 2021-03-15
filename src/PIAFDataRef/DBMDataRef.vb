@@ -1,4 +1,4 @@
-Option Explicit
+  Option Explicit
 Option Strict
 
 
@@ -279,13 +279,16 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Gets the annotation associated with a single historical event.
 
+      Dim AnnotationHandle As New PIPoint.PIAnnotationHandle
+
       GetAnnotation = Nothing
       If Not StoredAnnotations.TryGetValue(
         value.Timestamp.LocalTime, GetAnnotation) Then
         GetAnnotation = "Undefined"
       End If
 
-      value.AdditionalInfo = GetAnnotation
+      AnnotationHandle.UpdateLoadedAnnotation(GetAnnotation)
+      value.AdditionalInfo = AnnotationHandle
 
       Return GetAnnotation
 
