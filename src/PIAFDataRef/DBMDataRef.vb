@@ -1,4 +1,4 @@
-  Option Explicit
+Option Explicit
 Option Strict
 
 
@@ -32,6 +32,7 @@ Imports System.Runtime.InteropServices
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Asset.AFAttributeTrait
 Imports OSIsoft.AF.Data
+Imports OSIsoft.AF.PI
 Imports OSIsoft.AF.Time
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
