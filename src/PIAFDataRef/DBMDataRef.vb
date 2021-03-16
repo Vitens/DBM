@@ -32,11 +32,9 @@ Imports System.Runtime.InteropServices
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Asset.AFAttributeTrait
 Imports OSIsoft.AF.Data
-Imports OSIsoft.AF.PI
 Imports OSIsoft.AF.Time
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
-Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
@@ -92,7 +90,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private Shared DBM As New DBM
-    Private StoredAnnotations As New Dictionary(Of DateTime, Object)
 
 
     Public Shared Function CreateDataPipe As Object
@@ -162,8 +159,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' enumeration values logically ORed together. The default value is None.
         SupportedDataMethods = AFDataMethods.RecordedValue Or
           AFDataMethods.RecordedValues Or AFDataMethods.PlotValues Or
-          AFDataMethods.Annotations Or AFDataMethods.Summary Or
-          AFDataMethods.Summaries
+          AFDataMethods.Summary Or AFDataMethods.Summaries
         If SupportsFutureData Then
           ' Support future data if available.
           SupportedDataMethods = SupportedDataMethods Or AFDataMethods.Future
@@ -260,40 +256,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       End Get
 
     End Property
-
-
-    Public Overrides Sub SetAnnotation(value As AFValue,
-      annotation As Object)
-
-      ' Associates the annotation with the passed in value.
-
-      If StoredAnnotations.ContainsKey(value.Timestamp.LocalTime) Then
-        StoredAnnotations.Remove(value.Timestamp.LocalTime)
-      End If
-
-      StoredAnnotations.Add(value.Timestamp.LocalTime, annotation)
-
-    End Sub
-
-
-    Public Overrides Function GetAnnotation(value As AFValue) As Object
-
-      ' Gets the annotation associated with a single historical event.
-
-      Dim AnnotationHandle As New PIPoint.PIAnnotationHandle
-
-      GetAnnotation = Nothing
-      If Not StoredAnnotations.TryGetValue(
-        value.Timestamp.LocalTime, GetAnnotation) Then
-        GetAnnotation = "Undefined"
-      End If
-
-      AnnotationHandle.UpdateLoadedAnnotation(GetAnnotation)
-      value.AdditionalInfo = AnnotationHandle
-
-      Return GetAnnotation
-
-    End Function
 
 
     Public Overrides Function GetValue(context As Object,
@@ -426,13 +388,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim InputPointDriver As DBMPointDriver
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim Results As List(Of DBMResult)
-      Dim Measurements(), Forecasts() As Double
       Dim RawSnapshot As DateTime
       Dim RawValues As AFValues = Nothing
       Dim Result As DBMResult
       Dim iR, iD As Integer ' Iterators for raw values and DBM results.
-      Dim Annotations As New AFAnnotations
-      Dim Annotation As AFAnnotation
 
       GetValues = New AFValues
 
@@ -491,10 +450,6 @@ Namespace Vitens.DynamicBandwidthMonitor
           timeRange.StartTime.LocalTime, timeRange.EndTime.LocalTime,
           numberOfValues)
 
-        ' Resize arrays to store results for RMSD calculation.
-        ReDim Measurements(Results.Count-1)
-        ReDim Forecasts(Results.Count-1)
-
         ' Retrieve raw snapshot timestamp and raw values for Target trait. Only
         ' retrieve values if the start timestamp for this time range is before
         ' the next interval after the snapshot timestamp.
@@ -521,10 +476,6 @@ Namespace Vitens.DynamicBandwidthMonitor
               If SupportsFutureData Or Not .IsFutureData Then
 
                 If Attribute.Trait Is LimitTarget Then
-
-                  ' Store results for RMSD calculation.
-                  Measurements(iD) = .ForecastItem.Measurement
-                  Forecasts(iD) = .ForecastItem.Forecast
 
                   ' The Target trait returns the original, valid raw
                   ' measurements, augmented with forecast data for invalid and
@@ -598,18 +549,6 @@ Namespace Vitens.DynamicBandwidthMonitor
                     End If
                     iR += 1 ' Move iterator to next raw value.
                   Loop
-
-                  ' Annotate the last value with the RMSD and CV(RMSD).
-                  If iD = Results.Count Then
-                    Annotations.Clear
-                    Annotation = Annotations.Add(
-                      "RMSD", RMSD(Measurements, Forecasts))
-                    Annotation = Annotations.Add(
-                      "CV(RMSD)", RMSD(Measurements, Forecasts, True))
-                    GetValues.Item(GetValues.Count-1).Annotated = True
-                    SetAnnotation(
-                      GetValues.Item(GetValues.Count-1), Annotations)
-                  End If
 
                 ElseIf Attribute.Trait Is Forecast Then
                   GetValues.Add(New AFValue(.ForecastItem.Forecast,
