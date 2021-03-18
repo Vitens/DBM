@@ -29,6 +29,7 @@ Imports System.DateTime
 Imports System.Double
 Imports System.Math
 Imports System.Runtime.InteropServices
+Imports Microsoft.VisualBasic.Constants
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Asset.AFAttributeTrait
 Imports OSIsoft.AF.Data
