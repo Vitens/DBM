@@ -393,7 +393,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim RawValues As AFValues = Nothing
       Dim Result As DBMResult
       Dim iR, iD As Integer ' Iterators for raw values and DBM results.
-      Dim Measurements(), Forecasts() As Double
 
       GetValues = New AFValues
 
@@ -602,19 +601,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Annotate Target values with the RMSD and CV(RMSD).
       If Attribute.Trait Is LimitTarget Then
-        ReDim Measurements(Results.Count-1)
-        ReDim Forecasts(Results.Count-1)
-        iD = 0
-        For Each Result In Results
-          Measurements(iD) = Result.ForecastItem.Measurement
-          Forecasts(iD) = Result.ForecastItem.Forecast
-          iD += 1
-        Next Result
         GetValues.Add(New AFValue(
-          String.Format("RMSD: {0}",
-          RMSD(Measurements, Forecasts).ToString("G5")) & "; " &
-          String.Format("CV(RMSD): {0}",
-          RMSD(Measurements, Forecasts, True).ToString("G5")),
+          String.Format("RMSD: {0}", RMSD(Results).ToString("G5")) & "; " &
+          String.Format("CV(RMSD): {0}", RMSD(Results, True).ToString("G5")),
           New AFTime(timeRange.EndTime.LocalTime.AddSeconds(1)),
           Nothing, AFValueStatus.Annotated))
       End If
