@@ -563,10 +563,10 @@ Namespace Vitens.DynamicBandwidthMonitor
                   ' Annotate the last value with the RMSD and CV(RMSD).
                   If iD = Results.Count Then
                     GetValues.Add(New AFValue(String.Format("RMSD: {0}",
-                      RMSD(Measurements, Forecasts)).ToString("G5"),
+                      RMSD(Measurements, Forecasts).ToString("G5")),
                       AFTime.MinValue, Nothing, AFValueStatus.Annotated))
                     GetValues.Add(New AFValue(String.Format("CV(RMSD): {0}",
-                      RMSD(Measurements, Forecasts, True)).ToString("G5"),
+                      RMSD(Measurements, Forecasts, True).ToString("G5")),
                       AFTime.MinValue, Nothing, AFValueStatus.Annotated))
                   End If
 
