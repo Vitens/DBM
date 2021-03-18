@@ -612,7 +612,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Next Result
         GetValues.Add(New AFValue(
           String.Format("RMSD: {0}",
-          RMSD(Measurements, Forecasts).ToString("G5")) & Environment.NewLine &
+          RMSD(Measurements, Forecasts).ToString("G5")) & "; " &
           String.Format("CV(RMSD): {0}",
           RMSD(Measurements, Forecasts, True).ToString("G5")),
           New AFTime(timeRange.EndTime.LocalTime.AddTicks(1)),
