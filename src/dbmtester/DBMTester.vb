@@ -29,6 +29,7 @@ Imports System.Globalization.CultureInfo
 Imports System.Text.RegularExpressions
 Imports System.Threading.Thread
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
+Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
