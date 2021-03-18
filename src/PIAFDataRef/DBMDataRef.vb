@@ -601,7 +601,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
 
       ' Annotate Target values with the RMSD and CV(RMSD).
-      If Attribute.Trait Is LimitTarget
+      If Attribute.Trait Is LimitTarget Then
         ReDim Measurements(Results.Count-1)
         ReDim Forecasts(Results.Count-1)
         iD = 0
