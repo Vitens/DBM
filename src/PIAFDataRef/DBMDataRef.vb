@@ -389,11 +389,11 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim InputPointDriver As DBMPointDriver
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim Results As List(Of DBMResult)
-      Dim Measurements(), Forecasts() As Double
       Dim RawSnapshot As DateTime
       Dim RawValues As AFValues = Nothing
       Dim Result As DBMResult
       Dim iR, iD As Integer ' Iterators for raw values and DBM results.
+      Dim Measurements(), Forecasts() As Double
 
       GetValues = New AFValues
 
@@ -452,10 +452,6 @@ Namespace Vitens.DynamicBandwidthMonitor
           timeRange.StartTime.LocalTime, timeRange.EndTime.LocalTime,
           numberOfValues)
 
-        ' Resize arrays to store results for RMSD calculation.
-        ReDim Measurements(Results.Count-1)
-        ReDim Forecasts(Results.Count-1)
-
         ' Retrieve raw snapshot timestamp and raw values for Target trait. Only
         ' retrieve values if the start timestamp for this time range is before
         ' the next interval after the snapshot timestamp.
@@ -482,10 +478,6 @@ Namespace Vitens.DynamicBandwidthMonitor
               If SupportsFutureData Or Not .IsFutureData Then
 
                 If Attribute.Trait Is LimitTarget Then
-
-                  ' Store results for RMSD calculation.
-                  Measurements(iD) = .ForecastItem.Measurement
-                  Forecasts(iD) = .ForecastItem.Forecast
 
                   ' The Target trait returns the original, valid raw
                   ' measurements, augmented with forecast data for invalid and
@@ -560,18 +552,6 @@ Namespace Vitens.DynamicBandwidthMonitor
                     iR += 1 ' Move iterator to next raw value.
                   Loop
 
-                  ' Annotate the last value with the RMSD and CV(RMSD).
-                  If iD = Results.Count Then
-                    GetValues.Add(New AFValue(String.Format("RMSD: {0}",
-                      RMSD(Measurements, Forecasts).ToString("G5")),
-                      New AFTime(timeRange.EndTime.LocalTime.AddSeconds(1)),
-                      Nothing, AFValueStatus.Annotated))
-                    GetValues.Add(New AFValue(String.Format("CV(RMSD): {0}",
-                      RMSD(Measurements, Forecasts, True).ToString("G5")),
-                      New AFTime(timeRange.EndTime.LocalTime.AddSeconds(1)),
-                      Nothing, AFValueStatus.Annotated))
-                  End If
-
                 ElseIf Attribute.Trait Is Forecast Then
                   GetValues.Add(New AFValue(.ForecastItem.Forecast,
                     New AFTime(.Timestamp)))
@@ -605,13 +585,39 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         Next Result
 
-        ' If there are no calculation results, return a NoData state.
-        ' Definition: 'Data-retrieval functions use this state for time periods
-        ' where no archive values for a tag can exist 10 minutes into the future
-        ' or before the oldest mounted archive.'
         If GetValues.Count = 0 Then
+
+          ' If there are no calculation results, return a NoData state.
+          ' Definition: 'Data-retrieval functions use this state for time
+          ' periods where no archive values for a tag can exist 10 minutes into
+          ' the future or before the oldest mounted archive.'
           GetValues.Add(AFValue.CreateSystemStateValue(
             AFSystemStateCode.NoData, timeRange.StartTime))
+
+        ElseIf Attribute.Trait Is LimitTarget
+
+          ' Resize arrays to store results for RMSD calculation.
+          ReDim Measurements(Results.Count-1)
+          ReDim Forecasts(Results.Count-1)
+
+          ' Store results for RMSD calculation.
+          iD = 0
+          For Each Result In Results
+            Measurements(iD) = .ForecastItem.Measurement
+            Forecasts(iD) = .ForecastItem.Forecast
+            iD += 1
+          Next Result
+
+          ' Annotate values with the RMSD and CV(RMSD).
+          GetValues.Add(New AFValue(String.Format("RMSD: {0}",
+            RMSD(Measurements, Forecasts).ToString("G5")),
+            New AFTime(timeRange.EndTime.LocalTime.AddSeconds(1)),
+            Nothing, AFValueStatus.Annotated))
+          GetValues.Add(New AFValue(String.Format("CV(RMSD): {0}",
+            RMSD(Measurements, Forecasts, True).ToString("G5")),
+            New AFTime(timeRange.EndTime.LocalTime.AddSeconds(1)),
+            Nothing, AFValueStatus.Annotated))
+
         End If
 
       Else
