@@ -23,6 +23,7 @@ Option Strict
 
 
 Imports System
+Imports System.Collections.Generic
 Imports System.Double
 Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
