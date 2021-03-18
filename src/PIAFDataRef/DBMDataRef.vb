@@ -585,30 +585,26 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         Next Result
 
+        ' If there are no calculation results, return a NoData state.
+        ' Definition: 'Data-retrieval functions use this state for time periods
+        ' where no archive values for a tag can exist 10 minutes into the future
+        ' or before the oldest mounted archive.'
         If GetValues.Count = 0 Then
-
-          ' If there are no calculation results, return a NoData state.
-          ' Definition: 'Data-retrieval functions use this state for time
-          ' periods where no archive values for a tag can exist 10 minutes into
-          ' the future or before the oldest mounted archive.'
           GetValues.Add(AFValue.CreateSystemStateValue(
             AFSystemStateCode.NoData, timeRange.StartTime))
+          Return GetValues
+        End If
 
-        ElseIf Attribute.Trait Is LimitTarget
-
-          ' Resize arrays to store results for RMSD calculation.
+        ' Annotate Target values with the RMSD and CV(RMSD).
+        If Attribute.Trait Is LimitTarget
           ReDim Measurements(Results.Count-1)
           ReDim Forecasts(Results.Count-1)
-
-          ' Store results for RMSD calculation.
           iD = 0
           For Each Result In Results
             Measurements(iD) = Result.ForecastItem.Measurement
             Forecasts(iD) = Result.ForecastItem.Forecast
             iD += 1
           Next Result
-
-          ' Annotate values with the RMSD and CV(RMSD).
           GetValues.Add(New AFValue(
             String.Format("RMSD: {0}",
             RMSD(Measurements, Forecasts).ToString("G5")) &
@@ -617,7 +613,6 @@ Namespace Vitens.DynamicBandwidthMonitor
             RMSD(Measurements, Forecasts, True).ToString("G5")),
             New AFTime(timeRange.EndTime.LocalTime.AddTicks(1)),
             Nothing, AFValueStatus.Annotated))
-
         End If
 
       Else
