@@ -474,7 +474,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim i As Integer
       Dim Measurements(Results.Count-1), Forecasts(Results.Count-1) As Double
 
-      For i = 0 To Results.Length-1
+      For i = 0 To Results.Count-1
         Measurements(i) = Results.Item(i).ForecastItem.Measurement
         Forecasts(i) = Results.Item(i).ForecastItem.Forecast
       Next Result
