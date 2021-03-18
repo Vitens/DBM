@@ -1247,6 +1247,33 @@ Namespace Vitens.DynamicBandwidthMonitor
         End With
       Next i
 
+      ' RMSD GetResults
+      Console.WriteLine(
+        RMSD(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 1, 1, 0, 0)))
+      )
+      Console.WriteLine(
+        RMSD(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 1, 0, 0),
+        New DateTime(2016, 1, 1, 2, 0, 0)), False)
+      )
+      Console.WriteLine(
+        RMSD(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 2, 0, 0),
+        New DateTime(2016, 1, 1, 3, 0, 0)), False)
+      )
+      Console.WriteLine(
+        RMSD(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 3, 0, 0),
+        New DateTime(2016, 1, 1, 4, 0, 0)), True)
+      )
+      Console.WriteLine(
+        RMSD(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 4, 0, 0),
+        New DateTime(2016, 1, 1, 5, 0, 0)), True)
+      )
+
       ' GetResults Count - test number of results
       AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0),
