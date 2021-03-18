@@ -475,8 +475,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Measurements(Results.Count-1), Forecasts(Results.Count-1) As Double
 
       For i = 0 To Results.Count-1
-        Measurements(i) = Results.Item(i).ForecastItem.Measurement
-        Forecasts(i) = Results.Item(i).ForecastItem.Forecast
+        With Results.Item(i).ForecastItem
+          Measurements(i) = .Measurement
+          Forecasts(i) = .Forecast
+        End With
       Next i
 
       Return RMSD(Measurements, Forecasts, Normalized)
