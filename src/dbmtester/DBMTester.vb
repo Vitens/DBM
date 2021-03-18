@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -70,8 +70,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim InputPointDriver As DBMPointDriver = Nothing
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim StartTimestamp, EndTimestamp As DateTime
-      Dim Result As DBMResult
+      Dim Results As List(Of DBMResult)
       Dim DBM As New DBM
+      Dim Result As DBMResult
 
       ' Parse command line arguments
       For Each CommandLineArg In GetCommandLineArgs
@@ -131,8 +132,15 @@ Namespace Vitens.DynamicBandwidthMonitor
           EndTimestamp = NextInterval(StartTimestamp)
         End If
 
-        For Each Result In DBM.GetResults(InputPointDriver, CorrelationPoints,
-          StartTimestamp, EndTimestamp) ' Get results for time range.
+        ' Header
+        Console.WriteLine("Timestamp" & Separator & "Factor" & Separator &
+          "Measurement" & Separator & "Forecast" & Separator &
+          "LowerControlLimit" & Separator & "UpperControlLimit")
+
+        ' Get results for time range.
+        Results = DBM.GetResults(InputPointDriver, CorrelationPoints,
+          StartTimestamp, EndTimestamp)
+        For Each Result In Results
 
           With Result
             Console.WriteLine(.Timestamp.ToString("s") & Separator &
@@ -144,6 +152,11 @@ Namespace Vitens.DynamicBandwidthMonitor
           End With
 
         Next Result
+
+        Console.WriteLine("# " &
+          String.Format("RMSD: {0}", RMSD(Results).ToString("G5")))
+        Console.WriteLine("# " &
+          String.Format("CV(RMSD): {0}", RMSD(Results, True).ToString("G5")))
 
       End If
 
