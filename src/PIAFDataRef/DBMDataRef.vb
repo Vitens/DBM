@@ -603,8 +603,8 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' Store results for RMSD calculation.
           iD = 0
           For Each Result In Results
-            Measurements(iD) = .ForecastItem.Measurement
-            Forecasts(iD) = .ForecastItem.Forecast
+            Measurements(iD) = Result.ForecastItem.Measurement
+            Forecasts(iD) = Result.ForecastItem.Forecast
             iD += 1
           Next Result
 
