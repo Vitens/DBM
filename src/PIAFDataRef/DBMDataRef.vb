@@ -612,7 +612,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' Annotate values with the RMSD and CV(RMSD).
           GetValues.Add(New AFValue(
             String.Format("RMSD: {0}",
-            RMSD(Measurements, Forecasts).ToString("G5")) & Constants.vbCrLf &
+            RMSD(Measurements, Forecasts).ToString("G5")) & ControlChars.CrLf &
             String.Format("CV(RMSD): {0}",
             RMSD(Measurements, Forecasts, True).ToString("G5")),
             New AFTime(timeRange.EndTime.LocalTime.AddTicks(1)),
