@@ -29,7 +29,6 @@ Imports System.DateTime
 Imports System.Double
 Imports System.Math
 Imports System.Runtime.InteropServices
-Imports Microsoft.VisualBasic
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Asset.AFAttributeTrait
 Imports OSIsoft.AF.Data
@@ -612,7 +611,8 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' Annotate values with the RMSD and CV(RMSD).
           GetValues.Add(New AFValue(
             String.Format("RMSD: {0}",
-            RMSD(Measurements, Forecasts).ToString("G5")) & ControlChars.CrLf &
+            RMSD(Measurements, Forecasts).ToString("G5")) &
+            Environment.NewLine &
             String.Format("CV(RMSD): {0}",
             RMSD(Measurements, Forecasts, True).ToString("G5")),
             New AFTime(timeRange.EndTime.LocalTime.AddTicks(1)),
