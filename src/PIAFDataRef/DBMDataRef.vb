@@ -564,10 +564,10 @@ Namespace Vitens.DynamicBandwidthMonitor
                   If iD = Results.Count Then
                     GetValues.Add(New AFValue("RMSD: " &
                       RMSD(Measurements, Forecasts).ToString("0.####"),
-                      timeRange.EndTime), Nothing, AFValueStatus.Annotated)
+                      timeRange.EndTime, Nothing, AFValueStatus.Annotated))
                     GetValues.Add(New AFValue("CV(RMSD): " &
                       RMSD(Measurements, Forecasts, True).ToString("0.####"),
-                      timeRange.EndTime), Nothing, AFValueStatus.Annotated)
+                      timeRange.EndTime, Nothing, AFValueStatus.Annotated))
                   End If
 
                 ElseIf Attribute.Trait Is Forecast Then
