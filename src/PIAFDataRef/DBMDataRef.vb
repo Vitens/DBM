@@ -331,16 +331,16 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       End If
 
-      ' Returns the single value for the attribute. Use the first good value for
+      ' Returns a single value for the attribute. Use the first good value for
       ' this, as GetValues inserts annotated bad values at the beginning of the
       ' AFValues object.
       Values = GetValues(Nothing, New AFTimeRange(New AFTime(Timestamp),
         New AFTime(Timestamp.AddSeconds(CalculationInterval))), 1,
         Nothing, Nothing)
       For Each Value In Values
-        If Value.IsGood Then Return Value
+        If Value.IsGood Then Return Value ' Return first good value
       Next Value
-      Return Nothing
+      Return Values(Values.Count-1) ' No good values, return last value
 
     End Function
 
