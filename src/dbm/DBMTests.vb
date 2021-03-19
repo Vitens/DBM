@@ -1318,12 +1318,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       Next i
 
       ' RMSD GetResults
+      AssertNaN(RMSD(New List(Of DBMResult)))
       AssertAlmostEqual(RMSD(DBM.GetResults(InputPointDriver, CorrelationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 1, 1, 0, 0))), 16.1292)
-      AssertAlmostEqual(RMSD(DBM.GetResults(InputPointDriver, CorrelationPoints,
-        New DateTime(2016, 1, 1, 1, 0, 0),
-        New DateTime(2016, 1, 1, 2, 0, 0)), False), 10.192)
       AssertAlmostEqual(RMSD(DBM.GetResults(InputPointDriver, CorrelationPoints,
         New DateTime(2016, 1, 1, 2, 0, 0),
         New DateTime(2016, 1, 1, 3, 0, 0)), False), 9.4811)
