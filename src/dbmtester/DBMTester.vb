@@ -136,7 +136,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         End If
 
         ' Header
-        Console.WriteLine("# " & Product.Replace(NewLine, NewLine & "# "))
+        Console.WriteLine(
+          sCsvComment & Product.Replace(NewLine, NewLine & sCsvComment))
         Console.WriteLine(sTimestamp & Separator & sFactor & Separator &
           sMeasurement & Separator & sForecast & Separator &
           sLowerControlLimit & Separator & sUpperControlLimit)
@@ -157,7 +158,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         Next Result
 
-        Console.WriteLine("# " &
+        Console.WriteLine(sCsvComment &
           String.Format(sPredictivePower, RMSD(Results), RMSD(Results, True)))
 
       End If

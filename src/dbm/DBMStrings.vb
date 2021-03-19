@@ -37,9 +37,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Const sForecast As String = "Forecast"
     Public Const sLowerControlLimit As String = "Lower control limit"
     Public Const sUpperControlLimit As String = "Upper control limit"
-
     Public Const sNumberFormat As String = "G5"
-
+    Public Const sCsvComment As String = "# "
     Public Const sPredictivePower As String = "Predictive power: " &
       "RMSD={0:" & sNumberFormat & "} CV(RMSD)={1:" & sNumberFormat & "}"
 
