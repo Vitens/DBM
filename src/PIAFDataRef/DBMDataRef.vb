@@ -35,7 +35,9 @@ Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Time
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
+Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
+Imports Vitens.DynamicBandwidthMonitor.DBMStrings
 
 
 ' Assembly title
@@ -287,6 +289,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim SourceTimestamp As DateTime
       Dim Timestamp As DateTime = Now
+      Dim Values As AFValues
+      Dim Value As AFValue
 
       ' Check if this attribute is properly configured. If it is not configured
       ' properly, return a Configure system state. This will be done in the
@@ -327,10 +331,16 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       End If
 
-      ' Returns the single value for the attribute.
-      Return GetValues(Nothing, New AFTimeRange(New AFTime(Timestamp),
+      ' Returns a single value for the attribute. Use the first good value for
+      ' this, as GetValues inserts annotated bad values at the beginning of the
+      ' AFValues object.
+      Values = GetValues(Nothing, New AFTimeRange(New AFTime(Timestamp),
         New AFTime(Timestamp.AddSeconds(CalculationInterval))), 1,
-        Nothing, Nothing)(0) ' Request a single value
+        Nothing, Nothing)
+      For Each Value In Values
+        If Value.IsGood Then Return Value ' Return first good value
+      Next Value
+      Return Values(Values.Count-1) ' No good values, return last value
 
     End Function
 
@@ -396,210 +406,214 @@ Namespace Vitens.DynamicBandwidthMonitor
       GetValues = New AFValues
 
       ' Check if this attribute is properly configured.
-      If ConfigurationIsValid Then
-
-        Element = DirectCast(Attribute.Element, AFElement)
-        InputPointDriver = New DBMPointDriver(Attribute.Parent) ' Parent attrib.
-
-        ' Retrieve correlation points from AF hierarchy for first-level child
-        ' attributes in non-root elements only when calculating the DBM factor
-        ' value and if correlation calculations are not disabled using
-        ' categories.
-        If Not Element.IsRoot And Attribute.Parent.Parent Is Nothing And
-          Attribute.Trait Is Nothing And
-          Not Attribute.CategoriesString.Contains(CategoryNoCorrelation) Then
-
-          ParentElement = Element.Parent
-
-          ' Find siblings
-          If ParentElement IsNot Nothing Then
-            For Each SiblingElement In ParentElement.Elements
-              If Not SiblingElement.UniqueID.Equals(Element.UniqueID) And
-                SiblingElement.Template IsNot Nothing AndAlso
-                SiblingElement.Template.UniqueID.Equals(
-                Element.Template.UniqueID) Then ' Same template, skip self
-                If SiblingElement.Attributes(Attribute.Parent.Name).
-                  GetValue.IsGood Then ' Add only if has good data
-                  CorrelationPoints.Add(New DBMCorrelationPoint(
-                    New DBMPointDriver(SiblingElement.Attributes(
-                    Attribute.Parent.Name)), False))
-                End If
-              End If
-            Next SiblingElement
-          End If
-
-          ' Find parents recursively
-          Do While ParentElement IsNot Nothing
-            If ParentElement.Template IsNot Nothing AndAlso
-              ParentElement.Template.UniqueID.Equals(
-              Element.Template.UniqueID) Then ' Same template
-              If ParentElement.Attributes(Attribute.Parent.Name).
-                GetValue.IsGood Then ' Add only if has good data
-                CorrelationPoints.Add(New DBMCorrelationPoint(
-                  New DBMPointDriver(ParentElement.Attributes(
-                  Attribute.Parent.Name)), True))
-              End If
-            End If
-            ParentElement = ParentElement.Parent
-          Loop
-
-        End If
-
-        ' Get DBM results for time range.
-        Results = DBM.GetResults(InputPointDriver, CorrelationPoints,
-          timeRange.StartTime.LocalTime, timeRange.EndTime.LocalTime,
-          numberOfValues)
-
-        ' Retrieve raw snapshot timestamp and raw values for Target trait. Only
-        ' retrieve values if the start timestamp for this time range is before
-        ' the next interval after the snapshot timestamp.
-        If Attribute.Trait Is LimitTarget Then
-          RawSnapshot = InputPointDriver.SnapshotTimestamp
-          If timeRange.StartTime.LocalTime < NextInterval(RawSnapshot) Then
-            RawValues = Attribute.Parent.
-              GetValues(timeRange, numberOfValues, Nothing)
-            ' If there are no DBM results to iterate over, and there are raw
-            ' values for this time range, return the raw values directly.
-            If Results.Count = 0 And RawValues.Count > 0 Then Return RawValues
-          Else
-            RawValues = New AFValues ' Future data, no raw values.
-          End If
-        End If
-
-        ' Iterate over DBM results for time range.
-        For Each Result In Results
-
-          With Result
-
-            If .TimestampIsValid Then
-
-              If SupportsFutureData Or Not .IsFutureData Then
-
-                If Attribute.Trait Is LimitTarget Then
-
-                  ' The Target trait returns the original, valid raw
-                  ' measurements, augmented with forecast data for invalid and
-                  ' future data. Data quality is marked as Substituted for
-                  ' invalid data replaced by forecast data, or Questionable for
-                  ' future forecast data or data exceeding Minimum and Maximum
-                  ' control limits.
-
-                  ' Augment raw values with forecast. This is done if any of
-                  ' four conditions is true:
-                  '  1) There are no raw values for the time period. Since there
-                  '       are no values, the best we can do is return the
-                  '       forecast.
-                  '  2) For the first raw value, if this value is not good. The
-                  '       forecast is returned because either this value is
-                  '       before this result, or there are no values before this
-                  '       value.
-                  '  3) For all but the first raw value, if the previous raw
-                  '       value is not good. While this value is not good, the
-                  '       forecast is returned. Note that the previous raw value
-                  '       can be on the exact same timestamp as this result.
-                  '  4) If the timestamp is past the raw snapshot timestamp.
-                  '       This appends forecast values to the future.
-                  If RawValues.Count = 0 OrElse
-                    Not RawValues.Item(Max(0, iR-1)).IsGood OrElse
-                    .Timestamp > RawSnapshot Then
-                    If IsNaN(.ForecastItem.Forecast) Then
-                      ' If there is no valid forecast result, return an
-                      ' InvalidData state. Definition: 'Invalid Data state.'
-                      GetValues.Add(AFValue.CreateSystemStateValue(
-                        AFSystemStateCode.InvalidData, New AFTime(.Timestamp)))
-                    Else
-                      ' Replace bad values with forecast, append forecast values
-                      ' to the future.
-                      GetValues.Add(New AFValue(.ForecastItem.Forecast,
-                        New AFTime(.Timestamp)))
-                      ' Mark replaced (not good) values as substituted.
-                      GetValues.Item(GetValues.Count-1).Substituted =
-                        .Timestamp <= RawSnapshot
-                      ' Mark forecast values as questionable.
-                      GetValues.Item(GetValues.Count-1).Questionable =
-                        .Timestamp > RawSnapshot
-                    End If
-                  End If
-                  iD += 1 ' Move iterator to next DBM result.
-
-                  ' Include valid raw values. Raw values are appended while
-                  ' there are still values available before or on the raw
-                  ' snapshot timestamp, and if any of two conditions is true:
-                  '  1) If there is a next DBM result, and the raw value
-                  '       timestamp is on or before this result. This includes
-                  '       all values until the timestamp of the next DBM result
-                  '       (inclusive).
-                  '  2) The raw value timestamp is on or after the last DBM
-                  '       result. This includes all remaining values after the
-                  '       last result.
-                  Do While iR < RawValues.Count AndAlso
-                    RawValues.Item(iR).Timestamp.LocalTime <=
-                    RawSnapshot AndAlso
-                    ((iD < Results.Count AndAlso RawValues.Item(iR).
-                    Timestamp.LocalTime <= Results.Item(iD).Timestamp) OrElse
-                    RawValues.Item(iR).Timestamp.LocalTime >=
-                    Results.Item(Results.Count-1).Timestamp)
-                    If RawValues.Item(iR).IsGood Then ' Only include good values
-                      GetValues.Add(RawValues.Item(iR))
-                      ' Mark events (exceeding Minimum and Maximum control
-                      ' limits) as questionable.
-                      GetValues.Item(GetValues.Count-1).Questionable =
-                        Abs(.ForecastItem.Measurement-.ForecastItem.Forecast) >
-                        .ForecastItem.Range(pValueMinMax)
-                    End If
-                    iR += 1 ' Move iterator to next raw value.
-                  Loop
-
-                ElseIf Attribute.Trait Is Forecast Then
-                  GetValues.Add(New AFValue(.ForecastItem.Forecast,
-                    New AFTime(.Timestamp)))
-                ElseIf Attribute.Trait Is LimitMinimum Then
-                  GetValues.Add(New AFValue(.ForecastItem.Forecast-
-                    .ForecastItem.Range(pValueMinMax), New AFTime(.Timestamp)))
-                ElseIf Attribute.Trait Is LimitLoLo Then
-                  GetValues.Add(New AFValue(.ForecastItem.LowerControlLimit,
-                    New AFTime(.Timestamp)))
-                ElseIf Attribute.Trait Is LimitLo Then
-                  GetValues.Add(New AFValue(.ForecastItem.Forecast-
-                    .ForecastItem.Range(pValueLoHi), New AFTime(.Timestamp)))
-                ElseIf Attribute.Trait Is LimitHi Then
-                  GetValues.Add(New AFValue(.ForecastItem.Forecast+
-                    .ForecastItem.Range(pValueLoHi), New AFTime(.Timestamp)))
-                ElseIf Attribute.Trait Is LimitHiHi Then
-                  GetValues.Add(New AFValue(.ForecastItem.UpperControlLimit,
-                    New AFTime(.Timestamp)))
-                ElseIf Attribute.Trait Is LimitMaximum Then
-                  GetValues.Add(New AFValue(.ForecastItem.Forecast+
-                    .ForecastItem.Range(pValueMinMax), New AFTime(.Timestamp)))
-                Else
-                  GetValues.Add(New AFValue(.Factor, New AFTime(.Timestamp)))
-                End If
-
-              End If
-
-            End If
-
-          End With
-
-        Next Result
-
-        ' If there are no calculation results, return a NoData state.
-        ' Definition: 'Data-retrieval functions use this state for time periods
-        ' where no archive values for a tag can exist 10 minutes into the future
-        ' or before the oldest mounted archive.'
-        If GetValues.Count = 0 Then
-          GetValues.Add(AFValue.CreateSystemStateValue(
-            AFSystemStateCode.NoData, timeRange.StartTime))
-        End If
-
-      Else
-
+      If Not ConfigurationIsValid Then
         ' Attribute or parent attribute is not configured properly, return a
         ' Configure system state. Definition: 'The point configuration has been
         ' rejected as invalid by the data source.'
         GetValues.Add(AFValue.CreateSystemStateValue(
           AFSystemStateCode.Configure, timeRange.StartTime))
+        Return GetValues
+      End If
 
+      Element = DirectCast(Attribute.Element, AFElement)
+      InputPointDriver = New DBMPointDriver(Attribute.Parent) ' Parent attribute
+
+      ' Retrieve correlation points from AF hierarchy for first-level child
+      ' attributes in non-root elements only when calculating the DBM factor
+      ' value and if correlation calculations are not disabled using
+      ' categories.
+      If Not Element.IsRoot And Attribute.Parent.Parent Is Nothing And
+        Attribute.Trait Is Nothing And
+        Not Attribute.CategoriesString.Contains(CategoryNoCorrelation) Then
+
+        ParentElement = Element.Parent
+
+        ' Find siblings
+        If ParentElement IsNot Nothing Then
+          For Each SiblingElement In ParentElement.Elements
+            If Not SiblingElement.UniqueID.Equals(Element.UniqueID) And
+              SiblingElement.Template IsNot Nothing AndAlso
+              SiblingElement.Template.UniqueID.Equals(
+              Element.Template.UniqueID) Then ' Same template, skip self
+              If SiblingElement.Attributes(Attribute.Parent.Name).
+                GetValue.IsGood Then ' Add only if has good data
+                CorrelationPoints.Add(New DBMCorrelationPoint(
+                  New DBMPointDriver(SiblingElement.Attributes(
+                  Attribute.Parent.Name)), False))
+              End If
+            End If
+          Next SiblingElement
+        End If
+
+        ' Find parents recursively
+        Do While ParentElement IsNot Nothing
+          If ParentElement.Template IsNot Nothing AndAlso
+            ParentElement.Template.UniqueID.Equals(
+            Element.Template.UniqueID) Then ' Same template
+            If ParentElement.Attributes(Attribute.Parent.Name).
+              GetValue.IsGood Then ' Add only if has good data
+              CorrelationPoints.Add(New DBMCorrelationPoint(
+                New DBMPointDriver(ParentElement.Attributes(
+                Attribute.Parent.Name)), True))
+            End If
+          End If
+          ParentElement = ParentElement.Parent
+        Loop
+
+      End If
+
+      ' Get DBM results for time range.
+      Results = DBM.GetResults(InputPointDriver, CorrelationPoints,
+        timeRange.StartTime.LocalTime, timeRange.EndTime.LocalTime,
+        numberOfValues)
+
+      ' Retrieve raw snapshot timestamp and raw values for Target trait. Only
+      ' retrieve values if the start timestamp for this time range is before the
+      ' next interval after the snapshot timestamp.
+      If Attribute.Trait Is LimitTarget Then
+        RawSnapshot = InputPointDriver.SnapshotTimestamp
+        If timeRange.StartTime.LocalTime < NextInterval(RawSnapshot) Then
+          RawValues = Attribute.Parent.
+            GetValues(timeRange, numberOfValues, Nothing)
+          ' If there are no DBM results to iterate over, and there are raw
+          ' values for this time range, return the raw values directly.
+          If Results.Count = 0 And RawValues.Count > 0 Then Return RawValues
+        Else
+          RawValues = New AFValues ' Future data, no raw values.
+        End If
+      End If
+
+      ' Iterate over DBM results for time range.
+      For Each Result In Results
+
+        With Result
+
+          If .TimestampIsValid Then
+
+            If SupportsFutureData Or Not .IsFutureData Then
+
+              If Attribute.Trait Is LimitTarget Then
+
+                ' The Target trait returns the original, valid raw measurements,
+                ' augmented with forecast data for invalid and future data. Data
+                ' quality is marked as Substituted for invalid data replaced by
+                ' forecast data, or Questionable for future forecast data or
+                ' data exceeding Minimum and Maximum control limits.
+
+                ' Augment raw values with forecast. This is done if any of four
+                ' conditions is true:
+                '  1) There are no raw values for the time period. Since there
+                '       are no values, the best we can do is return the
+                '       forecast.
+                '  2) For the first raw value, if this value is not good. The
+                '       forecast is returned because either this value is
+                '       before this result, or there are no values before this
+                '       value.
+                '  3) For all but the first raw value, if the previous raw
+                '       value is not good. While this value is not good, the
+                '       forecast is returned. Note that the previous raw value
+                '       can be on the exact same timestamp as this result.
+                '  4) If the timestamp is past the raw snapshot timestamp.
+                '       This appends forecast values to the future.
+                If RawValues.Count = 0 OrElse
+                  Not RawValues.Item(Max(0, iR-1)).IsGood OrElse
+                  .Timestamp > RawSnapshot Then
+                  If IsNaN(.ForecastItem.Forecast) Then
+                    ' If there is no valid forecast result, return an
+                    ' InvalidData state. Definition: 'Invalid Data state.'
+                    GetValues.Add(AFValue.CreateSystemStateValue(
+                      AFSystemStateCode.InvalidData, New AFTime(.Timestamp)))
+                  Else
+                    ' Replace bad values with forecast, append forecast values
+                    ' to the future.
+                    GetValues.Add(New AFValue(.ForecastItem.Forecast,
+                      New AFTime(.Timestamp)))
+                    ' Mark replaced (not good) values as substituted.
+                    GetValues.Item(GetValues.Count-1).Substituted =
+                      .Timestamp <= RawSnapshot
+                    ' Mark forecast values as questionable.
+                    GetValues.Item(GetValues.Count-1).Questionable =
+                      .Timestamp > RawSnapshot
+                  End If
+                End If
+                iD += 1 ' Move iterator to next DBM result.
+
+                ' Include valid raw values. Raw values are appended while there
+                ' are still values available before or on the raw snapshot
+                ' timestamp, and if any of two conditions is true:
+                '  1) If there is a next DBM result, and the raw value timestamp
+                '       is on or before this result. This includes all values
+                '       until the timestamp of the next DBM result (inclusive).
+                '  2) The raw value timestamp is on or after the last DBM
+                '       result. This includes all remaining values after the
+                '       last result.
+                Do While iR < RawValues.Count AndAlso
+                  RawValues.Item(iR).Timestamp.LocalTime <=
+                  RawSnapshot AndAlso
+                  ((iD < Results.Count AndAlso RawValues.Item(iR).
+                  Timestamp.LocalTime <= Results.Item(iD).Timestamp) OrElse
+                  RawValues.Item(iR).Timestamp.LocalTime >=
+                  Results.Item(Results.Count-1).Timestamp)
+                  If RawValues.Item(iR).IsGood Then ' Only include good values
+                    GetValues.Add(RawValues.Item(iR))
+                    ' Mark events (exceeding Minimum and Maximum control limits)
+                    ' as questionable.
+                    GetValues.Item(GetValues.Count-1).Questionable =
+                      Abs(.ForecastItem.Measurement-.ForecastItem.Forecast) >
+                      .ForecastItem.Range(pValueMinMax)
+                  End If
+                  iR += 1 ' Move iterator to next raw value.
+                Loop
+
+              ElseIf Attribute.Trait Is Forecast Then
+                GetValues.Add(New AFValue(.ForecastItem.Forecast,
+                  New AFTime(.Timestamp)))
+              ElseIf Attribute.Trait Is LimitMinimum Then
+                GetValues.Add(New AFValue(.ForecastItem.Forecast-
+                  .ForecastItem.Range(pValueMinMax), New AFTime(.Timestamp)))
+              ElseIf Attribute.Trait Is LimitLoLo Then
+                GetValues.Add(New AFValue(.ForecastItem.LowerControlLimit,
+                  New AFTime(.Timestamp)))
+              ElseIf Attribute.Trait Is LimitLo Then
+                GetValues.Add(New AFValue(.ForecastItem.Forecast-
+                  .ForecastItem.Range(pValueLoHi), New AFTime(.Timestamp)))
+              ElseIf Attribute.Trait Is LimitHi Then
+                GetValues.Add(New AFValue(.ForecastItem.Forecast+
+                  .ForecastItem.Range(pValueLoHi), New AFTime(.Timestamp)))
+              ElseIf Attribute.Trait Is LimitHiHi Then
+                GetValues.Add(New AFValue(.ForecastItem.UpperControlLimit,
+                  New AFTime(.Timestamp)))
+              ElseIf Attribute.Trait Is LimitMaximum Then
+                GetValues.Add(New AFValue(.ForecastItem.Forecast+
+                  .ForecastItem.Range(pValueMinMax), New AFTime(.Timestamp)))
+              Else
+                GetValues.Add(New AFValue(.Factor, New AFTime(.Timestamp)))
+              End If
+
+            End If
+
+          End If
+
+        End With
+
+      Next Result
+
+      ' If there are no calculation results, return a NoData state.
+      ' Definition: 'Data-retrieval functions use this state for time periods
+      ' where no archive values for a tag can exist 10 minutes into the future
+      ' or before the oldest mounted archive.'
+      If GetValues.Count = 0 Then
+        GetValues.Add(AFValue.CreateSystemStateValue(
+          AFSystemStateCode.NoData, timeRange.StartTime))
+        Return GetValues
+      End If
+
+      ' Annotate Target values with the RMSD and CV(RMSD).
+      If Attribute.Trait Is LimitTarget Then
+        GetValues.Insert(0, New AFValue(
+          String.Format(sPredictivePower, RMSD(Results), RMSD(Results, True)),
+          New AFTime(timeRange.StartTime.LocalTime.AddSeconds(-1)),
+          Nothing, AFValueStatus.Annotated))
       End If
 
       ' Returns the collection of values for the attribute sorted in increasing

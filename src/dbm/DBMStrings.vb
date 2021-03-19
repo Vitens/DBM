@@ -22,18 +22,28 @@ Option Strict
 ' along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 
-' This information is shared between all DBM binaries. A summary can be
-' returned using the DBM.Version function.
+Imports System
 
 
-<assembly:System.Reflection.AssemblyVersion("1.65.*")>
+Namespace Vitens.DynamicBandwidthMonitor
 
-<assembly:System.Reflection.AssemblyProduct("Dynamic Bandwidth Monitor")>
 
-<assembly:System.Reflection.AssemblyDescription(
-  "Leak detection method implemented in a real-time data historian")>
+  Public Class DBMStrings
 
-<assembly:System.Reflection.AssemblyCopyright(
-  "Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.")>
 
-<assembly:System.Reflection.AssemblyCompany("Vitens N.V.")>
+    Public Const sTimestamp As String = "Timestamp"
+    Public Const sFactor As String = "Factor"
+    Public Const sMeasurement As String = "Measurement"
+    Public Const sForecast As String = "Forecast"
+    Public Const sLowerControlLimit As String = "Lower control limit"
+    Public Const sUpperControlLimit As String = "Upper control limit"
+    Public Const sNumberFormat As String = "G5"
+    Public Const sCsvComment As String = "# "
+    Public Const sPredictivePower As String = "Predictive power: " &
+      "RMSD={0:" & sNumberFormat & "} CV(RMSD)={1:" & sNumberFormat & "}"
+
+
+  End Class
+
+
+End Namespace

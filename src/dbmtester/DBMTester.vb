@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -29,7 +29,10 @@ Imports System.Globalization.CultureInfo
 Imports System.Text.RegularExpressions
 Imports System.Threading.Thread
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
+Imports Vitens.DynamicBandwidthMonitor.DBMInfo
+Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
+Imports Vitens.DynamicBandwidthMonitor.DBMStrings
 
 
 ' Assembly title
@@ -59,7 +62,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Shared Function FormatNumber(Value As Double) As String
 
-      Return Value.ToString("0.####")
+      Return Value.ToString(sNumberFormat)
 
     End Function
 
@@ -70,8 +73,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim InputPointDriver As DBMPointDriver = Nothing
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim StartTimestamp, EndTimestamp As DateTime
-      Dim Result As DBMResult
+      Dim Results As List(Of DBMResult)
       Dim DBM As New DBM
+      Dim Result As DBMResult
 
       ' Parse command line arguments
       For Each CommandLineArg In GetCommandLineArgs
@@ -131,8 +135,17 @@ Namespace Vitens.DynamicBandwidthMonitor
           EndTimestamp = NextInterval(StartTimestamp)
         End If
 
-        For Each Result In DBM.GetResults(InputPointDriver, CorrelationPoints,
-          StartTimestamp, EndTimestamp) ' Get results for time range.
+        ' Header
+        Console.WriteLine(
+          sCsvComment & Product.Replace(NewLine, NewLine & sCsvComment))
+        Console.WriteLine(sTimestamp & Separator & sFactor & Separator &
+          sMeasurement & Separator & sForecast & Separator &
+          sLowerControlLimit & Separator & sUpperControlLimit)
+
+        ' Get results for time range.
+        Results = DBM.GetResults(InputPointDriver, CorrelationPoints,
+          StartTimestamp, EndTimestamp)
+        For Each Result In Results
 
           With Result
             Console.WriteLine(.Timestamp.ToString("s") & Separator &
@@ -144,6 +157,9 @@ Namespace Vitens.DynamicBandwidthMonitor
           End With
 
         Next Result
+
+        Console.WriteLine(sCsvComment &
+          String.Format(sPredictivePower, RMSD(Results), RMSD(Results, True)))
 
       End If
 

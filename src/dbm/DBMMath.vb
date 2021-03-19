@@ -23,6 +23,7 @@ Option Strict
 
 
 Imports System
+Imports System.Collections.Generic
 Imports System.Double
 Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
@@ -414,7 +415,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function RMSD(Measurements() As Double,
+    Public Overloads Shared Function RMSD(Measurements() As Double,
       Forecasts() As Double, Optional Normalized As Boolean = False) As Double
 
       ' The root-mean-square deviation (RMSD) or root-mean-square error (RMSE)
@@ -463,6 +464,24 @@ Namespace Vitens.DynamicBandwidthMonitor
       If Normalized Then RMSD /= Mean
 
       Return RMSD
+
+    End Function
+
+
+    Public Overloads Shared Function RMSD(Results As List(Of DBMResult),
+      Optional Normalized As Boolean = False) As Double
+
+      Dim i As Integer
+      Dim Measurements(Results.Count-1), Forecasts(Results.Count-1) As Double
+
+      For i = 0 To Results.Count-1
+        With Results.Item(i).ForecastItem
+          Measurements(i) = .Measurement
+          Forecasts(i) = .Forecast
+        End With
+      Next i
+
+      Return RMSD(Measurements, Forecasts, Normalized)
 
     End Function
 
