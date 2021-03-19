@@ -29,6 +29,7 @@ Imports System.Globalization.CultureInfo
 Imports System.Text.RegularExpressions
 Imports System.Threading.Thread
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
+Imports Vitens.DynamicBandwidthMonitor.DBMInfo
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
@@ -134,6 +135,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         End If
 
         ' Header
+        Console.WriteLine("# " & Product.Replace(NewLine, NewLine & "# "))
         Console.WriteLine("Timestamp" & Separator & "Factor" & Separator &
           "Measurement" & Separator & "Forecast" & Separator &
           "LowerControlLimit" & Separator & "UpperControlLimit")
