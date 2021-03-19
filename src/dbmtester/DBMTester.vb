@@ -157,9 +157,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         Next Result
 
         Console.WriteLine("# " &
-          String.Format("RMSD: {0}", RMSD(Results).ToString("G5")))
-        Console.WriteLine("# " &
-          String.Format("CV(RMSD): {0}", RMSD(Results, True).ToString("G5")))
+          String.Format("Predictive power: RMSD={0:G5} CV(RMSD)={1:G5}",
+          RMSD(Results), RMSD(Results, True)))
 
       End If
 
