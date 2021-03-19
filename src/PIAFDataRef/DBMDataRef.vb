@@ -289,6 +289,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim SourceTimestamp As DateTime
       Dim Timestamp As DateTime = Now
+      Dim Values As AFValues
+      Dim Value As AFValue
 
       ' Check if this attribute is properly configured. If it is not configured
       ' properly, return a Configure system state. This will be done in the
@@ -329,10 +331,16 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       End If
 
-      ' Returns the single value for the attribute.
-      Return GetValues(Nothing, New AFTimeRange(New AFTime(Timestamp),
+      ' Returns the single value for the attribute. Use the first good value for
+      ' this, as GetValues inserts annotated bad values at the beginning of the
+      ' AFValues object.
+      Values = GetValues(Nothing, New AFTimeRange(New AFTime(Timestamp),
         New AFTime(Timestamp.AddSeconds(CalculationInterval))), 1,
-        Nothing, Nothing)(0) ' Request a single value
+        Nothing, Nothing)
+      For Each Value In Values
+        If Value.IsGood Then Return Value
+      Next Value
+      Return Nothing
 
     End Function
 
@@ -602,7 +610,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Annotate Target values with the RMSD and CV(RMSD).
       If Attribute.Trait Is LimitTarget Then
-        GetValues.Add(New AFValue(String.Format(sPredictivePower,
+        GetValues.Insert(0, New AFValue(String.Format(sPredictivePower,
           Results.Count, RMSD(Results), RMSD(Results, True)),
           New AFTime(timeRange.StartTime.LocalTime.AddSeconds(-1)),
           Nothing, AFValueStatus.Annotated))
