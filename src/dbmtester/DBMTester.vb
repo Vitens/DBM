@@ -62,7 +62,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Shared Function FormatNumber(Value As Double) As String
 
-      Return Value.ToString("0.####")
+      Return Value.ToString(sNumberFormat)
 
     End Function
 
