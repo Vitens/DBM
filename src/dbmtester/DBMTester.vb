@@ -32,6 +32,7 @@ Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
+Imports Vitens.DynamicBandwidthMonitor.DBMStrings
 
 
 ' Assembly title
@@ -136,9 +137,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         ' Header
         Console.WriteLine("# " & Product.Replace(NewLine, NewLine & "# "))
-        Console.WriteLine("Timestamp" & Separator & "Factor" & Separator &
-          "Measurement" & Separator & "Forecast" & Separator &
-          "LowerControlLimit" & Separator & "UpperControlLimit")
+        Console.WriteLine(sTimestamp & Separator & sFactor & Separator &
+          sMeasurement & Separator & sForecast & Separator &
+          sLowerControlLimit & Separator & sUpperControlLimit)
 
         ' Get results for time range.
         Results = DBM.GetResults(InputPointDriver, CorrelationPoints,
@@ -157,8 +158,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Next Result
 
         Console.WriteLine("# " &
-          String.Format("Predictive power: RMSD={0:G5} CV(RMSD)={1:G5}",
-          RMSD(Results), RMSD(Results, True)))
+          String.Format(sPredictivePower, RMSD(Results), RMSD(Results, True)))
 
       End If
 

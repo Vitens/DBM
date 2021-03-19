@@ -37,6 +37,7 @@ Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
+Imports Vitens.DynamicBandwidthMonitor.DBMStrings
 
 
 ' Assembly title
@@ -602,8 +603,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Annotate Target values with the RMSD and CV(RMSD).
       If Attribute.Trait Is LimitTarget Then
         GetValues.Add(New AFValue(
-          String.Format("Predictive power: RMSD={0:G5} CV(RMSD)={1:G5}",
-          RMSD(Results), RMSD(Results, True)),
+          String.Format(sPredictivePower, RMSD(Results), RMSD(Results, True)),
           New AFTime(timeRange.EndTime.LocalTime.AddSeconds(1)),
           Nothing, AFValueStatus.Annotated))
       End If
