@@ -610,8 +610,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Annotate Target values with the RMSD and CV(RMSD).
       If Attribute.Trait Is LimitTarget Then
-        GetValues.Insert(0, New AFValue(String.Format(sPredictivePower,
-          Results.Count, RMSD(Results), RMSD(Results, True)),
+        GetValues.Insert(0, New AFValue(
+          String.Format(sPredictivePower, RMSD(Results), RMSD(Results, True)),
           New AFTime(timeRange.StartTime.LocalTime.AddSeconds(-1)),
           Nothing, AFValueStatus.Annotated))
       End If
