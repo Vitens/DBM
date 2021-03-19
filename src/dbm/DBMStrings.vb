@@ -31,14 +31,14 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMStrings
 
 
-    Const sTimestamp As String = "Timestamp"
-    Const sFactor As String = "Factor"
-    Const sMeasurement As String = "Measurement"
-    Const sForecast As String = "Forecast"
-    Const sLowerControlLimit As String = "Lower control limit"
-    Const sUpperControlLimit As String = "Upper control limit"
+    Public Const sTimestamp As String = "Timestamp"
+    Public Const sFactor As String = "Factor"
+    Public Const sMeasurement As String = "Measurement"
+    Public Const sForecast As String = "Forecast"
+    Public Const sLowerControlLimit As String = "Lower control limit"
+    Public Const sUpperControlLimit As String = "Upper control limit"
 
-    Const sPredictivePower As String =
+    Public Const sPredictivePower As String =
       "Predictive power: RMSD={0:G5} CV(RMSD)={1:G5}"
 
 
