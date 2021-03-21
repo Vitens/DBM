@@ -49,6 +49,3 @@ Source: "..\..\*"; Excludes: "\.git,\enc,\appveyor-tools"; DestDir: "{app}"; Fla
 Name: "{group}\Files"; Filename: "{app}"; IconFilename: "{app}\src\res\dbm.ico"
 Name: "{group}\About"; Filename: "{cmd}"; Parameters: "/k DBMAbout.exe"; WorkingDir: "{app}\build"; IconFilename: "{app}\src\res\dbm.ico"
 Name: "{group}\Uninstall"; Filename: "{uninstallexe}"
-
-[Run]
-Filename: "{app}\register.bat"; StatusMsg: "Registering PI AF Data Reference on local AF server ..."; Flags: runhidden
