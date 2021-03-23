@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2019  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -32,8 +32,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Count As Integer
-    Public Slope, OriginSlope, Angle, OriginAngle, Intercept, StandardError,
-        Correlation, ModifiedCorrelation, Determination As Double
+    Public Mean, RMSD, CVRMSD, Slope, OriginSlope, Angle, OriginAngle,
+      Intercept, StandardError, Correlation, ModifiedCorrelation,
+      Determination As Double
 
 
   End Class

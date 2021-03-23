@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2019  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -53,6 +53,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       With Statistics
 
+        If ValuesY.Length = 0 Then Return Nothing ' Empty
+
         If ValuesX Is Nothing Then ' No X values, assume linear scale from 0.
           ReDim ValuesX(ValuesY.Length-1)
           For i = 0 To ValuesX.Length-1
@@ -60,17 +62,53 @@ Namespace Vitens.DynamicBandwidthMonitor
           Next i
         End If
 
+        If Not(ValuesY.Length = ValuesX.Length) Then Return Nothing ' Non-equal
+
         ' Calculate sums
         For i = 0 To ValuesY.Length-1
           If Not IsNaN(ValuesX(i)) And Not IsNaN(ValuesY(i)) Then
+            .Count += 1
+            .Mean += ValuesY(i)
+            .RMSD += (ValuesX(i)-ValuesY(i))^2
             SumX += ValuesX(i)
             SumY += ValuesY(i)
             SumXX += ValuesX(i)^2
             SumYY += ValuesY(i)^2
             SumXY += ValuesX(i)*ValuesY(i)
-            .Count += 1
           End If
         Next i
+
+        If .Count = 0 Then Return Nothing ' No non-NaN pairs.
+
+        .Mean = .Mean/.Count ' Average
+
+        ' The root-mean-square deviation (RMSD) or root-mean-square error (RMSE)
+        ' is a frequently used measure of the differences between values (sample
+        ' or population values) predicted by a model or an estimator and the
+        ' values observed. The RMSD represents the square root of the second
+        ' sample moment of the differences between predicted values and observed
+        ' values or the quadratic mean of these differences. These deviations
+        ' are called residuals when the calculations are performed over the data
+        ' sample that was used for estimation and are called errors (or
+        ' prediction errors) when computed out-of-sample. The RMSD serves to
+        ' aggregate the magnitudes of the errors in predictions for various data
+        ' points into a single measure of predictive power.
+        .RMSD = Sqrt(.RMSD/.Count)
+
+        ' Normalizing the RMSD facilitates the comparison between datasets or
+        ' models with different scales. Though there is no consistent means of
+        ' normalization in the literature, common choices are the mean or the
+        ' range (defined as the maximum value minus the minimum value) of the
+        ' measured data. This value is commonly referred to as the normalized
+        ' root-mean-square deviation or error (NRMSD or NRMSE), and often
+        ' expressed as a percentage, where lower values indicate less residual
+        ' variance. In many cases, especially for smaller samples, the sample
+        ' range is likely to be affected by the size of sample which would
+        ' hamper comparisons. When normalizing by the mean value of the
+        ' measurements, the term coefficient of variation of the RMSD, CV(RMSD)
+        ' may be used to avoid ambiguity. This is analogous to the coefficient
+        ' of variation with the RMSD taking the place of the standard deviation.
+        .CVRMSD = .RMSD/.Mean
 
         .Slope = (.Count*SumXY-SumX*SumY)/(.Count*SumXX-SumX^2) ' Lin.regression
         .OriginSlope = SumXY/SumXX ' Lin.regression through the origin (alpha=0)
