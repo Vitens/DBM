@@ -160,7 +160,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Next Result
 
         Console.WriteLine(sCsvComment & String.Format(sPredictivePower,
-          Statistics.RMSD(Results), Statistics.CVRMSD(Results)*100))
+          Statistics(Results).RMSD, Statistics(Results).CVRMSD*100))
 
       End If
 
