@@ -40,11 +40,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function Brief As String
 
-      Return String.Format(
-        sPredictivePower,
-        Statistics(Results).Determination
-        Statistics(Results).RMSD,
-        Statistics(Results).CVRMSD*100)
+      Return String.Format(sPredictivePower, Determination RMSD, CVRMSD*100)
 
     End Function
 
