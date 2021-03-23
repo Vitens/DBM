@@ -39,7 +39,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Determination As Double
 
 
-    Private Function Valid As Boolean
+    Private Function Calibrated As Boolean
 
       ' ASHRAE Guideline 14-2014
       ' American Society of Heating, Refrigerating and Air Conditioning
@@ -67,7 +67,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Function Brief As String
 
       Return String.Format(sStatisticsBrief,
-        Count, Mean, NMBE*100, RMSD, CVRMSD*100, Determination, Valid)
+        Count, Mean, NMBE*100, RMSD, CVRMSD*100, Determination, Calibrated)
 
     End Function
 

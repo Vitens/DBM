@@ -46,7 +46,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       "RMSD: {3:" & sNumberFormat & "}; " &
       "CV(RMSD): {4:" & sNumberFormat & "}%; " &
       "R²: {5:" & sNumberFormat & "}; " &
-      "Valid: {6}"
+      "Calibrated: {6}"
 
 
   End Class
