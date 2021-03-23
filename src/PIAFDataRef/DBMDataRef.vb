@@ -488,108 +488,101 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         With Result
 
-          If .TimestampIsValid Then
+          If .TimestampIsValid And
+            (SupportsFutureData Or Not .IsFutureData) Then
 
-            If SupportsFutureData Or Not .IsFutureData Then
+            If Attribute.Trait Is LimitTarget Then
 
-              If Attribute.Trait Is LimitTarget Then
+              ' The Target trait returns the original, valid raw measurements,
+              ' augmented with forecast data for invalid and future data. Data
+              ' quality is marked as Substituted for invalid data replaced by
+              ' forecast data, or Questionable for future forecast data or data
+              ' exceeding Minimum and Maximum control limits.
 
-                ' The Target trait returns the original, valid raw measurements,
-                ' augmented with forecast data for invalid and future data. Data
-                ' quality is marked as Substituted for invalid data replaced by
-                ' forecast data, or Questionable for future forecast data or
-                ' data exceeding Minimum and Maximum control limits.
-
-                ' Augment raw values with forecast. This is done if any of four
-                ' conditions is true:
-                '  1) There are no raw values for the time period. Since there
-                '       are no values, the best we can do is return the
-                '       forecast.
-                '  2) For the first raw value, if this value is not good. The
-                '       forecast is returned because either this value is
-                '       before this result, or there are no values before this
-                '       value.
-                '  3) For all but the first raw value, if the previous raw
-                '       value is not good. While this value is not good, the
-                '       forecast is returned. Note that the previous raw value
-                '       can be on the exact same timestamp as this result.
-                '  4) If the timestamp is past the raw snapshot timestamp.
-                '       This appends forecast values to the future.
-                If RawValues.Count = 0 OrElse
-                  Not RawValues.Item(Max(0, iR-1)).IsGood OrElse
-                  .Timestamp > RawSnapshot Then
-                  If IsNaN(.ForecastItem.Forecast) Then
-                    ' If there is no valid forecast result, return an
-                    ' InvalidData state. Definition: 'Invalid Data state.'
-                    GetValues.Add(AFValue.CreateSystemStateValue(
-                      AFSystemStateCode.InvalidData, New AFTime(.Timestamp)))
-                  Else
-                    ' Replace bad values with forecast, append forecast values
-                    ' to the future.
-                    GetValues.Add(New AFValue(.ForecastItem.Forecast,
-                      New AFTime(.Timestamp)))
-                    ' Mark replaced (not good) values as substituted.
-                    GetValues.Item(GetValues.Count-1).Substituted =
-                      .Timestamp <= RawSnapshot
-                    ' Mark forecast values as questionable.
-                    GetValues.Item(GetValues.Count-1).Questionable =
-                      .Timestamp > RawSnapshot
-                  End If
+              ' Augment raw values with forecast. This is done if any of four
+              ' conditions is true:
+              '  1) There are no raw values for the time period. Since there are
+              '       no values, the best we can do is return the forecast.
+              '  2) For the first raw value, if this value is not good. The
+              '       forecast is returned because either this value is before
+              '       this result, or there are no values before this value.
+              '  3) For all but the first raw value, if the previous raw value
+              '       is not good. While this value is not good, the forecast is
+              '       returned. Note that the previous raw value can be on the
+              '       exact same timestamp as this result.
+              '  4) If the timestamp is past the raw snapshot timestamp. This
+              '       appends forecast values to the future.
+              If RawValues.Count = 0 OrElse
+                Not RawValues.Item(Max(0, iR-1)).IsGood OrElse
+                .Timestamp > RawSnapshot Then
+                If IsNaN(.ForecastItem.Forecast) Then
+                  ' If there is no valid forecast result, return an InvalidData
+                  ' state. Definition: 'Invalid Data state.'
+                  GetValues.Add(AFValue.CreateSystemStateValue(
+                    AFSystemStateCode.InvalidData, New AFTime(.Timestamp)))
+                Else
+                  ' Replace bad values with forecast, append forecast values to
+                  ' the future.
+                  GetValues.Add(New AFValue(.ForecastItem.Forecast,
+                    New AFTime(.Timestamp)))
+                  ' Mark replaced (not good) values as substituted.
+                  GetValues.Item(GetValues.Count-1).Substituted =
+                    .Timestamp <= RawSnapshot
+                  ' Mark forecast values as questionable.
+                  GetValues.Item(GetValues.Count-1).Questionable =
+                    .Timestamp > RawSnapshot
                 End If
-                iD += 1 ' Move iterator to next DBM result.
-
-                ' Include valid raw values. Raw values are appended while there
-                ' are still values available before or on the raw snapshot
-                ' timestamp, and if any of two conditions is true:
-                '  1) If there is a next DBM result, and the raw value timestamp
-                '       is on or before this result. This includes all values
-                '       until the timestamp of the next DBM result (inclusive).
-                '  2) The raw value timestamp is on or after the last DBM
-                '       result. This includes all remaining values after the
-                '       last result.
-                Do While iR < RawValues.Count AndAlso
-                  RawValues.Item(iR).Timestamp.LocalTime <=
-                  RawSnapshot AndAlso
-                  ((iD < Results.Count AndAlso RawValues.Item(iR).
-                  Timestamp.LocalTime <= Results.Item(iD).Timestamp) OrElse
-                  RawValues.Item(iR).Timestamp.LocalTime >=
-                  Results.Item(Results.Count-1).Timestamp)
-                  If RawValues.Item(iR).IsGood Then ' Only include good values
-                    GetValues.Add(RawValues.Item(iR))
-                    ' Mark events (exceeding Minimum and Maximum control limits)
-                    ' as questionable.
-                    GetValues.Item(GetValues.Count-1).Questionable =
-                      Abs(.ForecastItem.Measurement-.ForecastItem.Forecast) >
-                      .ForecastItem.Range(pValueMinMax)
-                  End If
-                  iR += 1 ' Move iterator to next raw value.
-                Loop
-
-              ElseIf Attribute.Trait Is Forecast Then
-                GetValues.Add(New AFValue(.ForecastItem.Forecast,
-                  New AFTime(.Timestamp)))
-              ElseIf Attribute.Trait Is LimitMinimum Then
-                GetValues.Add(New AFValue(.ForecastItem.Forecast-
-                  .ForecastItem.Range(pValueMinMax), New AFTime(.Timestamp)))
-              ElseIf Attribute.Trait Is LimitLoLo Then
-                GetValues.Add(New AFValue(.ForecastItem.LowerControlLimit,
-                  New AFTime(.Timestamp)))
-              ElseIf Attribute.Trait Is LimitLo Then
-                GetValues.Add(New AFValue(.ForecastItem.Forecast-
-                  .ForecastItem.Range(pValueLoHi), New AFTime(.Timestamp)))
-              ElseIf Attribute.Trait Is LimitHi Then
-                GetValues.Add(New AFValue(.ForecastItem.Forecast+
-                  .ForecastItem.Range(pValueLoHi), New AFTime(.Timestamp)))
-              ElseIf Attribute.Trait Is LimitHiHi Then
-                GetValues.Add(New AFValue(.ForecastItem.UpperControlLimit,
-                  New AFTime(.Timestamp)))
-              ElseIf Attribute.Trait Is LimitMaximum Then
-                GetValues.Add(New AFValue(.ForecastItem.Forecast+
-                  .ForecastItem.Range(pValueMinMax), New AFTime(.Timestamp)))
-              Else
-                GetValues.Add(New AFValue(.Factor, New AFTime(.Timestamp)))
               End If
+              iD += 1 ' Move iterator to next DBM result.
 
+              ' Include valid raw values. Raw values are appended while there
+              ' are still values available before or on the raw snapshot
+              ' timestamp, and if any of two conditions is true:
+              '  1) If there is a next DBM result, and the raw value timestamp
+              '       is on or before this result. This includes all values
+              '       until the timestamp of the next DBM result (inclusive).
+              '  2) The raw value timestamp is on or after the last DBM result.
+              '       This includes all remaining values after the last result.
+              Do While iR < RawValues.Count AndAlso
+                RawValues.Item(iR).Timestamp.LocalTime <= RawSnapshot AndAlso
+                ((iD < Results.Count AndAlso RawValues.Item(iR).
+                Timestamp.LocalTime <= Results.Item(iD).Timestamp) OrElse
+                RawValues.Item(iR).Timestamp.LocalTime >=
+                Results.Item(Results.Count-1).Timestamp)
+                If RawValues.Item(iR).IsGood Then ' Only include good values
+                  GetValues.Add(RawValues.Item(iR))
+                  ' Mark events (exceeding Minimum and Maximum control limits)
+                  ' as questionable.
+                  GetValues.Item(GetValues.Count-1).Questionable =
+                    Abs(.ForecastItem.Measurement-.ForecastItem.Forecast) >
+                    .ForecastItem.Range(pValueMinMax)
+                End If
+                iR += 1 ' Move iterator to next raw value.
+              Loop
+
+            ElseIf Attribute.Trait Is Forecast Then
+              GetValues.Add(New AFValue(.ForecastItem.Forecast,
+                New AFTime(.Timestamp)))
+            ElseIf Attribute.Trait Is LimitMinimum Then
+              GetValues.Add(New AFValue(.ForecastItem.Forecast-
+                .ForecastItem.Range(pValueMinMax), New AFTime(.Timestamp)))
+            ElseIf Attribute.Trait Is LimitLoLo Then
+              GetValues.Add(New AFValue(.ForecastItem.LowerControlLimit,
+                New AFTime(.Timestamp)))
+            ElseIf Attribute.Trait Is LimitLo Then
+              GetValues.Add(New AFValue(.ForecastItem.Forecast-
+                .ForecastItem.Range(pValueLoHi), New AFTime(.Timestamp)))
+            ElseIf Attribute.Trait Is LimitHi Then
+              GetValues.Add(New AFValue(.ForecastItem.Forecast+
+                .ForecastItem.Range(pValueLoHi), New AFTime(.Timestamp)))
+            ElseIf Attribute.Trait Is LimitHiHi Then
+              GetValues.Add(New AFValue(.ForecastItem.UpperControlLimit,
+                New AFTime(.Timestamp)))
+            ElseIf Attribute.Trait Is LimitMaximum Then
+              GetValues.Add(New AFValue(.ForecastItem.Forecast+
+                .ForecastItem.Range(pValueMinMax), New AFTime(.Timestamp)))
+            Else
+              GetValues.Add(New AFValue(.Factor, New AFTime(.Timestamp)))
             End If
 
           End If
