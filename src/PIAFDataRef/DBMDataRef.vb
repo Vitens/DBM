@@ -612,7 +612,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       If Attribute.Trait Is LimitTarget Then
         GetValues.Insert(0, New AFValue(String.Format(
           sPredictivePower, RMSD(Results), RMSD(Results, True)*100),
-          New AFTime(timeRange.StartTime.LocalTime.AddSeconds(-1)),
+          New AFTime(timeRange.StartTime.LocalTime),
           Nothing, AFValueStatus.Annotated))
       End If
 
