@@ -1132,7 +1132,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           AssertAlmostEqual(.Determination, {0.024, 0.1398, 0.1164, 0.082,
             0.0271, 0.0004, 0.0509, 0.1184, 0.0063, 0.1413, 0.1845, 0, 0.1029,
             0.0412, 0.0146, 0.0002, 0.091, 0.022, 0.2803, 0.0974}(i))
-Console.WriteLine(Round(.Mean, 4) & " " & Round(.RMSD, 4) & " " & Round(.CVRMSD, 4))
+Console.WriteLine(Round(.Mean, 4).ToString & " " & Round(.RMSD, 4).ToString & " " & Round(.CVRMSD, 4).ToString)
         End With
       Next i
 
