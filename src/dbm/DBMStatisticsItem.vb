@@ -40,7 +40,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Function Brief As String
 
-      Return String.Format(sStatisticsBrief, Count, Determination, RMSD, CVRMSD)
+      Return String.Format(sStatisticsBrief,
+        Count, Mean, NMBE, RMSD, CVRMSD, Determination)
 
     End Function
 
