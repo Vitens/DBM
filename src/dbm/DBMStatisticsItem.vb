@@ -41,7 +41,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Function Calibrated As Boolean
 
-      ' ASHRAE Guideline 14-2014
+      ' ASHRAE Guideline 14-2014, Measurement of Energy, Demand, and Water
+      ' Savings
       ' American Society of Heating, Refrigerating and Air Conditioning
       ' Engineers (ASHRAE). Handbook Fundamentals; American Society of Heating,
       ' Refrigerating and Air Conditioning Engineers: Atlanta, GA, USA, 2013;
@@ -50,8 +51,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       '   relative to monthly calibration data. If hourly calibration data are
       '   used, these requirements shall be 10% and 30%, respectively."
 
-      ' IPMVP
-      ' Efficiency Valuation Organization.International Performance Measurement
+      ' IPMVP, International Performance Measurement and Verification Protocol
+      ' Efficiency Valuation Organization. International Performance Measurement
       ' and Verification Protocol: Concepts and Options for Determining Energy
       ' and Water Savings, Volume I; Technical Report; Efficiency Valuation
       ' Organization: Washington, DC, USA, 2012.
@@ -59,7 +60,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       '   value, 0.75 is often considered a reasonable indicator of a good
       '   causal relationship amongst the energy and independent variables."
 
-      Return Abs(NMBE)<=0.05 And CVRMSD<=0.15 And Determination>=0.75
+      Return Abs(NMBE)<=0.05 And Abs(CVRMSD)<=0.15 And Determination>=0.75
 
     End Function
 

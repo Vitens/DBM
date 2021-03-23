@@ -54,33 +54,31 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       With Statistics
 
-        If ValuesY.Length = 0 Then Return Statistics ' Empty
-
         If ValuesX Is Nothing Then ' No X values, assume linear scale from 0.
           ReDim ValuesX(ValuesY.Length-1)
-          For i = 0 To ValuesX.Length-1
+          For i = 0 To ValuesY.Length-1
             ValuesX(i) = i
           Next i
         End If
 
-        If Not(ValuesY.Length = ValuesX.Length) Then Return Statistics ' Non-eql
-
         ' Calculate sums
-        For i = 0 To ValuesY.Length-1
-          If Not IsNaN(ValuesX(i)) And Not IsNaN(ValuesY(i)) Then
-            .Count += 1
-            .Mean += ValuesY(i)
-            .NMBE += ValuesX(i)-ValuesY(i)
-            .RMSD += (ValuesX(i)-ValuesY(i))^2
-            SumX += ValuesX(i)
-            SumY += ValuesY(i)
-            SumXX += ValuesX(i)^2
-            SumYY += ValuesY(i)^2
-            SumXY += ValuesX(i)*ValuesY(i)
-          End If
-        Next i
+        If ValuesY.Length > 0 And ValuesY.Length = ValuesX.Length Then
+          For i = 0 To ValuesY.Length-1
+            If Not IsNaN(ValuesY(i)) And Not IsNaN(ValuesX(i)) Then
+              .Count += 1
+              .Mean += ValuesY(i)
+              .NMBE += ValuesX(i)-ValuesY(i)
+              .RMSD += (ValuesX(i)-ValuesY(i))^2
+              SumX += ValuesX(i)
+              SumY += ValuesY(i)
+              SumXX += ValuesX(i)^2
+              SumYY += ValuesY(i)^2
+              SumXY += ValuesX(i)*ValuesY(i)
+            End If
+          Next i
+        End If
 
-        If .Count = 0 Then Return Statistics ' No non-NaN pairs.
+        If .Count = 0 Then Return Statistics ' Empty, non-eq, or no non-NaN pair
 
         .Mean = .Mean/.Count ' Average
 
@@ -132,7 +130,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' The standard error is a measure of the amount of error in the
         ' prediction of y for an individual x.
         For i = 0 to ValuesY.Length-1
-          If Not IsNaN(ValuesX(i)) And Not IsNaN(ValuesY(i)) Then
+          If Not IsNaN(ValuesY(i)) And Not IsNaN(ValuesX(i)) Then
             .StandardError += (ValuesY(i)-ValuesX(i)*.Slope-.Intercept)^2
           End If
         Next i
