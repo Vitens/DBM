@@ -44,8 +44,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       "Mean={1:" & sNumberFormat & "} " &
       "NMBE={2:" & sNumberFormat & "} " &
       "RMSD={3:" & sNumberFormat & "} " &
-      "CV(RMSD)={4:" & sNumberFormat & "}" &
-      "R²={5:" & sNumberFormat & "} "
+      "CV(RMSD)={4:" & sNumberFormat & "} " &
+      "R²={5:" & sNumberFormat & "}"
 
 
   End Class
