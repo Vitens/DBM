@@ -37,6 +37,7 @@ Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
+Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
 Imports Vitens.DynamicBandwidthMonitor.DBMStrings
 
 
@@ -613,8 +614,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' to the bad value at the beginning of the time range. By returning the
         ' value outside of the requested time range, it is not shown in a PI
         ' ProcessBook trend object as a bad value, marked with an X.
-        GetValues.Insert(0, New AFValue(String.Format(
-          sPredictivePower, RMSD(Results), RMSD(Results, True)*100),
+        GetValues.Insert(0, New AFValue(String.Format(sPredictivePower,
+          Statistics.RMSD(Results), Statistics.CVRMSD(Results)*100),
           New AFTime(timeRange.StartTime.LocalTime.AddSeconds(-1)),
           Nothing, AFValueStatus.Annotated))
       End If
