@@ -615,7 +615,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' value outside of the requested time range, it is not shown in a PI
         ' ProcessBook trend object as a bad value, marked with an X.
         GetValues.Insert(0, New AFValue(String.Format(sPredictivePower,
-          Statistics(Results).RMSD, Statistics(Results).CVRMSD*100),
+          Statistics(Results).Determination, Statistics(Results).RMSD,
+          Statistics(Results).CVRMSD*100),
           New AFTime(timeRange.StartTime.LocalTime.AddSeconds(-1)),
           Nothing, AFValueStatus.Annotated))
       End If
