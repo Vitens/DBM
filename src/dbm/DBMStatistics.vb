@@ -23,6 +23,7 @@ Option Strict
 
 
 Imports System
+Imports System.Collections.Generic
 Imports System.Double
 Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
@@ -38,7 +39,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' calling the Statistics method.
 
 
-    Public Shared Function Statistics(ValuesY() As Double,
+    Public Overloads Shared Function Statistics(ValuesY() As Double,
       Optional ValuesX() As Double = Nothing) As DBMStatisticsItem
 
       ' Performs calculation of several statistics functions on the input
@@ -145,6 +146,24 @@ Namespace Vitens.DynamicBandwidthMonitor
       End With
 
       Return Statistics
+
+    End Function
+
+
+    Public Overloads Shared Function Statistics(
+      Results As List(Of DBMResult)) As DBMStatisticsItem
+
+      Dim i As Integer
+      Dim Measurements(Results.Count-1), Forecasts(Results.Count-1) As Double
+
+      For i = 0 To Results.Count-1
+        With Results.Item(i).ForecastItem
+          Measurements(i) = .Measurement
+          Forecasts(i) = .Forecast
+        End With
+      Next i
+
+      Return RMSD(Measurements, Forecasts, Normalized)
 
     End Function
 
