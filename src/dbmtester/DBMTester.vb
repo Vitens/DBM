@@ -149,17 +149,17 @@ Namespace Vitens.DynamicBandwidthMonitor
 
           With Result
             Console.WriteLine(.Timestamp.ToString("s") & Separator &
-            FormatNumber(.Factor) & Separator &
-            FormatNumber(.ForecastItem.Measurement) & Separator &
-            FormatNumber(.ForecastItem.Forecast) & Separator &
-            FormatNumber(.ForecastItem.LowerControlLimit) & Separator &
-            FormatNumber(.ForecastItem.UpperControlLimit))
+              FormatNumber(.Factor) & Separator &
+              FormatNumber(.ForecastItem.Measurement) & Separator &
+              FormatNumber(.ForecastItem.Forecast) & Separator &
+              FormatNumber(.ForecastItem.LowerControlLimit) & Separator &
+              FormatNumber(.ForecastItem.UpperControlLimit))
           End With
 
         Next Result
 
-        Console.WriteLine(sCsvComment &
-          String.Format(sPredictivePower, RMSD(Results), RMSD(Results, True)))
+        Console.WriteLine(sCsvComment & String.Format(
+          sPredictivePower, RMSD(Results), RMSD(Results, True)*100))
 
       End If
 

@@ -40,7 +40,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Const sNumberFormat As String = "G5"
     Public Const sCsvComment As String = "# "
     Public Const sPredictivePower As String = "Predictive power: " &
-      "RMSD={0:" & sNumberFormat & "} CV(RMSD)={1:" & sNumberFormat & "}"
+      "RMSD={0:" & sNumberFormat & "} CV(RMSD)={1:" & sNumberFormat & "}%"
 
 
   End Class
