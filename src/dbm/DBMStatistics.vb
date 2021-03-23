@@ -70,6 +70,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           If Not IsNaN(ValuesX(i)) And Not IsNaN(ValuesY(i)) Then
             .Count += 1
             .Mean += ValuesY(i)
+            .NMBE += (ValuesX(i)-ValuesY(i))
             .RMSD += (ValuesX(i)-ValuesY(i))^2
             SumX += ValuesX(i)
             SumY += ValuesY(i)
@@ -82,6 +83,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         If .Count = 0 Then Return Statistics ' No non-NaN pairs.
 
         .Mean = .Mean/.Count ' Average
+
+        .NMBE = (.NMBE/.Count)/.Mean
 
         ' The root-mean-square deviation (RMSD) or root-mean-square error (RMSE)
         ' is a frequently used measure of the differences between values (sample
