@@ -30,10 +30,8 @@ Imports System.Text.RegularExpressions
 Imports System.Threading.Thread
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
-Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
-Imports Vitens.DynamicBandwidthMonitor.DBMStrings
 
 
 ' Assembly title
