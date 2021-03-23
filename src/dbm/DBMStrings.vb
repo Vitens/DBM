@@ -42,9 +42,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Const sStatisticsBrief As String =
       "n={0} " &
       "Mean={1:" & sNumberFormat & "} " &
-      "NMBE={2:" & sNumberFormat & "} " &
+      "NMBE={2:" & sNumberFormat & "}% " &
       "RMSD={3:" & sNumberFormat & "} " &
-      "CV(RMSD)={4:" & sNumberFormat & "} " &
+      "CV(RMSD)={4:" & sNumberFormat & "}% " &
       "R²={5:" & sNumberFormat & "}"
 
 
