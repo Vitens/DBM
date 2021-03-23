@@ -38,7 +38,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Determination As Double
 
 
-    Public Shared Function Brief As String
+    Public Function Brief As String
 
       Return String.Format(sStatisticsBrief, Count, Determination, RMSD, CVRMSD)
 
