@@ -163,7 +163,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         End With
       Next i
 
-      Return RMSD(Measurements, Forecasts, Normalized)
+      Return Statistics(Measurements, Forecasts)
 
     End Function
 
