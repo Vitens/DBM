@@ -40,12 +40,13 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Const sNumberFormat As String = "G5"
     Public Const sCsvComment As String = "# "
     Public Const sStatisticsBrief As String =
-      "n={0} " &
-      "Mean={1:" & sNumberFormat & "} " &
-      "NMBE={2:" & sNumberFormat & "}% " &
-      "RMSD={3:" & sNumberFormat & "} " &
-      "CV(RMSD)={4:" & sNumberFormat & "}% " &
-      "R²={5:" & sNumberFormat & "}"
+      "n: {0}; " &
+      "Mean: {1:" & sNumberFormat & "}; " &
+      "NMBE: {2:" & sNumberFormat & "}%; " &
+      "RMSD: {3:" & sNumberFormat & "}; " &
+      "CV(RMSD): {4:" & sNumberFormat & "}%; " &
+      "R²: {5:" & sNumberFormat & "}; " &
+      "Valid: {6}"
 
 
   End Class

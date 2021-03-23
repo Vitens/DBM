@@ -84,6 +84,14 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         .Mean = .Mean/.Count ' Average
 
+        ' MBE (Mean Bias Error), as its name indicates, is the average of the
+        ' errors of a sample space. Generally, it is a good indicator of the
+        ' overall behavior of the simulated data with regards to the regression
+        ' line of the sample. NMBE (Normalized Mean Bias Error) is a
+        ' normalization of the MBE index that is used to scale the results of
+        ' MBE, making them comparable. It quantifies the MBE index by dividing
+        ' it by the mean of measured values, giving the global difference
+        ' between the real values and the predicted ones.
         .NMBE = .NMBE/.Count/.Mean
 
         ' The root-mean-square deviation (RMSD) or root-mean-square error (RMSE)
