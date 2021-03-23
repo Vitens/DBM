@@ -23,6 +23,7 @@ Option Strict
 
 
 Imports System
+Imports Vitens.DynamicBandwidthMonitor.DBMStrings
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -35,6 +36,17 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Mean, RMSD, CVRMSD, Slope, OriginSlope, Angle, OriginAngle,
       Intercept, StandardError, Correlation, ModifiedCorrelation,
       Determination As Double
+
+
+    Public Shared Function Brief As String
+
+      Return String.Format(
+        sPredictivePower,
+        Statistics(Results).Determination
+        Statistics(Results).RMSD,
+        Statistics(Results).CVRMSD*100)
+
+    End Function
 
 
   End Class

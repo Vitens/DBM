@@ -54,7 +54,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       With Statistics
 
-        If ValuesY.Length = 0 Then Return Nothing ' Empty
+        If ValuesY.Length = 0 Then Return Statistics ' Empty
 
         If ValuesX Is Nothing Then ' No X values, assume linear scale from 0.
           ReDim ValuesX(ValuesY.Length-1)
@@ -63,7 +63,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           Next i
         End If
 
-        If Not(ValuesY.Length = ValuesX.Length) Then Return Nothing ' Non-equal
+        If Not(ValuesY.Length = ValuesX.Length) Then Return Statistics ' Non-eql
 
         ' Calculate sums
         For i = 0 To ValuesY.Length-1
@@ -79,7 +79,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           End If
         Next i
 
-        If .Count = 0 Then Return Nothing ' No non-NaN pairs.
+        If .Count = 0 Then Return Statistics ' No non-NaN pairs.
 
         .Mean = .Mean/.Count ' Average
 
