@@ -39,12 +39,12 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' calling the Statistics method.
 
 
-    Public Overloads Shared Function Statistics(ValuesY() As Double,
-      Optional ValuesX() As Double = Nothing) As DBMStatisticsItem
+    Public Overloads Shared Function Statistics(Dependent() As Double,
+      Optional Independent() As Double = Nothing) As DBMStatisticsItem
 
       ' Performs calculation of several statistics functions on the input
-      ' data. If no values for X are passed, a linear scale starting at 0 is
-      ' assumed.
+      ' data. If no values for the independent variable are passed, a linear
+      ' scale starting at 0 is assumed.
       ' The result of the calculation is returned as a new object.
 
       Dim i As Integer
@@ -54,26 +54,26 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       With Statistics
 
-        If ValuesX Is Nothing Then ' No X values, assume linear scale from 0.
-          ReDim ValuesX(ValuesY.Length-1)
-          For i = 0 To ValuesY.Length-1
-            ValuesX(i) = i
+        If Independent Is Nothing Then ' No independent var, assume linear scale
+          ReDim Independent(Dependent.Length-1)
+          For i = 0 To Dependent.Length-1
+            Independent(i) = i
           Next i
         End If
 
         ' Calculate sums
-        If ValuesY.Length > 0 And ValuesY.Length = ValuesX.Length Then
-          For i = 0 To ValuesY.Length-1
-            If Not IsNaN(ValuesY(i)) And Not IsNaN(ValuesX(i)) Then
+        If Dependent.Length > 0 And Dependent.Length = Independent.Length Then
+          For i = 0 To Dependent.Length-1
+            If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
               .Count += 1
-              .Mean += ValuesY(i)
-              .NMBE += ValuesX(i)-ValuesY(i)
-              .RMSD += (ValuesX(i)-ValuesY(i))^2
-              SumX += ValuesX(i)
-              SumY += ValuesY(i)
-              SumXX += ValuesX(i)^2
-              SumYY += ValuesY(i)^2
-              SumXY += ValuesX(i)*ValuesY(i)
+              .Mean += Dependent(i)
+              .NMBE += Dependent(i)-Independent(i)
+              .RMSD += (Dependent(i)-Independent(i))^2
+              SumX += Independent(i)
+              SumY += Dependent(i)
+              SumXX += Independent(i)^2
+              SumYY += Dependent(i)^2
+              SumXY += Independent(i)*Dependent(i)
             End If
           Next i
         End If
@@ -135,9 +135,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Standard error of the predicted y-value for each x in the regression.
         ' The standard error is a measure of the amount of error in the
         ' prediction of y for an individual x.
-        For i = 0 to ValuesY.Length-1
-          If Not IsNaN(ValuesY(i)) And Not IsNaN(ValuesX(i)) Then
-            .StandardError += (ValuesY(i)-ValuesX(i)*.Slope-.Intercept)^2
+        For i = 0 to Dependent.Length-1
+          If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
+            .StandardError += (Dependent(i)-Independent(i)*.Slope-.Intercept)^2
           End If
         Next i
         ' n-2 is used because two parameters (slope and intercept) were
@@ -169,16 +169,16 @@ Namespace Vitens.DynamicBandwidthMonitor
       Results As List(Of DBMResult)) As DBMStatisticsItem
 
       Dim i As Integer
-      Dim Measurements(Results.Count-1), Forecasts(Results.Count-1) As Double
+      Dim Forecasts(Results.Count-1), Measurements(Results.Count-1) As Double
 
       For i = 0 To Results.Count-1
         With Results.Item(i).ForecastItem
-          Measurements(i) = .Measurement
           Forecasts(i) = .Forecast
+          Measurements(i) = .Measurement
         End With
       Next i
 
-      Return Statistics(Measurements, Forecasts)
+      Return Statistics(Forecasts, Measurements)
 
     End Function
 
