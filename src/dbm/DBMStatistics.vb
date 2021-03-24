@@ -90,7 +90,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' MBE, making them comparable. It quantifies the MBE index by dividing
         ' it by the mean of measured values, giving the global difference
         ' between the real values and the predicted ones.
-        .NMBE = .NMBE/.Count/.Mean
+        .NMBE = .NMBE/Max(0, .Count-1)/.Mean
 
         ' The root-mean-square deviation (RMSD) or root-mean-square error (RMSE)
         ' is a frequently used measure of the differences between values (sample
@@ -103,7 +103,13 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' prediction errors) when computed out-of-sample. The RMSD serves to
         ' aggregate the magnitudes of the errors in predictions for various data
         ' points into a single measure of predictive power.
-        .RMSD = Sqrt(.RMSD/.Count)
+        .RMSD = Sqrt(.RMSD/Max(0, .Count-1))
+
+        ' For both NMBE and CV(RMSD), ASHRAE Guideline 14-2014 states: "For
+        ' calibrated simulations, the CV(RMSE) and NMBE of modeled energy use
+        ' shall be determined by comparing simulation predicted data to the
+        ' utility data used for calibration, with p = 1.". So we devide by n - 1
+        ' as in the stated equations where there is a division by n - p.
 
         ' Normalizing the RMSD facilitates the comparison between datasets or
         ' models with different scales. Though there is no consistent means of
@@ -136,7 +142,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Next i
         ' n-2 is used because two parameters (slope and intercept) were
         ' estimated in order to estimate the sum of squares.
-        .StandardError = Sqrt(.StandardError/(.Count-2))
+        .StandardError = Sqrt(.StandardError/Max(0, .Count-2))
 
         ' A number that quantifies some type of correlation and dependence,
         ' meaning statistical relationships between two or more random
