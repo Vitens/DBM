@@ -67,6 +67,21 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Function Brief As String
 
+      ' DBM can calculate model calibration information statistics. This
+      ' information is exposed in the DBMTester utility and the DBMDataRef data
+      ' reference. The model is considered to be calibrated if it has a
+      ' absolute normalized mean bias error of at most 5%, an absolute
+      ' coefficient of variation of the root-mean-square deviation of at most
+      ' 15%, and a determination (R^2) of at least 0.75. There are several
+      ' agencies that have developed guidelines and methodologies to establish a
+      ' measure of the accuracy of models. We decided to follow the guidelines
+      ' as documented in ASHRAE Guideline 14-2014, Measurement of Energy,
+      ' Demand, and Water Savings, by the American Society of Heating,
+      ' Refrigerating and Air Conditioning Engineers, and International
+      ' Performance Measurement and Verification Protocol: Concepts and Options
+      ' for Determining Energy and Water Savings, Volume 1, by the Efficiency
+      ' Valuation Organization.
+
       If Count < 3 Then Return sStatisticsInsufficientData ' Need at least 3 pts
 
       Return String.Format(sStatisticsBrief,

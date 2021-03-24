@@ -40,7 +40,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Const sNumberFormat As String = "G5"
     Public Const sCsvComment As String = "# "
     Public Const sStatisticsInsufficientData As String =
-      "Insufficient data for calculating calibration information statistics"
+      "Insufficient data for calculating " &
+      "model calibration information statistics"
     Public Const sStatisticsBrief As String =
       "Calibrated: {0} (" &
       "n: {1}; " &
