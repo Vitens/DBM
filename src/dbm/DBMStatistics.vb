@@ -66,7 +66,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           For i = 0 To Dependent.Length-1
             If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
               .Count += 1
-              .Mean += Dependent(i)
+              .Mean += Independent(i)
               .NMBE += Independent(i)-Dependent(i)
               .RMSD += (Independent(i)-Dependent(i))^2
               SumX += Independent(i)
