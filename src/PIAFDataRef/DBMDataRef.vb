@@ -35,9 +35,8 @@ Imports OSIsoft.AF.Data
 Imports OSIsoft.AF.Time
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
-Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
-Imports Vitens.DynamicBandwidthMonitor.DBMStrings
+Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
 
 
 ' Assembly title
@@ -601,7 +600,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Return GetValues
       End If
 
-      ' Annotate Target values with the RMSD and CV(RMSD).
+      ' Annotate Target values with model calibration information statistics.
       If Attribute.Trait Is LimitTarget Then
         ' This is a nasty hack. It does not (yet?) seem possible to insert a
         ' proper annotated value. This hack inserts a bad value, marked as
@@ -613,8 +612,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' to the bad value at the beginning of the time range. By returning the
         ' value outside of the requested time range, it is not shown in a PI
         ' ProcessBook trend object as a bad value, marked with an X.
-        GetValues.Insert(0, New AFValue(String.Format(
-          sPredictivePower, RMSD(Results), RMSD(Results, True)*100),
+        GetValues.Insert(0, New AFValue(Statistics(Results).Brief,
           New AFTime(timeRange.StartTime.LocalTime.AddSeconds(-1)),
           Nothing, AFValueStatus.Annotated))
       End If

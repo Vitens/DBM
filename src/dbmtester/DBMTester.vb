@@ -30,8 +30,8 @@ Imports System.Text.RegularExpressions
 Imports System.Threading.Thread
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
-Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
+Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
 Imports Vitens.DynamicBandwidthMonitor.DBMStrings
 
 
@@ -158,8 +158,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         Next Result
 
-        Console.WriteLine(sCsvComment & String.Format(
-          sPredictivePower, RMSD(Results), RMSD(Results, True)*100))
+        Console.WriteLine(sCsvComment & Statistics(Results).Brief)
 
       End If
 

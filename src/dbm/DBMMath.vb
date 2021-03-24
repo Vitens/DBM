@@ -23,7 +23,6 @@ Option Strict
 
 
 Imports System
-Imports System.Collections.Generic
 Imports System.Double
 Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
@@ -411,77 +410,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns angle in degrees for Slope.
 
       Return Atan(Slope)/(2*PI)*360
-
-    End Function
-
-
-    Public Overloads Shared Function RMSD(Measurements() As Double,
-      Forecasts() As Double, Optional Normalized As Boolean = False) As Double
-
-      ' The root-mean-square deviation (RMSD) or root-mean-square error (RMSE)
-      ' is a frequently used measure of the differences between values (sample
-      ' or population values) predicted by a model or an estimator and the
-      ' values observed. The RMSD represents the square root of the second
-      ' sample moment of the differences between predicted values and observed
-      ' values or the quadratic mean of these differences. These deviations are
-      ' called residuals when the calculations are performed over the data
-      ' sample that was used for estimation and are called errors (or prediction
-      ' errors) when computed out-of-sample. The RMSD serves to aggregate the
-      ' magnitudes of the errors in predictions for various data points into a
-      ' single measure of predictive power.
-
-      Dim i, Count As Integer
-      Dim Mean As Double
-
-      If Measurements.Length > 0 And Measurements.Length = Forecasts.Length Then
-        For i = 0 To Measurements.Length-1
-          If Not IsNaN(Measurements(i)) And Not IsNaN(Forecasts(i)) Then
-            RMSD += (Forecasts(i)-Measurements(i))^2
-            Mean += Measurements(i)
-            Count += 1
-          End If
-        Next i
-      End If
-
-      If Count = 0 Then Return NaN ' Empty, non-equal, or no non-NaN pairs.
-
-      RMSD = Sqrt(RMSD/Count)
-      Mean = Mean/Count
-
-      ' Normalizing the RMSD facilitates the comparison between datasets or
-      ' models with different scales. Though there is no consistent means of
-      ' normalization in the literature, common choices are the mean or the
-      ' range (defined as the maximum value minus the minimum value) of the
-      ' measured data. This value is commonly referred to as the normalized
-      ' root-mean-square deviation or error (NRMSD or NRMSE), and often
-      ' expressed as a percentage, where lower values indicate less residual
-      ' variance. In many cases, especially for smaller samples, the sample
-      ' range is likely to be affected by the size of sample which would hamper
-      ' comparisons. When normalizing by the mean value of the measurements, the
-      ' term coefficient of variation of the RMSD, CV(RMSD) may be used to avoid
-      ' ambiguity. This is analogous to the coefficient of variation with the
-      ' RMSD taking the place of the standard deviation.
-      If Normalized Then RMSD /= Mean
-
-      Return RMSD
-
-    End Function
-
-
-    Public Overloads Shared Function RMSD(Results As List(Of DBMResult),
-      Optional Normalized As Boolean = False) As Double
-
-      Dim i As Integer
-      Dim Measurements(Results.Count-1), Forecasts(Results.Count-1) As Double
-
-      For i = 0 To Results.Count-1
-        With Results.Item(i).ForecastItem
-          Measurements(i) = .Measurement
-          Forecasts(i) = .Forecast
-        End With
-      Next i
-
-      Return RMSD(Measurements, Forecasts, Normalized)
 
     End Function
 

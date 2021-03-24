@@ -601,38 +601,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(SlopeToAngle(-1.6831), -59.2837)
       AssertAlmostEqual(SlopeToAngle(-2.0031), -63.4704)
 
-      AssertNaN(RMSD({}, {}))
-      AssertNaN(RMSD({1}, {}))
-      AssertNaN(RMSD({}, {1}))
-      AssertNaN(RMSD({1}, {1, 2}))
-      AssertNaN(RMSD({NaN}, {NaN}))
-      AssertNaN(RMSD({1, 2}, {NaN, NaN}))
-      AssertNaN(RMSD({NaN, NaN}, {1, 2}))
-      AssertNaN(RMSD({1, NaN}, {NaN, 2}))
-      AssertEqual(RMSD({1, 2}, {1, 2}), 0)
-      AssertAlmostEqual(RMSD({22.9209, 38.4266, 68.0724, 99.5133, 137.5343},
-        {6.312, 26.1236, 46.4224, 51.6031, 82.2753}), 35.3409)
-      AssertAlmostEqual(RMSD({36.0669, 56.3126, 87.0465, 90.3358, 121.6257},
-        {21.1303, 50.5925, 75.5125, 98.2478, 106.5677}), 11.6464)
-      AssertAlmostEqual(RMSD({1.0778, 15.4275, 33.4357, 35.0669, 39.1254},
-        {4.5849, 5.8702, 24.2946, 51.1991, 56.0207}), 12.107)
-      AssertAlmostEqual(RMSD({14.4002, 46.6372, 67.8622, 68.4366, 105.8508},
-        {37.4782, 60.2742, 90.5246, 118.0239, 144.4999}), 32.2019)
-      AssertAlmostEqual(RMSD({29.5289, 65.0544, 93.8844, 95.8158, 108.4096},
-        {1.6749, 10.5653, 46.1936, 62.9573, 89.4832}, False), 38.6192)
-      AssertAlmostEqual(RMSD({36.4355, 71.794, 111.4153, 135.912, 157.2526},
-        {29.2101, 52.4227, 87.7501, 123.2186, 133.9783}, False), 18.3865)
-      AssertAlmostEqual(RMSD({33.6119, 71.478, 108.3694, 125.8594, 133.3706},
-        {9.5769, 34.5098, 70.9659, 108.1606, 120.9939}, True), 0.292)
-      AssertAlmostEqual(RMSD({22.7011, 48.1137, 76.1351, 92.5158, 97.2741},
-        {22.3235, 47.6603, 49.3894, 88.389, 91.1577}, True), 0.1843)
-      AssertAlmostEqual(RMSD({18.8711, 38.2954, NaN, 85.4236, 99.999},
-        {33.2514, 36.3659, 41.5289, 67.0192, 68.2669}), 19.7241)
-      AssertAlmostEqual(RMSD({16.4998, 40.5346, 50.6114, NaN, 108.2397},
-        {NaN, 28.7668, 34.6964, 37.897, 39.1058}, False), 41.5181)
-      AssertAlmostEqual(RMSD({16.1989, NaN, 51.0796, 72.0766, NaN},
-        {4.2429, NaN, NaN, 81.3421, 89.191}, True), 0.2423)
-
       ' DBMDate
       AssertEqual(PreviousInterval(
         New DateTime(2016, 4, 4, 16, 33, 2)),
@@ -1097,6 +1065,21 @@ Namespace Vitens.DynamicBandwidthMonitor
           Statistics({3228, 3564, 2323, 3616, 2405, 3914, 2132, 2123, 3586,
             2759, 2927, 2239}, {10, 15, 21, 22, 24, 32, 34, 43, 46, 53, 55, 63})
           }(i)
+          AssertAlmostEqual(.Mean, {5.5, 5.5, 5.5, 5.5, 5.5, 5.5, 5.5, 5.5, 5.5,
+            5.5, 38.1667, 48.3333, 30.75, 36.0833, 34.4167, 34.5833, 42.6667,
+            45.6667, 50.1667, 34.8333}(i))
+          AssertAlmostEqual(.NMBE, {592.0331, 632.5455, 625.2893, 588.2479,
+            557.1736, 566.7438, 632.3802, 565.9504, 552.4463, 602.281, 75.8801,
+            64.8715, 102.3651, 77.646, 96.1981, 92.0096, 80.4354, 72.6967,
+            62.0568, 89.7729}(i))
+          AssertAlmostEqual(.RMSD, {3167.9258, 3394.2629, 3336.9028, 3179.8491,
+            2994.3311, 3023.2923, 3369.4408, 3020.5574, 2952.649, 3226.249,
+            2829.5396, 3043.2987, 3070.68, 2715.4702, 3230.1787, 3118.601,
+            3321.5314, 3199.6607, 3015.5051, 3067.0011}(i))
+          AssertAlmostEqual(.CVRMSD, {575.9865, 617.1387, 606.7096, 578.1544,
+            544.4238, 549.6895, 612.6256, 549.1922, 536.8453, 586.5907, 74.1364,
+            62.9648, 99.8595, 75.2555, 93.8551, 90.1764, 77.8484, 70.0656,
+            60.1097, 88.0479}(i))
           AssertAlmostEqual(.Slope, {-24.1399, -67.5699, 51.3427, -56.9825,
             27.3182, -2.6573, 32.1923, -46.8462, -11.1224, -61.5455, 9.4424,
             -0.1552, 10.7659, 4.8889, -4.6572, -0.4548, -6.6652, 2.2442,
@@ -1316,21 +1299,6 @@ Namespace Vitens.DynamicBandwidthMonitor
           New DateTime(2016, 1, 1, 1, 0, 0), 5)(i).Timestamp,
           New DateTime(2016, 1, 1, 0, {0, 10, 25, 40, 55}(i), 0))
       Next i
-
-      ' RMSD GetResults
-      AssertNaN(RMSD(New List(Of DBMResult)))
-      AssertAlmostEqual(RMSD(DBM.GetResults(InputPointDriver, CorrelationPoints,
-        New DateTime(2016, 1, 1, 0, 0, 0),
-        New DateTime(2016, 1, 1, 1, 0, 0))), 16.1292)
-      AssertAlmostEqual(RMSD(DBM.GetResults(InputPointDriver, CorrelationPoints,
-        New DateTime(2016, 1, 1, 2, 0, 0),
-        New DateTime(2016, 1, 1, 3, 0, 0)), False), 9.4811)
-      AssertAlmostEqual(RMSD(DBM.GetResults(InputPointDriver, CorrelationPoints,
-        New DateTime(2016, 1, 1, 3, 0, 0),
-        New DateTime(2016, 1, 1, 4, 0, 0)), True), 0.0442)
-      AssertAlmostEqual(RMSD(DBM.GetResults(InputPointDriver, CorrelationPoints,
-        New DateTime(2016, 1, 1, 4, 0, 0),
-        New DateTime(2016, 1, 1, 5, 0, 0)), True), 0.0441)
 
     End Sub
 
