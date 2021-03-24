@@ -60,7 +60,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       '   value, 0.75 is often considered a reasonable indicator of a good
       '   causal relationship amongst the energy and independent variables."
 
-      Return Abs(NMBE)<=0.05 And Abs(CVRMSD)<=0.15 And Determination>=0.75
+      Return Abs(NMBE) <= 0.05 And
+        Abs(CVRMSD) <= 0.15 And
+        Determination >= 0.75
 
     End Function
 
