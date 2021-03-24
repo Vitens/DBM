@@ -1,8 +1,8 @@
 ![Logo](img/dbmlogo.png)
 
 # DBM
-Dynamic Bandwidth Monitor
-Leak detection method implemented in a real-time data historian
+Dynamic Bandwidth Monitor\
+Leak detection method implemented in a real-time data historian\
 Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
 
 ## Continuous integration
@@ -117,7 +117,7 @@ The `Target` trait returns the original, valid raw measurements, augmented with 
 Beginning with PI AF 2018 SP3 Patch 2, all AF plugins must be signed with a valid certificate. Users must ensure any 3rd party or custom plugins are signed with a valid certificate. Digitally signing plugins increases the users' confidence that it is from a trusted entity. AF data references that are not signed could have been tampered with and are potentially dangerous. Therefore, in order to protect its users, OSIsoft software enforces that all AF 2.x data reference plugins be signed. Use `sign.bat` to sign the data reference and support assemblies with your pfx certificate file before registering the data reference with PI AF.
 
 ### Model calibration information statistics
-DBM can calculate model calibration information statistics. This information is exposed in the DBMTester utility and the DBMDataRef data reference. The model is considered to be calibrated if it has a absolute normalized mean bias error of at most 5%, an absolute coefficient of variation of the root-mean-square deviation of at most 15%, and a determination (R^2) of at least 0.75. There are several agencies that have developed guidelines and methodologies to establish a measure of the accuracy of models. We decided to follow the guidelines as documented in _ASHRAE Guideline 14-2014, Measurement of Energy, Demand, and Water Savings_, by the American Society of Heating, Refrigerating and Air Conditioning Engineers, and _International Performance Measurement and Verification Protocol: Concepts and Options for Determining Energy and Water Savings, Volume I_, by the Efficiency Valuation Organization.
+DBM can calculate model calibration information statistics. This information is exposed in the DBMTester utility and the DBMDataRef data reference. The model is considered to be calibrated if it has an absolute normalized mean bias error of at most 5%, an absolute coefficient of variation of the root-mean-square deviation of at most 15%, and a determination (R^2) of at least 0.75. There are several agencies that have developed guidelines and methodologies to establish a measure of the accuracy of models. We decided to follow the guidelines as documented in _ASHRAE Guideline 14-2014, Measurement of Energy, Demand, and Water Savings_, by the American Society of Heating, Refrigerating and Air Conditioning Engineers, and _International Performance Measurement and Verification Protocol: Concepts and Options for Determining Energy and Water Savings, Volume I_, by the Efficiency Valuation Organization.
 
 ### License
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
