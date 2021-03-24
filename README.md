@@ -119,7 +119,7 @@ Beginning with PI AF 2018 SP3 Patch 2, all AF plugins must be signed with a vali
 ### Model calibration information statistics
 DBM can calculate model calibration information statistics. This information is exposed in the DBMTester utility and the DBMDataRef data reference. The model is considered to be calibrated if it has an absolute normalized mean bias error of at most 5%, an absolute coefficient of variation of the root-mean-square deviation of at most 15%, and a determination (R^2) of at least 0.75. There are several agencies that have developed guidelines and methodologies to establish a measure of the accuracy of models. We decided to follow the guidelines as documented in _ASHRAE Guideline 14-2014, Measurement of Energy, Demand, and Water Savings_, by the American Society of Heating, Refrigerating and Air Conditioning Engineers, and _International Performance Measurement and Verification Protocol: Concepts and Options for Determining Energy and Water Savings, Volume I_, by the Efficiency Valuation Organization.
 
-An example of the model calibration information statistics:
+An example of the model calibration information statistics:\
 `Calibrated: True (n: 2016; Mean: 872,28; NMBE: -1,3752%; RMSD: 46,996; CV(RMSD): 5,3878%; R²: 0,98416)`
 
 ### License
