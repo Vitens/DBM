@@ -1069,7 +1069,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             2814.5833, 2862.8333, 3193.75, 2858.8333, 2790.75, 3042, 2692.9167,
             2922.5, 2916.1667, 2604.3333, 3069.3333, 2951.4167, 3188.5833,
             3088.8333, 2903.9167, 2901.3333}(i))
-Console.WriteLine(Round(.NMBE, 4).ToString & " " & Round(.RMSD, 4).ToString & " " & Round(.CVRMSD, 4).ToString & " " & )
+Console.WriteLine(Round(.NMBE, 4).ToString & " " & Round(.RMSD, 4).ToString & " " & Round(.CVRMSD, 4).ToString)
 '         AssertAlmostEqual(.NMBE, {-0.9982, -0.9983, -0.9983, -0.9981, -0.998,
 '           -0.9981, -0.9983, -0.9981, -0.998, -0.9982, -0.9858, -0.9835,
 '           -0.9895, -0.9861, -0.9888, -0.9883, -0.9866, -0.9852, -0.9827,
