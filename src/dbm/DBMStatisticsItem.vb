@@ -56,12 +56,12 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' and Verification Protocol: Concepts and Options for Determining Energy
       ' and Water Savings, Volume I; Technical Report; Efficiency Valuation
       ' Organization: Washington, DC, USA, 2012.
-      '   "Though there is no universal standard for a minimum acceptable R^2
+      '   "Though there is no universal standard for a minimum acceptable R²
       '   value, 0.75 is often considered a reasonable indicator of a good
       '   causal relationship amongst the energy and independent variables."
 
-      Return Abs(NMBE) <= 0.05 And
-        Abs(CVRMSD) <= 0.15 And
+      Return Abs(NMBE) <= 0.1 And
+        Abs(CVRMSD) <= 0.3 And
         Determination >= 0.75
 
     End Function
@@ -72,9 +72,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' DBM can calculate model calibration information statistics. This
       ' information is exposed in the DBMTester utility and the DBMDataRef data
       ' reference. The model is considered to be calibrated if it has an
-      ' absolute normalized mean bias error of at most 5%, an absolute
+      ' absolute normalized mean bias error of at most 10%, an absolute
       ' coefficient of variation of the root-mean-square deviation of at most
-      ' 15%, and a determination (R^2) of at least 0.75. There are several
+      ' 30%, and a determination (R²) of at least 0.75. There are several
       ' agencies that have developed guidelines and methodologies to establish a
       ' measure of the accuracy of models. We decided to follow the guidelines
       ' as documented in ASHRAE Guideline 14-2014, Measurement of Energy,
