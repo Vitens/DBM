@@ -87,7 +87,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       If Count < 3 Then Return sStatisticsInsufficientData ' Need at least 3 pts
 
       Return String.Format(sStatisticsBrief,
-        Calibrated, Count, Mean, NMBE*100, RMSD, CVRMSD*100, Determination)
+        Calibrated, Count, NMBE*100, CVRMSD*100, Determination)
 
     End Function
 
