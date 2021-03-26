@@ -44,10 +44,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       "model calibration information statistics"
     Public Const sStatisticsBrief As String =
       "Calibrated: {0} (" &
-      "n: {1}; " &
-      "NMBE: {2:" & sNumberFormat & "}%; " &
-      "CV(RMSD): {3:" & sNumberFormat & "}%; " &
-      "R²: {4:" & sNumberFormat & "})"
+      "n {1}; " &
+      "Bias {2:P}; " &
+      "Variation {3:P}; " &
+      "Fit {4:P})"
 
 
   End Class
