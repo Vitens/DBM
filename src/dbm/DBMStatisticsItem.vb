@@ -69,25 +69,28 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Function Brief As String
 
-      ' DBM can calculate model calibration information statistics. This
-      ' information is exposed in the DBMTester utility and the DBMDataRef data
-      ' reference. The model is considered to be calibrated if it has an
-      ' absolute normalized mean bias error of at most 10%, an absolute
-      ' coefficient of variation of the root-mean-square deviation of at most
-      ' 30%, and a determination (R²) of at least 0.75. There are several
-      ' agencies that have developed guidelines and methodologies to establish a
-      ' measure of the accuracy of models. We decided to follow the guidelines
-      ' as documented in ASHRAE Guideline 14-2014, Measurement of Energy,
-      ' Demand, and Water Savings, by the American Society of Heating,
-      ' Refrigerating and Air Conditioning Engineers, and International
-      ' Performance Measurement and Verification Protocol: Concepts and Options
-      ' for Determining Energy and Water Savings, Volume I, by the Efficiency
-      ' Valuation Organization.
+      ' Model calibration metrics: bias, variation, and fit
+      ' DBM can calculate model calibration metrics. This information is exposed
+      ' in the DBMTester utility and the DBMDataRef data reference. The model is
+      ' considered to be calibrated if all of the following conditions are met:
+      '   * the absolute normalized mean bias error (NMBE, as a measure of bias)
+      '     is 10% or lower,
+      '   * the absolute coefficient of variation of the root-mean-square
+      '     deviation (CV(RMSD), as a measure of variation) is 30% or lower,
+      '   * the determination (R², as a measure of fit) is 0.75 or higher.
+      ' There are several agencies that have developed guidelines and
+      ' methodologies to establish a measure of the accuracy of models. We
+      ' decided to follow the guidelines as documented in ASHRAE Guideline
+      ' 14-2014, Measurement of Energy, Demand, and Water Savings, by the
+      ' American Society of Heating, Refrigerating and Air Conditioning
+      ' Engineers, and International Performance Measurement and Verification
+      ' Protocol: Concepts and Options for Determining Energy and Water Savings,
+      ' Volume I, by the Efficiency Valuation Organization.
 
       If Count < 3 Then Return sStatisticsInsufficientData ' Need at least 3 pts
 
       Return String.Format(sStatisticsBrief,
-        Calibrated, Count, NMBE*100, CVRMSD*100, Determination)
+        Calibrated, Count, NMBE, CVRMSD, Determination)
 
     End Function
 

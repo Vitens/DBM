@@ -38,16 +38,16 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Const sLowerControlLimit As String = "Lower control limit"
     Public Const sUpperControlLimit As String = "Upper control limit"
     Public Const sNumberFormat As String = "G5"
+    Public Const sPercentageFormat As String = "0.0%"
     Public Const sCsvComment As String = "# "
     Public Const sStatisticsInsufficientData As String =
-      "Insufficient data for calculating " &
-      "model calibration information statistics"
+      "Insufficient data for calculating model calibration metrics"
     Public Const sStatisticsBrief As String =
       "Calibrated: {0} (" &
-      "n: {1}; " &
-      "NMBE: {2:" & sNumberFormat & "}%; " &
-      "CV(RMSD): {3:" & sNumberFormat & "}%; " &
-      "R²: {4:" & sNumberFormat & "})"
+      "n {1}; " &
+      "Bias {2:" & sPercentageFormat & "}; " &
+      "Variation {3:" & sPercentageFormat & "}; " &
+      "Fit {4:" & sPercentageFormat & "})"
 
 
   End Class
