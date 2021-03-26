@@ -41,8 +41,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Const sPercentageFormat As String = "0.0%"
     Public Const sCsvComment As String = "# "
     Public Const sStatisticsInsufficientData As String =
-      "Insufficient data for calculating " &
-      "model calibration information statistics"
+      "Insufficient data for calculating model calibration metrics"
     Public Const sStatisticsBrief As String =
       "Calibrated: {0} (" &
       "n {1}; " &

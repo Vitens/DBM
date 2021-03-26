@@ -600,7 +600,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Return GetValues
       End If
 
-      ' Annotate Target values with model calibration information statistics.
+      ' Annotate Target values with model calibration metrics.
       If Attribute.Trait Is LimitTarget Then
         ' This is a nasty hack. It does not (yet?) seem possible to insert a
         ' proper annotated value. This hack inserts a bad value, marked as
