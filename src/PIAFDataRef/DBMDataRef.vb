@@ -301,7 +301,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' This method writes, replaces, or removes a value on the target system
       ' using the configured data reference.
 
-      If value.Annotated And updateOption = AFUpdateOption.ReplaceOnly Then
+      If Not value Is Nothing AndAlso
+        (value.Annotated And updateOption = AFUpdateOption.ReplaceOnly) Then
         SetAnnotation(value, value.GetAnnotation) ' Update annotation
       End If
 
