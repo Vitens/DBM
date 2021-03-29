@@ -267,7 +267,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       If Not value Is Nothing Then ' Key
         StoredAnnotations.Remove(value.Timestamp) ' Remove existing
-        If Not annotation Is Nothing Then ' Value
+        If Not annotation Is Nothing AndAlso
+          Not (TypeOf annotation Is String AndAlso
+          annotation = String.Empty) Then ' Value
           StoredAnnotations.Add(value.Timestamp, annotation) ' Add
         End If
       End If
