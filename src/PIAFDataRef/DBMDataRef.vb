@@ -283,7 +283,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       '   attributes"
 
       GetAnnotation = Nothing
-      If Not value Is Nothing AndAlso StoredAnnotations.
+      If StoredAnnotations.
         TryGetValue(value.Timestamp.LocalTime, GetAnnotation) Then
         StoredAnnotations.Remove(value.Timestamp.LocalTime) ' Remove
         Return GetAnnotation
