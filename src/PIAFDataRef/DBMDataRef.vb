@@ -282,13 +282,13 @@ Namespace Vitens.DynamicBandwidthMonitor
       '   is because of an old known issue related to annotations with AF2
       '   attributes"
 
-      GetAnnotation = Nothing ' Default
+      GetAnnotation = Nothing
       If StoredAnnotations.
         TryGetValue(value.Timestamp.LocalTime, GetAnnotation) Then
         StoredAnnotations.Remove(value.Timestamp.LocalTime) ' Remove
         Return GetAnnotation
       Else
-        Return Nothing
+        Return String.Empty ' Default
       End If
 
     End Function
@@ -300,7 +300,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' This method writes, replaces, or removes a value on the target system
       ' using the configured data reference.
 
-      If value.Annotated And updateOption = AFUpdateOption.Replace Then
+      If value.Annotated And updateOption = AFUpdateOption.ReplaceOnly Then
         SetAnnotation(value, value.GetAnnotation) ' Update annotation
       End If
 
@@ -640,12 +640,13 @@ Namespace Vitens.DynamicBandwidthMonitor
         Return GetValues
       End If
 
-      ' If there is more than one value, annotate last value in Target values
-      ' with model calibration metrics.
+      ' If there is more than one value, annotate the last value in Target
+      ' values with model calibration metrics.
       If GetValues.Count > 1 And Attribute.Trait Is LimitTarget Then
         GetValues.Item(GetValues.Count-1).
           SetAnnotation(Statistics(Results).Brief)
-        UpdateValue(GetValues.Item(GetValues.Count-1), AFUpdateOption.Replace)
+        UpdateValue(GetValues.Item(GetValues.Count-1),
+          AFUpdateOption.ReplaceOnly)
       End If
 
       ' Returns the collection of values for the attribute sorted in increasing
