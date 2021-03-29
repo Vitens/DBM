@@ -644,13 +644,11 @@ Namespace Vitens.DynamicBandwidthMonitor
         Return GetValues
       End If
 
-      ' If there is more than one value, annotate the last value in Target
+      ' If there is more than one value, annotate the first value in the Target
       ' values with model calibration metrics.
       If GetValues.Count > 1 And Attribute.Trait Is LimitTarget Then
-        GetValues.Item(GetValues.Count-1).
-          SetAnnotation(Statistics(Results).Brief)
-        UpdateValue(GetValues.Item(GetValues.Count-1),
-          AFUpdateOption.ReplaceOnly)
+        GetValues.Item(0).SetAnnotation(Statistics(Results).Brief)
+        UpdateValue(GetValues.Item(0), AFUpdateOption.ReplaceOnly)
       End If
 
       ' Returns the collection of values for the attribute sorted in increasing
