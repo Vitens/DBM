@@ -282,6 +282,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       '   is because of an old known issue related to annotations with AF2
       '   attributes"
 
+Return "Test"
       GetAnnotation = Nothing
       If StoredAnnotations.
         TryGetValue(value.Timestamp.LocalTime, GetAnnotation) Then
