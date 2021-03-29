@@ -595,7 +595,8 @@ Namespace Vitens.DynamicBandwidthMonitor
                 RawValues.Item(iR).Timestamp.LocalTime >=
                 Results.Item(Results.Count-1).Timestamp)
                 If RawValues.Item(iR).IsGood Then ' Only include good values
-                  GetValues.Add(New AFValue(RawValues.Item(iR))) ' Create copy
+                  GetValues.Add(New AFValue(
+                    RawValues.Item(iR).Value, RawValues.Item(iR).Timestamp))
                   ' Mark events (exceeding Minimum and Maximum control limits)
                   ' as questionable.
                   GetValues.Item(GetValues.Count-1).Questionable =
