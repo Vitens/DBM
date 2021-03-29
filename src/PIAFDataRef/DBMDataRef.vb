@@ -265,10 +265,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Associates the annotation with the passed in value.
 
-      If value Is Nothing Then Exit Sub ' No key, exit
-      StoredAnnotations.Remove(value) ' Remove existing
-      If annotation Is Nothing Then Exit Sub ' No value, exit
-      StoredAnnotations.Add(value, annotation) ' Add
+      If Not value Is Nothing Then ' Key
+        StoredAnnotations.Remove(value) ' Remove existing
+        If Not annotation Is Nothing Then ' Value
+          StoredAnnotations.Add(value, annotation) ' Add
+        End If
+      End If
 
     End Sub
 
