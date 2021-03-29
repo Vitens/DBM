@@ -263,7 +263,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Overrides Sub SetAnnotation(value As AFValue, annotation As Object)
 
-      ' Associates the annotation with the passed in value.
+      ' Associates the annotation with the passed in value. A [sic] annotation
+      ' value of an Empty string is used to indicated [sic] existing annotations
+      ' should be removed.
 
       If Not value Is Nothing Then ' Key
         StoredAnnotations.Remove(value.Timestamp) ' Remove existing
@@ -288,7 +290,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       GetAnnotation = Nothing
       If Not value Is Nothing AndAlso
         StoredAnnotations.TryGetValue(value.Timestamp, GetAnnotation) Then
-        StoredAnnotations.Remove(value.Timestamp) ' Remove
+        StoredAnnotations.Remove(value.Timestamp) ' Remove after get
         Return GetAnnotation
       Else
         Return String.Empty ' Default
@@ -305,7 +307,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       If Not value Is Nothing AndAlso
         (value.Annotated And updateOption = AFUpdateOption.ReplaceOnly) Then
-        SetAnnotation(value, value.GetAnnotation) ' Update annotation
+        SetAnnotation(value, value.GetAnnotation) ' Set annotation
       End If
 
     End Sub
