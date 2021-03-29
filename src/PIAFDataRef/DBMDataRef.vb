@@ -282,7 +282,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       '   is because of an old known issue related to annotations with AF2
       '   attributes"
 
-Return "Test"
       GetAnnotation = Nothing
       If StoredAnnotations.
         TryGetValue(value.Timestamp.LocalTime, GetAnnotation) Then
@@ -301,7 +300,6 @@ Return "Test"
       ' This method writes, replaces, or removes a value on the target system
       ' using the configured data reference.
 
-Exit Sub
       If value.Annotated And updateOption = AFUpdateOption.ReplaceOnly Then
         SetAnnotation(value, value.GetAnnotation) ' Update annotation
       End If
