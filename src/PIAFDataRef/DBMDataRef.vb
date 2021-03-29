@@ -90,6 +90,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const pValueMinMax As Double = 0.9999 ' CI for Minimum and Maximum
 
 
+    Private StoredAnnotations As New Dictionary(Of AFTime, Object) ' Persist
     Private Shared DBM As New DBM
 
 
@@ -266,6 +267,15 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' value of an Empty string is used to indicated [sic] existing annotations
       ' should be removed.
 
+      If Not value Is Nothing Then ' Key
+        StoredAnnotations.Remove(value.Timestamp) ' Remove existing
+        If Not annotation Is Nothing AndAlso
+          Not (TypeOf annotation Is String AndAlso
+          annotation Is String.Empty) Then ' Value
+          StoredAnnotations.Add(value.Timestamp, annotation) ' Add
+        End If
+      End If
+
     End Sub
 
 
@@ -277,8 +287,13 @@ Namespace Vitens.DynamicBandwidthMonitor
       '   is because of an old known issue related to annotations with AF2
       '   attributes"
 
-      If Not value Is Nothing AndAlso value.Annotated Then
-        Return value.GetAnnotation
+      GetAnnotation = Nothing
+      If Not value Is Nothing AndAlso
+        StoredAnnotations.TryGetValue(value.Timestamp, GetAnnotation) Then
+        StoredAnnotations.Remove(value.Timestamp) ' Remove after get
+        Return GetAnnotation
+      Else
+        Return String.Empty ' Default
       End If
 
     End Function
@@ -289,6 +304,11 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' This method writes, replaces, or removes a value on the target system
       ' using the configured data reference.
+
+      If Not value Is Nothing AndAlso
+        (value.Annotated And updateOption = AFUpdateOption.ReplaceOnly) Then
+        SetAnnotation(value, value.GetAnnotation) ' Set annotation
+      End If
 
     End Sub
 
