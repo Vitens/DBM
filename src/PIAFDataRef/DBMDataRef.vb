@@ -90,6 +90,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const pValueMinMax As Double = 0.9999 ' CI for Minimum and Maximum
 
 
+    Private StoredAnnotations As New Dictionary(Of AFTime, Object) ' Persist
     Private Shared DBM As New DBM
 
 
@@ -160,7 +161,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' enumeration values logically ORed together. The default value is None.
         SupportedDataMethods = AFDataMethods.RecordedValue Or
           AFDataMethods.RecordedValues Or AFDataMethods.PlotValues Or
-          AFDataMethods.Summary Or AFDataMethods.Summaries
+          AFDataMethods.Annotations Or AFDataMethods.Summary Or
+          AFDataMethods.Summaries Or AFDataMethods.UpdateValue
         If SupportsFutureData Then
           ' Support future data if available.
           SupportedDataMethods = SupportedDataMethods Or AFDataMethods.Future
@@ -259,6 +261,58 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
+    Public Overrides Sub SetAnnotation(value As AFValue, annotation As Object)
+
+      ' Associates the annotation with the passed in value. A [sic] annotation
+      ' value of an Empty string is used to indicated [sic] existing annotations
+      ' should be removed.
+
+      If Not value Is Nothing Then ' Key
+        StoredAnnotations.Remove(value.Timestamp) ' Remove existing
+        If Not annotation Is Nothing AndAlso
+          Not (TypeOf annotation Is String AndAlso
+          annotation Is String.Empty) Then ' Value
+          StoredAnnotations.Add(value.Timestamp, annotation) ' Add
+        End If
+      End If
+
+    End Sub
+
+
+    Public Overrides Function GetAnnotation(value As AFValue) As Object
+
+      ' Gets the annotation associated with a single historical event.
+
+      ' OSIsoft Tech Support: "[...] the reason you can't see it in Processbook,
+      '   is because of an old known issue related to annotations with AF2
+      '   attributes"
+
+      GetAnnotation = Nothing
+      If Not value Is Nothing AndAlso
+        StoredAnnotations.TryGetValue(value.Timestamp, GetAnnotation) Then
+        StoredAnnotations.Remove(value.Timestamp) ' Remove after get
+        Return GetAnnotation
+      Else
+        Return String.Empty ' Default
+      End If
+
+    End Function
+
+
+    Public Overrides Sub UpdateValue(value As AFValue,
+      updateOption As AFUpdateOption)
+
+      ' This method writes, replaces, or removes a value on the target system
+      ' using the configured data reference.
+
+      If Not value Is Nothing AndAlso
+        (value.Annotated And updateOption = AFUpdateOption.ReplaceOnly) Then
+        SetAnnotation(value, value.GetAnnotation) ' Set annotation
+      End If
+
+    End Sub
+
+
     Public Overrides Function GetValue(context As Object,
       timeContext As Object, inputAttributes As AFAttributeList,
       inputValues As AFValues) As AFValue
@@ -288,8 +342,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim SourceTimestamp As DateTime
       Dim Timestamp As DateTime = Now
-      Dim Values As AFValues
-      Dim Value As AFValue
 
       ' Check if this attribute is properly configured. If it is not configured
       ' properly, return a Configure system state. This will be done in the
@@ -330,16 +382,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       End If
 
-      ' Returns a single value for the attribute. Use the first good value for
-      ' this, as GetValues inserts annotated bad values at the beginning of the
-      ' AFValues object.
-      Values = GetValues(Nothing, New AFTimeRange(New AFTime(Timestamp),
+      ' Returns the single value for the attribute.
+      Return GetValues(Nothing, New AFTimeRange(New AFTime(Timestamp),
         New AFTime(Timestamp.AddSeconds(CalculationInterval))), 1,
-        Nothing, Nothing)
-      For Each Value In Values
-        If Value.IsGood Then Return Value ' Return first good value
-      Next Value
-      Return Values(Values.Count-1) ' No good values, return last value
+        Nothing, Nothing)(0) ' Request a single value
 
     End Function
 
@@ -600,21 +646,11 @@ Namespace Vitens.DynamicBandwidthMonitor
         Return GetValues
       End If
 
-      ' Annotate Target values with model calibration metrics.
-      If Attribute.Trait Is LimitTarget Then
-        ' This is a nasty hack. It does not (yet?) seem possible to insert a
-        ' proper annotated value. This hack inserts a bad value, marked as
-        ' annotated, containing a string at one second before the start
-        ' timestamp as the first item in the data series. The value has to have
-        ' a Bad status in order to be able to contain a string. The value has to
-        ' be at the beginning of the data series, or else a PI Vision trend
-        ' object will draw a straight line from the end of the data series back
-        ' to the bad value at the beginning of the time range. By returning the
-        ' value outside of the requested time range, it is not shown in a PI
-        ' ProcessBook trend object as a bad value, marked with an X.
-        GetValues.Insert(0, New AFValue(Statistics(Results).Brief,
-          New AFTime(timeRange.StartTime.LocalTime.AddSeconds(-1)),
-          Nothing, AFValueStatus.Annotated))
+      ' If there is more than one value, annotate the first value in the Target
+      ' values with model calibration metrics.
+      If GetValues.Count > 1 And Attribute.Trait Is LimitTarget Then
+        GetValues.Item(0).SetAnnotation(Statistics(Results).Brief)
+        UpdateValue(GetValues.Item(0), AFUpdateOption.ReplaceOnly)
       End If
 
       ' Returns the collection of values for the attribute sorted in increasing
