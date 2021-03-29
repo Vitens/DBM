@@ -265,11 +265,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Associates the annotation with the passed in value.
 
-      If StoredAnnotations.ContainsKey(value.Timestamp.LocalTime) Then
-        StoredAnnotations.Remove(value.Timestamp.LocalTime) ' Replace existing
-      End If
-
-      StoredAnnotations.Add(value.Timestamp.LocalTime, annotation) ' Add
+      If value Is Nothing Then Exit Sub ' No key, exit
+      StoredAnnotations.Remove(value) ' Remove existing
+      If annotation Is Nothing Then Exit Sub ' No value, exit
+      StoredAnnotations.Add(value, annotation) ' Add
 
     End Sub
 
@@ -283,9 +282,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       '   attributes"
 
       GetAnnotation = Nothing
-      If StoredAnnotations.
-        TryGetValue(value.Timestamp.LocalTime, GetAnnotation) Then
-        StoredAnnotations.Remove(value.Timestamp.LocalTime) ' Remove
+      If Not value Is Nothing AndAlso
+        StoredAnnotations.TryGetValue(value, GetAnnotation) Then
+        StoredAnnotations.Remove(value) ' Remove
         Return GetAnnotation
       Else
         Return String.Empty ' Default
