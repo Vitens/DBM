@@ -301,6 +301,7 @@ Return "Test"
       ' This method writes, replaces, or removes a value on the target system
       ' using the configured data reference.
 
+Exit Sub
       If value.Annotated And updateOption = AFUpdateOption.ReplaceOnly Then
         SetAnnotation(value, value.GetAnnotation) ' Update annotation
       End If
