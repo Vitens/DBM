@@ -90,7 +90,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const pValueMinMax As Double = 0.9999 ' CI for Minimum and Maximum
 
 
-    Private StoredAnnotations As New Dictionary(Of Object, Object) ' Persist
+    Private StoredAnnotations As New Dictionary(Of AFTime, Object) ' Persist
     Private Shared DBM As New DBM
 
 
@@ -265,10 +265,10 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Associates the annotation with the passed in value.
 
-      If Not value Is Nothing Then ' Key
-        StoredAnnotations.Remove(value) ' Remove existing
+      If Not value Is Nothing AndAlso Not value.Timestamp Is Nothing Then ' Key
+        StoredAnnotations.Remove(value.Timestamp) ' Remove existing
         If Not annotation Is Nothing Then ' Value
-          StoredAnnotations.Add(value, annotation) ' Add
+          StoredAnnotations.Add(value.Timestamp, annotation) ' Add
         End If
       End If
 
@@ -285,8 +285,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       GetAnnotation = Nothing
       If Not value Is Nothing AndAlso
-        StoredAnnotations.TryGetValue(value, GetAnnotation) Then
-        StoredAnnotations.Remove(value) ' Remove
+        Not value.Timestamp Is Nothing AndAlso
+        StoredAnnotations.TryGetValue(value.Timestamp, GetAnnotation) Then
+        StoredAnnotations.Remove(value.Timestamp) ' Remove
         Return GetAnnotation
       Else
         Return String.Empty ' Default
