@@ -90,7 +90,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const pValueMinMax As Double = 0.9999 ' CI for Minimum and Maximum
 
 
-    Private StoredAnnotations As New Dictionary(Of DateTime, Object) ' Persist
+    Private StoredAnnotations As New Dictionary(Of Object, Object) ' Persist
     Private Shared DBM As New DBM
 
 
