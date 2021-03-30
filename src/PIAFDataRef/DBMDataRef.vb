@@ -267,9 +267,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' value of an Empty string is used to indicated [sic] existing annotations
       ' should be removed.
 
-      If Not value Is Nothing Then ' Key
+      If value IsNot Nothing Then ' Key
         StoredAnnotations.Remove(value.Timestamp) ' Remove existing
-        If Not annotation Is Nothing AndAlso
+        If annotation IsNot Nothing AndAlso
           Not (TypeOf annotation Is String AndAlso
           annotation Is String.Empty) Then ' Value
           StoredAnnotations.Add(value.Timestamp, annotation) ' Add
@@ -288,7 +288,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       '   attributes"
 
       GetAnnotation = Nothing
-      If Not value Is Nothing AndAlso
+      If value IsNot Nothing AndAlso
         StoredAnnotations.TryGetValue(value.Timestamp, GetAnnotation) Then
         StoredAnnotations.Remove(value.Timestamp) ' Remove after get
         Return GetAnnotation
@@ -305,7 +305,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' This method writes, replaces, or removes a value on the target system
       ' using the configured data reference.
 
-      If Not value Is Nothing AndAlso
+      If value IsNot Nothing AndAlso
         (value.Annotated And updateOption = AFUpdateOption.ReplaceOnly) Then
         SetAnnotation(value, value.GetAnnotation) ' Set annotation
       End If
