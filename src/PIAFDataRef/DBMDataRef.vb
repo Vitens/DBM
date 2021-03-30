@@ -272,6 +272,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           Not (TypeOf Annotation Is String AndAlso
           Annotation Is String.Empty) Then ' Value
           Value.Annotated = True
+          Value.Attribute = Attribute
           Annotations.Add(Value.Timestamp, Annotation) ' Add
         End If
       End If
