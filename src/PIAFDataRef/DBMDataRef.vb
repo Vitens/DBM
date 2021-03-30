@@ -267,13 +267,11 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' AFValue.
 
       If Value IsNot Nothing Then ' Key
-        Value.Annotated = False
         Annotations.Remove(Value.Timestamp) ' Remove existing
-        If Annotation IsNot Nothing AndAlso
-          Not (TypeOf Annotation Is String AndAlso
-          Annotation Is String.Empty) Then ' Value
-          Value.Annotated = True
+        Value.Annotated = False
+        If Annotation IsNot Nothing Then ' Value
           Annotations.Add(Value.Timestamp, Annotation) ' Add
+          Value.Annotated = True
         End If
       End If
 
