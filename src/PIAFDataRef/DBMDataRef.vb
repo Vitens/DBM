@@ -657,7 +657,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' where no archive values for a tag can exist 10 minutes into the future
       ' or before the oldest mounted archive.'
       If GetValues.Count = 0 Then
-        GetValues.Add(AFValue.CreateSystemNoDataFound(timeRange.StartTime))
+        GetValues.Add(AFValue.CreateSystemStateValue(
+          AFSystemStateCode.NoData, timeRange.StartTime))
         Return GetValues
       End If
 
