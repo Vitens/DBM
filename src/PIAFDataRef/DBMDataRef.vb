@@ -455,7 +455,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Attribute or parent attribute is not configured properly, return a
         ' Configure system state. Definition: 'The point configuration has been
         ' rejected as invalid by the data source.'
-        GetValues.Add(AFValue.CreateSystemStateValue(Attribute,
+        GetValues.Add(AFValue.CreateSystemStateValue(
           AFSystemStateCode.Configure, timeRange.StartTime))
         Return GetValues
       End If
@@ -563,12 +563,12 @@ Namespace Vitens.DynamicBandwidthMonitor
                 If IsNaN(.ForecastItem.Forecast) Then
                   ' If there is no valid forecast result, return an InvalidData
                   ' state. Definition: 'Invalid Data state.'
-                  GetValues.Add(AFValue.CreateSystemStateValue(Attribute,
+                  GetValues.Add(AFValue.CreateSystemStateValue(
                     AFSystemStateCode.InvalidData, New AFTime(.Timestamp)))
                 Else
                   ' Replace bad values with forecast, append forecast values to
                   ' the future.
-                  GetValues.Add(New AFValue(Attribute,
+                  GetValues.Add(New AFValue(
                     .ForecastItem.Forecast, New AFTime(.Timestamp)))
                   ' Mark replaced (not good) values as substituted.
                   GetValues.Item(GetValues.Count-1).Substituted =
@@ -597,7 +597,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                 If RawValues.Item(iR).IsGood Then ' Only include good values
                   ' Create a copy of the value, so that it's attribute is not
                   ' linked to an attribute that might not support annotations.
-                  GetValues.Add(New AFValue(Attribute,
+                  GetValues.Add(New AFValue(
                     RawValues.Item(iR).Value, RawValues.Item(iR).Timestamp))
                   ' Mark events (exceeding Minimum and Maximum control limits)
                   ' as questionable.
@@ -609,39 +609,39 @@ Namespace Vitens.DynamicBandwidthMonitor
               Loop
 
             ElseIf Attribute.Trait Is Forecast Then
-              GetValues.Add(New AFValue(Attribute,
+              GetValues.Add(New AFValue(
                 .ForecastItem.Forecast, New AFTime(.Timestamp)))
 
             ElseIf Attribute.Trait Is LimitMinimum Then
-              GetValues.Add(New AFValue(Attribute,
+              GetValues.Add(New AFValue(
                 .ForecastItem.Forecast-.ForecastItem.Range(pValueMinMax),
                 New AFTime(.Timestamp)))
 
             ElseIf Attribute.Trait Is LimitLoLo Then
-              GetValues.Add(New AFValue(Attribute,
+              GetValues.Add(New AFValue(
                 .ForecastItem.LowerControlLimit, New AFTime(.Timestamp)))
 
             ElseIf Attribute.Trait Is LimitLo Then
-              GetValues.Add(New AFValue(Attribute,
+              GetValues.Add(New AFValue(
                 .ForecastItem.Forecast-.ForecastItem.Range(pValueLoHi),
                 New AFTime(.Timestamp)))
 
             ElseIf Attribute.Trait Is LimitHi Then
-              GetValues.Add(New AFValue(Attribute,
+              GetValues.Add(New AFValue(
                 .ForecastItem.Forecast+.ForecastItem.Range(pValueLoHi),
                 New AFTime(.Timestamp)))
 
             ElseIf Attribute.Trait Is LimitHiHi Then
-              GetValues.Add(New AFValue(Attribute,
+              GetValues.Add(New AFValue(
                 .ForecastItem.UpperControlLimit, New AFTime(.Timestamp)))
 
             ElseIf Attribute.Trait Is LimitMaximum Then
-              GetValues.Add(New AFValue(Attribute,
+              GetValues.Add(New AFValue(
                 .ForecastItem.Forecast+.ForecastItem.Range(pValueMinMax),
                 New AFTime(.Timestamp)))
 
             Else ' Factor
-              GetValues.Add(New AFValue(Attribute,
+              GetValues.Add(New AFValue(
                 .Factor, New AFTime(.Timestamp)))
 
             End If
@@ -657,8 +657,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' where no archive values for a tag can exist 10 minutes into the future
       ' or before the oldest mounted archive.'
       If GetValues.Count = 0 Then
-        GetValues.Add(
-          AFValue.CreateSystemNoDataFound(Attribute, timeRange.StartTime))
+        GetValues.Add(AFValue.CreateSystemNoDataFound(timeRange.StartTime))
         Return GetValues
       End If
 
