@@ -261,11 +261,10 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
-    Private Sub SetAnnotation(value As AFValue, annotation As Object)
+    Private Sub StoreAnnotation(value As AFValue, annotation As Object)
 
-      ' Associates the annotation with the passed in value. A [sic] annotation
-      ' value of an Empty string is used to indicated [sic] existing annotations
-      ' should be removed.
+      ' Stores the annotation object in a dictionary for the timestamp in the
+      ' AFValue.
 
       If value IsNot Nothing Then ' Key
         StoredAnnotations.Remove(value.Timestamp) ' Remove existing
@@ -652,7 +651,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' values with model calibration metrics.
       If GetValues.Count > 1 And Attribute.Trait Is LimitTarget Then
         GetValues.Item(0).SetAnnotation(Statistics(Results).Brief)
-        SetAnnotation(GetValues.Item(0), GetValues.Item(0).GetAnnotation)
+        StoreAnnotation(GetValues.Item(0), GetValues.Item(0).GetAnnotation)
       End If
 
       ' Returns the collection of values for the attribute sorted in increasing
