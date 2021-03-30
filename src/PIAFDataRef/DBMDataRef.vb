@@ -90,7 +90,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const pValueMinMax As Double = 0.9999 ' CI for Minimum and Maximum
 
 
-    Private StoredAnnotations As New Dictionary(Of AFTime, Object) ' Persist
+    Private Annotations As New Dictionary(Of AFTime, Object)
     Private Shared DBM As New DBM
 
 
@@ -261,18 +261,18 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
-    Private Sub StoreAnnotation(Value As AFValue, Annotation As Object)
+    Private Sub Annotate(Value As AFValue, Annotation As Object)
 
       ' Stores the annotation object in a dictionary for the timestamp in the
       ' AFValue.
 
       If Value IsNot Nothing Then ' Key
-        StoredAnnotations.Remove(Value.Timestamp) ' Remove existing
+        Annotations.Remove(Value.Timestamp) ' Remove existing
         If Annotation IsNot Nothing AndAlso
           Not (TypeOf Annotation Is String AndAlso
           Annotation Is String.Empty) Then ' Value
           Value.SetAnnotation(Annotation)
-          StoredAnnotations.Add(Value.Timestamp, Annotation) ' Add
+          Annotations.Add(Value.Timestamp, Annotation) ' Add
         End If
       End If
 
@@ -289,8 +289,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       GetAnnotation = Nothing
       If value IsNot Nothing AndAlso
-        StoredAnnotations.TryGetValue(value.Timestamp, GetAnnotation) Then
-        StoredAnnotations.Remove(value.Timestamp) ' Remove after get
+        Annotations.TryGetValue(value.Timestamp, GetAnnotation) Then
+        Annotations.Remove(value.Timestamp) ' Remove after get
         Return GetAnnotation
       Else
         Return String.Empty ' Default
@@ -651,7 +651,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' If there is more than one value, annotate the first value in the Target
       ' values with model calibration metrics.
       If GetValues.Count > 1 And Attribute.Trait Is LimitTarget Then
-        StoreAnnotation(GetValues.Item(0), Statistics(Results).Brief)
+        Annotate(GetValues.Item(0), Statistics(Results).Brief)
       End If
 
       ' Returns the collection of values for the attribute sorted in increasing
