@@ -162,7 +162,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         SupportedDataMethods = AFDataMethods.RecordedValue Or
           AFDataMethods.RecordedValues Or AFDataMethods.PlotValues Or
           AFDataMethods.Annotations Or AFDataMethods.Summary Or
-          AFDataMethods.Summaries
+          AFDataMethods.Summaries Or AFDataMethods.UpdateValue
         If SupportsFutureData Then
           ' Support future data if available.
           SupportedDataMethods = SupportedDataMethods Or AFDataMethods.Future
@@ -297,6 +297,15 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
 
     End Function
+
+
+    Public Overrides Sub UpdateValue(value As AFValue,
+      updateOption As AFUpdateOption)
+
+      ' This method writes, replaces, or removes a value on the target system
+      ' using the configured data reference.
+
+    End Sub
 
 
     Public Overrides Function GetValue(context As Object,
@@ -652,6 +661,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' values with model calibration metrics.
       If GetValues.Count > 1 And Attribute.Trait Is LimitTarget Then
         GetValues.Item(0).SetAnnotation(Statistics(Results).Brief)
+        UpdateValue(GetValues.Item(0), AFUpdateOption.ReplaceOnly)
       End If
 
       ' Returns the collection of values for the attribute sorted in increasing
