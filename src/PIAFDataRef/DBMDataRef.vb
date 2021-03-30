@@ -90,7 +90,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const pValueMinMax As Double = 0.9999 ' CI for Minimum and Maximum
 
 
-    Private StoredAnnotations As New Dictionary(Of AFTime, Object) ' Persist
+    Private Annotations As New Dictionary(Of AFTime, Object)
     Private Shared DBM As New DBM
 
 
@@ -162,7 +162,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         SupportedDataMethods = AFDataMethods.RecordedValue Or
           AFDataMethods.RecordedValues Or AFDataMethods.PlotValues Or
           AFDataMethods.Annotations Or AFDataMethods.Summary Or
-          AFDataMethods.Summaries Or AFDataMethods.UpdateValue
+          AFDataMethods.Summaries
         If SupportsFutureData Then
           ' Support future data if available.
           SupportedDataMethods = SupportedDataMethods Or AFDataMethods.Future
@@ -261,18 +261,17 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
-    Public Overrides Sub SetAnnotation(value As AFValue, annotation As Object)
+    Private Sub Annotate(Value As AFValue, Annotation As Object)
 
-      ' Associates the annotation with the passed in value. A [sic] annotation
-      ' value of an Empty string is used to indicated [sic] existing annotations
-      ' should be removed.
+      ' Stores the annotation object in a dictionary for the timestamp of the
+      ' AFValue.
 
-      If Not value Is Nothing Then ' Key
-        StoredAnnotations.Remove(value.Timestamp) ' Remove existing
-        If Not annotation Is Nothing AndAlso
-          Not (TypeOf annotation Is String AndAlso
-          annotation Is String.Empty) Then ' Value
-          StoredAnnotations.Add(value.Timestamp, annotation) ' Add
+      If Value IsNot Nothing Then ' Key
+        Annotations.Remove(Value.Timestamp) ' Remove existing
+        Value.Annotated = False
+        If Annotation IsNot Nothing Then ' Value
+          Annotations.Add(Value.Timestamp, Annotation) ' Add
+          Value.Annotated = True
         End If
       End If
 
@@ -288,29 +287,15 @@ Namespace Vitens.DynamicBandwidthMonitor
       '   attributes"
 
       GetAnnotation = Nothing
-      If Not value Is Nothing AndAlso
-        StoredAnnotations.TryGetValue(value.Timestamp, GetAnnotation) Then
-        StoredAnnotations.Remove(value.Timestamp) ' Remove after get
+      If value IsNot Nothing AndAlso
+        Annotations.TryGetValue(value.Timestamp, GetAnnotation) Then
+        Annotations.Remove(value.Timestamp) ' Remove after get
         Return GetAnnotation
       Else
         Return String.Empty ' Default
       End If
 
     End Function
-
-
-    Public Overrides Sub UpdateValue(value As AFValue,
-      updateOption As AFUpdateOption)
-
-      ' This method writes, replaces, or removes a value on the target system
-      ' using the configured data reference.
-
-      If Not value Is Nothing AndAlso
-        (value.Annotated And updateOption = AFUpdateOption.ReplaceOnly) Then
-        SetAnnotation(value, value.GetAnnotation) ' Set annotation
-      End If
-
-    End Sub
 
 
     Public Overrides Function GetValue(context As Object,
@@ -568,8 +553,8 @@ Namespace Vitens.DynamicBandwidthMonitor
                 Else
                   ' Replace bad values with forecast, append forecast values to
                   ' the future.
-                  GetValues.Add(New AFValue(.ForecastItem.Forecast,
-                    New AFTime(.Timestamp)))
+                  GetValues.Add(New AFValue(
+                    .ForecastItem.Forecast, New AFTime(.Timestamp)))
                   ' Mark replaced (not good) values as substituted.
                   GetValues.Item(GetValues.Count-1).Substituted =
                     .Timestamp <= RawSnapshot
@@ -609,28 +594,41 @@ Namespace Vitens.DynamicBandwidthMonitor
               Loop
 
             ElseIf Attribute.Trait Is Forecast Then
-              GetValues.Add(New AFValue(.ForecastItem.Forecast,
-                New AFTime(.Timestamp)))
+              GetValues.Add(New AFValue(
+                .ForecastItem.Forecast, New AFTime(.Timestamp)))
+
             ElseIf Attribute.Trait Is LimitMinimum Then
-              GetValues.Add(New AFValue(.ForecastItem.Forecast-
-                .ForecastItem.Range(pValueMinMax), New AFTime(.Timestamp)))
+              GetValues.Add(New AFValue(
+                .ForecastItem.Forecast-.ForecastItem.Range(pValueMinMax),
+                New AFTime(.Timestamp)))
+
             ElseIf Attribute.Trait Is LimitLoLo Then
-              GetValues.Add(New AFValue(.ForecastItem.LowerControlLimit,
-                New AFTime(.Timestamp)))
+              GetValues.Add(New AFValue(
+                .ForecastItem.LowerControlLimit, New AFTime(.Timestamp)))
+
             ElseIf Attribute.Trait Is LimitLo Then
-              GetValues.Add(New AFValue(.ForecastItem.Forecast-
-                .ForecastItem.Range(pValueLoHi), New AFTime(.Timestamp)))
-            ElseIf Attribute.Trait Is LimitHi Then
-              GetValues.Add(New AFValue(.ForecastItem.Forecast+
-                .ForecastItem.Range(pValueLoHi), New AFTime(.Timestamp)))
-            ElseIf Attribute.Trait Is LimitHiHi Then
-              GetValues.Add(New AFValue(.ForecastItem.UpperControlLimit,
+              GetValues.Add(New AFValue(
+                .ForecastItem.Forecast-.ForecastItem.Range(pValueLoHi),
                 New AFTime(.Timestamp)))
+
+            ElseIf Attribute.Trait Is LimitHi Then
+              GetValues.Add(New AFValue(
+                .ForecastItem.Forecast+.ForecastItem.Range(pValueLoHi),
+                New AFTime(.Timestamp)))
+
+            ElseIf Attribute.Trait Is LimitHiHi Then
+              GetValues.Add(New AFValue(
+                .ForecastItem.UpperControlLimit, New AFTime(.Timestamp)))
+
             ElseIf Attribute.Trait Is LimitMaximum Then
-              GetValues.Add(New AFValue(.ForecastItem.Forecast+
-                .ForecastItem.Range(pValueMinMax), New AFTime(.Timestamp)))
-            Else
-              GetValues.Add(New AFValue(.Factor, New AFTime(.Timestamp)))
+              GetValues.Add(New AFValue(
+                .ForecastItem.Forecast+.ForecastItem.Range(pValueMinMax),
+                New AFTime(.Timestamp)))
+
+            Else ' Factor
+              GetValues.Add(New AFValue(
+                .Factor, New AFTime(.Timestamp)))
+
             End If
 
           End If
@@ -652,8 +650,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' If there is more than one value, annotate the first value in the Target
       ' values with model calibration metrics.
       If GetValues.Count > 1 And Attribute.Trait Is LimitTarget Then
-        GetValues.Item(0).SetAnnotation(Statistics(Results).Brief)
-        UpdateValue(GetValues.Item(0), AFUpdateOption.ReplaceOnly)
+        Annotate(GetValues.Item(0), Statistics(Results).Brief)
       End If
 
       ' Returns the collection of values for the attribute sorted in increasing
