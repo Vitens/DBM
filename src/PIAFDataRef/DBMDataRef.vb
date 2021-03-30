@@ -263,10 +263,11 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Sub Annotate(Value As AFValue, Annotation As Object)
 
-      ' Stores the annotation object in a dictionary for the timestamp in the
+      ' Stores the annotation object in a dictionary for the timestamp of the
       ' AFValue.
 
       If Value IsNot Nothing Then ' Key
+        Value.Annotated = False
         Annotations.Remove(Value.Timestamp) ' Remove existing
         If Annotation IsNot Nothing AndAlso
           Not (TypeOf Annotation Is String AndAlso
