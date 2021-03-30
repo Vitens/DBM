@@ -162,7 +162,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         SupportedDataMethods = AFDataMethods.RecordedValue Or
           AFDataMethods.RecordedValues Or AFDataMethods.PlotValues Or
           AFDataMethods.Annotations Or AFDataMethods.Summary Or
-          AFDataMethods.Summaries Or AFDataMethods.UpdateValue
+          AFDataMethods.Summaries
         If SupportsFutureData Then
           ' Support future data if available.
           SupportedDataMethods = SupportedDataMethods Or AFDataMethods.Future
@@ -261,7 +261,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
-    Public Overrides Sub SetAnnotation(value As AFValue, annotation As Object)
+    Private Sub SetAnnotation(value As AFValue, annotation As Object)
 
       ' Associates the annotation with the passed in value. A [sic] annotation
       ' value of an Empty string is used to indicated [sic] existing annotations
@@ -297,20 +297,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
 
     End Function
-
-
-    Public Overrides Sub UpdateValue(value As AFValue,
-      updateOption As AFUpdateOption)
-
-      ' This method writes, replaces, or removes a value on the target system
-      ' using the configured data reference.
-
-      If value IsNot Nothing AndAlso
-        (value.Annotated And updateOption = AFUpdateOption.ReplaceOnly) Then
-        SetAnnotation(value, value.GetAnnotation) ' Set annotation
-      End If
-
-    End Sub
 
 
     Public Overrides Function GetValue(context As Object,
@@ -666,7 +652,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' values with model calibration metrics.
       If GetValues.Count > 1 And Attribute.Trait Is LimitTarget Then
         GetValues.Item(0).SetAnnotation(Statistics(Results).Brief)
-        UpdateValue(GetValues.Item(0), AFUpdateOption.ReplaceOnly)
+        SetAnnotation(GetValues.Item(0), GetValues.Item(0).GetAnnotation)
       End If
 
       ' Returns the collection of values for the attribute sorted in increasing
