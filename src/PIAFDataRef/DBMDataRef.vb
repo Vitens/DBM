@@ -261,17 +261,18 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
-    Private Sub StoreAnnotation(value As AFValue, annotation As Object)
+    Private Sub StoreAnnotation(Value As AFValue, Annotation As Object)
 
       ' Stores the annotation object in a dictionary for the timestamp in the
       ' AFValue.
 
-      If value IsNot Nothing Then ' Key
-        StoredAnnotations.Remove(value.Timestamp) ' Remove existing
-        If annotation IsNot Nothing AndAlso
-          Not (TypeOf annotation Is String AndAlso
-          annotation Is String.Empty) Then ' Value
-          StoredAnnotations.Add(value.Timestamp, annotation) ' Add
+      If Value IsNot Nothing Then ' Key
+        StoredAnnotations.Remove(Value.Timestamp) ' Remove existing
+        If Annotation IsNot Nothing AndAlso
+          Not (TypeOf Annotation Is String AndAlso
+          Annotation Is String.Empty) Then ' Value
+          Value.SetAnnotation(Annotation)
+          StoredAnnotations.Add(Value.Timestamp, Annotation) ' Add
         End If
       End If
 
@@ -650,8 +651,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' If there is more than one value, annotate the first value in the Target
       ' values with model calibration metrics.
       If GetValues.Count > 1 And Attribute.Trait Is LimitTarget Then
-        GetValues.Item(0).SetAnnotation(Statistics(Results).Brief)
-        StoreAnnotation(GetValues.Item(0), GetValues.Item(0).GetAnnotation)
+        StoreAnnotation(GetValues.Item(0), Statistics(Results).Brief)
       End If
 
       ' Returns the collection of values for the attribute sorted in increasing
