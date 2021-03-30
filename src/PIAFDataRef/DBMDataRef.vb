@@ -271,7 +271,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         If Annotation IsNot Nothing AndAlso
           Not (TypeOf Annotation Is String AndAlso
           Annotation Is String.Empty) Then ' Value
-          Value.SetAnnotation(Annotation)
+          Value.Annotated = True
           Annotations.Add(Value.Timestamp, Annotation) ' Add
         End If
       End If
