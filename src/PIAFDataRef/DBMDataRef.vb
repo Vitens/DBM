@@ -673,15 +673,15 @@ Namespace Vitens.DynamicBandwidthMonitor
                 Loop
                 ForecastWeight = 0
                 For Each Result In Results ' Calculate forecast weight
-                  If Result.Timestamp >= FlatLine.StartTime And
-                    Result.Timestamp < FlatLine.EndTime Then
+                  If Result.Timestamp >= FlatLine.StartTime.LocalTime And
+                    Result.Timestamp < FlatLine.EndTime.LocalTime Then
                     ForecastWeight += Result.ForecastItem.Forecast*
                       CalculationInterval
                   End If
                 Next Result
                 For Each Result In Results ' Add weighted forecast
-                  If Result.Timestamp >= FlatLine.StartTime And
-                    Result.Timestamp < FlatLine.EndTime Then
+                  If Result.Timestamp >= FlatLine.StartTime.LocalTime And
+                    Result.Timestamp < FlatLine.EndTime.LocalTime Then
                     NewValues.Add(New AFValue(
                       Result.ForecastItem.Forecast/ForecastWeight*Weight,
                       New AFTime(Result.Timestamp)))
