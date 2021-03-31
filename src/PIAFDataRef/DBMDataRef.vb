@@ -375,7 +375,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Private Function DeFlatline(Values As AFValues) As AFValues
+    Private Function DeFlatline(Values As AFValues,
+      Results As List(Of DBMResult)) As AFValues
 
       ' De-flatline
 
@@ -721,7 +722,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       If GetValues.Count > 1 And Attribute.Trait Is LimitTarget Then
 
         ' De-flatline
-        GetValues = DeFlatline(GetValues)
+        GetValues = DeFlatline(GetValues, Results)
 
         ' If there is more than one value, annotate the first value in the
         ' Target values with model calibration metrics.
