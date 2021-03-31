@@ -687,8 +687,8 @@ Namespace Vitens.DynamicBandwidthMonitor
                       New AFTime(Result.Timestamp)))
                     NewValues.Item(NewValues.Count-1).Substituted = True
                     Annotate(NewValues.Item(NewValues.Count-1),
-                      "Forecast: {0:G5}; Factor: {1:G5}",
-                      Result.ForecastItem.Forecast, Weight/ForecastWeight)
+                      String.Format("Forecast: {0:G5}; Factor: {1:G5}",
+                      Result.ForecastItem.Forecast, Weight/ForecastWeight))
                   End If
                 Next Result
               End If
