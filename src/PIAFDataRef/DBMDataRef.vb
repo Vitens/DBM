@@ -383,7 +383,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Value As AFValue
       Dim NewValues As New AFValues
       Dim iFL, iV, iR As Integer ' Iterators for flatline index, values, results
-      Dim Flatline As AFTimeRange
+      Dim FlatlineStart, FlatlineEnd As DateTime
       Dim OriginalWeight, ForecastWeight As Double
 
       For Each Value In Values
@@ -403,12 +403,12 @@ Namespace Vitens.DynamicBandwidthMonitor
           '     value.
           If iFL > 0 And iV < Values.Count-1 And iV-iFL > 1 Then
 
-            Flatline = New AFTimeRange(Values.Item(iFL).Timestamp,
-              Values.Item(iV+1).Timestamp) ' Flatline time range, end exclusive
+            FlatlineStart = Values.Item(iFL).Timestamp.LocalTime
+            FlatlineEnd = Values.Item(iV+1).Timestamp.LocalTime ' Exclusive
 
             ' The duration of the flatline, including the duration of the spike
             ' value, has to be at least one hour.
-            If Flatline.Span.TotalHours >= 1 Then
+            If FlatlineEnd.Subtract(FlatlineStart).TotalHours >= 1 Then
 
               OriginalWeight = 0
               Do While iFL <= iV ' Remove flatline, calculate weight of original
@@ -422,8 +422,8 @@ Namespace Vitens.DynamicBandwidthMonitor
               ForecastWeight = 0
               iR = 0
               For Each Result In Results ' Calculate weight of forecast
-                If Result.Timestamp >= Flatline.StartTime.LocalTime And
-                  Result.Timestamp < Flatline.EndTime.LocalTime And
+                If Result.Timestamp >= FlatlineStart And
+                  Result.Timestamp < FlatlineEnd And
                   iR < Results.Count-1 Then
                   ForecastWeight += Result.ForecastItem.Forecast*
                     New AFTimeRange(New AFTime(Result.Timestamp),
@@ -434,8 +434,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
               iR = 0
               For Each Result In Results ' Add weight adjusted forecast
-                If Result.Timestamp >= Flatline.StartTime.LocalTime And
-                  Result.Timestamp < Flatline.EndTime.LocalTime And
+                If Result.Timestamp >= FlatlineStart And
+                  Result.Timestamp < FlatlineEnd And
                   iR < Results.Count-1 Then
                   NewValues.Add(New AFValue(
                     Result.ForecastItem.Forecast/ForecastWeight*OriginalWeight,

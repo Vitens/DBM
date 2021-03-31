@@ -66,7 +66,6 @@ Namespace Vitens.DynamicBandwidthMonitor
           For i = 0 To Dependent.Length-1
             If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
               .Count += 1
-              .Mean += Independent(i)
               .NMBE += Dependent(i)-Independent(i)
               .RMSD += (Dependent(i)-Independent(i))^2
               SumX += Independent(i)
@@ -80,7 +79,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         If .Count = 0 Then Return Statistics ' Empty, non-eq, or no non-NaN pair
 
-        .Mean = .Mean/.Count ' Average
+        .Mean = SumX/.Count ' Average
 
         ' MBE (Mean Bias Error), as its name indicates, is the average of the
         ' errors of a sample space. Generally, it is a good indicator of the
