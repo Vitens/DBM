@@ -40,6 +40,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Const sNumberFormat As String = "G5"
     Public Const sPercentageFormat As String = "0.0%"
     Public Const sCsvComment As String = "# "
+    Public Const sDeflatline As String =
+      "De-flatline (Factor {0:" & sNumberFormat & ")"
     Public Const sStatisticsInsufficientData As String =
       "Insufficient data for calculating model calibration metrics"
     Public Const sStatisticsBrief As String =
