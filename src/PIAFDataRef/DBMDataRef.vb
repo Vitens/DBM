@@ -382,7 +382,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim Value As AFValue
       Dim NewValues As New AFValues
-      Dim iV, iFL As Integer
+      Dim iFL, iV As Integer ' Iterators for flatline start index and values.
       Dim Flatline As AFTimeRange
       Dim OriginalWeight, ForecastWeight As Double
 
@@ -390,12 +390,17 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         NewValues.Add(Value) ' Add original
 
-        If iV = 0 Or Not Convert.ToDouble(Value.Value) =
+        ' A flatline ends when the value is different from the previous value.
+        If Not Convert.ToDouble(Value.Value) =
           Convert.ToDouble(Values.Item(iFL).Value) Then
 
-          ' A flatline can never start at the first value, as we don't know if
-          ' the start was before this.
-          If iFL > 0 And iV > iFL+1 And iV < Values.Count Then
+          ' * A flatline can never start at the first value, as we don't know if
+          '     the start was before this;
+          ' * It also cannot end on the last value, as we don't know if the end
+          '     was after this. We need at least one value after the spike value
+          '     to determine it's length;
+          ' * We need at least 2 repeating values.
+          If iFL > 0 And iV < Values.Count And iV > iFL+1 Then
 
             Flatline = New AFTimeRange(Values.Item(iFL).Timestamp,
               Values.Item(iV+1).Timestamp)
@@ -435,10 +440,10 @@ Namespace Vitens.DynamicBandwidthMonitor
             End If
 
           End If
-          iFL = iV
+          iFL = iV ' Set flatline start index to the current value.
 
         End If
-        iV += 1
+        iV += 1 ' Move iterator to next value.
 
       Next Value
 
