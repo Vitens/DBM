@@ -375,14 +375,14 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Private Function DeFlatline(Values As AFValues,
+    Private Function Deflatline(Values As AFValues,
       Results As List(Of DBMResult), Stepped As Boolean) As AFValues
 
       ' De-flatline
 
       Dim Value As AFValue
       Dim NewValues As New AFValues
-      Dim iFL, iV, iR As Integer ' Iterators for flatline index, values, results
+      Dim iFL, iV, iD As Integer ' Iterators for flatline index, values, results
       Dim FlatlineStart, FlatlineEnd As DateTime
       Dim OriginalWeight, WeightedValue, ForecastWeight As Double
 
@@ -407,48 +407,48 @@ Namespace Vitens.DynamicBandwidthMonitor
             FlatlineEnd = Values.Item(iV+1).Timestamp.LocalTime ' Exclusive
 
             ' The duration of the flatline, including the duration of the spike
-            ' value, has to be at least one hour.
-            If FlatlineEnd.Subtract(FlatlineStart).TotalHours >= 1 Then
+            ' value, has to be more than one hour.
+            If FlatlineEnd.Subtract(FlatlineStart).TotalHours > 1 Then
 
               OriginalWeight = 0
               Do While iFL <= iV ' Remove flatline, calculate weight of original
                 NewValues.RemoveAt(NewValues.Count-1) ' Remove original
                 WeightedValue = Convert.ToDouble(Values.Item(iFL).Value)
                 If Not Stepped Then WeightedValue =
-                  (WeightedValue+Convert.ToDouble(Values.Item(iFL+1).Value))/2
+                  WeightedValue/2+Convert.ToDouble(Values.Item(iFL+1).Value)/2
                 OriginalWeight += WeightedValue*
                   Values.Item(iFL+1).Timestamp.LocalTime.Subtract(
                   Values.Item(iFL).Timestamp.LocalTime).TotalSeconds
                 iFL += 1
               Loop
 
+              iD = 0
               ForecastWeight = 0
-              iR = 0
               For Each Result In Results ' Calculate weight of forecast
                 If Result.Timestamp >= FlatlineStart And
                   Result.Timestamp < FlatlineEnd And
-                  iR < Results.Count-1 Then
+                  iD < Results.Count-1 Then
                   WeightedValue = Result.ForecastItem.Forecast
                   If Not Stepped Then WeightedValue =
-                    (WeightedValue+Results.Item(iR+1).ForecastItem.Forecast)/2
+                    WeightedValue/2+Results.Item(iD+1).ForecastItem.Forecast/2
                   ForecastWeight += WeightedValue*
-                    Results.Item(iR+1).Timestamp.Subtract(
+                    Results.Item(iD+1).Timestamp.Subtract(
                     Result.Timestamp).TotalSeconds
                 End If
-                iR += 1 ' Move iterator to next result.
+                iD += 1 ' Move iterator to next result.
               Next Result
 
-              iR = 0
+              iD = 0
               For Each Result In Results ' Add weight adjusted forecast
                 If Result.Timestamp >= FlatlineStart And
                   Result.Timestamp < FlatlineEnd And
-                  iR < Results.Count-1 Then
+                  iD < Results.Count-1 Then
                   NewValues.Add(New AFValue(
-                    Result.ForecastItem.Forecast/ForecastWeight*OriginalWeight,
+                    Result.ForecastItem.Forecast*OriginalWeight/ForecastWeight,
                     New AFTime(Result.Timestamp)))
                   NewValues.Item(NewValues.Count-1).Substituted = True
                 End If
-                iR += 1 ' Move iterator to next result.
+                iD += 1 ' Move iterator to next result.
               Next Result
 
             End If
@@ -741,7 +741,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       If GetValues.Count > 1 And Attribute.Trait Is LimitTarget Then
 
         ' De-flatline
-        GetValues = DeFlatline(GetValues, Results, [Step])
+        GetValues = Deflatline(GetValues, Results, [Step])
 
         ' If there is more than one value, annotate the first value in the
         ' Target values with model calibration metrics.
