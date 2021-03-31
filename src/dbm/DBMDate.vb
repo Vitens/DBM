@@ -104,7 +104,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns True if the passed date is a holiday.
 
       Dim DaysSinceEaster As Integer =
-        Timestamp.Subtract(Computus(Timestamp.Year)).TotalDays
+        Timestamp.Subtract(Computus(Timestamp.Year)).Days
 
       With Timestamp
         ' For any culture, consider the following days a holiday:
