@@ -413,7 +413,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               OriginalWeight = 0
               Do While iFL <= iV ' Remove flatline, calculate weight of original
                 NewValues.RemoveAt(NewValues.Count-1) ' Remove original
-                WeightedValue = Convert.ToDouble(Values.Item(iFL).Value
+                WeightedValue = Convert.ToDouble(Values.Item(iFL).Value)
                 If Not Stepped Then WeightedValue =
                   (WeightedValue+Convert.ToDouble(Values.Item(iFL+1).Value))/2
                 OriginalWeight += WeightedValue*
