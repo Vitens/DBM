@@ -382,7 +382,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim Value As AFValue
       Dim NewValues As New AFValues
-      Dim iFL, iV As Integer ' Iterators for flatline start index and values.
+      Dim iFL, iV, iR As Integer ' Iterators for flatline index, values, results
       Dim Flatline As AFTimeRange
       Dim OriginalWeight, ForecastWeight As Double
 
@@ -420,12 +420,15 @@ Namespace Vitens.DynamicBandwidthMonitor
               Loop
 
               ForecastWeight = 0
+              iR = 0
               For Each Result In Results ' Calculate weight of forecast
                 If Result.Timestamp >= Flatline.StartTime.LocalTime And
                   Result.Timestamp < Flatline.EndTime.LocalTime Then
                   ForecastWeight += Result.ForecastItem.Forecast*
-                    CalculationInterval
+                    New AFTimeRange(New AFTime(Result.Timestamp),
+                    New AFTime(Results.Item(iR+1).Timestamp)).Span.TotalSeconds
                 End If
+                iR += 1 ' Move iterator to next result.
               Next Result
 
               For Each Result In Results ' Add weight adjusted forecast
