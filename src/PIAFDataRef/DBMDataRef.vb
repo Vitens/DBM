@@ -432,6 +432,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                 iR += 1 ' Move iterator to next result.
               Next Result
 
+              iR = 0
               For Each Result In Results ' Add weight adjusted forecast
                 If Result.Timestamp >= Flatline.StartTime.LocalTime And
                   Result.Timestamp < Flatline.EndTime.LocalTime And
@@ -441,6 +442,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                     New AFTime(Result.Timestamp)))
                   NewValues.Item(NewValues.Count-1).Substituted = True
                 End If
+                iR += 1 ' Move iterator to next result.
               Next Result
 
             End If
