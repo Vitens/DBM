@@ -414,8 +414,8 @@ Namespace Vitens.DynamicBandwidthMonitor
               Do While iFL <= iV ' Remove flatline, calculate weight of original
                 NewValues.RemoveAt(NewValues.Count-1) ' Remove original
                 OriginalWeight += Convert.ToDouble(Values.Item(iFL).Value)*
-                  New AFTimeRange(Values.Item(iFL).Timestamp,
-                  Values.Item(iFL+1).Timestamp).Span.TotalSeconds
+                  Values.Item(iFL+1).Timestamp.LocalTime.Subtract(
+                  Values.Item(iFL).Timestamp.LocalTime).TotalSeconds
                 iFL += 1
               Loop
 
@@ -426,8 +426,8 @@ Namespace Vitens.DynamicBandwidthMonitor
                   Result.Timestamp < FlatlineEnd And
                   iR < Results.Count-1 Then
                   ForecastWeight += Result.ForecastItem.Forecast*
-                    New AFTimeRange(New AFTime(Result.Timestamp),
-                    New AFTime(Results.Item(iR+1).Timestamp)).Span.TotalSeconds
+                    Results.Item(iR+1).Timestamp.LocalTime.Subtract(
+                    Result.Timestamp.LocalTime).TotalSeconds
                 End If
                 iR += 1 ' Move iterator to next result.
               Next Result
