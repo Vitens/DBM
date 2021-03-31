@@ -397,13 +397,14 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' * A flatline can never start at the first value, as we don't know if
           '     the start was before this;
           ' * It also cannot end on the last value, as we don't know if the end
-          '     was after this. We need at least one value after the spike value
-          '     to determine it's length;
-          ' * We need at least 2 repeating values.
-          If iFL > 0 And iV < Values.Count And iV > iFL+1 Then
+          '     was after this. We need at least one extra value after the spike
+          '     value to determine it's length;
+          ' * We need at least 3 values: two repeating values and one spike
+          '     value.
+          If iFL > 0 And iV < Values.Count-1 And iV-iFL > 1 Then
 
             Flatline = New AFTimeRange(Values.Item(iFL).Timestamp,
-              Values.Item(iV+1).Timestamp)
+              Values.Item(iV+1).Timestamp) ' Flatline time range, end exclusive
 
             ' The duration of the flatline, including the duration of the spike
             ' value, has to be at least one hour.
