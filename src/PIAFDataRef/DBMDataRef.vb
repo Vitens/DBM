@@ -423,7 +423,8 @@ Namespace Vitens.DynamicBandwidthMonitor
               iR = 0
               For Each Result In Results ' Calculate weight of forecast
                 If Result.Timestamp >= Flatline.StartTime.LocalTime And
-                  Result.Timestamp < Flatline.EndTime.LocalTime Then
+                  Result.Timestamp < Flatline.EndTime.LocalTime And
+                  iR < Results.Count-1 Then
                   ForecastWeight += Result.ForecastItem.Forecast*
                     New AFTimeRange(New AFTime(Result.Timestamp),
                     New AFTime(Results.Item(iR+1).Timestamp)).Span.TotalSeconds
@@ -433,7 +434,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
               For Each Result In Results ' Add weight adjusted forecast
                 If Result.Timestamp >= Flatline.StartTime.LocalTime And
-                  Result.Timestamp < Flatline.EndTime.LocalTime Then
+                  Result.Timestamp < Flatline.EndTime.LocalTime And
+                  iR < Results.Count-1 Then
                   NewValues.Add(New AFValue(
                     Result.ForecastItem.Forecast/ForecastWeight*OriginalWeight,
                     New AFTime(Result.Timestamp)))
