@@ -658,7 +658,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         Dim Weight, ForecastWeight As Double
         For Each Value In GetValues
           NewValues.Add(GetValues.Item(i)) ' Add original
-          If Not (i > 0 And Value.Value = GetValues.Item(iFL).Value) Then
+          If Not (i > 0 And Convert.ToDouble(Value.Value) =
+            Convert.ToDouble(GetValues.Item(iFL).Value)) Then
             If (iFL > 0 And i > iFL+1 And i < GetValues.Count) Then
               FlatLine = New AFTimeRange(GetValues.Item(iFL).Timestamp,
                 GetValues.Item(i+1).Timestamp)
@@ -666,7 +667,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                 Weight = 0
                 Do While iFL <= i ' Remove flatline, calculate weight
                   NewValues.RemoveAt(NewValues.Count-1) ' Remove original
-                  Weight += GetValues.Item(iFL).Value*
+                  Weight += Convert.ToDouble(GetValues.Item(iFL).Value)*
                     New AFTimeRange(GetValues.Item(iFL).Timestamp,
                     GetValues.Item(iFL+1).Timestamp).Span.TotalSeconds
                   iFL += 1
