@@ -426,8 +426,8 @@ Namespace Vitens.DynamicBandwidthMonitor
                   Result.Timestamp < FlatlineEnd And
                   iR < Results.Count-1 Then
                   ForecastWeight += Result.ForecastItem.Forecast*
-                    Results.Item(iR+1).Timestamp.LocalTime.Subtract(
-                    Result.Timestamp.LocalTime).TotalSeconds
+                    Results.Item(iR+1).Timestamp.Subtract(
+                    Result.Timestamp).TotalSeconds
                 End If
                 iR += 1 ' Move iterator to next result.
               Next Result
