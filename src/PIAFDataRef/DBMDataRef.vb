@@ -647,10 +647,62 @@ Namespace Vitens.DynamicBandwidthMonitor
         Return GetValues
       End If
 
-      ' If there is more than one value, annotate the first value in the Target
-      ' values with model calibration metrics.
       If GetValues.Count > 1 And Attribute.Trait Is LimitTarget Then
+
+        ' De-flatline
+        Dim Value As AFValue
+        Dim NewValues As New AFValues
+        Dim i As Integer
+        Dim iFL As Integer
+        Dim FlatLine As AFTimeRange
+        Dim Weight, ForecastWeight As Double
+        For Each Value In GetValues
+          NewValues.Add(GetValues.Item(i)) ' Add original
+          If Not (i > 0 And Value.Value = GetValues.Item(iFL).Value) Then
+            If (iFL > 0 And i > iFL+1 And i < GetValues.Count) Then
+              FlatLine = New AFTimeRange(GetValues.Item(iFL).Timestamp,
+                GetValues.Item(i+1).Timestamp)
+              If FlatLine.Span.TotalHours >= 1 Then
+                Weight = 0
+                Do While iFL <= i ' Remove flatline, calculate weight
+                  NewValues.RemoveAt(NewValues.Count-1) ' Remove original
+                  Weight += GetValues.Item(iFL).Value*
+                    New AFTimeRange(GetValues.Item(iFL).Timestamp,
+                    GetValues.Item(iFL+1).Timestamp).Span.TotalSeconds
+                  iFL += 1
+                Loop
+                ForecastWeight = 0
+                For Each Result In Results ' Calculate forecast weight
+                  If Result.Timestamp >= FlatLine.StartTime And
+                    Result.Timestamp < FlatLine.EndTime Then
+                    ForecastWeight += Result.ForecastItem.Forecast*
+                      CalculationInterval
+                  End If
+                Next Result
+                For Each Result In Results ' Add weighted forecast
+                  If Result.Timestamp >= FlatLine.StartTime And
+                    Result.Timestamp < FlatLine.EndTime Then
+                    NewValues.Add(New AFValue(
+                      Result.ForecastItem.Forecast/ForecastWeight*Weight,
+                      New AFTime(Result.Timestamp)))
+                    NewValues.Item(NewValues.Count-1).Substituted = True
+                    Annotate(NewValues.Item(NewValues.Count-1),
+                      "Forecast: {0:G5}; Factor: {1:G5}",
+                      Result.ForecastItem.Forecast, Weight/ForecastWeight)
+                  End If
+                Next Result
+              End If
+            End If
+            iFL = i
+          End If
+          i += 1
+        Next Value
+        GetValues = NewValues
+
+        ' If there is more than one value, annotate the first value in the
+        ' Target values with model calibration metrics.
         Annotate(GetValues.Item(0), Statistics(Results).Brief)
+
       End If
 
       ' Returns the collection of values for the attribute sorted in increasing
