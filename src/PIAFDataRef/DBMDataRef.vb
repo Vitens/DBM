@@ -437,7 +437,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                   iD < Results.Count-1 Then
                   Weight = Result.ForecastItem.Forecast
                   If Not Stepped Then
-                    Weight += Results.Item(iD+1).ForecastItem.Forecast)
+                    Weight += Results.Item(iD+1).ForecastItem.Forecast
                     Weight /= 2
                   End If
                   ForecastWeight += Weight*
