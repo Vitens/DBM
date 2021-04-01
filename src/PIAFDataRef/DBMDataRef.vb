@@ -420,10 +420,15 @@ Namespace Vitens.DynamicBandwidthMonitor
             ' value, has to be more than one hour.
             If FlatlineEnd.Subtract(FlatlineStart).TotalHours > 1 Then
 
-              ' Remove flatline values, calculate weight of original.
+              ' Remove flatline values.
+              Do While Deflatline.Item(Deflatline.Count-1).
+                Timestamp.LocalTime >= FlatlineStart
+                Deflatline.RemoveAt(Deflatline.Count-1) ' Remove flatline value.
+              Loop
+
+              ' Calculate weight of original.
               MeasurementWeight = 0
               Do While iFL <= iV
-                Deflatline.RemoveAt(Deflatline.Count-1) ' Remove flatline value.
                 Weight = Convert.ToDouble(Values.Item(iFL).Value)
                 If Not Stepped Then
                   Weight += Convert.ToDouble(Values.Item(iFL+1).Value)
