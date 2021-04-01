@@ -379,7 +379,13 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private Function Deflatline(Values As AFValues,
       Results As List(Of DBMResult), Stepped As Boolean) As AFValues
 
-      ' De-flatline
+      ' De-flatline detects and removes incorrect flatlines in the data and
+      ' replaces them with forecast values, which are then scaled to the
+      ' original time range total. There are two situations we want to
+      ' automatically improve here: whenever data is manually replaced by
+      ' inserting an average value over a longer time range, and whenever we
+      ' receive a flatline containing all zeroes, followed by a single spike
+      ' value containing the total of the previous flatline time range.
 
       Dim Value As AFValue
       Dim iFL, iV, iD As Integer ' Iterators for flatline index, values, results
@@ -393,7 +399,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         Deflatline.Add(Value) ' Add original value.
 
-        ' A flatline ends when the value is different from the previous value.
+        ' The flatline ends when a value is different from the value that is
+        ' currently being monitored.
         If Not Convert.ToDouble(Value.Value) =
           Convert.ToDouble(Values.Item(iFL).Value) Then
 
@@ -449,6 +456,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
               ' Add weight adjusted forecast.
               iD = 0
+              Annotated = False
               For Each Result In Results
                 If Result.Timestamp >= FlatlineStart And
                   Result.Timestamp < FlatlineEnd And
