@@ -391,7 +391,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim iFL, iV, iD As Integer ' Iterators for flatline index, values, results
       Dim FlatlineStart, FlatlineEnd As DateTime
       Dim MeasurementWeight, Weight, ForecastWeight As Double
-      Dim Annotated As Boolean
+      Dim Annotated, Deflatlined As Boolean
 
       Deflatline = New AFValues
 
@@ -482,11 +482,22 @@ Namespace Vitens.DynamicBandwidthMonitor
                   iD += 1 ' Move iterator to next result.
                 End With
               Next Result
+              Deflatlined = True
 
             End If
 
           End If
           iFL = iV ' Set flatline start index to the current value.
+
+          ' After deflatlining, skip the spike value interval as flatline start
+          ' index to avoid overwriting data that has just been inserted. This
+          ' could happen if the spike value is seen as the start value of a new
+          ' flatline. This issue is solved by moving the flatline index to the
+          ' value after the spike value.
+          If Deflatlined Then
+            iFL += 1
+            Deflatlined = False
+          End If
 
         End If
         iV += 1 ' Move iterator to next value.
