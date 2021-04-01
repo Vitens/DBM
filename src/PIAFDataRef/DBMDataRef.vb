@@ -384,7 +384,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Value As AFValue
       Dim iFL, iV, iD As Integer ' Iterators for flatline index, values, results
       Dim FlatlineStart, FlatlineEnd As DateTime
-      Dim OriginalWeight, WeightedValue, ForecastWeight As Double
+      Dim MeasurementWeight, Weight, ForecastWeight As Double
       Dim Annotated As Boolean
 
       Deflatline = New AFValues
@@ -414,13 +414,15 @@ Namespace Vitens.DynamicBandwidthMonitor
             If FlatlineEnd.Subtract(FlatlineStart).TotalHours > 1 Then
 
               ' Remove flatline values, calculate weight of original.
-              OriginalWeight = 0
+              MeasurementWeight = 0
               Do While iFL <= iV
                 Deflatline.RemoveAt(Deflatline.Count-1) ' Remove flatline value.
-                WeightedValue = Convert.ToDouble(Values.Item(iFL).Value)
-                If Not Stepped Then WeightedValue =
-                  (WeightedValue+Convert.ToDouble(Values.Item(iFL+1).Value))/2
-                OriginalWeight += WeightedValue*
+                Weight = Convert.ToDouble(Values.Item(iFL).Value)
+                If Not Stepped Then
+                  Weight += Convert.ToDouble(Values.Item(iFL+1).Value)
+                  Weight /= 2
+                End If
+                MeasurementWeight += Weight*
                   Values.Item(iFL+1).Timestamp.LocalTime.Subtract(
                   Values.Item(iFL).Timestamp.LocalTime).TotalSeconds
                 iFL += 1 ' Move iterator to next flatline value.
@@ -433,10 +435,12 @@ Namespace Vitens.DynamicBandwidthMonitor
                 If Result.Timestamp >= FlatlineStart And
                   Result.Timestamp < FlatlineEnd And
                   iD < Results.Count-1 Then
-                  WeightedValue = Result.ForecastItem.Forecast
-                  If Not Stepped Then WeightedValue =
-                    (WeightedValue+Results.Item(iD+1).ForecastItem.Forecast)/2
-                  ForecastWeight += WeightedValue*
+                  Weight = Result.ForecastItem.Forecast
+                  If Not Stepped Then
+                    Weight += Results.Item(iD+1).ForecastItem.Forecast)
+                    Weight /= 2
+                  End If
+                  ForecastWeight += Weight*
                     Results.Item(iD+1).Timestamp.Subtract(
                     Result.Timestamp).TotalSeconds
                 End If
@@ -449,13 +453,14 @@ Namespace Vitens.DynamicBandwidthMonitor
                 If Result.Timestamp >= FlatlineStart And
                   Result.Timestamp < FlatlineEnd And
                   iD < Results.Count-1 Then
-                  Deflatline.Add(New AFValue(
-                    Result.ForecastItem.Forecast*OriginalWeight/ForecastWeight,
+                  Deflatline.Add(New AFValue(Result.ForecastItem.Forecast*
+                    MeasurementWeight/ForecastWeight,
                     New AFTime(Result.Timestamp)))
                   Deflatline.Item(Deflatline.Count-1).Substituted = True
                   If Not Annotated Then ' Annotate first new value.
                     Annotate(Deflatline.Item(Deflatline.Count-1),
-                      String.Format(sDeflatline, OriginalWeight/ForecastWeight))
+                      String.Format(sDeflatline,
+                      MeasurementWeight/ForecastWeight))
                     Annotated = True
                   End If
                 End If
