@@ -453,18 +453,19 @@ Namespace Vitens.DynamicBandwidthMonitor
                   If .Timestamp >= ReplaceFrom And
                     i < Results.Count-1 Then
                     Weight = .ForecastItem.Forecast
-                    ' When not stepped, using interpolation, the value to be
-                    ' used for the interval is the average value of the current
-                    ' value and the next value.
-                    If Not Stepped Then
-                      Weight += Results.Item(i+1).ForecastItem.Forecast
-                      Weight /= 2
-                    End If
                     If Results.Item(i+1).Timestamp < ReplaceTo Then
+                      If Not Stepped Then
+                        Weight += Results.Item(i+1).ForecastItem.Forecast
+                        Weight /= 2
+                      End If
                       ForecastWeight += Weight*
                         Results.Item(i+1).Timestamp.Subtract(
                         .Timestamp).TotalSeconds
                     Else
+                      If Not Stepped Then
+                        Weight += Convert.ToDouble(Values.Item(iV+1).Value)
+                        Weight /= 2
+                      End If
                       ForecastWeight += Weight*
                         ReplaceTo.Subtract(.Timestamp).TotalSeconds
                     End If
