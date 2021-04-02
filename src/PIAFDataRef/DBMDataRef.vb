@@ -390,7 +390,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Value As AFValue
       Dim iFL, iV, i As Integer ' Iterators
       Dim MeasurementWeight, ForecastWeight As Double
-      Dim First, Deflatlined As Boolean
+      Dim Deflatlined As Boolean
 
       Deflatline = New AFValues
 
@@ -436,79 +436,36 @@ Namespace Vitens.DynamicBandwidthMonitor
 
               ' Calculate weight of forecast.
               i = 0
-              First = True
               ForecastWeight = 0
-              For Each Result In Results
-                If Result.Timestamp >=
-                  Values.Item(iV+1).Timestamp.LocalTime Then Exit For ' After
-                If Result.Timestamp >= Values.Item(iFL).Timestamp.LocalTime And
-                  i < Results.Count-1 Then
-                  If First Then
-                    ' Compensate for the time range from the start of the
-                    ' flatline to the first forecast to be inserted, since the
-                    ' value before the flatline will now propagate until the
-                    ' first forecast.
-                    ' Step 1: Calculate previous weight of value before the
-                    '   flatline and subtract this from the total forecast
-                    '   weight. This is the original weight which was valid for
-                    '   the previous value.
-                    ForecastWeight -= WeightedValue(
-                      Convert.ToDouble(Values.Item(iFL-1).Value),
-                      Convert.ToDouble(Values.Item(iFL).Value),
-                      Values.Item(iFL-1).Timestamp.LocalTime,
-                      Values.Item(iFL).Timestamp.LocalTime, Stepped)
-                    ' Step 2: Calculate new weight of value before the flatline
-                    '   to first forecast and add this to the total forecast
-                    '   weight. This 'extra' weight is correctly included in the
-                    '   total forecast weight.
-                    ForecastWeight += WeightedValue(
-                      Convert.ToDouble(Values.Item(iFL-1).Value),
-                      Result.ForecastItem.Forecast,
-                      Values.Item(iFL-1).Timestamp.LocalTime,
-                      Result.Timestamp, Stepped)
-                    First = False
-                  End If
-                  If Results.Item(i+1).Timestamp <
-                    Values.Item(iV+1).Timestamp.LocalTime Then
-                    ' Weight until the next forecast value.
-                    ForecastWeight += WeightedValue(
-                      Result.ForecastItem.Forecast,
-                      Results.Item(i+1).ForecastItem.Forecast,
-                      Result.Timestamp,
-                      Results.Item(i+1).Timestamp, Stepped)
-                  Else
-                    ' Weight until the next original value.
-                    ForecastWeight += WeightedValue(
-                      Result.ForecastItem.Forecast,
-                      Convert.ToDouble(Values.Item(iV+1).Value),
-                      Result.Timestamp,
-                      Values.Item(iV+1).Timestamp.LocalTime, Stepped)
-                  End If
+              Do While i < Results.Count-1
+                If Results.Item(i).Timestamp >=
+                  Values.Item(iV+1).Timestamp.LocalTime Then Exit Do ' After
+                If Results.Item(i).Timestamp >=
+                  Values.Item(iFL).Timestamp.LocalTime Then
+                  ForecastWeight += WeightedValue(
+                    Results.Item(i).ForecastItem.Forecast,
+                    Results.Item(i+1).ForecastItem.Forecast,
+                    Results.Item(i).Timestamp,
+                    Results.Item(i+1).Timestamp, Stepped)
                 End If
                 i += 1 ' Increase iterator.
-              Next Result
+              Loop
 
               ' Add weight adjusted forecast.
               i = 0
-              First = True
-              For Each Result In Results
-                If Result.Timestamp >=
-                  Values.Item(iV+1).Timestamp.LocalTime Then Exit For ' After
-                If Result.Timestamp >= Values.Item(iFL).Timestamp.LocalTime And
-                  i < Results.Count-1 Then
-                  Deflatline.Add(New AFValue(Result.ForecastItem.Forecast*
+              Do While i < Results.Count-1
+                If Results.Item(i).Timestamp >=
+                  Values.Item(iV+1).Timestamp.LocalTime Then Exit Do ' After
+                If Results.Item(i).Timestamp >=
+                  Values.Item(iFL).Timestamp.LocalTime Then
+                  Deflatline.Add(New AFValue(
+                    Results.Item(i).ForecastItem.Forecast*
                     MeasurementWeight/ForecastWeight,
-                    New AFTime(Result.Timestamp)))
+                    New AFTime(Results.Item(i).Timestamp)))
                   Deflatline.Item(Deflatline.Count-1).Substituted = True
-                  If First Then ' Annotate first new value.
-                    Annotate(Deflatline.Item(Deflatline.Count-1),
-                      String.Format(sDeflatline,
-                      MeasurementWeight/ForecastWeight))
-                    First = False
-                  End If
                 End If
                 i += 1 ' Increase iterator.
-              Next Result
+              Loop
 
               Deflatlined = True
 
