@@ -1071,7 +1071,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2021, 4, 2, 19, 35, 35), True), 53349.935)
       AssertAlmostEqual(WeightedValue(56.6827, 51.6966,
         New DateTime(2021, 4, 2, 15, 46, 26),
-        New DateTime(2021, 4, 2, 15, 48, 47), False), 7640.7407)
+        New DateTime(2021, 4, 2, 15, 48, 47), False), 7640.7406)
       AssertAlmostEqual(WeightedValue(1.4532, 3.5828,
         New DateTime(2021, 4, 2, 13, 37, 33),
         New DateTime(2021, 4, 2, 13, 43, 30), True), 518.7924)
