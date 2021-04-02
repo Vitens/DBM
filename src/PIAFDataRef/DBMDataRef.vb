@@ -388,8 +388,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' value containing the total of the previous flatline time range.
 
       Dim Value As AFValue
-      Dim iFL, iV, iD As Integer ' Iterators for flatline index, values, results
-      Dim FlatlineStart, FlatlineEnd As DateTime
+      Dim iFL, iV, i As Integer ' Iterators
+      Dim ReplaceFrom, SpikeValue, ReplaceTo As DateTime
       Dim MeasurementWeight, Weight, ForecastWeight As Double
       Dim Annotated, Deflatlined As Boolean
 
@@ -413,62 +413,74 @@ Namespace Vitens.DynamicBandwidthMonitor
           '     value.
           If iFL > 0 And iV < Values.Count-1 And iV-iFL > 1 Then
 
-            FlatlineStart = Values.Item(iFL).Timestamp.LocalTime
-            FlatlineEnd = Values.Item(iV+1).Timestamp.LocalTime ' Exclusive.
+            ReplaceFrom = Values.Item(iFL).Timestamp.LocalTime
+            SpikeValue = Values.Item(iV).Timestamp.LocalTime
+            ReplaceTo = Values.Item(iV+1).Timestamp.LocalTime ' Exclusive.
 
-            ' The duration of the flatline, including the duration of the spike
-            ' value, has to be more than one hour.
-            If FlatlineEnd.Subtract(FlatlineStart).TotalHours > 1 Then
+            ' The duration of the flatline has to be at least one hour.
+            If SpikeValue.Subtract(ReplaceFrom).TotalHours >= 1 Then
 
               ' Remove flatline values.
               Do While Deflatline.Item(Deflatline.Count-1).
-                Timestamp.LocalTime >= FlatlineStart
+                Timestamp.LocalTime >= ReplaceFrom
                 Deflatline.RemoveAt(Deflatline.Count-1) ' Remove flatline value.
               Loop
 
               ' Calculate weight of original.
+              i = 0
               MeasurementWeight = 0
-              Do While iFL <= iV
-                Weight = Convert.ToDouble(Values.Item(iFL).Value)
+              Do While iFL+i <= iV
+                Weight = Convert.ToDouble(Values.Item(iFL+i).Value)
+                ' When not stepped, using interpolation, the value to be used
+                ' for the interval is the average value of the current value and
+                ' the next value.
                 If Not Stepped Then
-                  Weight += Convert.ToDouble(Values.Item(iFL+1).Value)
+                  Weight += Convert.ToDouble(Values.Item(iFL+i+1).Value)
                   Weight /= 2
                 End If
                 MeasurementWeight += Weight*
-                  Values.Item(iFL+1).Timestamp.LocalTime.Subtract(
-                  Values.Item(iFL).Timestamp.LocalTime).TotalSeconds
-                iFL += 1 ' Move iterator to next flatline value.
+                  Values.Item(iFL+i+1).Timestamp.LocalTime.Subtract(
+                  Values.Item(iFL+i).Timestamp.LocalTime).TotalSeconds
+                i += 1 ' Increase iterator.
               Loop
 
               ' Calculate weight of forecast.
-              iD = 0
+              i = 0
               ForecastWeight = 0
               For Each Result In Results
                 With Result
-                  If .Timestamp >= FlatlineEnd Then Exit For
-                  If .Timestamp >= FlatlineStart And
-                    iD < Results.Count-1 Then
+                  If .Timestamp >= ReplaceTo Then Exit For ' Stop looking after.
+                  If .Timestamp >= ReplaceFrom And
+                    i < Results.Count-1 Then
                     Weight = .ForecastItem.Forecast
+                    ' When not stepped, using interpolation, the value to be
+                    ' used for the interval is the average value of the current
+                    ' value and the next value.
                     If Not Stepped Then
-                      Weight += Results.Item(iD+1).ForecastItem.Forecast
+                      Weight += Results.Item(i+1).ForecastItem.Forecast
                       Weight /= 2
                     End If
-                    ForecastWeight += Weight*
-                      Results.Item(iD+1).Timestamp.Subtract(
-                      .Timestamp).TotalSeconds
+                    If Results.Item(i+1).Timestamp < ReplaceTo Then
+                      ForecastWeight += Weight*
+                        Results.Item(i+1).Timestamp.Subtract(
+                        .Timestamp).TotalSeconds
+                    Else
+                      ForecastWeight += Weight*
+                        ReplaceTo.Subtract(.Timestamp).TotalSeconds
+                    End If
                   End If
-                  iD += 1 ' Move iterator to next result.
+                  i += 1 ' Increase iterator.
                 End With
               Next Result
 
               ' Add weight adjusted forecast.
-              iD = 0
+              i = 0
               Annotated = False
               For Each Result In Results
                 With Result
-                  If .Timestamp >= FlatlineEnd Then Exit For
-                  If .Timestamp >= FlatlineStart And
-                    iD < Results.Count-1 Then
+                  If .Timestamp >= ReplaceTo Then Exit For ' Stop looking after.
+                  If .Timestamp >= ReplaceFrom And
+                    i < Results.Count-1 Then
                     Deflatline.Add(New AFValue(.ForecastItem.Forecast*
                       MeasurementWeight/ForecastWeight, New AFTime(.Timestamp)))
                     Deflatline.Item(Deflatline.Count-1).Substituted = True
@@ -479,9 +491,10 @@ Namespace Vitens.DynamicBandwidthMonitor
                       Annotated = True
                     End If
                   End If
-                  iD += 1 ' Move iterator to next result.
+                  i += 1 ' Increase iterator.
                 End With
               Next Result
+
               Deflatlined = True
 
             End If
