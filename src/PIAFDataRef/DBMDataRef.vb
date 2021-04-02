@@ -444,58 +444,55 @@ Namespace Vitens.DynamicBandwidthMonitor
               i = 0
               ForecastWeight = 0
               For Each Result In Results
-                With Result
-                  If .Timestamp >=
-                    Values.Item(iV+1).Timestamp.LocalTime Then Exit For ' After
-                  If .Timestamp >= Values.Item(iFL).Timestamp.LocalTime And
-                    i < Results.Count-1 Then
-                    Weight = .ForecastItem.Forecast
-                    If Results.Item(i+1).Timestamp <
-                      Values.Item(iV+1).Timestamp.LocalTime Then
-                      ' Weight until the next forecast value.
-                      If Not Stepped Then
-                        Weight += Results.Item(i+1).ForecastItem.Forecast
-                        Weight /= 2
-                      End If
-                      ForecastWeight += Weight*
-                        Results.Item(i+1).Timestamp.Subtract(
-                        .Timestamp).TotalSeconds
-                    Else
-                      ' Weight until the next original value.
-                      If Not Stepped Then
-                        Weight += Convert.ToDouble(Values.Item(iV+1).Value)
-                        Weight /= 2
-                      End If
-                      ForecastWeight += Weight*
-                        Values.Item(iV+1).Timestamp.LocalTime.Subtract(
-                          .Timestamp).TotalSeconds
+                If Result.Timestamp >=
+                  Values.Item(iV+1).Timestamp.LocalTime Then Exit For ' After
+                If Result.Timestamp >= Values.Item(iFL).Timestamp.LocalTime And
+                  i < Results.Count-1 Then
+                  Weight = Result.ForecastItem.Forecast
+                  If Results.Item(i+1).Timestamp <
+                    Values.Item(iV+1).Timestamp.LocalTime Then
+                    ' Weight until the next forecast value.
+                    If Not Stepped Then
+                      Weight += Results.Item(i+1).ForecastItem.Forecast
+                      Weight /= 2
                     End If
+                    ForecastWeight += Weight*
+                      Results.Item(i+1).Timestamp.Subtract(
+                      Result.Timestamp).TotalSeconds
+                  Else
+                    ' Weight until the next original value.
+                    If Not Stepped Then
+                      Weight += Convert.ToDouble(Values.Item(iV+1).Value)
+                      Weight /= 2
+                    End If
+                    ForecastWeight += Weight*
+                      Values.Item(iV+1).Timestamp.LocalTime.Subtract(
+                        Result.Timestamp).TotalSeconds
                   End If
-                  i += 1 ' Increase iterator.
-                End With
+                End If
+                i += 1 ' Increase iterator.
               Next Result
 
               ' Add weight adjusted forecast.
               i = 0
               Annotated = False
               For Each Result In Results
-                With Result
-                  If .Timestamp >=
-                    Values.Item(iV+1).Timestamp.LocalTime Then Exit For ' After
-                  If .Timestamp >= Values.Item(iFL).Timestamp.LocalTime And
-                    i < Results.Count-1 Then
-                    Deflatline.Add(New AFValue(.ForecastItem.Forecast*
-                      MeasurementWeight/ForecastWeight, New AFTime(.Timestamp)))
-                    Deflatline.Item(Deflatline.Count-1).Substituted = True
-                    If Not Annotated Then ' Annotate first new value.
-                      Annotate(Deflatline.Item(Deflatline.Count-1),
-                        String.Format(sDeflatline,
-                        MeasurementWeight/ForecastWeight))
-                      Annotated = True
-                    End If
+                If Result.Timestamp >=
+                  Values.Item(iV+1).Timestamp.LocalTime Then Exit For ' After
+                If Result.Timestamp >= Values.Item(iFL).Timestamp.LocalTime And
+                  i < Results.Count-1 Then
+                  Deflatline.Add(New AFValue(Result.ForecastItem.Forecast*
+                    MeasurementWeight/ForecastWeight,
+                    New AFTime(Result.Timestamp)))
+                  Deflatline.Item(Deflatline.Count-1).Substituted = True
+                  If Not Annotated Then ' Annotate first new value.
+                    Annotate(Deflatline.Item(Deflatline.Count-1),
+                      String.Format(sDeflatline,
+                      MeasurementWeight/ForecastWeight))
+                    Annotated = True
                   End If
-                  i += 1 ' Increase iterator.
-                End With
+                End If
+                i += 1 ' Increase iterator.
               Next Result
 
               Deflatlined = True
