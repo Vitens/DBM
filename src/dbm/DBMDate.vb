@@ -189,6 +189,26 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Shared Function WeightedValue(Value As Double, NextValue As Double,
+      Timestamp As DateTime, NextTimestamp As DateTime,
+      Stepped As Boolean) As Double
+
+      WeightedValue = Value
+
+      ' When not stepped, using interpolation, the value to be used for the
+      ' interval is the average value of the current value and the next value.
+      If Not Stepped Then
+        WeightedValue += NextValue
+        WeightedValue /= 2
+      End If
+
+      WeightedValue *= NextTimestamp.Subtract(Timestamp).TotalSeconds
+
+      Return WeightedValue
+
+    End Function
+
+
   End Class
 
 

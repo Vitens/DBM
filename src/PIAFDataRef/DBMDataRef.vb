@@ -426,17 +426,11 @@ Namespace Vitens.DynamicBandwidthMonitor
               i = 0
               MeasurementWeight = 0
               Do While iFL+i <= iV
-                Weight = Convert.ToDouble(Values.Item(iFL+i).Value)
-                ' When not stepped, using interpolation, the value to be used
-                ' for the interval is the average value of the current value and
-                ' the next value.
-                If Not Stepped Then
-                  Weight += Convert.ToDouble(Values.Item(iFL+i+1).Value)
-                  Weight /= 2
-                End If
-                MeasurementWeight += Weight*
-                  Values.Item(iFL+i+1).Timestamp.LocalTime.Subtract(
-                  Values.Item(iFL+i).Timestamp.LocalTime).TotalSeconds
+                MeasurementWeight += WeightedValue(
+                  Convert.ToDouble(Values.Item(iFL+i).Value),
+                  Convert.ToDouble(Values.Item(iFL+i+1).Value),
+                  Values.Item(iFL+i).Timestamp.LocalTime,
+                  Values.Item(iFL+i+1).Timestamp.LocalTime, Stepped)
                 i += 1 ' Increase iterator.
               Loop
 
@@ -457,47 +451,36 @@ Namespace Vitens.DynamicBandwidthMonitor
                     ' Step 1: Calculate new weight of value before flatline and
                     '   subtract this from the total forecast weight. This new
                     '   weight has to be replaced by the original weight.
-                    Weight = Convert.ToDouble(Values.Item(iFL-1).Value)
-                    If Not Stepped Then
-                      Weight += Result.ForecastItem.Forecast
-                      Weight /= 2
-                    End If
-                    ForecastWeight += -Weight*
-                      Result.Timestamp.Subtract(
-                      Values.Item(iFL-1).Timestamp.LocalTime).TotalSeconds
+                    ForecastWeight -= WeightedValue(
+                      Convert.ToDouble(Values.Item(iFL-1).Value),
+                      Result.ForecastItem.Forecast,
+                      Values.Item(iFL-1).Timestamp.LocalTime,
+                      Result.Timestamp, Stepped)
                     ' Step 2: Calculate previous weight of value before flatline
                     '   and add this to the total forecast weight. This is the
                     '   original weight which is valid for the previous value.
-                    Weight = Convert.ToDouble(Values.Item(iFL-1).Value)
-                    If Not Stepped Then
-                      Weight += Convert.ToDouble(Values.Item(iFL).Value)
-                      Weight /= 2
-                    End If
-                    ForecastWeight += Weight*
-                      Values.Item(iFL).Timestamp.LocalTime.Subtract(
-                      Values.Item(iFL-1).Timestamp.LocalTime).TotalSeconds
+                    ForecastWeight += WeightedValue(
+                      Convert.ToDouble(Values.Item(iFL-1).Value),
+                      Convert.ToDouble(Values.Item(iFL).Value),
+                      Values.Item(iFL-1).Timestamp.LocalTime,
+                      Values.Item(iFL).Timestamp.LocalTime, Stepped)
                     First = False
                   End If
-                  Weight = Result.ForecastItem.Forecast
                   If Results.Item(i+1).Timestamp <
                     Values.Item(iV+1).Timestamp.LocalTime Then
                     ' Weight until the next forecast value.
-                    If Not Stepped Then
-                      Weight += Results.Item(i+1).ForecastItem.Forecast
-                      Weight /= 2
-                    End If
-                    ForecastWeight += Weight*
-                      Results.Item(i+1).Timestamp.Subtract(
-                      Result.Timestamp).TotalSeconds
+                    ForecastWeight += WeightedValue(
+                      Result.ForecastItem.Forecast,
+                      Results.Item(i+1).ForecastItem.Forecast,
+                      Result.Timestamp,
+                      Results.Item(i+1).Timestamp, Stepped)
                   Else
                     ' Weight until the next original value.
-                    If Not Stepped Then
-                      Weight += Convert.ToDouble(Values.Item(iV+1).Value)
-                      Weight /= 2
-                    End If
-                    ForecastWeight += Weight*
-                      Values.Item(iV+1).Timestamp.LocalTime.Subtract(
-                        Result.Timestamp).TotalSeconds
+                    ForecastWeight += WeightedValue(
+                      Result.ForecastItem.Forecast,
+                      Convert.ToDouble(Values.Item(iV+1).Value),
+                      Result.Timestamp,
+                      Values.Item(iV+1).Timestamp.LocalTime, Stepped)
                   End If
                 End If
                 i += 1 ' Increase iterator.
