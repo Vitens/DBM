@@ -202,7 +202,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         WeightedValue /= 2
       End If
 
-      WeightedValue *= NextTimestamp.Subtract(Timestamp).TotalSeconds
+      WeightedValue *= NextTimestamp.Subtract(Timestamp).TotalDays
 
       Return WeightedValue
 
