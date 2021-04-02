@@ -496,24 +496,16 @@ Namespace Vitens.DynamicBandwidthMonitor
                   Values.Item(iV+1).Timestamp.LocalTime Then Exit For ' After
                 If Result.Timestamp >= Values.Item(iFL).Timestamp.LocalTime And
                   i < Results.Count-1 Then
-                  If First Then
-                    Deflatline.Add(New AFValue(Result.ForecastItem.Forecast,
-                      New AFTime(Result.Timestamp)))
-                    Deflatline.Item(Deflatline.Count-1).Substituted = True
-                    Annotate(Deflatline.Item(Deflatline.Count-1),
-                      String.Format(sDeflatline,
-                      MeasurementWeight/ForecastWeight))
-                    First = False
-                  Else
-                    Deflatline.RemoveAt(Deflatline.Count-1)
-                  End If
                   Deflatline.Add(New AFValue(Result.ForecastItem.Forecast*
                     MeasurementWeight/ForecastWeight,
                     New AFTime(Result.Timestamp)))
                   Deflatline.Item(Deflatline.Count-1).Substituted = True
-                  Deflatline.Add(New AFValue(Result.ForecastItem.Forecast,
-                    New AFTime(Result.Timestamp)))
-                  Deflatline.Item(Deflatline.Count-1).Substituted = True
+                  If First Then ' Annotate first new value.
+                    Annotate(Deflatline.Item(Deflatline.Count-1),
+                      String.Format(sDeflatline,
+                      MeasurementWeight/ForecastWeight))
+                    First = False
+                  End If
                 End If
                 i += 1 ' Increase iterator.
               Next Result
