@@ -511,8 +511,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                     MeasurementWeight/ForecastWeight,
                     New AFTime(Result.Timestamp)))
                   Deflatline.Item(Deflatline.Count-1).Substituted = True
-                  Deflatline.Add(New AFValue(
-                    Convert.ToDouble(Values.Item(iV+1).Value)*
+                  Deflatline.Add(New AFValue(Values.Item(iV+1).Value*
                     MeasurementWeight/ForecastWeight,
                     Values.Item(iV+1).Timestamp))
                   Deflatline.Item(Deflatline.Count-1).Substituted = True
