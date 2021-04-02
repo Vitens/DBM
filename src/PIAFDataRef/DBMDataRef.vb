@@ -448,22 +448,23 @@ Namespace Vitens.DynamicBandwidthMonitor
                     ' flatline to the first forecast to be inserted, since the
                     ' value before the flatline will now propagate until the
                     ' first forecast.
-                    ' Step 1: Calculate new weight of value before flatline and
-                    '   subtract this from the total forecast weight. This new
-                    '   weight has to be replaced by the original weight.
+                    ' Step 1: Calculate previous weight of value before flatline
+                    '   and subtract this from the total forecast weight. This
+                    '   is the original weight which is valid for the previous
+                    '   value.
                     ForecastWeight -= WeightedValue(
-                      Convert.ToDouble(Values.Item(iFL-1).Value),
-                      Result.ForecastItem.Forecast,
-                      Values.Item(iFL-1).Timestamp.LocalTime,
-                      Result.Timestamp, Stepped)
-                    ' Step 2: Calculate previous weight of value before flatline
-                    '   and add this to the total forecast weight. This is the
-                    '   original weight which is valid for the previous value.
-                    ForecastWeight += WeightedValue(
                       Convert.ToDouble(Values.Item(iFL-1).Value),
                       Convert.ToDouble(Values.Item(iFL).Value),
                       Values.Item(iFL-1).Timestamp.LocalTime,
                       Values.Item(iFL).Timestamp.LocalTime, Stepped)
+                    ' Step 2: Calculate new weight of value before flatline and
+                    '   add this to the total forecast weight. This new weight
+                    '   has to be replaced by the original weight.
+                    ForecastWeight += WeightedValue(
+                      Convert.ToDouble(Values.Item(iFL-1).Value),
+                      Result.ForecastItem.Forecast,
+                      Values.Item(iFL-1).Timestamp.LocalTime,
+                      Result.Timestamp, Stepped)
                     First = False
                   End If
                   If Results.Item(i+1).Timestamp <
