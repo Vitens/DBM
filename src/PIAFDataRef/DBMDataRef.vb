@@ -390,7 +390,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Value As AFValue
       Dim iFL, iV, i As Integer ' Iterators
       Dim MeasurementWeight, Weight, ForecastWeight As Double
-      Dim Annotated, Deflatlined As Boolean
+      Dim First, Deflatlined As Boolean
 
       Deflatline = New AFValues
 
@@ -442,12 +442,23 @@ Namespace Vitens.DynamicBandwidthMonitor
 
               ' Calculate weight of forecast.
               i = 0
-              ForecastWeight = 0
+              First = True
               For Each Result In Results
                 If Result.Timestamp >=
                   Values.Item(iV+1).Timestamp.LocalTime Then Exit For ' After
                 If Result.Timestamp >= Values.Item(iFL).Timestamp.LocalTime And
                   i < Results.Count-1 Then
+                  If First Then
+                    Weight = Convert.ToDouble(Values.Item(iFL-1).Value)
+                    If Not Stepped Then
+                      Weight += Result.ForecastItem.Forecast
+                      Weight /= 2
+                    End If
+                    ForecastWeight = -Weight*
+                      Result.Timestamp.Subtract(
+                      Values.Item(iFL).Timestamp.LocalTime).TotalSeconds
+                    First = False
+                  End If
                   Weight = Result.ForecastItem.Forecast
                   If Results.Item(i+1).Timestamp <
                     Values.Item(iV+1).Timestamp.LocalTime Then
@@ -475,7 +486,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
               ' Add weight adjusted forecast.
               i = 0
-              Annotated = False
+              First = True
               For Each Result In Results
                 If Result.Timestamp >=
                   Values.Item(iV+1).Timestamp.LocalTime Then Exit For ' After
@@ -485,11 +496,11 @@ Namespace Vitens.DynamicBandwidthMonitor
                     MeasurementWeight/ForecastWeight,
                     New AFTime(Result.Timestamp)))
                   Deflatline.Item(Deflatline.Count-1).Substituted = True
-                  If Not Annotated Then ' Annotate first new value.
+                  If First Then ' Annotate first new value.
                     Annotate(Deflatline.Item(Deflatline.Count-1),
                       String.Format(sDeflatline,
                       MeasurementWeight/ForecastWeight))
-                    Annotated = True
+                    First = False
                   End If
                 End If
                 i += 1 ' Increase iterator.
