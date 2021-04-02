@@ -1021,6 +1021,67 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertEqual(EMATimeOffset(38000), -3915600)
       AssertEqual(EMATimeOffset(56000), -5770200)
 
+      AssertAlmostEqual(WeightedValue(54.5572, 59.5128,
+        New DateTime(2021, 4, 2, 16, 24, 10),
+        New DateTime(2021, 4, 2, 16, 30, 29), False), 21616.265)
+      AssertAlmostEqual(WeightedValue(61.101, 60.7455,
+        New DateTime(2021, 4, 2, 21, 52, 40),
+        New DateTime(2021, 4, 2, 22, 1, 50), True), 33605.55)
+      AssertAlmostEqual(WeightedValue(92.1337, 91.216,
+        New DateTime(2021, 4, 2, 11, 21, 43),
+        New DateTime(2021, 4, 2, 11, 21, 47), True), 368.5348)
+      AssertAlmostEqual(WeightedValue(8.4389, 11.2189,
+        New DateTime(2021, 4, 2, 10, 7, 1),
+        New DateTime(2021, 4, 2, 10, 7, 42), False), 402.9849)
+      AssertAlmostEqual(WeightedValue(31.9645, 31.3657,
+        New DateTime(2021, 4, 2, 23, 20, 9),
+        New DateTime(2021, 4, 2, 23, 34, 2), True), 26626.4285)
+      AssertAlmostEqual(WeightedValue(79.3012, 79.5086,
+        New DateTime(2021, 4, 2, 20, 5, 30),
+        New DateTime(2021, 4, 2, 20, 15, 1), False), 45340.1979)
+      AssertAlmostEqual(WeightedValue(12.7809, 16.1845,
+        New DateTime(2021, 4, 2, 4, 38, 10),
+        New DateTime(2021, 4, 2, 4, 49, 19), True), 8550.4221)
+      AssertAlmostEqual(WeightedValue(84.7342, 83.7452,
+        New DateTime(2021, 4, 2, 20, 1, 2),
+        New DateTime(2021, 4, 2, 20, 8, 48), False), 39255.7002)
+      AssertAlmostEqual(WeightedValue(61.349, 62.735,
+        New DateTime(2021, 4, 2, 18, 46, 33),
+        New DateTime(2021, 4, 2, 18, 49, 9), True), 9570.444)
+      AssertAlmostEqual(WeightedValue(24.2132, 23.4243,
+        New DateTime(2021, 4, 2, 12, 4, 8),
+        New DateTime(2021, 4, 2, 12, 8, 45), False), 6597.7938)
+      AssertAlmostEqual(WeightedValue(65.4336, 65.7781,
+        New DateTime(2021, 4, 2, 17, 28, 20),
+        New DateTime(2021, 4, 2, 17, 29, 28), True), 4449.4849)
+      AssertAlmostEqual(WeightedValue(35.2388, 37.7602,
+        New DateTime(2021, 4, 2, 21, 42, 57),
+        New DateTime(2021, 4, 2, 21, 56, 19), False), 29272.599)
+      AssertAlmostEqual(WeightedValue(58.8315, 55.2946,
+        New DateTime(2021, 4, 2, 22, 51, 18),
+        New DateTime(2021, 4, 2, 22, 56, 14), True), 17414.124)
+      AssertAlmostEqual(WeightedValue(34.7707, 27.6712,
+        New DateTime(2021, 4, 2, 11, 25, 40),
+        New DateTime(2021, 4, 2, 11, 34, 54), True), 19262.9678)
+      AssertAlmostEqual(WeightedValue(37.8202, 35.3707,
+        New DateTime(2021, 4, 2, 21, 51, 16),
+        New DateTime(2021, 4, 2, 21, 52, 48), False), 3366.7814)
+      AssertAlmostEqual(WeightedValue(89.065, 88.0274,
+        New DateTime(2021, 4, 2, 19, 25, 36),
+        New DateTime(2021, 4, 2, 19, 35, 35), True), 53349.935)
+      AssertAlmostEqual(WeightedValue(56.6827, 51.6966,
+        New DateTime(2021, 4, 2, 15, 46, 26),
+        New DateTime(2021, 4, 2, 15, 48, 47), False), 7640.7407)
+      AssertAlmostEqual(WeightedValue(1.4532, 3.5828,
+        New DateTime(2021, 4, 2, 13, 37, 33),
+        New DateTime(2021, 4, 2, 13, 43, 30), True), 518.7924)
+      AssertAlmostEqual(WeightedValue(65.598, 69.4065,
+        New DateTime(2021, 4, 2, 12, 25, 45),
+        New DateTime(2021, 4, 2, 12, 36, 29), False), 43471.449)
+      AssertAlmostEqual(WeightedValue(64.0065, 66.1427,
+        New DateTime(2021, 4, 2, 3, 19, 53),
+        New DateTime(2021, 4, 2, 3, 21, 41), True), 6912.702)
+
       ' DBMStatistics
       For i = 0 To 19
         With {
