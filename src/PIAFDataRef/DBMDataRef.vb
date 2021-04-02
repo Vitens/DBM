@@ -448,18 +448,19 @@ Namespace Vitens.DynamicBandwidthMonitor
                     ' flatline to the first forecast to be inserted, since the
                     ' value before the flatline will now propagate until the
                     ' first forecast.
-                    ' Step 1: Calculate previous weight of value before flatline
-                    '   and subtract this from the total forecast weight. This
-                    '   is the original weight which is valid for the previous
-                    '   value.
+                    ' Step 1: Calculate previous weight of value before the
+                    '   flatline and subtract this from the total forecast
+                    '   weight. This is the original weight which was valid for
+                    '   the previous value.
                     ForecastWeight -= WeightedValue(
                       Convert.ToDouble(Values.Item(iFL-1).Value),
                       Convert.ToDouble(Values.Item(iFL).Value),
                       Values.Item(iFL-1).Timestamp.LocalTime,
                       Values.Item(iFL).Timestamp.LocalTime, Stepped)
-                    ' Step 2: Calculate new weight of value before flatline and
-                    '   add this to the total forecast weight. This new weight
-                    '   has to be replaced by the original weight.
+                    ' Step 2: Calculate new weight of value before the flatline
+                    '   to first forecast and add this to the total forecast
+                    '   weight. This 'extra' weight is correctly included in the
+                    '   total forecast weight.
                     ForecastWeight += WeightedValue(
                       Convert.ToDouble(Values.Item(iFL-1).Value),
                       Result.ForecastItem.Forecast,
@@ -495,16 +496,24 @@ Namespace Vitens.DynamicBandwidthMonitor
                   Values.Item(iV+1).Timestamp.LocalTime Then Exit For ' After
                 If Result.Timestamp >= Values.Item(iFL).Timestamp.LocalTime And
                   i < Results.Count-1 Then
-                  Deflatline.Add(New AFValue(Result.ForecastItem.Forecast*
-                    MeasurementWeight/ForecastWeight,
-                    New AFTime(Result.Timestamp)))
-                  Deflatline.Item(Deflatline.Count-1).Substituted = True
-                  If First Then ' Annotate first new value.
+                  If First Then
+                    ' For the first forecast, insert an unadjusted forecast as
+                    ' well. This is done so that the weight of the value before
+                    ' the flatline does not change because of the weight
+                    ' adjusted forecast values.
+                    Deflatline.Add(New AFValue(Result.ForecastItem.Forecast,
+                      New AFTime(Result.Timestamp)))
+                    Deflatline.Item(Deflatline.Count-1).Substituted = True
+                    ' Annotate first new value.
                     Annotate(Deflatline.Item(Deflatline.Count-1),
                       String.Format(sDeflatline,
                       MeasurementWeight/ForecastWeight))
                     First = False
                   End If
+                  Deflatline.Add(New AFValue(Result.ForecastItem.Forecast*
+                    MeasurementWeight/ForecastWeight,
+                    New AFTime(Result.Timestamp)))
+                  Deflatline.Item(Deflatline.Count-1).Substituted = True
                 End If
                 i += 1 ' Increase iterator.
               Next Result
