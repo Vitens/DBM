@@ -225,9 +225,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       Else
         ' w = (v0+v1)/2*(t1-t0)+(v1+v2)/2*(t2-t1)
         ' Solve for v1:
-        '   v1 = (v0*(t1-t0)+v2*(t2-t1)-2*w)/(t0-t2)
-        Return (v0*t1.Subtract(t0).TotalDays+v2*t2.Subtract(t1).TotalDays-
-          2*w)/t0.Subtract(t2).TotalDays
+        '   v1 = (2*w-v0*(t1-t0)-v2*(t2-t1))/(t2-t0)
+        Return (2*w-v0*t1.Subtract(t0).TotalDays-
+          v2*t2.Subtract(t1).TotalDays)/t2.Subtract(t0).TotalDays
       End If
 
     End Function

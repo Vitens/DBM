@@ -1086,6 +1086,60 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2021, 4, 14), New DateTime(2021, 4, 15), True, 20), 12)
       AssertEqual(FindCentralValue(2, 3, New DateTime(2021, 4, 10),
         New DateTime(2021, 4, 14), New DateTime(2021, 4, 15), False, 20), 5.8)
+      AssertAlmostEqual(FindCentralValue(3.66, 4.25,
+        New DateTime(2021, 4, 11), New DateTime(2021, 4, 12),
+        New DateTime(2021, 4, 14), False, 9.85), 2.5133)
+      AssertAlmostEqual(FindCentralValue(0.09, 6.04,
+        New DateTime(2021, 4, 13), New DateTime(2021, 4, 17),
+        New DateTime(2021, 4, 23), False, 7.52), -2.156)
+      AssertAlmostEqual(FindCentralValue(0.69, 5.76,
+        New DateTime(2021, 4, 12), New DateTime(2021, 4, 14),
+        New DateTime(2021, 4, 18), True, 7.11), 1.4325)
+      AssertAlmostEqual(FindCentralValue(1.45, 4.93,
+        New DateTime(2021, 4, 13), New DateTime(2021, 4, 19),
+        New DateTime(2021, 4, 25), True, 4.5), -0.7)
+      AssertAlmostEqual(FindCentralValue(0.27, 5.82,
+        New DateTime(2021, 4, 13), New DateTime(2021, 4, 15),
+        New DateTime(2021, 4, 21), True, 2.97), 0.405)
+      AssertAlmostEqual(FindCentralValue(1.21, 5,
+        New DateTime(2021, 4, 10), New DateTime(2021, 4, 13),
+        New DateTime(2021, 4, 15), False, 8.6), 0.714)
+      AssertAlmostEqual(FindCentralValue(2.28, 7.9,
+        New DateTime(2021, 4, 10), New DateTime(2021, 4, 16),
+        New DateTime(2021, 4, 17), True, 1.24), -12.44)
+      AssertAlmostEqual(FindCentralValue(0.68, 3.33,
+        New DateTime(2021, 4, 10), New DateTime(2021, 4, 12),
+        New DateTime(2021, 4, 13), True, 4.1), 2.74)
+      AssertAlmostEqual(FindCentralValue(3.45, 4.79,
+        New DateTime(2021, 4, 10), New DateTime(2021, 4, 13),
+        New DateTime(2021, 4, 17), True, 4.92), -1.3575)
+      AssertAlmostEqual(FindCentralValue(0.17, 7.71,
+        New DateTime(2021, 4, 11), New DateTime(2021, 4, 12),
+        New DateTime(2021, 4, 15), True, 0.65), 0.16)
+      AssertAlmostEqual(FindCentralValue(0.61, 6.43,
+        New DateTime(2021, 4, 13), New DateTime(2021, 4, 16),
+        New DateTime(2021, 4, 22), True, 2.9), 0.1783)
+      AssertAlmostEqual(FindCentralValue(1.62, 7.39,
+        New DateTime(2021, 4, 13), New DateTime(2021, 4, 18),
+        New DateTime(2021, 4, 20), True, 0.92), -3.59)
+      AssertAlmostEqual(FindCentralValue(1.99, 7.5,
+        New DateTime(2021, 4, 13), New DateTime(2021, 4, 18),
+        New DateTime(2021, 4, 24), False, 4.05), -4.2591)
+      AssertAlmostEqual(FindCentralValue(0.16, 7.68,
+        New DateTime(2021, 4, 10), New DateTime(2021, 4, 15),
+        New DateTime(2021, 4, 18), True, 3.85), 1.0167)
+      AssertAlmostEqual(FindCentralValue(0.14, 6.45,
+        New DateTime(2021, 4, 13), New DateTime(2021, 4, 18),
+        New DateTime(2021, 4, 19), False, 6.44), 0.955)
+      AssertAlmostEqual(FindCentralValue(1.52, 4.13,
+        New DateTime(2021, 4, 13), New DateTime(2021, 4, 15),
+        New DateTime(2021, 4, 16), False, 7.61), 2.6833)
+      AssertAlmostEqual(FindCentralValue(1.91, 3.78,
+        New DateTime(2021, 4, 12), New DateTime(2021, 4, 14),
+        New DateTime(2021, 4, 17), True, 0.64), -1.06)
+      AssertAlmostEqual(FindCentralValue(0.17, 4.81,
+        New DateTime(2021, 4, 10), New DateTime(2021, 4, 14),
+        New DateTime(2021, 4, 18), False, 4.33), -1.4075)
 
       ' DBMStatistics
       For i = 0 To 19
