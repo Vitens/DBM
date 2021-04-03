@@ -214,8 +214,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       w As Double) As Double
 
       ' Finds the required central value v1 at given time t1 so that the
-      ' time-weighted total of the time range from t0 (with value v0) to t2
-      ' (with value v2) equals the given time-weighted total w.
+      ' time-weighted total of the three points in the time range from t0 (with
+      ' value v0) to t2 (with value v2) equals the given time-weighted total w.
 
       If Stepped Then
         ' w = v0*(t1-t0)+v1*(t2-t1)
