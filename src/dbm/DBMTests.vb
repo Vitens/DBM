@@ -1082,14 +1082,10 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2021, 4, 2, 3, 19, 53),
         New DateTime(2021, 4, 2, 3, 21, 41), True), 0.08)
 
-      AssertEqual(FindCentralValue(2, 3,
-        New DateTime(2021, 4, 3, 10, 0, 0),
-        New DateTime(2021, 4, 3, 10, 4, 0),
-        New DateTime(2021, 4, 3, 10, 5, 0), True, 20), 12)
-      AssertEqual(FindCentralValue(2, 3,
-        New DateTime(2021, 4, 3, 10, 0, 0),
-        New DateTime(2021, 4, 3, 10, 4, 0),
-        New DateTime(2021, 4, 3, 10, 5, 0), False, 20), 5.8)
+      AssertEqual(FindCentralValue(2, 3, New DateTime(2021, 4, 10),
+        New DateTime(2021, 4, 14), New DateTime(2021, 4, 15), True, 20), 12)
+      AssertEqual(FindCentralValue(2, 3, New DateTime(2021, 4, 10),
+        New DateTime(2021, 4, 14), New DateTime(2021, 4, 15), False, 20), 5.8)
 
       ' DBMStatistics
       For i = 0 To 19
