@@ -35,6 +35,7 @@ Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
+Imports Vitens.DynamicBandwidthMonitor.DBMTimeWeighting
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -1021,6 +1022,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertEqual(EMATimeOffset(38000), -3915600)
       AssertEqual(EMATimeOffset(56000), -5770200)
 
+      ' DBMTimeWeighting
       AssertAlmostEqual(WeightedValue(54.5572, 59.5128,
         New DateTime(2021, 4, 2, 16, 24, 10),
         New DateTime(2021, 4, 2, 16, 30, 29), False), 0.2502)

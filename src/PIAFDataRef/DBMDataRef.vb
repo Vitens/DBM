@@ -37,6 +37,7 @@ Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
+Imports Vitens.DynamicBandwidthMonitor.DBMTimeWeighting
 
 
 ' Assembly title
