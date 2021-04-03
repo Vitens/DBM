@@ -34,22 +34,30 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Contains time weighting functions.
 
 
-    Public Shared Function WeightedValue(Value As Double, NextValue As Double,
-      Timestamp As DateTime, NextTimestamp As DateTime,
+    Public Shared Function TimeWeight(Timestamp As DateTime,
+      NextTimestamp As DateTime) As Double
+
+      Return NextTimestamp.Subtract(Timestamp).TotalDays
+
+    End Function
+
+
+    Public Shared Function TimeWeightedValue(Value As Double,
+      NextValue As Double, Timestamp As DateTime, NextTimestamp As DateTime,
       Stepped As Boolean) As Double
 
-      WeightedValue = Value
+      TimeWeightedValue = Value
 
       ' When not stepped, using interpolation, the value to be used for the
       ' interval is the average value of the current value and the next value.
       If Not Stepped Then
-        WeightedValue += NextValue
-        WeightedValue /= 2
+        TimeWeightedValue += NextValue
+        TimeWeightedValue /= 2
       End If
 
-      WeightedValue *= NextTimestamp.Subtract(Timestamp).TotalDays
+      TimeWeightedValue *= TimeWeight(Timestamp, NextTimestamp)
 
-      Return WeightedValue
+      Return TimeWeightedValue
 
     End Function
 
@@ -66,13 +74,14 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' w = v0*(t1-t0)+v1*(t2-t1)
         ' Solve for v1:
         '   v1 = (w-v0*(t1-t0))/(t2-t1)
-        Return (w-v0*t1.Subtract(t0).TotalDays)/t2.Subtract(t1).TotalDays
+        Return (w-TimeWeightedValue(v0, Nothing, t0, t1, True))/
+          TimeWeight(t1, t2)
       Else
         ' w = (v0+v1)/2*(t1-t0)+(v1+v2)/2*(t2-t1)
         ' Solve for v1:
         '   v1 = (2*w-v0*(t1-t0)-v2*(t2-t1))/(t2-t0)
-        Return (2*w-v0*t1.Subtract(t0).TotalDays-
-          v2*t2.Subtract(t1).TotalDays)/t2.Subtract(t0).TotalDays
+        Return (2*w-TimeWeightedValue(v0, Nothing, t0, t1, True)-
+          TimeWeightedValue(v2, Nothing, t1, t2, True))/TimeWeight(t0, t2)
       End If
 
     End Function

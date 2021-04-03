@@ -426,7 +426,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               i = 0
               MeasurementWeight = 0
               Do While iFL+i <= iV
-                MeasurementWeight += WeightedValue(
+                MeasurementWeight += TimeWeightedValue(
                   Convert.ToDouble(Values.Item(iFL+i).Value),
                   Convert.ToDouble(Values.Item(iFL+i+1).Value),
                   Values.Item(iFL+i).Timestamp.LocalTime,
@@ -442,7 +442,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                   Values.Item(iV+1).Timestamp.LocalTime Then Exit Do ' After
                 If Results.Item(i).Timestamp >=
                   Values.Item(iFL).Timestamp.LocalTime Then
-                  ForecastWeight += WeightedValue(
+                  ForecastWeight += TimeWeightedValue(
                     Results.Item(i).ForecastItem.Forecast,
                     Results.Item(i+1).ForecastItem.Forecast,
                     Results.Item(i).Timestamp,
