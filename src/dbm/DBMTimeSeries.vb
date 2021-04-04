@@ -38,11 +38,10 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function TimeWeight(Timestamp As DateTime,
       NextTimestamp As DateTime) As Double
 
-      If Timestamp > NextTimestamp Then
-        Return NaN
-      Else
-        Return NextTimestamp.Subtract(Timestamp).TotalDays
-      End If
+      ' Return NaN if the timestamps are not in order.
+      If Timestamp > NextTimestamp Then Return NaN
+
+      Return NextTimestamp.Subtract(Timestamp).TotalDays
 
     End Function
 
@@ -102,6 +101,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Returns the interpolated value v1 at given time t1 between the points at
       ' times t0 (with value v0) and t2 (with value v2).
+
+      ' Return NaN if the timestamps are not in order, or if they are all the
+      ' same.
+      If PreviousTimestamp > Timestamp Or
+        Timestamp > NextTimestamp Or
+        PreviousTimestamp = NextTimestamp Then Return NaN
 
       If Stepped Then
         ' v1 = v0

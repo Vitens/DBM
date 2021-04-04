@@ -1184,6 +1184,18 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2021, 4, 10), New DateTime(2021, 4, 14),
         New DateTime(2021, 4, 18), False, 4.33), -1.4075)
 
+      AssertNaN(InterpolatedValue(78.38, 61.17,
+        New DateTime(2021, 4, 4, 1, 0, 0),
+        New DateTime(2021, 4, 4, 0, 0, 0),
+        New DateTime(2021, 4, 4, 2, 0, 0), True))
+      AssertNaN(InterpolatedValue(78.38, 61.17,
+        New DateTime(2021, 4, 4, 0, 0, 0),
+        New DateTime(2021, 4, 4, 2, 0, 0),
+        New DateTime(2021, 4, 4, 1, 0, 0), True))
+      AssertNaN(InterpolatedValue(78.38, 61.17,
+        New DateTime(2021, 4, 4, 0, 0, 0),
+        New DateTime(2021, 4, 4, 0, 0, 0),
+        New DateTime(2021, 4, 4, 0, 0, 0), True))
       AssertEqual(InterpolatedValue(88.81, 80.04,
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 19, 9, 37),
@@ -1252,18 +1264,6 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 10, 33, 7),
         New DateTime(2021, 4, 4, 18, 9, 41), False), 48.7217)
-      AssertAlmostEqual(InterpolatedValue(71.55, 3.56,
-        New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 8, 14, 27),
-        New DateTime(2021, 4, 4, 9, 37, 53), False), 13.3762)
-      AssertAlmostEqual(InterpolatedValue(70.06, 69.35,
-        New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 3, 26, 19),
-        New DateTime(2021, 4, 4, 11, 36, 18), False), 69.8496)
-      AssertAlmostEqual(InterpolatedValue(78.38, 61.17,
-        New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 22, 57, 55),
-        New DateTime(2021, 4, 5, 21, 38, 51), False), 69.7216)
 
       ' DBMStatistics
       For i = 0 To 19
