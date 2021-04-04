@@ -1125,6 +1125,18 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2021, 4, 2, 19, 25, 36),
         New DateTime(2021, 4, 2, 19, 35, 35), True), 0.6175)
 
+      AssertNaN(FindCentralValue(0.17, 4.81,
+        New DateTime(2021, 4, 5), New DateTime(2021, 4, 4),
+        New DateTime(2021, 4, 6), False, 4.33))
+      AssertNaN(FindCentralValue(0.17, 4.81,
+        New DateTime(2021, 4, 4), New DateTime(2021, 4, 6),
+        New DateTime(2021, 4, 5), False, 4.33))
+      AssertNaN(FindCentralValue(0.17, 4.81,
+        New DateTime(2021, 4, 4), New DateTime(2021, 4, 4),
+        New DateTime(2021, 4, 4), False, 4.33))
+      AssertNaN(FindCentralValue(0.17, 4.81,
+        New DateTime(2021, 4, 4), New DateTime(2021, 4, 5),
+        New DateTime(2021, 4, 5), False, 4.33))
       AssertEqual(FindCentralValue(2, 3, New DateTime(2021, 4, 10),
         New DateTime(2021, 4, 14), New DateTime(2021, 4, 15), True, 20), 12)
       AssertEqual(FindCentralValue(2, 3, New DateTime(2021, 4, 10),
@@ -1171,18 +1183,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(FindCentralValue(0.16, 7.68,
         New DateTime(2021, 4, 10), New DateTime(2021, 4, 15),
         New DateTime(2021, 4, 18), True, 3.85), 1.0167)
-      AssertAlmostEqual(FindCentralValue(0.14, 6.45,
-        New DateTime(2021, 4, 13), New DateTime(2021, 4, 18),
-        New DateTime(2021, 4, 19), False, 6.44), 0.955)
-      AssertAlmostEqual(FindCentralValue(1.52, 4.13,
-        New DateTime(2021, 4, 13), New DateTime(2021, 4, 15),
-        New DateTime(2021, 4, 16), False, 7.61), 2.6833)
-      AssertAlmostEqual(FindCentralValue(1.91, 3.78,
-        New DateTime(2021, 4, 12), New DateTime(2021, 4, 14),
-        New DateTime(2021, 4, 17), True, 0.64), -1.06)
-      AssertAlmostEqual(FindCentralValue(0.17, 4.81,
-        New DateTime(2021, 4, 10), New DateTime(2021, 4, 14),
-        New DateTime(2021, 4, 18), False, 4.33), -1.4075)
 
       AssertNaN(InterpolatedValue(78.38, 61.17,
         New DateTime(2021, 4, 4, 1, 0, 0),

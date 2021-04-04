@@ -75,6 +75,13 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' time-weighted total of the three points in the time range from t0 (with
       ' value v0) to t2 (with value v2) equals the given time-weighted total w.
 
+      ' Return NaN if the timestamps are not in order, if they are all the same,
+      ' or if the central value has no weight.
+      If PreviousTimestamp > Timestamp Or
+        Timestamp > NextTimestamp Or
+        PreviousTimestamp = NextTimestamp Or
+        Timestamp = NextTimestamp Then Return NaN
+
       If Stepped Then
         ' w = v0*(t1-t0)+v1*(t2-t1)
         ' Solve for v1:
