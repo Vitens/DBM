@@ -109,10 +109,13 @@ Namespace Vitens.DynamicBandwidthMonitor
       If PreviousTimestamp > Timestamp Or
         Timestamp > NextTimestamp Then Return NaN
 
-      If Stepped Or PreviousTimestamp = NextTimestamp Then
+      If Stepped Then
         ' v1 = v0
         Return PreviousValue
       Else
+        If PreviousTimestamp = NextTimestamp Then
+          Return (PreviousValue+NextValue)/2
+        End If
         ' v1 = v0+(v2-v0)/(t2-t0)*(t1-t0)
         Return PreviousValue+(NextValue-PreviousValue)/
           TimeWeight(PreviousTimestamp, NextTimestamp)*
