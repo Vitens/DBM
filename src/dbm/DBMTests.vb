@@ -1206,12 +1206,12 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2021, 4, 4, 13, 13, 8), True), 74.86)
       AssertEqual(InterpolatedValue(0, 10,
         New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 10, 0, 0),
-        New DateTime(2021, 4, 4, 0, 0, 0), False), 0)
+        New DateTime(2021, 4, 4, 0, 0, 0),
+        New DateTime(2021, 4, 4, 10, 0, 0), False), 0)
       AssertEqual(InterpolatedValue(0, 10,
         New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 10, 0, 0),
-        New DateTime(2021, 4, 4, 7, 0, 0), False), 7)
+        New DateTime(2021, 4, 4, 7, 0, 0),
+        New DateTime(2021, 4, 4, 10, 0, 0), False), 7)
       AssertEqual(InterpolatedValue(0, 10,
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 10, 0, 0),
