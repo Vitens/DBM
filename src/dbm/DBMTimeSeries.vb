@@ -28,10 +28,10 @@ Imports System
 Namespace Vitens.DynamicBandwidthMonitor
 
 
-  Public Class DBMTimeWeighting
+  Public Class DBMTimeSeries
 
 
-    ' Contains time weighting functions.
+    ' Contains time series functions.
 
 
     Public Shared Function TimeWeight(Timestamp As DateTime,
@@ -62,9 +62,10 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function FindCentralValue(v0 As Double, v2 As Double,
-      t0 As DateTime, t1 As DateTime, t2 As DateTime, Stepped As Boolean,
-      w As Double) As Double
+    Public Shared Function FindCentralValue(PreviousValue As Double,
+      NextValue As Double, PreviousTimestamp As DateTime, Timestamp As DateTime,
+      NextTimestamp As DateTime, Stepped As Boolean,
+      TotalWeight As Double) As Double
 
       ' Finds the required central value v1 at given time t1 so that the
       ' time-weighted total of the three points in the time range from t0 (with
@@ -74,15 +75,27 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' w = v0*(t1-t0)+v1*(t2-t1)
         ' Solve for v1:
         '   v1 = (w-v0*(t1-t0))/(t2-t1)
-        Return (w-TimeWeightedValue(v0, Nothing, t0, t1, True))/
-          TimeWeight(t1, t2)
+        Return (TotalWeight-TimeWeightedValue(PreviousValue, Nothing,
+          PreviousTimestamp, Timestamp, True))/TimeWeight(Timestamp,
+          NextTimestamp)
       Else
         ' w = (v0+v1)/2*(t1-t0)+(v1+v2)/2*(t2-t1)
         ' Solve for v1:
         '   v1 = (2*w-v0*(t1-t0)-v2*(t2-t1))/(t2-t0)
-        Return (2*w-TimeWeightedValue(v0, Nothing, t0, t1, True)-
-          TimeWeightedValue(v2, Nothing, t1, t2, True))/TimeWeight(t0, t2)
+        Return (2*TotalWeight-TimeWeightedValue(PreviousValue, Nothing,
+          PreviousTimestamp, Timestamp, True)-TimeWeightedValue(NextValue,
+          Nothing, Timestamp, NextTimestamp, True))/
+          TimeWeight(PreviousTimestamp, NextTimestamp)
       End If
+
+    End Function
+
+
+    Public Shared Function InterpolatedValue(PreviousValue As Double,
+      NextValue As Double, PreviousTimestamp As DateTime, Timestamp As DateTime,
+      NextTimestamp As DateTime, Stepped As Boolean) As Double
+
+      ' TO DO
 
     End Function
 
