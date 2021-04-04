@@ -1184,6 +1184,87 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2021, 4, 10), New DateTime(2021, 4, 14),
         New DateTime(2021, 4, 18), False, 4.33), -1.4075)
 
+      AssertEqual(InterpolatedValue(88.81, 80.04,
+        New DateTime(2021, 4, 4, 0, 0, 0),
+        New DateTime(2021, 4, 4, 19, 9, 37),
+        New DateTime(2021, 4, 5, 3, 33, 35), True), 88.81)
+      AssertEqual(InterpolatedValue(65.18, 35.03,
+        New DateTime(2021, 4, 4, 0, 0, 0),
+        New DateTime(2021, 4, 4, 22, 28, 38),
+        New DateTime(2021, 4, 5, 0, 19, 52), True), 65.18)
+      AssertEqual(InterpolatedValue(4.86, 80.94,
+        New DateTime(2021, 4, 4, 0, 0, 0),
+        New DateTime(2021, 4, 4, 10, 36, 48),
+        New DateTime(2021, 4, 4, 19, 59, 45), True), 4.86)
+      AssertEqual(InterpolatedValue(58.07, 43.7,
+        New DateTime(2021, 4, 4, 0, 0, 0),
+        New DateTime(2021, 4, 4, 4, 42, 50),
+        New DateTime(2021, 4, 4, 22, 42, 49), True), 58.07)
+      AssertEqual(InterpolatedValue(74.86, 16.19,
+        New DateTime(2021, 4, 4, 0, 0, 0),
+        New DateTime(2021, 4, 4, 1, 59, 16),
+        New DateTime(2021, 4, 4, 13, 13, 8), True), 74.86)
+      AssertEqual(InterpolatedValue(0, 10,
+        New DateTime(2021, 4, 4, 0, 0, 0),
+        New DateTime(2021, 4, 4, 10, 0, 0),
+        New DateTime(2021, 4, 4, 0, 0, 0), False), 0)
+      AssertEqual(InterpolatedValue(0, 10,
+        New DateTime(2021, 4, 4, 0, 0, 0),
+        New DateTime(2021, 4, 4, 10, 0, 0),
+        New DateTime(2021, 4, 4, 7, 0, 0), False), 7)
+      AssertEqual(InterpolatedValue(0, 10,
+        New DateTime(2021, 4, 4, 0, 0, 0),
+        New DateTime(2021, 4, 4, 10, 0, 0),
+        New DateTime(2021, 4, 4, 10, 0, 0), False), 10)
+      AssertAlmostEqual(InterpolatedValue(47.42, 73.05,
+        New DateTime(2021, 4, 4, 0, 0, 0),
+        New DateTime(2021, 4, 4, 5, 41, 32),
+        New DateTime(2021, 4, 5, 5, 6, 30), False), 52.432)
+      AssertAlmostEqual(InterpolatedValue(81.21, 79.59,
+        New DateTime(2021, 4, 4, 0, 0, 0),
+        New DateTime(2021, 4, 4, 22, 37, 54),
+        New DateTime(2021, 4, 5, 8, 59, 35), False), 80.0988)
+      AssertAlmostEqual(InterpolatedValue(90.14, 58.01,
+        New DateTime(2021, 4, 4, 0, 0, 0),
+        New DateTime(2021, 4, 4, 0, 6, 21),
+        New DateTime(2021, 4, 4, 16, 53, 53), False), 89.9388)
+      AssertAlmostEqual(InterpolatedValue(5.67, 68,
+        New DateTime(2021, 4, 4, 0, 0, 0),
+        New DateTime(2021, 4, 4, 16, 57, 16),
+        New DateTime(2021, 4, 4, 17, 10, 6), False), 67.2235)
+      AssertAlmostEqual(InterpolatedValue(55.92, 48.91,
+        New DateTime(2021, 4, 4, 0, 0, 0),
+        New DateTime(2021, 4, 4, 17, 46, 0),
+        New DateTime(2021, 4, 4, 21, 13, 25), False), 50.0518)
+      AssertAlmostEqual(InterpolatedValue(97.63, 13.66,
+        New DateTime(2021, 4, 4, 0, 0, 0),
+        New DateTime(2021, 4, 4, 4, 43, 18),
+        New DateTime(2021, 4, 5, 1, 50, 5), False), 82.2833)
+      AssertAlmostEqual(InterpolatedValue(26.96, 37.18,
+        New DateTime(2021, 4, 4, 0, 0, 0),
+        New DateTime(2021, 4, 4, 12, 53, 35),
+        New DateTime(2021, 4, 5, 3, 11, 50), False), 31.8049)
+      AssertAlmostEqual(InterpolatedValue(98.8, 77.98,
+        New DateTime(2021, 4, 4, 0, 0, 0),
+        New DateTime(2021, 4, 4, 18, 22, 17),
+        New DateTime(2021, 4, 5, 3, 10, 5), False), 84.7212)
+      AssertAlmostEqual(InterpolatedValue(65.6, 36.55,
+        New DateTime(2021, 4, 4, 0, 0, 0),
+        New DateTime(2021, 4, 4, 10, 33, 7),
+        New DateTime(2021, 4, 4, 18, 9, 41), False), 48.7217)
+      AssertAlmostEqual(InterpolatedValue(71.55, 3.56,
+        New DateTime(2021, 4, 4, 0, 0, 0),
+        New DateTime(2021, 4, 4, 8, 14, 27),
+        New DateTime(2021, 4, 4, 9, 37, 53), False), 13.3762)
+      AssertAlmostEqual(InterpolatedValue(70.06, 69.35,
+        New DateTime(2021, 4, 4, 0, 0, 0),
+        New DateTime(2021, 4, 4, 3, 26, 19),
+        New DateTime(2021, 4, 4, 11, 36, 18), False), 69.8496)
+      AssertAlmostEqual(InterpolatedValue(78.38, 61.17,
+        New DateTime(2021, 4, 4, 0, 0, 0),
+        New DateTime(2021, 4, 4, 22, 57, 55),
+        New DateTime(2021, 4, 5, 21, 38, 51), False), 69.7216)
+
       ' DBMStatistics
       For i = 0 To 19
         With {

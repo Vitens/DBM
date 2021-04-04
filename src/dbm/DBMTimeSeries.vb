@@ -95,7 +95,17 @@ Namespace Vitens.DynamicBandwidthMonitor
       NextValue As Double, PreviousTimestamp As DateTime, Timestamp As DateTime,
       NextTimestamp As DateTime, Stepped As Boolean) As Double
 
-      ' TO DO
+      ' Returns the interpolated value v1 at given time t1 between the points at
+      ' times t0 (with value v0) and t2 (with value v2).
+
+      If Stepped Then
+        ' v1 = v0
+        Return PreviousValue
+      Else
+        ' v1 = v0+(v2-v0)/(t2-t0)*(t1-t0)
+        Return PreviousValue+(NextValue-PreviousValue)/
+          (NextTimestamp-PreviousTimestamp)*(Timestamp-PreviousTimestamp)
+      End If
 
     End Function
 
