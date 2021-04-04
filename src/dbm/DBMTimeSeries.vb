@@ -23,6 +23,7 @@ Option Strict
 
 
 Imports System
+Imports System.Double
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -37,7 +38,11 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function TimeWeight(Timestamp As DateTime,
       NextTimestamp As DateTime) As Double
 
-      Return NextTimestamp.Subtract(Timestamp).TotalDays
+      If Timestamp < NextTimestamp Then
+        Return NextTimestamp.Subtract(Timestamp).TotalDays
+      Else
+        Return NaN
+      End If
 
     End Function
 
