@@ -1023,14 +1023,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertEqual(EMATimeOffset(56000), -5770200)
 
       ' DBMTimeSeries
-      AssertNaN(TimeWeight(New DateTime(2020, 2, 20, 22, 55, 58),
-        New DateTime(2020, 2, 20, 22, 55, 58)))
-      AssertNaN(TimeWeight(New DateTime(2020, 2, 28, 16, 41, 54),
-        New DateTime(2020, 2, 28, 16, 41, 54)))
       AssertNaN(TimeWeight(New DateTime(2020, 9, 12, 5, 11, 42),
         New DateTime(2020, 5, 12, 18, 7, 18)))
       AssertNaN(TimeWeight(New DateTime(2020, 6, 21, 6, 17, 48),
         New DateTime(2020, 2, 4, 7, 24, 24)))
+      AssertEqual(TimeWeight(New DateTime(2020, 2, 20, 22, 55, 58),
+        New DateTime(2020, 2, 20, 22, 55, 58)), 0)
+      AssertEqual(TimeWeight(New DateTime(2020, 2, 28, 16, 41, 54),
+        New DateTime(2020, 2, 28, 16, 41, 54)), 0)
       AssertAlmostEqual(TimeWeight(New DateTime(2020, 5, 5, 9, 47, 55),
         New DateTime(2020, 10, 7, 8, 10, 17)), 154.9322)
       AssertAlmostEqual(TimeWeight(New DateTime(2020, 2, 7, 10, 39, 40),

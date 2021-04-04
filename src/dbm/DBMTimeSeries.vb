@@ -38,10 +38,10 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function TimeWeight(Timestamp As DateTime,
       NextTimestamp As DateTime) As Double
 
-      If Timestamp < NextTimestamp Then
-        Return NextTimestamp.Subtract(Timestamp).TotalDays
-      Else
+      If Timestamp > NextTimestamp Then
         Return NaN
+      Else
+        Return NextTimestamp.Subtract(Timestamp).TotalDays
       End If
 
     End Function
