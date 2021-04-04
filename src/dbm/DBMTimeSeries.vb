@@ -104,7 +104,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Else
         ' v1 = v0+(v2-v0)/(t2-t0)*(t1-t0)
         Return PreviousValue+(NextValue-PreviousValue)/
-          (NextTimestamp-PreviousTimestamp)*(Timestamp-PreviousTimestamp)
+          TimeWeight(PreviousTimestamp, NextTimestamp)*
+          TimeWeight(PreviousTimestamp, Timestamp)
       End If
 
     End Function
