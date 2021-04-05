@@ -23,6 +23,7 @@ Option Strict
 
 
 Imports System
+Imports System.Double
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -36,6 +37,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function TimeWeight(Timestamp As DateTime,
       NextTimestamp As DateTime) As Double
+
+      ' Return NaN if the timestamps are not in order.
+      If Timestamp > NextTimestamp Then Return NaN
 
       Return NextTimestamp.Subtract(Timestamp).TotalDays
 
@@ -72,6 +76,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' value v0) to t2 (with value v2) equals the given time-weighted total w.
 
       If Stepped Then
+        ' Return NaN if v1 has no weight.
+        If Timestamp = NextTimestamp Then Return NaN
         ' w = v0*(t1-t0)+v1*(t2-t1)
         ' Solve for v1:
         '   v1 = (w-v0*(t1-t0))/(t2-t1)
@@ -79,6 +85,8 @@ Namespace Vitens.DynamicBandwidthMonitor
           PreviousTimestamp, Timestamp, True))/TimeWeight(Timestamp,
           NextTimestamp)
       Else
+        ' Return NaN if the time range has no duration.
+        If PreviousTimestamp = NextTimestamp Then Return NaN
         ' w = (v0+v1)/2*(t1-t0)+(v1+v2)/2*(t2-t1)
         ' Solve for v1:
         '   v1 = (2*w-v0*(t1-t0)-v2*(t2-t1))/(t2-t0)
@@ -98,10 +106,18 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns the interpolated value v1 at given time t1 between the points at
       ' times t0 (with value v0) and t2 (with value v2).
 
+      ' Return NaN if the timestamps are not in order.
+      If PreviousTimestamp > Timestamp Or
+        Timestamp > NextTimestamp Then Return NaN
+
       If Stepped Then
         ' v1 = v0
         Return PreviousValue
       Else
+        ' Return average if the time range has no duration.
+        If PreviousTimestamp = NextTimestamp Then
+          Return (PreviousValue+NextValue)/2
+        End If
         ' v1 = v0+(v2-v0)/(t2-t0)*(t1-t0)
         Return PreviousValue+(NextValue-PreviousValue)/
           TimeWeight(PreviousTimestamp, NextTimestamp)*
