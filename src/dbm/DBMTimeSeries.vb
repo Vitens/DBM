@@ -36,19 +36,23 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Shared Function TimeWeight(Timestamp As DateTime,
-      NextTimestamp As DateTime) As Double
+      NextTimestamp As DateTime,
+      Optional RequireDuration As Boolean = False) As Double
 
-      ' Return NaN if the timestamps are not in order.
-      If Timestamp > NextTimestamp Then Return NaN
+      TimeWeight = NextTimestamp.Subtract(Timestamp).TotalDays
 
-      Return NextTimestamp.Subtract(Timestamp).TotalDays
+      ' Return NaN if the timestamps are not in order, or a duration is required
+      ' but equals zero.
+      If TimeWeight < 0 Or (RequireDuration And TimeWeight = 0) Then Return NaN
+
+      Return TimeWeight
 
     End Function
 
 
     Public Shared Function TimeWeightedValue(Value As Double,
       NextValue As Double, Timestamp As DateTime, NextTimestamp As DateTime,
-      Stepped As Boolean) As Double
+      Stepped As Boolean, Optional RequireDuration As Boolean = False) As Double
 
       TimeWeightedValue = Value
 
@@ -59,7 +63,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         TimeWeightedValue /= 2
       End If
 
-      TimeWeightedValue *= TimeWeight(Timestamp, NextTimestamp)
+      TimeWeightedValue *= TimeWeight(Timestamp, NextTimestamp, RequireDuration)
 
       Return TimeWeightedValue
 
@@ -76,24 +80,20 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' value v0) to t2 (with value v2) equals the given time-weighted total w.
 
       If Stepped Then
-        ' Return NaN if v1 has no weight.
-        If Timestamp = NextTimestamp Then Return NaN
         ' w = v0*(t1-t0)+v1*(t2-t1)
         ' Solve for v1:
         '   v1 = (w-v0*(t1-t0))/(t2-t1)
         Return (TotalWeight-TimeWeightedValue(PreviousValue, Nothing,
           PreviousTimestamp, Timestamp, True))/TimeWeight(Timestamp,
-          NextTimestamp)
+          NextTimestamp, True)
       Else
-        ' Return NaN if the time range has no duration.
-        If PreviousTimestamp = NextTimestamp Then Return NaN
         ' w = (v0+v1)/2*(t1-t0)+(v1+v2)/2*(t2-t1)
         ' Solve for v1:
         '   v1 = (2*w-v0*(t1-t0)-v2*(t2-t1))/(t2-t0)
         Return (2*TotalWeight-TimeWeightedValue(PreviousValue, Nothing,
           PreviousTimestamp, Timestamp, True)-TimeWeightedValue(NextValue,
           Nothing, Timestamp, NextTimestamp, True))/
-          TimeWeight(PreviousTimestamp, NextTimestamp)
+          TimeWeight(PreviousTimestamp, NextTimestamp, True)
       End If
 
     End Function
@@ -114,13 +114,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' v1 = v0
         Return PreviousValue
       Else
-        ' Return average if the time range has no duration.
-        If PreviousTimestamp = NextTimestamp Then
-          Return (PreviousValue+NextValue)/2
-        End If
         ' v1 = v0+(v2-v0)/(t2-t0)*(t1-t0)
         Return PreviousValue+(NextValue-PreviousValue)/
-          TimeWeight(PreviousTimestamp, NextTimestamp)*
+          TimeWeight(PreviousTimestamp, NextTimestamp, True)*
           TimeWeight(PreviousTimestamp, Timestamp)
       End If
 

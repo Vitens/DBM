@@ -1023,6 +1023,12 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertEqual(EMATimeOffset(56000), -5770200)
 
       ' DBMTimeSeries
+      AssertEqual(TimeWeight(New DateTime(2020, 1, 1, 0, 0, 0),
+        New DateTime(2020, 1, 1, 0, 0, 0)), 0)
+      AssertNaN(TimeWeight(New DateTime(2020, 1, 1, 0, 0, 0),
+        New DateTime(2020, 1, 1, 0, 0, 0), True))
+      AssertEqual(TimeWeight(New DateTime(2020, 1, 1, 0, 0, 0),
+        New DateTime(2020, 1, 1, 0, 0, 0), False), 0)
       AssertNaN(TimeWeight(New DateTime(2020, 9, 12, 5, 11, 42),
         New DateTime(2020, 5, 12, 18, 7, 18))) ' t1 < t0
       AssertNaN(TimeWeight(New DateTime(2020, 6, 21, 6, 17, 48),
@@ -1057,13 +1063,16 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2020, 6, 4, 23, 43, 49)), 68.6936)
       AssertAlmostEqual(TimeWeight(New DateTime(2020, 3, 26, 18, 35, 45),
         New DateTime(2020, 4, 12, 5, 2, 5)), 16.435)
-      AssertAlmostEqual(TimeWeight(New DateTime(2020, 1, 5, 7, 52, 32),
-        New DateTime(2020, 6, 25, 9, 26, 39)), 172.0654)
-      AssertAlmostEqual(TimeWeight(New DateTime(2020, 4, 22, 8, 59, 30),
-        New DateTime(2020, 7, 5, 6, 49, 44)), 73.9099)
-      AssertAlmostEqual(TimeWeight(New DateTime(2020, 1, 5, 22, 56, 59),
-        New DateTime(2020, 5, 3, 14, 40, 10)), 118.655)
 
+      AssertEqual(TimeWeightedValue(89.065, 88.0274,
+        New DateTime(2020, 1, 1, 0, 0, 0),
+        New DateTime(2020, 1, 1, 0, 0, 0), True), 0)
+      AssertNaN(TimeWeightedValue(89.065, 88.0274,
+        New DateTime(2020, 1, 1, 0, 0, 0),
+        New DateTime(2020, 1, 1, 0, 0, 0), True, True))
+      AssertEqual(TimeWeightedValue(89.065, 88.0274,
+        New DateTime(2020, 1, 1, 0, 0, 0),
+        New DateTime(2020, 1, 1, 0, 0, 0), True, False), 0)
       AssertNaN(TimeWeightedValue(65.598, 69.4065,
         New DateTime(2021, 4, 2, 12, 36, 29),
         New DateTime(2021, 4, 2, 12, 25, 45), False)) ' t1 < t0
@@ -1115,15 +1124,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(TimeWeightedValue(58.8315, 55.2946,
         New DateTime(2021, 4, 2, 22, 51, 18),
         New DateTime(2021, 4, 2, 22, 56, 14), True), 0.2016)
-      AssertAlmostEqual(TimeWeightedValue(34.7707, 27.6712,
-        New DateTime(2021, 4, 2, 11, 25, 40),
-        New DateTime(2021, 4, 2, 11, 34, 54), True), 0.223)
-      AssertAlmostEqual(TimeWeightedValue(37.8202, 35.3707,
-        New DateTime(2021, 4, 2, 21, 51, 16),
-        New DateTime(2021, 4, 2, 21, 52, 48), False), 0.039)
-      AssertAlmostEqual(TimeWeightedValue(89.065, 88.0274,
-        New DateTime(2021, 4, 2, 19, 25, 36),
-        New DateTime(2021, 4, 2, 19, 35, 35), True), 0.6175)
 
       AssertNaN(FindCentralValue(0.17, 4.81,
         New DateTime(2021, 4, 5), New DateTime(2021, 4, 4),
@@ -1196,10 +1196,10 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 0, 0, 0), True), 78.38) ' s, t0 = t2
-      AssertEqual(InterpolatedValue(78.38, 61.17,
+      AssertNaN(InterpolatedValue(78.38, 61.17,
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 0, 0, 0), False), 69.775) ' !s, t0 = t2
+        New DateTime(2021, 4, 4, 0, 0, 0), False)) ' !s, t0 = t2
       AssertEqual(InterpolatedValue(88.81, 80.04,
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 19, 9, 37),
