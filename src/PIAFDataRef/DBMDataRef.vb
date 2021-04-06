@@ -455,7 +455,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                     Values.Item(iFL-1).Timestamp.LocalTime,
                     Results.Item(i+1).Timestamp, Stepped),
                     Results.Item(i+1).ForecastItem.Forecast,
-                    Values.Item(iFL-1).Timestamp.LocalTime
+                    Values.Item(iFL-1).Timestamp.LocalTime,
                     Results.Item(i+1).Timestamp, Stepped)
                 End If
                 If Results.Item(i).Timestamp >
@@ -469,7 +469,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                       Results.Item(i+1).ForecastItem.Forecast,
                       Results.Item(i).Timestamp,
                       Values.Item(iV+1).Timestamp.LocalTime,
-                      Results.Item(i+1).Timestamp, Stepped)
+                      Results.Item(i+1).Timestamp, Stepped),
                       Results.Item(i).Timestamp,
                       Values.Item(iV+1).Timestamp.LocalTime, Stepped)
                   Else
