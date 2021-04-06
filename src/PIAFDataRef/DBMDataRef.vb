@@ -425,9 +425,9 @@ Namespace Vitens.DynamicBandwidthMonitor
               ' Calculate weight of original from iFL-1 to iV+1. The total
               ' weight is then from the value before the flatline to the value
               ' after the spike value. These two values are unmodified.
-              i = -1
+              i = -1 ' Start at iFL-1.
               MeasurementWeight = 0
-              Do While iFL+i <= iV
+              Do While iFL+i < iV+1
                 MeasurementWeight += TimeWeightedValue(
                   Convert.ToDouble(Values.Item(iFL+i).Value),
                   Convert.ToDouble(Values.Item(iFL+i+1).Value),
