@@ -403,6 +403,11 @@ Namespace Vitens.DynamicBandwidthMonitor
         If Not Convert.ToDouble(Value.Value) =
           Convert.ToDouble(Values.Item(iFL).Value) Then
 
+          ' iFL-1  Last good value before flatline
+          ' iFL    Start of flatline
+          ' iV     Spike value
+          ' iV+1   First good value
+
           ' * A flatline can never start at the first value, as we don't know if
           '     the start was before this;
           ' * It also cannot end on the last value, as we don't know if the end
@@ -412,9 +417,10 @@ Namespace Vitens.DynamicBandwidthMonitor
           '     value.
           If iFL > 0 And iV < Values.Count-1 And iV-iFL > 1 Then
 
-            ' The duration of the flatline has to be at least one hour.
-            If Values.Item(iV).Timestamp.LocalTime.Subtract(
-              Values.Item(iFL).Timestamp.LocalTime).TotalHours >= 1 Then
+            ' The duration has to be at least 12 calculation intervals.
+            If Values.Item(iV+1).Timestamp.LocalTime.Subtract(
+              Values.Item(iFL-1).Timestamp.LocalTime).TotalSeconds/
+              CalculationInterval >= 12 Then
 
               ' Remove flatline values.
               Do While Deflatline.Item(Deflatline.Count-1).
