@@ -422,8 +422,10 @@ Namespace Vitens.DynamicBandwidthMonitor
                 Deflatline.RemoveAt(Deflatline.Count-1) ' Remove flatline value.
               Loop
 
-              ' Calculate weight of original.
-              i = 0
+              ' Calculate weight of original from iFL-1 to iV+1. The total
+              ' weight is then from the value before the flatline to the value
+              ' after the spike value. These two values are unmodified.
+              i = -1
               MeasurementWeight = 0
               Do While iFL+i <= iV
                 MeasurementWeight += TimeWeightedValue(
@@ -434,14 +436,14 @@ Namespace Vitens.DynamicBandwidthMonitor
                 i += 1 ' Increase iterator.
               Loop
 
-              ' Calculate weight of forecast.
+              ' First iteration: Calculate weight of forecast.
               i = 0
               ForecastWeight = 0
               Do While i < Results.Count-1
                 If Results.Item(i).Timestamp >=
                   Values.Item(iV+1).Timestamp.LocalTime Then Exit Do ' After
-                If Results.Item(i).Timestamp >=
-                  Values.Item(iFL).Timestamp.LocalTime Then
+                If Results.Item(i).Timestamp >
+                  Values.Item(iFL-1).Timestamp.LocalTime Then
                   ForecastWeight += TimeWeightedValue(
                     Results.Item(i).ForecastItem.Forecast,
                     Results.Item(i+1).ForecastItem.Forecast,
@@ -451,13 +453,13 @@ Namespace Vitens.DynamicBandwidthMonitor
                 i += 1 ' Increase iterator.
               Loop
 
-              ' Add weight adjusted forecast.
+              ' Second iteration: Add weight adjusted forecast.
               i = 0
               Do While i < Results.Count-1
                 If Results.Item(i).Timestamp >=
                   Values.Item(iV+1).Timestamp.LocalTime Then Exit Do ' After
-                If Results.Item(i).Timestamp >=
-                  Values.Item(iFL).Timestamp.LocalTime Then
+                If Results.Item(i).Timestamp >
+                  Values.Item(iFL-1).Timestamp.LocalTime Then
                   Deflatline.Add(New AFValue(
                     Results.Item(i).ForecastItem.Forecast*
                     MeasurementWeight/ForecastWeight,
