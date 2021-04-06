@@ -52,7 +52,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function TimeWeightedValue(Value As Double,
       NextValue As Double, Timestamp As DateTime, NextTimestamp As DateTime,
-      Stepped As Boolean, Optional RequireDuration As Boolean = False) As Double
+      Stepped As Boolean) As Double
 
       TimeWeightedValue = Value
 
@@ -63,38 +63,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         TimeWeightedValue /= 2
       End If
 
-      TimeWeightedValue *= TimeWeight(Timestamp, NextTimestamp, RequireDuration)
+      TimeWeightedValue *= TimeWeight(Timestamp, NextTimestamp)
 
       Return TimeWeightedValue
-
-    End Function
-
-
-    Public Shared Function FindCentralValue(PreviousValue As Double,
-      NextValue As Double, PreviousTimestamp As DateTime, Timestamp As DateTime,
-      NextTimestamp As DateTime, Stepped As Boolean,
-      TotalWeight As Double) As Double
-
-      ' Finds the required central value v1 at given time t1 so that the
-      ' time-weighted total of the three points in the time range from t0 (with
-      ' value v0) to t2 (with value v2) equals the given time-weighted total w.
-
-      If Stepped Then
-        ' w = v0*(t1-t0)+v1*(t2-t1)
-        ' Solve for v1:
-        '   v1 = (w-v0*(t1-t0))/(t2-t1)
-        Return (TotalWeight-TimeWeightedValue(PreviousValue, Nothing,
-          PreviousTimestamp, Timestamp, True))/TimeWeight(Timestamp,
-          NextTimestamp, True)
-      Else
-        ' w = (v0+v1)/2*(t1-t0)+(v1+v2)/2*(t2-t1)
-        ' Solve for v1:
-        '   v1 = (2*w-v0*(t1-t0)-v2*(t2-t1))/(t2-t0)
-        Return (2*TotalWeight-TimeWeightedValue(PreviousValue, Nothing,
-          PreviousTimestamp, Timestamp, True)-TimeWeightedValue(NextValue,
-          Nothing, Timestamp, NextTimestamp, True))/
-          TimeWeight(PreviousTimestamp, NextTimestamp, True)
-      End If
 
     End Function
 

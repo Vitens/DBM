@@ -1064,15 +1064,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(TimeWeight(New DateTime(2020, 3, 26, 18, 35, 45),
         New DateTime(2020, 4, 12, 5, 2, 5)), 16.435)
 
-      AssertEqual(TimeWeightedValue(89.065, 88.0274,
-        New DateTime(2020, 1, 1, 0, 0, 0),
-        New DateTime(2020, 1, 1, 0, 0, 0), True), 0)
-      AssertNaN(TimeWeightedValue(89.065, 88.0274,
-        New DateTime(2020, 1, 1, 0, 0, 0),
-        New DateTime(2020, 1, 1, 0, 0, 0), True, True))
-      AssertEqual(TimeWeightedValue(89.065, 88.0274,
-        New DateTime(2020, 1, 1, 0, 0, 0),
-        New DateTime(2020, 1, 1, 0, 0, 0), True, False), 0)
       AssertNaN(TimeWeightedValue(65.598, 69.4065,
         New DateTime(2021, 4, 2, 12, 36, 29),
         New DateTime(2021, 4, 2, 12, 25, 45), False)) ' t1 < t0
@@ -1124,65 +1115,15 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(TimeWeightedValue(58.8315, 55.2946,
         New DateTime(2021, 4, 2, 22, 51, 18),
         New DateTime(2021, 4, 2, 22, 56, 14), True), 0.2016)
-
-      AssertNaN(FindCentralValue(0.17, 4.81,
-        New DateTime(2021, 4, 5), New DateTime(2021, 4, 4),
-        New DateTime(2021, 4, 6), True, 4.33)) ' s, t1 < t0
-      AssertNaN(FindCentralValue(0.17, 4.81,
-        New DateTime(2021, 4, 4), New DateTime(2021, 4, 6),
-        New DateTime(2021, 4, 5), True, 4.33)) ' s, t2 < t1
-      AssertNaN(FindCentralValue(0.17, 4.81,
-        New DateTime(2021, 4, 5), New DateTime(2021, 4, 4),
-        New DateTime(2021, 4, 6), False, 4.33)) ' !s, t1 < t0
-      AssertNaN(FindCentralValue(0.17, 4.81,
-        New DateTime(2021, 4, 4), New DateTime(2021, 4, 6),
-        New DateTime(2021, 4, 5), False, 4.33)) ' !s, t2 < t1
-      AssertNaN(FindCentralValue(0.17, 4.81,
-        New DateTime(2021, 4, 4), New DateTime(2021, 4, 4),
-        New DateTime(2021, 4, 4), False, 4.33)) ' !s, t0 = t2
-      AssertNaN(FindCentralValue(0.17, 4.81,
-        New DateTime(2021, 4, 4), New DateTime(2021, 4, 4),
-        New DateTime(2021, 4, 4), True, 4.33)) ' s, t1 = t2
-      AssertNaN(FindCentralValue(0.17, 4.81,
-        New DateTime(2021, 4, 4), New DateTime(2021, 4, 5),
-        New DateTime(2021, 4, 5), True, 4.33)) ' s, t1 = t2
-      AssertEqual(FindCentralValue(0.17, 4.81,
-        New DateTime(2021, 4, 4), New DateTime(2021, 4, 5),
-        New DateTime(2021, 4, 5), False, 4.33), 8.49) ' !s, t1 = t2
-      AssertEqual(FindCentralValue(2, 3, New DateTime(2021, 4, 10),
-        New DateTime(2021, 4, 14), New DateTime(2021, 4, 15), True, 20), 12)
-      AssertEqual(FindCentralValue(2, 3, New DateTime(2021, 4, 10),
-        New DateTime(2021, 4, 14), New DateTime(2021, 4, 15), False, 20), 5.8)
-      AssertAlmostEqual(FindCentralValue(3.66, 4.25,
-        New DateTime(2021, 4, 11), New DateTime(2021, 4, 12),
-        New DateTime(2021, 4, 14), False, 9.85), 2.5133)
-      AssertEqual(FindCentralValue(0.09, 6.04,
-        New DateTime(2021, 4, 13), New DateTime(2021, 4, 17),
-        New DateTime(2021, 4, 23), False, 7.52), -2.156)
-      AssertEqual(FindCentralValue(0.69, 5.76,
-        New DateTime(2021, 4, 12), New DateTime(2021, 4, 14),
-        New DateTime(2021, 4, 18), True, 7.11), 1.4325)
-      AssertAlmostEqual(FindCentralValue(1.45, 4.93,
-        New DateTime(2021, 4, 13), New DateTime(2021, 4, 19),
-        New DateTime(2021, 4, 25), True, 4.5), -0.7)
-      AssertEqual(FindCentralValue(0.27, 5.82,
-        New DateTime(2021, 4, 13), New DateTime(2021, 4, 15),
-        New DateTime(2021, 4, 21), True, 2.97), 0.405)
-      AssertAlmostEqual(FindCentralValue(1.21, 5,
-        New DateTime(2021, 4, 10), New DateTime(2021, 4, 13),
-        New DateTime(2021, 4, 15), False, 8.6), 0.714)
-      AssertEqual(FindCentralValue(2.28, 7.9,
-        New DateTime(2021, 4, 10), New DateTime(2021, 4, 16),
-        New DateTime(2021, 4, 17), True, 1.24), -12.44)
-      AssertAlmostEqual(FindCentralValue(0.68, 3.33,
-        New DateTime(2021, 4, 10), New DateTime(2021, 4, 12),
-        New DateTime(2021, 4, 13), True, 4.1), 2.74)
-      AssertAlmostEqual(FindCentralValue(3.45, 4.79,
-        New DateTime(2021, 4, 10), New DateTime(2021, 4, 13),
-        New DateTime(2021, 4, 17), True, 4.92), -1.3575)
-      AssertEqual(FindCentralValue(0.17, 7.71,
-        New DateTime(2021, 4, 11), New DateTime(2021, 4, 12),
-        New DateTime(2021, 4, 15), True, 0.65), 0.16)
+      AssertAlmostEqual(TimeWeightedValue(34.7707, 27.6712,
+        New DateTime(2021, 4, 2, 11, 25, 40),
+        New DateTime(2021, 4, 2, 11, 34, 54), True), 0.223)
+      AssertAlmostEqual(TimeWeightedValue(37.8202, 35.3707,
+        New DateTime(2021, 4, 2, 21, 51, 16),
+        New DateTime(2021, 4, 2, 21, 52, 48), False), 0.039)
+      AssertAlmostEqual(TimeWeightedValue(89.065, 88.0274,
+        New DateTime(2021, 4, 2, 19, 25, 36),
+        New DateTime(2021, 4, 2, 19, 35, 35), True), 0.6175)
 
       AssertNaN(InterpolatedValue(78.38, 61.17,
         New DateTime(2021, 4, 4, 1, 0, 0),
