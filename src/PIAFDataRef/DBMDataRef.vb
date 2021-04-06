@@ -428,6 +428,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               i = -1 ' Start at iFL-1.
               MeasurementWeight = 0
               Do While iFL+i < iV+1
+                ' Add weight.
                 MeasurementWeight += TimeWeightedValue(
                   Convert.ToDouble(Values.Item(iFL+i).Value),
                   Convert.ToDouble(Values.Item(iFL+i+1).Value),
@@ -442,13 +443,43 @@ Namespace Vitens.DynamicBandwidthMonitor
               Do While i < Results.Count-1
                 If Results.Item(i).Timestamp >=
                   Values.Item(iV+1).Timestamp.LocalTime Then Exit Do ' After
-                If Results.Item(i).Timestamp >
+                If Results.Item(i).Timestamp <
+                  Values.Item(iFL-1).Timestamp.LocalTime And
+                  Results.Item(i+1).Timestamp >
                   Values.Item(iFL-1).Timestamp.LocalTime Then
+                  ' Add weight, interpolate forecast value at iFL-1.
                   ForecastWeight += TimeWeightedValue(
-                    Results.Item(i).ForecastItem.Forecast,
+                    InterpolatedValue(Results.Item(i).ForecastItem.Forecast,
                     Results.Item(i+1).ForecastItem.Forecast,
                     Results.Item(i).Timestamp,
+                    Values.Item(iFL-1).Timestamp.LocalTime,
+                    Results.Item(i+1).Timestamp, Stepped),
+                    Results.Item(i+1).ForecastItem.Forecast,
+                    Values.Item(iFL-1).Timestamp.LocalTime
                     Results.Item(i+1).Timestamp, Stepped)
+                End If
+                If Results.Item(i).Timestamp >
+                  Values.Item(iFL-1).Timestamp.LocalTime Then
+                  If Results.Item(i+1).Timestamp >
+                    Values.Item(iV+1).Timestamp.LocalTime Then
+                    ' Add weight, interpolate forecast value at iV+1.
+                    ForecastWeight += TimeWeightedValue(
+                      Results.Item(i).ForecastItem.Forecast,
+                      InterpolatedValue(Results.Item(i).ForecastItem.Forecast,
+                      Results.Item(i+1).ForecastItem.Forecast,
+                      Results.Item(i).Timestamp,
+                      Values.Item(iV+1).Timestamp.LocalTime,
+                      Results.Item(i+1).Timestamp, Stepped)
+                      Results.Item(i).Timestamp,
+                      Values.Item(iV+1).Timestamp.LocalTime, Stepped)
+                  Else
+                    ' Add weight.
+                    ForecastWeight += TimeWeightedValue(
+                      Results.Item(i).ForecastItem.Forecast,
+                      Results.Item(i+1).ForecastItem.Forecast,
+                      Results.Item(i).Timestamp,
+                      Results.Item(i+1).Timestamp, Stepped)
+                  End If
                 End If
                 i += 1 ' Increase iterator.
               Loop
