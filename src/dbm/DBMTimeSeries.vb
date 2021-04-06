@@ -35,21 +35,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Contains time series functions.
 
 
-    Public Shared Function TimeWeight(Timestamp As DateTime,
-      NextTimestamp As DateTime,
-      Optional RequireDuration As Boolean = False) As Double
-
-      TimeWeight = NextTimestamp.Subtract(Timestamp).TotalDays
-
-      ' Return NaN if the timestamps are not in order, or a duration is required
-      ' but equals zero.
-      If TimeWeight < 0 Or (RequireDuration And TimeWeight = 0) Then Return NaN
-
-      Return TimeWeight
-
-    End Function
-
-
     Public Shared Function TimeWeightedValue(Value As Double,
       NextValue As Double, Timestamp As DateTime, NextTimestamp As DateTime,
       Stepped As Boolean) As Double
@@ -63,33 +48,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         TimeWeightedValue /= 2
       End If
 
-      TimeWeightedValue *= TimeWeight(Timestamp, NextTimestamp)
+      TimeWeightedValue *= NextTimestamp.Subtract(Timestamp).TotalDays
 
       Return TimeWeightedValue
-
-    End Function
-
-
-    Public Shared Function InterpolateValue(PreviousValue As Double,
-      NextValue As Double, PreviousTimestamp As DateTime, Timestamp As DateTime,
-      NextTimestamp As DateTime, Stepped As Boolean) As Double
-
-      ' Returns the interpolated value v1 at given time t1 between the points at
-      ' times t0 (with value v0) and t2 (with value v2).
-
-      ' Return NaN if the timestamps are not in order.
-      If PreviousTimestamp > Timestamp Or
-        Timestamp > NextTimestamp Then Return NaN
-
-      If Stepped Then
-        ' v1 = v0
-        Return PreviousValue
-      Else
-        ' v1 = v0+(v2-v0)/(t2-t0)*(t1-t0)
-        Return PreviousValue+(NextValue-PreviousValue)/
-          TimeWeight(PreviousTimestamp, NextTimestamp, True)*
-          TimeWeight(PreviousTimestamp, Timestamp)
-      End If
 
     End Function
 

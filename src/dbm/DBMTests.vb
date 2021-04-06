@@ -1023,59 +1023,18 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertEqual(EMATimeOffset(56000), -5770200)
 
       ' DBMTimeSeries
-      AssertEqual(TimeWeight(New DateTime(2020, 1, 1, 0, 0, 0),
-        New DateTime(2020, 1, 1, 0, 0, 0)), 0)
-      AssertNaN(TimeWeight(New DateTime(2020, 1, 1, 0, 0, 0),
-        New DateTime(2020, 1, 1, 0, 0, 0), True))
-      AssertEqual(TimeWeight(New DateTime(2020, 1, 1, 0, 0, 0),
-        New DateTime(2020, 1, 1, 0, 0, 0), False), 0)
-      AssertNaN(TimeWeight(New DateTime(2020, 9, 12, 5, 11, 42),
-        New DateTime(2020, 5, 12, 18, 7, 18))) ' t1 < t0
-      AssertNaN(TimeWeight(New DateTime(2020, 6, 21, 6, 17, 48),
-        New DateTime(2020, 2, 4, 7, 24, 24))) ' t1 < t0
-      AssertEqual(TimeWeight(New DateTime(2020, 2, 20, 22, 55, 58),
-        New DateTime(2020, 2, 20, 22, 55, 58)), 0) ' t0 = t1
-      AssertEqual(TimeWeight(New DateTime(2020, 2, 28, 16, 41, 54),
-        New DateTime(2020, 2, 28, 16, 41, 54)), 0) ' t0 = t1
-      AssertAlmostEqual(TimeWeight(New DateTime(2020, 5, 5, 9, 47, 55),
-        New DateTime(2020, 10, 7, 8, 10, 17)), 154.9322)
-      AssertAlmostEqual(TimeWeight(New DateTime(2020, 2, 7, 10, 39, 40),
-        New DateTime(2020, 6, 10, 21, 5, 21)), 124.4345)
-      AssertAlmostEqual(TimeWeight(New DateTime(2020, 4, 10, 13, 56, 19),
-        New DateTime(2020, 5, 27, 15, 38, 5)), 47.0707)
-      AssertAlmostEqual(TimeWeight(New DateTime(2020, 5, 21, 15, 3, 10),
-        New DateTime(2020, 7, 10, 12, 13, 42)), 49.8823)
-      AssertAlmostEqual(TimeWeight(New DateTime(2020, 3, 19, 0, 11, 12),
-        New DateTime(2020, 6, 24, 17, 10, 6)), 97.7076)
-      AssertAlmostEqual(TimeWeight(New DateTime(2020, 4, 30, 19, 49, 8),
-        New DateTime(2020, 9, 14, 4, 28, 49)), 136.3609)
-      AssertAlmostEqual(TimeWeight(New DateTime(2020, 4, 22, 17, 30, 44),
-        New DateTime(2020, 6, 21, 22, 59, 36)), 60.2284)
-      AssertAlmostEqual(TimeWeight(New DateTime(2020, 1, 31, 15, 2, 26),
-        New DateTime(2020, 5, 27, 13, 35, 8)), 116.9394)
-      AssertAlmostEqual(TimeWeight(New DateTime(2020, 6, 29, 23, 22, 4),
-        New DateTime(2020, 12, 11, 14, 37, 47)), 164.6359)
-      AssertAlmostEqual(TimeWeight(New DateTime(2020, 2, 12, 20, 49, 55),
-        New DateTime(2020, 2, 17, 12, 1, 54)), 4.6333)
-      AssertAlmostEqual(TimeWeight(New DateTime(2020, 6, 4, 4, 5, 2),
-        New DateTime(2020, 7, 10, 17, 12, 8)), 36.5466)
-      AssertAlmostEqual(TimeWeight(New DateTime(2020, 3, 28, 7, 5, 6),
-        New DateTime(2020, 6, 4, 23, 43, 49)), 68.6936)
-      AssertAlmostEqual(TimeWeight(New DateTime(2020, 3, 26, 18, 35, 45),
-        New DateTime(2020, 4, 12, 5, 2, 5)), 16.435)
-
-      AssertNaN(TimeWeightedValue(65.598, 69.4065,
-        New DateTime(2021, 4, 2, 12, 36, 29),
-        New DateTime(2021, 4, 2, 12, 25, 45), False)) ' t1 < t0
-      AssertNaN(TimeWeightedValue(64.0065, 66.1427,
-        New DateTime(2021, 4, 2, 3, 21, 41),
-        New DateTime(2021, 4, 2, 3, 19, 53), True)) ' t1 < t0
+      AssertAlmostEqual(TimeWeightedValue(37.8202, 35.3707,
+        New DateTime(2021, 4, 2, 21, 52, 48),
+        New DateTime(2021, 4, 2, 21, 51, 16), False), -0.039)
+      AssertAlmostEqual(TimeWeightedValue(89.065, 88.0274,
+        New DateTime(2021, 4, 2, 19, 35, 35),
+        New DateTime(2021, 4, 2, 19, 25, 36), True), -0.6175)
       AssertEqual(TimeWeightedValue(56.6827, 51.6966,
         New DateTime(2021, 4, 2, 15, 46, 26),
-        New DateTime(2021, 4, 2, 15, 46, 26), False), 0) ' t0 = t1
+        New DateTime(2021, 4, 2, 15, 46, 26), False), 0)
       AssertEqual(TimeWeightedValue(1.4532, 3.5828,
         New DateTime(2021, 4, 2, 13, 37, 33),
-        New DateTime(2021, 4, 2, 13, 37, 33), True), 0) ' t0 = t1
+        New DateTime(2021, 4, 2, 13, 37, 33), True), 0)
       AssertAlmostEqual(TimeWeightedValue(54.5572, 59.5128,
         New DateTime(2021, 4, 2, 16, 24, 10),
         New DateTime(2021, 4, 2, 16, 30, 29), False), 0.2502)
@@ -1124,87 +1083,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(TimeWeightedValue(89.065, 88.0274,
         New DateTime(2021, 4, 2, 19, 25, 36),
         New DateTime(2021, 4, 2, 19, 35, 35), True), 0.6175)
-
-      AssertNaN(InterpolateValue(78.38, 61.17,
-        New DateTime(2021, 4, 4, 1, 0, 0),
-        New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 2, 0, 0), True)) ' t1 < t0
-      AssertNaN(InterpolateValue(78.38, 61.17,
-        New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 2, 0, 0),
-        New DateTime(2021, 4, 4, 1, 0, 0), True)) ' t2 < t1
-      AssertEqual(InterpolateValue(78.38, 61.17,
-        New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 0, 0, 0), True), 78.38) ' s, t0 = t2
-      AssertNaN(InterpolateValue(78.38, 61.17,
-        New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 0, 0, 0), False)) ' !s, t0 = t2
-      AssertEqual(InterpolateValue(88.81, 80.04,
-        New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 19, 9, 37),
-        New DateTime(2021, 4, 5, 3, 33, 35), True), 88.81)
-      AssertEqual(InterpolateValue(65.18, 35.03,
-        New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 22, 28, 38),
-        New DateTime(2021, 4, 5, 0, 19, 52), True), 65.18)
-      AssertEqual(InterpolateValue(4.86, 80.94,
-        New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 10, 36, 48),
-        New DateTime(2021, 4, 4, 19, 59, 45), True), 4.86)
-      AssertEqual(InterpolateValue(58.07, 43.7,
-        New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 4, 42, 50),
-        New DateTime(2021, 4, 4, 22, 42, 49), True), 58.07)
-      AssertEqual(InterpolateValue(74.86, 16.19,
-        New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 1, 59, 16),
-        New DateTime(2021, 4, 4, 13, 13, 8), True), 74.86)
-      AssertEqual(InterpolateValue(0, 10,
-        New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 10, 0, 0), False), 0)
-      AssertEqual(InterpolateValue(0, 10,
-        New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 7, 0, 0),
-        New DateTime(2021, 4, 4, 10, 0, 0), False), 7)
-      AssertEqual(InterpolateValue(0, 10,
-        New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 10, 0, 0),
-        New DateTime(2021, 4, 4, 10, 0, 0), False), 10)
-      AssertAlmostEqual(InterpolateValue(47.42, 73.05,
-        New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 5, 41, 32),
-        New DateTime(2021, 4, 5, 5, 6, 30), False), 52.432)
-      AssertAlmostEqual(InterpolateValue(81.21, 79.59,
-        New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 22, 37, 54),
-        New DateTime(2021, 4, 5, 8, 59, 35), False), 80.0988)
-      AssertAlmostEqual(InterpolateValue(90.14, 58.01,
-        New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 0, 6, 21),
-        New DateTime(2021, 4, 4, 16, 53, 53), False), 89.9388)
-      AssertAlmostEqual(InterpolateValue(5.67, 68,
-        New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 16, 57, 16),
-        New DateTime(2021, 4, 4, 17, 10, 6), False), 67.2235)
-      AssertAlmostEqual(InterpolateValue(55.92, 48.91,
-        New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 17, 46, 0),
-        New DateTime(2021, 4, 4, 21, 13, 25), False), 50.0518)
-      AssertAlmostEqual(InterpolateValue(97.63, 13.66,
-        New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 4, 43, 18),
-        New DateTime(2021, 4, 5, 1, 50, 5), False), 82.2833)
-      AssertAlmostEqual(InterpolateValue(26.96, 37.18,
-        New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 12, 53, 35),
-        New DateTime(2021, 4, 5, 3, 11, 50), False), 31.8049)
-      AssertAlmostEqual(InterpolateValue(98.8, 77.98,
-        New DateTime(2021, 4, 4, 0, 0, 0),
-        New DateTime(2021, 4, 4, 18, 22, 17),
-        New DateTime(2021, 4, 5, 3, 10, 5), False), 84.7212)
 
       ' DBMStatistics
       For i = 0 To 19

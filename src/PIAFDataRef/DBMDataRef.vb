@@ -447,13 +447,9 @@ Namespace Vitens.DynamicBandwidthMonitor
                   Values.Item(iFL-1).Timestamp.LocalTime And
                   Results.Item(i+1).Timestamp >
                   Values.Item(iFL-1).Timestamp.LocalTime Then
-                  ' Add weight, interpolate forecast value at iFL-1.
+                  ' Add first weight.
                   ForecastWeight += TimeWeightedValue(
-                    InterpolateValue(Results.Item(i).ForecastItem.Forecast,
-                    Results.Item(i+1).ForecastItem.Forecast,
-                    Results.Item(i).Timestamp,
-                    Values.Item(iFL-1).Timestamp.LocalTime,
-                    Results.Item(i+1).Timestamp, Stepped),
+                    Convert.ToDouble(Values.Item(iFL-1).Value),
                     Results.Item(i+1).ForecastItem.Forecast,
                     Values.Item(iFL-1).Timestamp.LocalTime,
                     Results.Item(i+1).Timestamp, Stepped)
@@ -462,14 +458,10 @@ Namespace Vitens.DynamicBandwidthMonitor
                   Values.Item(iFL-1).Timestamp.LocalTime Then
                   If Results.Item(i+1).Timestamp >
                     Values.Item(iV+1).Timestamp.LocalTime Then
-                    ' Add weight, interpolate forecast value at iV+1.
+                    ' Add last weight.
                     ForecastWeight += TimeWeightedValue(
                       Results.Item(i).ForecastItem.Forecast,
-                      InterpolateValue(Results.Item(i).ForecastItem.Forecast,
-                      Results.Item(i+1).ForecastItem.Forecast,
-                      Results.Item(i).Timestamp,
-                      Values.Item(iV+1).Timestamp.LocalTime,
-                      Results.Item(i+1).Timestamp, Stepped),
+                      Convert.ToDouble(Values.Item(iV+1).Value),
                       Results.Item(i).Timestamp,
                       Values.Item(iV+1).Timestamp.LocalTime, Stepped)
                   Else
