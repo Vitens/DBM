@@ -447,7 +447,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                 If Results.Item(i).Timestamp >
                   Values.Item(iFL-1).Timestamp.LocalTime Then
                   ' Calculate numerator for scale factor; iFL-1.
-                  If Results.Item(i-1).Timestamp <=
+                  If Results.Item(i-1).Timestamp <
                     Values.Item(iFL-1).Timestamp.LocalTime Then
                     ScaleNumerator -= TimeWeightedValue(
                       Convert.ToDouble(Values.Item(iFL-1).Value), Nothing,
