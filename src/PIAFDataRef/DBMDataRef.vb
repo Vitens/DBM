@@ -450,7 +450,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                   If Results.Item(i-1).Timestamp <=
                     Values.Item(iFL-1).Timestamp.LocalTime Then
                     ScaleNumerator -= TimeWeightedValue(
-                      Convert.ToDouble(Values.Item(iFL-1)), Nothing,
+                      Convert.ToDouble(Values.Item(iFL-1).Value), Nothing,
                       Values.Item(iFL-1).Timestamp.LocalTime,
                       Results.Item(i).Timestamp, True)
                   End If
@@ -458,7 +458,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                   If Results.Item(i+1).Timestamp >=
                     Values.Item(iV+1).Timestamp.LocalTime Then
                     ScaleNumerator -= TimeWeightedValue(
-                      Convert.ToDouble(Values.Item(iV+1)), Nothing,
+                      Convert.ToDouble(Values.Item(iV+1).Value), Nothing,
                       Results.Item(i).Timestamp,
                       Values.Item(iV+1).Timestamp.LocalTime, True)
                   End If
