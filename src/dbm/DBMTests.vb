@@ -1125,83 +1125,83 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2021, 4, 2, 19, 25, 36),
         New DateTime(2021, 4, 2, 19, 35, 35), True), 0.6175)
 
-      AssertNaN(InterpolatedValue(78.38, 61.17,
+      AssertNaN(InterpolateValue(78.38, 61.17,
         New DateTime(2021, 4, 4, 1, 0, 0),
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 2, 0, 0), True)) ' t1 < t0
-      AssertNaN(InterpolatedValue(78.38, 61.17,
+      AssertNaN(InterpolateValue(78.38, 61.17,
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 2, 0, 0),
         New DateTime(2021, 4, 4, 1, 0, 0), True)) ' t2 < t1
-      AssertEqual(InterpolatedValue(78.38, 61.17,
+      AssertEqual(InterpolateValue(78.38, 61.17,
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 0, 0, 0), True), 78.38) ' s, t0 = t2
-      AssertNaN(InterpolatedValue(78.38, 61.17,
+      AssertNaN(InterpolateValue(78.38, 61.17,
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 0, 0, 0), False)) ' !s, t0 = t2
-      AssertEqual(InterpolatedValue(88.81, 80.04,
+      AssertEqual(InterpolateValue(88.81, 80.04,
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 19, 9, 37),
         New DateTime(2021, 4, 5, 3, 33, 35), True), 88.81)
-      AssertEqual(InterpolatedValue(65.18, 35.03,
+      AssertEqual(InterpolateValue(65.18, 35.03,
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 22, 28, 38),
         New DateTime(2021, 4, 5, 0, 19, 52), True), 65.18)
-      AssertEqual(InterpolatedValue(4.86, 80.94,
+      AssertEqual(InterpolateValue(4.86, 80.94,
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 10, 36, 48),
         New DateTime(2021, 4, 4, 19, 59, 45), True), 4.86)
-      AssertEqual(InterpolatedValue(58.07, 43.7,
+      AssertEqual(InterpolateValue(58.07, 43.7,
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 4, 42, 50),
         New DateTime(2021, 4, 4, 22, 42, 49), True), 58.07)
-      AssertEqual(InterpolatedValue(74.86, 16.19,
+      AssertEqual(InterpolateValue(74.86, 16.19,
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 1, 59, 16),
         New DateTime(2021, 4, 4, 13, 13, 8), True), 74.86)
-      AssertEqual(InterpolatedValue(0, 10,
+      AssertEqual(InterpolateValue(0, 10,
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 10, 0, 0), False), 0)
-      AssertEqual(InterpolatedValue(0, 10,
+      AssertEqual(InterpolateValue(0, 10,
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 7, 0, 0),
         New DateTime(2021, 4, 4, 10, 0, 0), False), 7)
-      AssertEqual(InterpolatedValue(0, 10,
+      AssertEqual(InterpolateValue(0, 10,
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 10, 0, 0),
         New DateTime(2021, 4, 4, 10, 0, 0), False), 10)
-      AssertAlmostEqual(InterpolatedValue(47.42, 73.05,
+      AssertAlmostEqual(InterpolateValue(47.42, 73.05,
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 5, 41, 32),
         New DateTime(2021, 4, 5, 5, 6, 30), False), 52.432)
-      AssertAlmostEqual(InterpolatedValue(81.21, 79.59,
+      AssertAlmostEqual(InterpolateValue(81.21, 79.59,
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 22, 37, 54),
         New DateTime(2021, 4, 5, 8, 59, 35), False), 80.0988)
-      AssertAlmostEqual(InterpolatedValue(90.14, 58.01,
+      AssertAlmostEqual(InterpolateValue(90.14, 58.01,
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 0, 6, 21),
         New DateTime(2021, 4, 4, 16, 53, 53), False), 89.9388)
-      AssertAlmostEqual(InterpolatedValue(5.67, 68,
+      AssertAlmostEqual(InterpolateValue(5.67, 68,
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 16, 57, 16),
         New DateTime(2021, 4, 4, 17, 10, 6), False), 67.2235)
-      AssertAlmostEqual(InterpolatedValue(55.92, 48.91,
+      AssertAlmostEqual(InterpolateValue(55.92, 48.91,
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 17, 46, 0),
         New DateTime(2021, 4, 4, 21, 13, 25), False), 50.0518)
-      AssertAlmostEqual(InterpolatedValue(97.63, 13.66,
+      AssertAlmostEqual(InterpolateValue(97.63, 13.66,
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 4, 43, 18),
         New DateTime(2021, 4, 5, 1, 50, 5), False), 82.2833)
-      AssertAlmostEqual(InterpolatedValue(26.96, 37.18,
+      AssertAlmostEqual(InterpolateValue(26.96, 37.18,
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 12, 53, 35),
         New DateTime(2021, 4, 5, 3, 11, 50), False), 31.8049)
-      AssertAlmostEqual(InterpolatedValue(98.8, 77.98,
+      AssertAlmostEqual(InterpolateValue(98.8, 77.98,
         New DateTime(2021, 4, 4, 0, 0, 0),
         New DateTime(2021, 4, 4, 18, 22, 17),
         New DateTime(2021, 4, 5, 3, 10, 5), False), 84.7212)

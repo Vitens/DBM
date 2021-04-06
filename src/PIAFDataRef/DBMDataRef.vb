@@ -449,7 +449,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                   Values.Item(iFL-1).Timestamp.LocalTime Then
                   ' Add weight, interpolate forecast value at iFL-1.
                   ForecastWeight += TimeWeightedValue(
-                    InterpolatedValue(Results.Item(i).ForecastItem.Forecast,
+                    InterpolateValue(Results.Item(i).ForecastItem.Forecast,
                     Results.Item(i+1).ForecastItem.Forecast,
                     Results.Item(i).Timestamp,
                     Values.Item(iFL-1).Timestamp.LocalTime,
@@ -465,7 +465,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                     ' Add weight, interpolate forecast value at iV+1.
                     ForecastWeight += TimeWeightedValue(
                       Results.Item(i).ForecastItem.Forecast,
-                      InterpolatedValue(Results.Item(i).ForecastItem.Forecast,
+                      InterpolateValue(Results.Item(i).ForecastItem.Forecast,
                       Results.Item(i+1).ForecastItem.Forecast,
                       Results.Item(i).Timestamp,
                       Values.Item(iV+1).Timestamp.LocalTime,

@@ -70,7 +70,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function InterpolatedValue(PreviousValue As Double,
+    Public Shared Function InterpolateValue(PreviousValue As Double,
       NextValue As Double, PreviousTimestamp As DateTime, Timestamp As DateTime,
       NextTimestamp As DateTime, Stepped As Boolean) As Double
 
