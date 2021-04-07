@@ -422,15 +422,31 @@ Namespace Vitens.DynamicBandwidthMonitor
               Values.Item(iFL-1).Timestamp.LocalTime).TotalSeconds/
               CalculationInterval >= 12 Then
 
-              ' Remove flatline values.
+              ' How to solve the scaling factor problem:
+              ' * For stepped values:
+              '     z = a*(u-t)+q*b*(v-u)+q*c*(w-v)+q*d*(x-w)+q*e*(y-x)
+              '     Solve for q:
+              '       q = (z-a(u-t))/(b(v-u)+c(w-v)+d(x-w)+e(y-x))
+              ' * For non-stepped values:
+              '     z = (a+qb)/2*(u-t)+(qb+qc)/2*(v-u)+(qc+qd)/2*(w-v)+
+              '         (qd+qe)/2*(x-w)+(qe+f)/2*(y-x)
+              '     Solve for q:
+              '       q = (z-a(u-t)/2-f(y-x)/2)/
+              '           (b(v-t)/2+c(w-u)/2+d(x-v)/2+e(y-w)/2)
+              ' Where a-f = values (iFL-1, iFL, first forecast,
+              '               last forecast, iV, iV+1),
+              '       t-y = their timestamps, q = scaling factor, z = weight.
+
+              ' Phase 1: Remove flatline values.
               Do While Deflatline.Item(Deflatline.Count-1).
                 Timestamp.LocalTime > Values.Item(iFL-1).Timestamp.LocalTime
                 Deflatline.RemoveAt(Deflatline.Count-1) ' Remove flatline value.
               Loop
 
-              ' Calculate weight of original from iFL-1 to iV+1. The total
-              ' weight is then from the value before the flatline to the value
-              ' after the spike value. These two values are unmodified.
+              ' Phase 2: Calculate weight of original from iFL-1 to
+              ' iV+1. The total weight is then from the value before the
+              ' flatline to the value after the spike value. These two values
+              ' are unmodified.
               i = -1 ' Start at iFL-1.
               MeasurementWeight = 0
               Do While iFL+i < iV+1
@@ -443,13 +459,13 @@ Namespace Vitens.DynamicBandwidthMonitor
                 i += 1 ' Increase iterator.
               Loop
 
-              ' First iteration: Calculate weight of forecast.
+              ' Phase 3: Calculate weight of forecast.
               i = 0
               ForecastWeight = 0
               Do While i < Results.Count-1
-                If Results.Item(i).Timestamp >=
+                If Results.Item(i).Timestamp >
                   Values.Item(iFL-1).Timestamp.LocalTime Then
-                  If Results.Item(i-1).Timestamp <
+                  If Results.Item(i-1).Timestamp <=
                     Values.Item(iFL-1).Timestamp.LocalTime Then
                     ' iFL-1 to first forecast.
                     If Stepped Then
@@ -507,10 +523,10 @@ Namespace Vitens.DynamicBandwidthMonitor
                 i += 1 ' Increase iterator.
               Loop
 
-              ' Second iteration: Add weight adjusted forecast.
+              ' Phase 4: Add weight adjusted forecast.
               i = 0
               Do While i < Results.Count-1
-                If Results.Item(i).Timestamp >=
+                If Results.Item(i).Timestamp >
                   Values.Item(iFL-1).Timestamp.LocalTime And
                   Results.Item(i).TimestampIsValid Then
                   Deflatline.Add(New AFValue(
