@@ -471,7 +471,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                         Values.Item(iFL-1).Timestamp.LocalTime,
                         Results.Item(i+1).Timestamp, True)/2
                     End If
-                  ElseIf Results.Item(i+1).Timestamp >
+                  ElseIf Results.Item(i+1).Timestamp >=
                     Values.Item(iV+1).Timestamp.LocalTime Then
                     ' Last forecast to iV+1.
                     If Stepped Then
