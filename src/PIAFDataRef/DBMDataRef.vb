@@ -511,7 +511,8 @@ Namespace Vitens.DynamicBandwidthMonitor
               i = 0
               Do While i < Results.Count-1
                 If Results.Item(i).Timestamp >
-                  Values.Item(iFL-1).Timestamp.LocalTime Then
+                  Values.Item(iFL-1).Timestamp.LocalTime And
+                  Results.Item(i).TimestampIsValid Then
                   Deflatline.Add(New AFValue(
                     Results.Item(i).ForecastItem.Forecast*
                     MeasurementWeight/ForecastWeight,
