@@ -452,31 +452,56 @@ Namespace Vitens.DynamicBandwidthMonitor
                   If Results.Item(i-1).Timestamp <
                     Values.Item(iFL-1).Timestamp.LocalTime Then
                     ' iFL-1 to first forecast.
-                    MeasurementWeight -= TimeWeightedValue(
-                      Convert.ToDouble(Values.Item(iFL-1).Value), Nothing,
-                      Values.Item(iFL-1).Timestamp.LocalTime,
-                      Results.Item(i).Timestamp, True)/2
-                    ForecastWeight += TimeWeightedValue(
-                      Results.Item(i).ForecastItem.Forecast, Nothing,
-                      Values.Item(iFL-1).Timestamp.LocalTime,
-                      Results.Item(i+1).Timestamp, True)/2
+                    If Stepped Then
+                      MeasurementWeight -= TimeWeightedValue(
+                        Convert.ToDouble(Values.Item(iFL-1).Value), Nothing,
+                        Values.Item(iFL-1).Timestamp.LocalTime,
+                        Results.Item(i).Timestamp, True)
+                      ForecastWeight += TimeWeightedValue(
+                        Results.Item(i).ForecastItem.Forecast, Nothing,
+                        Values.Item(iFL-1).Timestamp.LocalTime,
+                        Results.Item(i).Timestamp, True)
+                    Else
+                      MeasurementWeight -= TimeWeightedValue(
+                        Convert.ToDouble(Values.Item(iFL-1).Value), Nothing,
+                        Values.Item(iFL-1).Timestamp.LocalTime,
+                        Results.Item(i).Timestamp, True)/2
+                      ForecastWeight += TimeWeightedValue(
+                        Results.Item(i).ForecastItem.Forecast, Nothing,
+                        Values.Item(iFL-1).Timestamp.LocalTime,
+                        Results.Item(i+1).Timestamp, True)/2
+                    End If
                   ElseIf Results.Item(i+1).Timestamp >
                     Values.Item(iV+1).Timestamp.LocalTime Then
                     ' Last forecast to iV+1.
-                    MeasurementWeight -= TimeWeightedValue(
-                      Convert.ToDouble(Values.Item(iV+1).Value), Nothing,
-                      Results.Item(i).Timestamp,
-                      Values.Item(iV+1).Timestamp.LocalTime, True)/2
-                    ForecastWeight += TimeWeightedValue(
-                      Results.Item(i).ForecastItem.Forecast, Nothing,
-                      Results.Item(i-1).Timestamp,
-                      Values.Item(iV+1).Timestamp.LocalTime, True)/2
+                    If Stepped Then
+                      ForecastWeight += TimeWeightedValue(
+                        Results.Item(i).ForecastItem.Forecast, Nothing,
+                        Results.Item(i).Timestamp,
+                        Values.Item(iV+1).Timestamp.LocalTime, True)
+                    Else
+                      MeasurementWeight -= TimeWeightedValue(
+                        Convert.ToDouble(Values.Item(iV+1).Value), Nothing,
+                        Results.Item(i).Timestamp,
+                        Values.Item(iV+1).Timestamp.LocalTime, True)/2
+                      ForecastWeight += TimeWeightedValue(
+                        Results.Item(i).ForecastItem.Forecast, Nothing,
+                        Results.Item(i-1).Timestamp,
+                        Values.Item(iV+1).Timestamp.LocalTime, True)/2
+                    End If
                     Exit Do ' No more.
                   Else
-                    ForecastWeight += TimeWeightedValue(
-                      Results.Item(i).ForecastItem.Forecast, Nothing,
-                      Results.Item(i-1).Timestamp,
-                      Results.Item(i+1).Timestamp, True)/2
+                    If Stepped Then
+                      ForecastWeight += TimeWeightedValue(
+                        Results.Item(i).ForecastItem.Forecast, Nothing,
+                        Results.Item(i).Timestamp,
+                        Results.Item(i+1).Timestamp, True)
+                    Else
+                      ForecastWeight += TimeWeightedValue(
+                        Results.Item(i).ForecastItem.Forecast, Nothing,
+                        Results.Item(i-1).Timestamp,
+                        Results.Item(i+1).Timestamp, True)/2
+                    End If
                   End If
                 End If
                 i += 1 ' Increase iterator.
