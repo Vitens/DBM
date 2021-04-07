@@ -399,7 +399,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         Deflatline.Add(Value) ' Add original value.
 
         ' The flatline ends when a value is different from the value that is
-        ' currently being monitored.
+        ' currently being monitored. This value is also replaced by the scaled
+        ' forecast, as it may contain a spike value which needs to be
+        ' redistributed.
         If Not Convert.ToDouble(Value.Value) =
           Convert.ToDouble(Values.Item(iFL).Value) Then
 
@@ -472,20 +474,20 @@ Namespace Vitens.DynamicBandwidthMonitor
                       MeasurementWeight -= TimeWeightedValue(
                         Convert.ToDouble(Values.Item(iFL-1).Value), Nothing,
                         Values.Item(iFL-1).Timestamp.LocalTime,
-                        Results.Item(i).Timestamp, True)
+                        Results.Item(i).Timestamp, True) ' -a(u-t)
                       ForecastWeight += TimeWeightedValue(
                         Results.Item(i).ForecastItem.Forecast, Nothing,
                         Values.Item(iFL-1).Timestamp.LocalTime,
-                        Results.Item(i).Timestamp, True)
+                        Results.Item(i).Timestamp, True) ' b(v-u)
                     Else
                       MeasurementWeight -= TimeWeightedValue(
                         Convert.ToDouble(Values.Item(iFL-1).Value), Nothing,
                         Values.Item(iFL-1).Timestamp.LocalTime,
-                        Results.Item(i).Timestamp, True)/2
+                        Results.Item(i).Timestamp, True)/2 ' -a(u-t)/2
                       ForecastWeight += TimeWeightedValue(
                         Results.Item(i).ForecastItem.Forecast, Nothing,
                         Values.Item(iFL-1).Timestamp.LocalTime,
-                        Results.Item(i+1).Timestamp, True)/2
+                        Results.Item(i+1).Timestamp, True)/2 ' b(v-t)/2
                     End If
                   ElseIf Results.Item(i+1).Timestamp >=
                     Values.Item(iV+1).Timestamp.LocalTime Then
@@ -494,16 +496,18 @@ Namespace Vitens.DynamicBandwidthMonitor
                       ForecastWeight += TimeWeightedValue(
                         Results.Item(i).ForecastItem.Forecast, Nothing,
                         Results.Item(i).Timestamp,
-                        Values.Item(iV+1).Timestamp.LocalTime, True)
+                        Values.Item(iV+1).Timestamp.LocalTime, True) ' e(y-x)
                     Else
                       MeasurementWeight -= TimeWeightedValue(
                         Convert.ToDouble(Values.Item(iV+1).Value), Nothing,
                         Results.Item(i).Timestamp,
-                        Values.Item(iV+1).Timestamp.LocalTime, True)/2
+                        Values.Item(iV+1).Timestamp.LocalTime,
+                        True)/2 ' -f(y-x)/2
                       ForecastWeight += TimeWeightedValue(
                         Results.Item(i).ForecastItem.Forecast, Nothing,
                         Results.Item(i-1).Timestamp,
-                        Values.Item(iV+1).Timestamp.LocalTime, True)/2
+                        Values.Item(iV+1).Timestamp.LocalTime,
+                        True)/2 ' e(y-w)/2
                     End If
                     Exit Do ' No more.
                   Else
@@ -511,12 +515,12 @@ Namespace Vitens.DynamicBandwidthMonitor
                       ForecastWeight += TimeWeightedValue(
                         Results.Item(i).ForecastItem.Forecast, Nothing,
                         Results.Item(i).Timestamp,
-                        Results.Item(i+1).Timestamp, True)
+                        Results.Item(i+1).Timestamp, True) ' c(w-v), ...
                     Else
                       ForecastWeight += TimeWeightedValue(
                         Results.Item(i).ForecastItem.Forecast, Nothing,
                         Results.Item(i-1).Timestamp,
-                        Results.Item(i+1).Timestamp, True)/2
+                        Results.Item(i+1).Timestamp, True)/2 ' c(w-u)/2, ...
                     End If
                   End If
                 End If
