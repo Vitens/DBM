@@ -477,8 +477,8 @@ Namespace Vitens.DynamicBandwidthMonitor
                         Results.Item(i).Timestamp, True) ' -a(u-t)
                       ForecastWeight += TimeWeightedValue(
                         Results.Item(i).ForecastItem.Forecast, Nothing,
-                        Values.Item(iFL-1).Timestamp.LocalTime,
-                        Results.Item(i).Timestamp, True) ' b(v-u)
+                        Results.Item(i).Timestamp.LocalTime,
+                        Results.Item(i+1).Timestamp, True) ' b(v-u)
                     Else
                       MeasurementWeight -= TimeWeightedValue(
                         Convert.ToDouble(Values.Item(iFL-1).Value), Nothing,
