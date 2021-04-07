@@ -448,9 +448,9 @@ Namespace Vitens.DynamicBandwidthMonitor
               ScaleNumerator *= 2
               ScaleDenominator = 0
               Do While i < Results.Count-1
-                If Results.Item(i).Timestamp >
+                If Results.Item(i).Timestamp >=
                   Values.Item(iFL-1).Timestamp.LocalTime Then
-                  If Results.Item(i-1).Timestamp <=
+                  If Results.Item(i-1).Timestamp <
                     Values.Item(iFL-1).Timestamp.LocalTime Then
                     ' iFL-1 to first forecast.
                     ScaleNumerator -= TimeWeightedValue(
@@ -461,7 +461,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                       Results.Item(i).ForecastItem.Forecast, Nothing,
                       Values.Item(iFL-1).Timestamp.LocalTime,
                       Results.Item(i+1).Timestamp, True)
-                  ElseIf Results.Item(i+1).Timestamp >=
+                  ElseIf Results.Item(i+1).Timestamp >
                     Values.Item(iV+1).Timestamp.LocalTime Then
                     ' Last forecast to iV+1.
                     ScaleNumerator -= TimeWeightedValue(
