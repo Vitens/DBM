@@ -510,7 +510,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               ' Second iteration: Add weight adjusted forecast.
               i = 0
               Do While i < Results.Count-1
-                If Results.Item(i).Timestamp >
+                If Results.Item(i).Timestamp >=
                   Values.Item(iFL-1).Timestamp.LocalTime And
                   Results.Item(i).TimestampIsValid Then
                   Deflatline.Add(New AFValue(
@@ -518,10 +518,10 @@ Namespace Vitens.DynamicBandwidthMonitor
                     MeasurementWeight/ForecastWeight,
                     New AFTime(Results.Item(i).Timestamp)))
                   Deflatline.Item(Deflatline.Count-1).Substituted = True
-                  If Results.Item(i+1).Timestamp >=
-                    Values.Item(iV+1).Timestamp.LocalTime Then Exit Do ' No more
                 End If
                 i += 1 ' Increase iterator.
+                If Results.Item(i).Timestamp >=
+                  Values.Item(iV+1).Timestamp.LocalTime Then Exit Do ' No more.
               Loop
 
               Deflatlined = True
