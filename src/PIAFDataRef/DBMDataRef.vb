@@ -389,7 +389,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim Value As AFValue
       Dim iFL, iV, i As Integer ' Iterators
-      Dim MeasurementWeight, ScaleNumerator, ScaleDenominator As Double
+      Dim ScaleNumerator, ScaleDenominator As Double
       Dim Deflatlined As Boolean
 
       Deflatline = New AFValues
@@ -432,10 +432,10 @@ Namespace Vitens.DynamicBandwidthMonitor
               ' weight is then from the value before the flatline to the value
               ' after the spike value. These two values are unmodified.
               i = -1 ' Start at iFL-1.
-              MeasurementWeight = 0
+              ScaleNumerator = 0
               Do While iFL+i < iV+1
                 ' Add weight.
-                MeasurementWeight += TimeWeightedValue(
+                ScaleNumerator += TimeWeightedValue(
                   Convert.ToDouble(Values.Item(iFL+i).Value),
                   Convert.ToDouble(Values.Item(iFL+i+1).Value),
                   Values.Item(iFL+i).Timestamp.LocalTime,
@@ -445,12 +445,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
               ' First iteration: Calculate weight of forecast.
               i = 0
-              ScaleNumerator = 2*MeasurementWeight
+              ScaleNumerator *= 2
               ScaleDenominator = 0
               Do While i < Results.Count-1
                 If Results.Item(i).Timestamp >
                   Values.Item(iFL-1).Timestamp.LocalTime Then
-                  If Results.Item(i-1).Timestamp <
+                  If Results.Item(i-1).Timestamp <=
                     Values.Item(iFL-1).Timestamp.LocalTime Then
                     ' iFL-1 to first forecast.
                     ScaleNumerator -= TimeWeightedValue(
