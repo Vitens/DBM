@@ -389,7 +389,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim Value As AFValue
       Dim iFL, iV, i As Integer ' Iterators
-      Dim MeasurementWeight, ForecastWeight As Double
+      Dim MeasurementWeight, ScaleNumerator, ScaleDenominator As Double
       Dim Deflatlined As Boolean
 
       Deflatline = New AFValues
@@ -405,7 +405,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
           ' iFL-1  Last good value before flatline
           ' iFL    Start of flatline
-          ' iV     Spike value
+          ' iV     End of flatline, spike value
           ' iV+1   First good value
 
           ' * A flatline can never start at the first value, as we don't know if
@@ -445,17 +445,34 @@ Namespace Vitens.DynamicBandwidthMonitor
 
               ' First iteration: Calculate weight of forecast.
               i = 0
-              ForecastWeight = 0
+              ScaleNumerator = 2*MeasurementWeight
+              ScaleDenominator = 0
               Do While i < Results.Count-1
-                If Results.Item(i).Timestamp >=
-                  Values.Item(iV+1).Timestamp.LocalTime Then Exit Do ' After
                 If Results.Item(i).Timestamp >
                   Values.Item(iFL-1).Timestamp.LocalTime Then
-                  ForecastWeight += TimeWeightedValue(
-                    Results.Item(i).ForecastItem.Forecast,
-                    Results.Item(i+1).ForecastItem.Forecast,
-                    Results.Item(i).Timestamp,
-                    Results.Item(i+1).Timestamp, Stepped)
+                  ' Calculate numerator for scale factor; iFL-1 to first
+                  ' forecast.
+                  If Results.Item(i-1).Timestamp <
+                    Values.Item(iFL-1).Timestamp.LocalTime Then
+                    ScaleNumerator -= TimeWeightedValue(
+                      Convert.ToDouble(Values.Item(iFL-1).Value), Nothing,
+                      Values.Item(iFL-1).Timestamp.LocalTime,
+                      Results.Item(i).Timestamp, True)
+                  End If
+                  ' Calculate numerator for scale factor; last forecast to iV+1.
+                  If Results.Item(i+1).Timestamp >=
+                    Values.Item(iV+1).Timestamp.LocalTime Then
+                    ScaleNumerator -= TimeWeightedValue(
+                      Convert.ToDouble(Values.Item(iV+1).Value), Nothing,
+                      Results.Item(i).Timestamp,
+                      Values.Item(iV+1).Timestamp.LocalTime, True)
+                    Exit Do ' No more.
+                  End If
+                  ' Calculate denominator for scale factor.
+                  ScaleDenominator += TimeWeightedValue(
+                    Results.Item(i).ForecastItem.Forecast, Nothing,
+                    Results.Item(i-1).Timestamp,
+                    Results.Item(i+1).Timestamp, True)
                 End If
                 i += 1 ' Increase iterator.
               Loop
@@ -463,15 +480,15 @@ Namespace Vitens.DynamicBandwidthMonitor
               ' Second iteration: Add weight adjusted forecast.
               i = 0
               Do While i < Results.Count-1
-                If Results.Item(i).Timestamp >=
-                  Values.Item(iV+1).Timestamp.LocalTime Then Exit Do ' After
                 If Results.Item(i).Timestamp >
                   Values.Item(iFL-1).Timestamp.LocalTime Then
                   Deflatline.Add(New AFValue(
                     Results.Item(i).ForecastItem.Forecast*
-                    MeasurementWeight/ForecastWeight,
+                    ScaleNumerator/ScaleDenominator,
                     New AFTime(Results.Item(i).Timestamp)))
                   Deflatline.Item(Deflatline.Count-1).Substituted = True
+                  If Results.Item(i+1).Timestamp >=
+                    Values.Item(iV+1).Timestamp.LocalTime Then Exit Do ' No more
                 End If
                 i += 1 ' Increase iterator.
               Loop
