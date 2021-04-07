@@ -389,7 +389,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim Value As AFValue
       Dim iFL, iV, i As Integer ' Iterators
-      Dim ScaleNumerator, ScaleDenominator As Double
+      Dim MeasurementWeight, ForecastWeight As Double
       Dim Deflatlined As Boolean
 
       Deflatline = New AFValues
@@ -432,10 +432,10 @@ Namespace Vitens.DynamicBandwidthMonitor
               ' weight is then from the value before the flatline to the value
               ' after the spike value. These two values are unmodified.
               i = -1 ' Start at iFL-1.
-              ScaleNumerator = 0
+              MeasurementWeight = 0
               Do While iFL+i < iV+1
                 ' Add weight.
-                ScaleNumerator += TimeWeightedValue(
+                MeasurementWeight += TimeWeightedValue(
                   Convert.ToDouble(Values.Item(iFL+i).Value),
                   Convert.ToDouble(Values.Item(iFL+i+1).Value),
                   Values.Item(iFL+i).Timestamp.LocalTime,
@@ -445,39 +445,38 @@ Namespace Vitens.DynamicBandwidthMonitor
 
               ' First iteration: Calculate weight of forecast.
               i = 0
-              ScaleNumerator *= 2
-              ScaleDenominator = 0
+              ForecastWeight = 0
               Do While i < Results.Count-1
                 If Results.Item(i).Timestamp >=
                   Values.Item(iFL-1).Timestamp.LocalTime Then
                   If Results.Item(i-1).Timestamp <
                     Values.Item(iFL-1).Timestamp.LocalTime Then
                     ' iFL-1 to first forecast.
-                    ScaleNumerator -= TimeWeightedValue(
+                    MeasurementWeight -= TimeWeightedValue(
                       Convert.ToDouble(Values.Item(iFL-1).Value), Nothing,
                       Values.Item(iFL-1).Timestamp.LocalTime,
-                      Results.Item(i).Timestamp, True)
-                    ScaleDenominator += TimeWeightedValue(
+                      Results.Item(i).Timestamp, True)/2
+                    ForecastWeight += TimeWeightedValue(
                       Results.Item(i).ForecastItem.Forecast, Nothing,
                       Values.Item(iFL-1).Timestamp.LocalTime,
-                      Results.Item(i+1).Timestamp, True)
+                      Results.Item(i+1).Timestamp, True)/2
                   ElseIf Results.Item(i+1).Timestamp >
                     Values.Item(iV+1).Timestamp.LocalTime Then
                     ' Last forecast to iV+1.
-                    ScaleNumerator -= TimeWeightedValue(
+                    MeasurementWeight -= TimeWeightedValue(
                       Convert.ToDouble(Values.Item(iV+1).Value), Nothing,
                       Results.Item(i).Timestamp,
-                      Values.Item(iV+1).Timestamp.LocalTime, True)
-                    ScaleDenominator += TimeWeightedValue(
+                      Values.Item(iV+1).Timestamp.LocalTime, True)/2
+                    ForecastWeight += TimeWeightedValue(
                       Results.Item(i).ForecastItem.Forecast, Nothing,
                       Results.Item(i-1).Timestamp,
-                      Values.Item(iV+1).Timestamp.LocalTime, True)
+                      Values.Item(iV+1).Timestamp.LocalTime, True)/2
                     Exit Do ' No more.
                   Else
-                    ScaleDenominator += TimeWeightedValue(
+                    ForecastWeight += TimeWeightedValue(
                       Results.Item(i).ForecastItem.Forecast, Nothing,
                       Results.Item(i-1).Timestamp,
-                      Results.Item(i+1).Timestamp, True)
+                      Results.Item(i+1).Timestamp, True)/2
                   End If
                 End If
                 i += 1 ' Increase iterator.
@@ -490,7 +489,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                   Values.Item(iFL-1).Timestamp.LocalTime Then
                   Deflatline.Add(New AFValue(
                     Results.Item(i).ForecastItem.Forecast*
-                    ScaleNumerator/ScaleDenominator,
+                    MeasurementWeight/ForecastWeight,
                     New AFTime(Results.Item(i).Timestamp)))
                   Deflatline.Item(Deflatline.Count-1).Substituted = True
                   If Results.Item(i+1).Timestamp >=
