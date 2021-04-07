@@ -450,29 +450,35 @@ Namespace Vitens.DynamicBandwidthMonitor
               Do While i < Results.Count-1
                 If Results.Item(i).Timestamp >
                   Values.Item(iFL-1).Timestamp.LocalTime Then
-                  ' Calculate numerator for scale factor; iFL-1 to first
-                  ' forecast.
                   If Results.Item(i-1).Timestamp <
                     Values.Item(iFL-1).Timestamp.LocalTime Then
+                    ' iFL-1 to first forecast.
                     ScaleNumerator -= TimeWeightedValue(
                       Convert.ToDouble(Values.Item(iFL-1).Value), Nothing,
                       Values.Item(iFL-1).Timestamp.LocalTime,
                       Results.Item(i).Timestamp, True)
-                  End If
-                  ' Calculate numerator for scale factor; last forecast to iV+1.
-                  If Results.Item(i+1).Timestamp >=
+                    ScaleDenominator += TimeWeightedValue(
+                      Results.Item(i).ForecastItem.Forecast, Nothing,
+                      Values.Item(iFL-1).Timestamp.LocalTime,
+                      Results.Item(i+1).Timestamp, True)
+                  ElseIf Results.Item(i+1).Timestamp >=
                     Values.Item(iV+1).Timestamp.LocalTime Then
+                    ' Last forecast to iV+1.
                     ScaleNumerator -= TimeWeightedValue(
                       Convert.ToDouble(Values.Item(iV+1).Value), Nothing,
                       Results.Item(i).Timestamp,
                       Values.Item(iV+1).Timestamp.LocalTime, True)
+                    ScaleDenominator += TimeWeightedValue(
+                      Results.Item(i).ForecastItem.Forecast, Nothing,
+                      Results.Item(i-1).Timestamp,
+                      Values.Item(iV+1).Timestamp.LocalTime, True)
                     Exit Do ' No more.
+                  Else
+                    ScaleDenominator += TimeWeightedValue(
+                      Results.Item(i).ForecastItem.Forecast, Nothing,
+                      Results.Item(i-1).Timestamp,
+                      Results.Item(i+1).Timestamp, True)
                   End If
-                  ' Calculate denominator for scale factor.
-                  ScaleDenominator += TimeWeightedValue(
-                    Results.Item(i).ForecastItem.Forecast, Nothing,
-                    Results.Item(i-1).Timestamp,
-                    Results.Item(i+1).Timestamp, True)
                 End If
                 i += 1 ' Increase iterator.
               Loop
