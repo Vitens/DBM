@@ -562,7 +562,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               ' After deflatlining, skip the spike value interval and the first
               ' good value as flatline start index to avoid overwriting data
               ' that has just been inserted.
-              iFL += 2
+              iFL = iV+2
 
             End If
 
