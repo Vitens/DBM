@@ -439,7 +439,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               '               last forecast, iV, iV+1),
               '       t-y = their timestamps, q = scaling factor, z = weight.
 
-              ' Phase 1: Remove flatline values.
+              ' Phase 1: Remove all values after iFL-1.
               Do While Deflatline.Item(Deflatline.Count-1).
                 Timestamp.LocalTime > Values.Item(iFL-1).Timestamp.LocalTime
                 Deflatline.RemoveAt(Deflatline.Count-1) ' Remove flatline value.
@@ -448,7 +448,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               ' Phase 2: Calculate weight of original from iFL-1 to
               ' iV+1. The total weight is then from the value before the
               ' flatline to the value after the spike value. These two values
-              ' are unmodified.
+              ' are unmodified in the end result.
               i = -1 ' Start at iFL-1.
               MeasurementWeight = 0
               Do While iFL+i < iV+1
@@ -474,20 +474,20 @@ Namespace Vitens.DynamicBandwidthMonitor
                       MeasurementWeight -= TimeWeightedValue(
                         Convert.ToDouble(Values.Item(iFL-1).Value), Nothing,
                         Values.Item(iFL-1).Timestamp.LocalTime,
-                        Results.Item(i).Timestamp, True) ' -a(u-t)
+                        Results.Item(i).Timestamp) ' -a(u-t)
                       ForecastWeight += TimeWeightedValue(
                         Results.Item(i).ForecastItem.Forecast, Nothing,
                         Results.Item(i).Timestamp,
-                        Results.Item(i+1).Timestamp, True) ' b(v-u)
+                        Results.Item(i+1).Timestamp) ' b(v-u)
                     Else
                       MeasurementWeight -= TimeWeightedValue(
                         Convert.ToDouble(Values.Item(iFL-1).Value), Nothing,
                         Values.Item(iFL-1).Timestamp.LocalTime,
-                        Results.Item(i).Timestamp, True)/2 ' -a(u-t)/2
+                        Results.Item(i).Timestamp)/2 ' -a(u-t)/2
                       ForecastWeight += TimeWeightedValue(
                         Results.Item(i).ForecastItem.Forecast, Nothing,
                         Values.Item(iFL-1).Timestamp.LocalTime,
-                        Results.Item(i+1).Timestamp, True)/2 ' b(v-t)/2
+                        Results.Item(i+1).Timestamp)/2 ' b(v-t)/2
                     End If
                   ElseIf Results.Item(i+1).Timestamp >=
                     Values.Item(iV+1).Timestamp.LocalTime Then
@@ -496,18 +496,16 @@ Namespace Vitens.DynamicBandwidthMonitor
                       ForecastWeight += TimeWeightedValue(
                         Results.Item(i).ForecastItem.Forecast, Nothing,
                         Results.Item(i).Timestamp,
-                        Values.Item(iV+1).Timestamp.LocalTime, True) ' e(y-x)
+                        Values.Item(iV+1).Timestamp.LocalTime) ' e(y-x)
                     Else
                       MeasurementWeight -= TimeWeightedValue(
                         Convert.ToDouble(Values.Item(iV+1).Value), Nothing,
                         Results.Item(i).Timestamp,
-                        Values.Item(iV+1).Timestamp.LocalTime,
-                        True)/2 ' -f(y-x)/2
+                        Values.Item(iV+1).Timestamp.LocalTime)/2 ' -f(y-x)/2
                       ForecastWeight += TimeWeightedValue(
                         Results.Item(i).ForecastItem.Forecast, Nothing,
                         Results.Item(i-1).Timestamp,
-                        Values.Item(iV+1).Timestamp.LocalTime,
-                        True)/2 ' e(y-w)/2
+                        Values.Item(iV+1).Timestamp.LocalTime)/2 ' e(y-w)/2
                     End If
                     Exit Do ' No more.
                   Else
@@ -517,12 +515,12 @@ Namespace Vitens.DynamicBandwidthMonitor
                       ForecastWeight += TimeWeightedValue(
                         Results.Item(i).ForecastItem.Forecast, Nothing,
                         Results.Item(i).Timestamp,
-                        Results.Item(i+1).Timestamp, True) ' c(w-v), ...
+                        Results.Item(i+1).Timestamp) ' c(w-v), ...
                     Else
                       ForecastWeight += TimeWeightedValue(
                         Results.Item(i).ForecastItem.Forecast, Nothing,
                         Results.Item(i-1).Timestamp,
-                        Results.Item(i+1).Timestamp, True)/2 ' c(w-u)/2, ...
+                        Results.Item(i+1).Timestamp)/2 ' c(w-u)/2, ...
                     End If
                   End If
                 End If

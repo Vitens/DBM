@@ -37,7 +37,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function TimeWeightedValue(Value As Double,
       NextValue As Double, Timestamp As DateTime, NextTimestamp As DateTime,
-      Stepped As Boolean) As Double
+      Optional Stepped As Boolean = True) As Double
 
       TimeWeightedValue = Value
 

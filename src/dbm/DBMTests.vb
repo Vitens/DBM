@@ -1034,7 +1034,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2021, 4, 2, 15, 46, 26), False), 0)
       AssertEqual(TimeWeightedValue(1.4532, 3.5828,
         New DateTime(2021, 4, 2, 13, 37, 33),
-        New DateTime(2021, 4, 2, 13, 37, 33), True), 0)
+        New DateTime(2021, 4, 2, 13, 37, 33)), 0)
       AssertAlmostEqual(TimeWeightedValue(54.5572, 59.5128,
         New DateTime(2021, 4, 2, 16, 24, 10),
         New DateTime(2021, 4, 2, 16, 30, 29), False), 0.2502)
@@ -1049,7 +1049,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2021, 4, 2, 10, 7, 42), False), 0.0047)
       AssertAlmostEqual(TimeWeightedValue(31.9645, 31.3657,
         New DateTime(2021, 4, 2, 23, 20, 9),
-        New DateTime(2021, 4, 2, 23, 34, 2), True), 0.3082)
+        New DateTime(2021, 4, 2, 23, 34, 2)), 0.3082)
       AssertAlmostEqual(TimeWeightedValue(79.3012, 79.5086,
         New DateTime(2021, 4, 2, 20, 5, 30),
         New DateTime(2021, 4, 2, 20, 15, 1), False), 0.5248)
@@ -1067,7 +1067,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2021, 4, 2, 12, 8, 45), False), 0.0764)
       AssertAlmostEqual(TimeWeightedValue(65.4336, 65.7781,
         New DateTime(2021, 4, 2, 17, 28, 20),
-        New DateTime(2021, 4, 2, 17, 29, 28), True), 0.0515)
+        New DateTime(2021, 4, 2, 17, 29, 28)), 0.0515)
       AssertAlmostEqual(TimeWeightedValue(35.2388, 37.7602,
         New DateTime(2021, 4, 2, 21, 42, 57),
         New DateTime(2021, 4, 2, 21, 56, 19), False), 0.3388)
@@ -1076,13 +1076,13 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2021, 4, 2, 22, 56, 14), True), 0.2016)
       AssertAlmostEqual(TimeWeightedValue(34.7707, 27.6712,
         New DateTime(2021, 4, 2, 11, 25, 40),
-        New DateTime(2021, 4, 2, 11, 34, 54), True), 0.223)
+        New DateTime(2021, 4, 2, 11, 34, 54)), 0.223)
       AssertAlmostEqual(TimeWeightedValue(37.8202, 35.3707,
         New DateTime(2021, 4, 2, 21, 51, 16),
         New DateTime(2021, 4, 2, 21, 52, 48), False), 0.039)
       AssertAlmostEqual(TimeWeightedValue(89.065, 88.0274,
         New DateTime(2021, 4, 2, 19, 25, 36),
-        New DateTime(2021, 4, 2, 19, 35, 35), True), 0.6175)
+        New DateTime(2021, 4, 2, 19, 35, 35)), 0.6175)
 
       ' DBMStatistics
       For i = 0 To 19
