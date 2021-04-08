@@ -399,58 +399,63 @@ Namespace Vitens.DynamicBandwidthMonitor
         Deflatline.Add(Value) ' Add original value.
 
         ' The flatline ends when a value is different from the value that is
-        ' currently being monitored. This value is also replaced by the scaled
-        ' forecast, as it may contain a spike value which needs to be
+        ' currently being monitored (iFL). This value is also replaced by the
+        ' scaled forecast, as it may contain a spike value which needs to be
         ' redistributed.
         If Not Convert.ToDouble(Value.Value) =
           Convert.ToDouble(Values.Item(iFL).Value) Then
 
-          ' iFL-1  Last good value before flatline
-          ' iFL    Start of flatline
-          ' iV     End of flatline, spike value
-          ' iV+1   First good value
+          ' Now the following timestamps are important to redistribute the
+          ' total:
+          '  * iFL-1 Last good value before flatline
+          '  * iFL   Start of flatline
+          '  * iV    End of flatline, spike value
+          '  * iV+1  First good value
 
-          ' * A flatline can never start at the first value, as we don't know if
-          '     the start was before this;
-          ' * It also cannot end on the last value, as we don't know if the end
-          '     was after this. We need at least one extra value after the spike
-          '     value to determine it's length;
-          ' * We need at least 3 values: two repeating values and one spike
-          '     value.
+          ' If all of the following conditions are true, we can redistribute the
+          ' total:
+          '  1) A flatline can never start at the first value in the time
+          '       series, as we don't know if the start was already before this.
+          '  2) It also cannot end on the last value in the time series, as we
+          '       don't know if the end was after this. We need at least one
+          '       extra value after the spike value to determine it's length.
+          '  3) We need at least 3 values: two repeating values and one spike
+          '       value.
           If iFL > 0 And iV < Values.Count-1 And iV-iFL > 1 Then
 
-            ' The duration has to be at least 12 calculation intervals.
+            ' The duration between the last and first good values around the
+            ' flatline has to be at least 12 calculation intervals. With the
+            ' default calculation interval of 5 minutes, this equals one hour.
             If Values.Item(iV+1).Timestamp.LocalTime.Subtract(
               Values.Item(iFL-1).Timestamp.LocalTime).TotalSeconds/
               CalculationInterval >= 12 Then
 
               ' How to solve the scaling factor problem:
-              ' * For stepped values:
-              '     z = a(u-t)+qb(v-u)+qc(w-v)+qd(x-w)+qe(y-x)
-              '     Solve for q:
-              '       q = (z-a(u-t))/(b(v-u)+c(w-v)+d(x-w)+e(y-x))
-              ' * For non-stepped values:
-              '     z = (a+qb)/2(u-t)+(qb+qc)/2(v-u)+(qc+qd)/2(w-v)+
-              '         (qd+qe)/2(x-w)+(qe+f)/2(y-x)
-              '     Solve for q:
-              '       q = (z-a(u-t)/2-f(y-x)/2)/
-              '           (b(v-t)/2+c(w-u)/2+d(x-v)/2+e(y-w)/2)
+              '  * For stepped values:
+              '      z = a(u-t)+qb(v-u)+qc(w-v)+qd(x-w)+qe(y-x)
+              '      Solve for q:
+              '        q = (z-a(u-t))/(b(v-u)+c(w-v)+d(x-w)+e(y-x))
+              '  * For non-stepped values:
+              '      z = (a+qb)/2(u-t)+(qb+qc)/2(v-u)+(qc+qd)/2(w-v)+
+              '          (qd+qe)/2(x-w)+(qe+f)/2(y-x)
+              '      Solve for q:
+              '        q = (z-a(u-t)/2-f(y-x)/2)/
+              '            (b(v-t)/2+c(w-u)/2+d(x-v)/2+e(y-w)/2)
               ' Where a-f = values (iFL-1, iFL, first forecast,
               '               last forecast, iV, iV+1),
               '       t-y = their timestamps, q = scaling factor, z = weight.
 
-              ' Phase 1: Remove all values after iFL-1.
+              ' Phase 1: Remove all values after the last good value.
               Do While Deflatline.Item(Deflatline.Count-1).
                 Timestamp.LocalTime > Values.Item(iFL-1).Timestamp.LocalTime
-                Deflatline.RemoveAt(Deflatline.Count-1) ' Remove flatline value.
+                Deflatline.RemoveAt(Deflatline.Count-1)
               Loop
 
-              ' Phase 2: Calculate weight of original from iFL-1 to
-              ' iV+1. The total weight is then from the value before the
-              ' flatline to the value after the spike value. These two values
-              ' are unmodified in the end result.
-              i = -1 ' Start at iFL-1.
-              MeasurementWeight = 0
+              ' Phase 2: Calculate weight of original from the last good value
+              ' to the first good value. These two values are unmodified in the
+              ' end result.
+              i = -1 ' Start at the last good value.
+              MeasurementWeight = 0 ' Initial weight.
               Do While iFL+i < iV+1
                 ' Add weight.
                 MeasurementWeight += TimeWeightedValue(
@@ -463,13 +468,15 @@ Namespace Vitens.DynamicBandwidthMonitor
 
               ' Phase 3: Calculate weight of forecast.
               i = 0
-              ForecastWeight = 0
-              Do While i < Results.Count-1
+              ForecastWeight = 0 ' Initial weight.
+              Do While i < Results.Count-1 ' Exclude last value, we need i+1.
                 If Results.Item(i).Timestamp >
                   Values.Item(iFL-1).Timestamp.LocalTime Then
+                  ' All forecasts after the last good value and before the first
+                  ' good value.
                   If Results.Item(i-1).Timestamp <=
                     Values.Item(iFL-1).Timestamp.LocalTime Then
-                    ' iFL-1 to first forecast.
+                    ' Last good value to first forecast.
                     If Stepped Then
                       MeasurementWeight -= TimeWeightedValue(
                         Convert.ToDouble(Values.Item(iFL-1).Value), Nothing,
@@ -491,7 +498,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                     End If
                   ElseIf Results.Item(i+1).Timestamp >=
                     Values.Item(iV+1).Timestamp.LocalTime Then
-                    ' Last forecast to iV+1.
+                    ' Last forecast to first good value.
                     If Stepped Then
                       ForecastWeight += TimeWeightedValue(
                         Results.Item(i).ForecastItem.Forecast, Nothing,
@@ -509,14 +516,22 @@ Namespace Vitens.DynamicBandwidthMonitor
                     End If
                     Exit Do ' No more.
                   Else
-                    ' All forecasts after iFL-1 and before iV+1, except first
-                    ' and last.
+                    ' All forecasts after the last good value and before the
+                    ' first good value, except first and last.
                     If Stepped Then
                       ForecastWeight += TimeWeightedValue(
                         Results.Item(i).ForecastItem.Forecast, Nothing,
                         Results.Item(i).Timestamp,
                         Results.Item(i+1).Timestamp) ' c(w-v), ...
                     Else
+                      ' If not stepped, each value has a certain weight in it's
+                      ' previous and it's next interval. For both of these
+                      ' intervals it accounts for half of the total weight,
+                      ' since a non-stepped interval weight is based on the
+                      ' average value between the previous and the next value,
+                      ' with the other half of the weight coming from it's
+                      ' previous and next values. So we can just add half the
+                      ' total weight from the previous interval to the next.
                       ForecastWeight += TimeWeightedValue(
                         Results.Item(i).ForecastItem.Forecast, Nothing,
                         Results.Item(i-1).Timestamp,
@@ -533,6 +548,8 @@ Namespace Vitens.DynamicBandwidthMonitor
                 If Results.Item(i).Timestamp >
                   Values.Item(iFL-1).Timestamp.LocalTime And
                   Results.Item(i).TimestampIsValid Then
+                  ' Insert scaled forecasts for valid timestamps after the last
+                  ' good value and before the first good value.
                   Deflatline.Add(New AFValue(
                     Results.Item(i).ForecastItem.Forecast*
                     MeasurementWeight/ForecastWeight,
