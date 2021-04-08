@@ -426,12 +426,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
               ' How to solve the scaling factor problem:
               ' * For stepped values:
-              '     z = a*(u-t)+q*b*(v-u)+q*c*(w-v)+q*d*(x-w)+q*e*(y-x)
+              '     z = a(u-t)+qb(v-u)+qc(w-v)+qd(x-w)+qe(y-x)
               '     Solve for q:
               '       q = (z-a(u-t))/(b(v-u)+c(w-v)+d(x-w)+e(y-x))
               ' * For non-stepped values:
-              '     z = (a+qb)/2*(u-t)+(qb+qc)/2*(v-u)+(qc+qd)/2*(w-v)+
-              '         (qd+qe)/2*(x-w)+(qe+f)/2*(y-x)
+              '     z = (a+qb)/2(u-t)+(qb+qc)/2(v-u)+(qc+qd)/2(w-v)+
+              '         (qd+qe)/2(x-w)+(qe+f)/2(y-x)
               '     Solve for q:
               '       q = (z-a(u-t)/2-f(y-x)/2)/
               '           (b(v-t)/2+c(w-u)/2+d(x-v)/2+e(y-w)/2)
@@ -511,6 +511,8 @@ Namespace Vitens.DynamicBandwidthMonitor
                     End If
                     Exit Do ' No more.
                   Else
+                    ' All forecasts after iFL-1 and before iV+1, except first
+                    ' and last.
                     If Stepped Then
                       ForecastWeight += TimeWeightedValue(
                         Results.Item(i).ForecastItem.Forecast, Nothing,
