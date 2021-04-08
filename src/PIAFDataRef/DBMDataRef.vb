@@ -559,10 +559,12 @@ Namespace Vitens.DynamicBandwidthMonitor
                   Values.Item(iV+1).Timestamp.LocalTime Then Exit Do ' No more.
               Loop
 
-              ' After deflatlining, skip the spike value interval and the first
-              ' good value as flatline start index to avoid overwriting data
-              ' that has just been inserted.
-              iFL = Values.Count-1 ' test single correction
+              ' After deflatlining, skip the spike value interval as flatline
+              ' start index to avoid overwriting data that has just been
+              ' inserted. This could happen if the spike value is seen as the
+              ' start value of a new flatline. This issue is solved by moving
+              ' the flatline index an extra interval, to the first good value.
+              iFL = iV+1
 
             End If
 
