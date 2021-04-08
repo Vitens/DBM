@@ -388,7 +388,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' value containing the total of the previous flatline time range.
 
       Dim Value As AFValue
-      Dim iFL, iV, i As Integer ' Iterators
+      Dim iV, iFL, i As Integer ' Iterators
       Dim MeasurementWeight, ForecastWeight As Double
 
       Deflatline = New AFValues
@@ -401,7 +401,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' currently being monitored (iFL). This value is also replaced by the
         ' scaled forecast, as it may contain a spike value which needs to be
         ' redistributed.
-        If Not Convert.ToDouble(Value.Value) =
+        If iV > iFL And Not Convert.ToDouble(Value.Value) =
           Convert.ToDouble(Values.Item(iFL).Value) Then
 
           ' The following timestamps are important:
