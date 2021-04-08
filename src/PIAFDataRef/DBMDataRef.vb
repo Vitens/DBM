@@ -562,7 +562,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               ' After deflatlining, skip the spike value interval and the first
               ' good value as flatline start index to avoid overwriting data
               ' that has just been inserted.
-              iFL = Values.Count ' test single correction
+              iFL = Values.Count-1 ' test single correction
 
             End If
 
