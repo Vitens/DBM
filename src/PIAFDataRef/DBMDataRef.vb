@@ -401,7 +401,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' currently being monitored (iFL). This value is also replaced by the
         ' scaled forecast, as it may contain a spike value which needs to be
         ' redistributed.
-        If iV > iFL And Not Convert.ToDouble(Value.Value) =
+        If iV > iFL AndAlso Not Convert.ToDouble(Value.Value) =
           Convert.ToDouble(Values.Item(iFL).Value) Then
 
           ' The following timestamps are important:
