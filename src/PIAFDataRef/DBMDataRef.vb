@@ -390,7 +390,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Value As AFValue
       Dim iFL, iV, i As Integer ' Iterators
       Dim MeasurementWeight, ForecastWeight As Double
-      Dim Deflatlined As Boolean
 
       Deflatline = New AFValues
 
@@ -405,8 +404,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         If Not Convert.ToDouble(Value.Value) =
           Convert.ToDouble(Values.Item(iFL).Value) Then
 
-          ' Now the following timestamps are important to redistribute the
-          ' total:
+          ' The following timestamps are important:
           '  * iFL-1 Last good value before flatline
           '  * iFL   Start of flatline
           '  * iV    End of flatline, spike value
@@ -561,21 +559,17 @@ Namespace Vitens.DynamicBandwidthMonitor
                   Values.Item(iV+1).Timestamp.LocalTime Then Exit Do ' No more.
               Loop
 
-              Deflatlined = True
+              ' After deflatlining, skip the spike value interval and the first
+              ' good value as flatline start index to avoid overwriting data
+              ' that has just been inserted.
+              iFL += 2
 
             End If
 
-          End If
-          iFL = iV ' Set flatline start index to the current value.
+          Else
 
-          ' After deflatlining, skip the spike value interval as flatline start
-          ' index to avoid overwriting data that has just been inserted. This
-          ' could happen if the spike value is seen as the start value of a new
-          ' flatline. This issue is solved by moving the flatline index to the
-          ' value after the spike value.
-          If Deflatlined Then
-            iFL += 1
-            Deflatlined = False
+            iFL = iV ' Set flatline start index to the current value.
+
           End If
 
         End If
