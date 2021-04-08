@@ -564,7 +564,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               ' inserted. This could happen if the spike value is seen as the
               ' start value of a new flatline. This issue is solved by moving
               ' the flatline index an extra interval, to the first good value.
-              iFL = iV+1
+              iFL = iV+2
 
             End If
 
