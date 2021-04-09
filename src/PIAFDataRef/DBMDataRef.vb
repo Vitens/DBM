@@ -392,6 +392,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Value As AFValue
       Dim MeasurementWeight, ForecastWeight As Double
 
+      Deflatline = Nothing
+
       Do While Changed
 
         Deflatline = New AFValues
