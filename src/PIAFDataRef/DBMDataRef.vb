@@ -387,208 +387,204 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' receive a flatline containing all zeroes, followed by a single spike
       ' value containing the total of the previous flatline time range.
 
-      Dim Changed As Boolean = True ' First iteration.
-      Dim iV, iFL, i As Integer ' Iterators
       Dim Value As AFValue
+      Dim iV, iFL, i As Integer ' Iterators
       Dim MeasurementWeight, ForecastWeight As Double
 
-      Deflatline = Nothing
+      Deflatline = New AFValues
 
-      Do While Changed
+      For Each Value In Values
 
-        Deflatline = New AFValues
-        Changed = False
-        iV = 0
-        iFL = 0
+        Deflatline.Add(Value) ' Add original value.
 
-        For Each Value In Values
+        ' The flatline ends when a value is different from the value that is
+        ' currently being monitored (iFL). This value is also replaced by the
+        ' scaled forecast, as it may contain a spike value which needs to be
+        ' redistributed.
+        If iV > iFL AndAlso Not Convert.ToDouble(Value.Value) =
+          Convert.ToDouble(Values.Item(iFL).Value) Then
 
-          Deflatline.Add(Value) ' Add original value.
+          ' The following timestamps are important:
+          '  * iFL-1 Last good value before flatline
+          '  * iFL   Start of flatline
+          '  * iV    End of flatline, spike value
+          '  * iV+1  First good value
 
-          ' The flatline ends when a value is different from the value that is
-          ' currently being monitored (iFL). This value is also replaced by the
-          ' scaled forecast, as it may contain a spike value which needs to be
-          ' redistributed. Only pass this check if the current iteration does
-          ' not already contain changes.
-          If Not Changed And Not Convert.ToDouble(Value.Value) =
-            Convert.ToDouble(Values.Item(iFL).Value) Then
+          ' If all of the following conditions are true, we can redistribute the
+          ' total:
+          '  1) A flatline can never start at the first value in the time
+          '       series, as we don't know if the start was already before this.
+          '  2) It also cannot end on the last value in the time series, as we
+          '       don't know if the end was after this. We need at least one
+          '       extra value after the spike value to determine it's length.
+          '  3) We need at least 3 values: two repeating values and one spike
+          '       value.
+          '  4) The duration between the last and first good values around the
+          '       flatline has to be at least 12 calculation intervals. With the
+          '       default calculation interval of 5 minutes, this equals one
+          '       hour.
+          If (iFL > 0 And iV < Values.Count-1 And iV-iFL > 1) AndAlso
+            Values.Item(iV+1).Timestamp.LocalTime.Subtract(
+            Values.Item(iFL-1).Timestamp.LocalTime).TotalSeconds/
+            CalculationInterval >= 12 Then
 
-            ' The following timestamps are important:
-            '  * iFL-1 Last good value before flatline
-            '  * iFL   Start of flatline
-            '  * iV    End of flatline, spike value
-            '  * iV+1  First good value
+            ' How to solve the scaling factor problem:
+            '  * For stepped values:
+            '      z = a(u-t)+qb(v-u)+qc(w-v)+qd(x-w)+qe(y-x)
+            '      Solve for q:
+            '        q = (z-a(u-t))/(b(v-u)+c(w-v)+d(x-w)+e(y-x))
+            '  * For non-stepped values:
+            '      z = (a+qb)/2(u-t)+(qb+qc)/2(v-u)+(qc+qd)/2(w-v)+
+            '          (qd+qe)/2(x-w)+(qe+f)/2(y-x)
+            '      Solve for q:
+            '        q = (z-a(u-t)/2-f(y-x)/2)/
+            '            (b(v-t)/2+c(w-u)/2+d(x-v)/2+e(y-w)/2)
+            ' Where a-f = values (iFL-1, iFL, first forecast,
+            '               last forecast, iV, iV+1),
+            '       t-y = their timestamps, q = scaling factor, z = weight.
 
-            ' If all of the following conditions are true, we can redistribute
-            ' the total:
-            '  1) A flatline can never start at the first value in the time
-            '       series, as we don't know if the start was already before
-            '       this.
-            '  2) It also cannot end on the last value in the time series, as we
-            '       don't know if the end was after this. We need at least one
-            '       extra value after the spike value to determine it's length.
-            '  3) We need at least 3 values: two repeating values and one spike
-            '       value.
-            '  4) The duration between the last and first good values around the
-            '       flatline has to be at least 12 calculation intervals. With
-            '       the default calculation interval of 5 minutes, this equals
-            '       one hour.
-            If (iFL > 0 And iV < Values.Count-1 And iV-iFL > 1) AndAlso
-              (Values.Item(iV+1).Timestamp.LocalTime.Subtract(
-              Values.Item(iFL-1).Timestamp.LocalTime).TotalSeconds/
-              CalculationInterval >= 12) Then
+            ' Phase 1: Remove all values after the last good value.
+            Do While Deflatline.Item(Deflatline.Count-1).
+              Timestamp.LocalTime > Values.Item(iFL-1).Timestamp.LocalTime
+              Deflatline.RemoveAt(Deflatline.Count-1)
+            Loop
 
-              ' How to solve the scaling factor problem:
-              '  * For stepped values:
-              '      z = a(u-t)+qb(v-u)+qc(w-v)+qd(x-w)+qe(y-x)
-              '      Solve for q:
-              '        q = (z-a(u-t))/(b(v-u)+c(w-v)+d(x-w)+e(y-x))
-              '  * For non-stepped values:
-              '      z = (a+qb)/2(u-t)+(qb+qc)/2(v-u)+(qc+qd)/2(w-v)+
-              '          (qd+qe)/2(x-w)+(qe+f)/2(y-x)
-              '      Solve for q:
-              '        q = (z-a(u-t)/2-f(y-x)/2)/
-              '            (b(v-t)/2+c(w-u)/2+d(x-v)/2+e(y-w)/2)
-              ' Where a-f = values (iFL-1, iFL, first forecast,
-              '               last forecast, iV, iV+1),
-              '       t-y = their timestamps, q = scaling factor, z = weight.
+            ' Phase 2: Calculate weight of original from the last good value to
+            ' the first good value. These two values are unmodified in the end
+            ' result.
+            i = -1 ' Start at the last good value.
+            MeasurementWeight = 0 ' Initial weight.
+            Do While iFL+i < iV+1
+              ' Add weight.
+              MeasurementWeight += TimeWeightedValue(
+                Convert.ToDouble(Values.Item(iFL+i).Value),
+                Convert.ToDouble(Values.Item(iFL+i+1).Value),
+                Values.Item(iFL+i).Timestamp.LocalTime,
+                Values.Item(iFL+i+1).Timestamp.LocalTime, Stepped)
+              i += 1 ' Increase iterator.
+            Loop ' iFL-1 to iV.
 
-              ' Phase 1: Remove all values after the last good value.
-              Do While Deflatline.Item(Deflatline.Count-1).
-                Timestamp.LocalTime > Values.Item(iFL-1).Timestamp.LocalTime
-                Deflatline.RemoveAt(Deflatline.Count-1)
-              Loop
-
-              ' Phase 2: Calculate weight of original from the last good value
-              ' to the first good value. These two values are unmodified in the
-              ' end result.
-              i = -1 ' Start at the last good value.
-              MeasurementWeight = 0 ' Initial weight.
-              Do While iFL+i < iV+1
-                ' Add weight.
-                MeasurementWeight += TimeWeightedValue(
-                  Convert.ToDouble(Values.Item(iFL+i).Value),
-                  Convert.ToDouble(Values.Item(iFL+i+1).Value),
-                  Values.Item(iFL+i).Timestamp.LocalTime,
-                  Values.Item(iFL+i+1).Timestamp.LocalTime, Stepped)
-                i += 1 ' Increase iterator.
-              Loop ' iFL-1 to iV.
-
-              ' Phase 3: Calculate weight of forecast.
-              i = 0
-              ForecastWeight = 0 ' Initial weight.
-              Do While i < Results.Count-1 ' Exclude last value, we need i+1.
-                If Results.Item(i).Timestamp >
+            ' Phase 3: Calculate weight of forecast.
+            i = 0
+            ForecastWeight = 0 ' Initial weight.
+            Do While i < Results.Count-1 ' Exclude last value, we need i+1.
+              If Results.Item(i).Timestamp >
+                Values.Item(iFL-1).Timestamp.LocalTime Then
+                ' All forecasts after the last good value and before the first
+                ' good value.
+                If Results.Item(i-1).Timestamp <=
                   Values.Item(iFL-1).Timestamp.LocalTime Then
-                  ' All forecasts after the last good value and before the first
-                  ' good value.
-                  If Results.Item(i-1).Timestamp <=
-                    Values.Item(iFL-1).Timestamp.LocalTime Then
-                    ' Last good value to first forecast.
-                    If Stepped Then
-                      MeasurementWeight -= TimeWeightedValue(
-                        Convert.ToDouble(Values.Item(iFL-1).Value), Nothing,
-                        Values.Item(iFL-1).Timestamp.LocalTime,
-                        Results.Item(i).Timestamp) ' -a(u-t)
-                      ForecastWeight += TimeWeightedValue(
-                        Results.Item(i).ForecastItem.Forecast, Nothing,
-                        Results.Item(i).Timestamp,
-                        Results.Item(i+1).Timestamp) ' b(v-u)
-                    Else
-                      MeasurementWeight -= TimeWeightedValue(
-                        Convert.ToDouble(Values.Item(iFL-1).Value), Nothing,
-                        Values.Item(iFL-1).Timestamp.LocalTime,
-                        Results.Item(i).Timestamp)/2 ' -a(u-t)/2
-                      ForecastWeight += TimeWeightedValue(
-                        Results.Item(i).ForecastItem.Forecast, Nothing,
-                        Values.Item(iFL-1).Timestamp.LocalTime,
-                        Results.Item(i+1).Timestamp)/2 ' b(v-t)/2
-                    End If ' Stepped.
-                  ElseIf Results.Item(i+1).Timestamp >=
-                    Values.Item(iV+1).Timestamp.LocalTime Then
-                    ' Last forecast to first good value.
-                    If Stepped Then
-                      ForecastWeight += TimeWeightedValue(
-                        Results.Item(i).ForecastItem.Forecast, Nothing,
-                        Results.Item(i).Timestamp,
-                        Values.Item(iV+1).Timestamp.LocalTime) ' e(y-x)
-                    Else
-                      MeasurementWeight -= TimeWeightedValue(
-                        Convert.ToDouble(Values.Item(iV+1).Value), Nothing,
-                        Results.Item(i).Timestamp,
-                        Values.Item(iV+1).Timestamp.LocalTime)/2 ' -f(y-x)/2
-                      ForecastWeight += TimeWeightedValue(
-                        Results.Item(i).ForecastItem.Forecast, Nothing,
-                        Results.Item(i-1).Timestamp,
-                        Values.Item(iV+1).Timestamp.LocalTime)/2 ' e(y-w)/2
-                    End If ' Stepped.
-                    Exit Do ' No more.
+                  ' Last good value to first forecast.
+                  If Stepped Then
+                    MeasurementWeight -= TimeWeightedValue(
+                      Convert.ToDouble(Values.Item(iFL-1).Value), Nothing,
+                      Values.Item(iFL-1).Timestamp.LocalTime,
+                      Results.Item(i).Timestamp) ' -a(u-t)
+                    ForecastWeight += TimeWeightedValue(
+                      Results.Item(i).ForecastItem.Forecast, Nothing,
+                      Results.Item(i).Timestamp,
+                      Results.Item(i+1).Timestamp) ' b(v-u)
                   Else
-                    ' All forecasts after the last good value and before the
-                    ' first good value, except first and last.
-                    If Stepped Then
-                      ForecastWeight += TimeWeightedValue(
-                        Results.Item(i).ForecastItem.Forecast, Nothing,
-                        Results.Item(i).Timestamp,
-                        Results.Item(i+1).Timestamp) ' c(w-v), ...
-                    Else
-                      ' If not stepped, each value has a certain weight in it's
-                      ' previous and it's next interval. For both of these
-                      ' intervals it accounts for half of the total weight,
-                      ' since a non-stepped interval weight is based on the
-                      ' average value between the previous and the next value,
-                      ' with the other half of the weight coming from it's
-                      ' previous and next values. So we can just add half the
-                      ' total weight from the previous interval to the next.
-                      ForecastWeight += TimeWeightedValue(
-                        Results.Item(i).ForecastItem.Forecast, Nothing,
-                        Results.Item(i-1).Timestamp,
-                        Results.Item(i+1).Timestamp)/2 ' c(w-u)/2, ...
-                    End If ' Stepped.
-                  End If
+                    MeasurementWeight -= TimeWeightedValue(
+                      Convert.ToDouble(Values.Item(iFL-1).Value), Nothing,
+                      Values.Item(iFL-1).Timestamp.LocalTime,
+                      Results.Item(i).Timestamp)/2 ' -a(u-t)/2
+                    ForecastWeight += TimeWeightedValue(
+                      Results.Item(i).ForecastItem.Forecast, Nothing,
+                      Values.Item(iFL-1).Timestamp.LocalTime,
+                      Results.Item(i+1).Timestamp)/2 ' b(v-t)/2
+                  End If ' Stepped.
+                ElseIf Results.Item(i+1).Timestamp >=
+                  Values.Item(iV+1).Timestamp.LocalTime Then
+                  ' Last forecast to first good value.
+                  If Stepped Then
+                    ForecastWeight += TimeWeightedValue(
+                      Results.Item(i).ForecastItem.Forecast, Nothing,
+                      Results.Item(i).Timestamp,
+                      Values.Item(iV+1).Timestamp.LocalTime) ' e(y-x)
+                  Else
+                    MeasurementWeight -= TimeWeightedValue(
+                      Convert.ToDouble(Values.Item(iV+1).Value), Nothing,
+                      Results.Item(i).Timestamp,
+                      Values.Item(iV+1).Timestamp.LocalTime)/2 ' -f(y-x)/2
+                    ForecastWeight += TimeWeightedValue(
+                      Results.Item(i).ForecastItem.Forecast, Nothing,
+                      Results.Item(i-1).Timestamp,
+                      Values.Item(iV+1).Timestamp.LocalTime)/2 ' e(y-w)/2
+                  End If ' Stepped.
+                  Exit Do ' No more.
+                Else
+                  ' All forecasts after the last good value and before the first
+                  ' good value, except first and last.
+                  If Stepped Then
+                    ForecastWeight += TimeWeightedValue(
+                      Results.Item(i).ForecastItem.Forecast, Nothing,
+                      Results.Item(i).Timestamp,
+                      Results.Item(i+1).Timestamp) ' c(w-v), ...
+                  Else
+                    ' If not stepped, each value has a certain weight in it's
+                    ' previous and it's next interval. For both of these
+                    ' intervals it accounts for half of the total weight, since
+                    ' a non-stepped interval weight is based on the average
+                    ' value between the previous and the next value, with the
+                    ' other half of the weight coming from it's previous and
+                    ' next values. So we can just add half the total weight from
+                    ' the previous interval to the next.
+                    ForecastWeight += TimeWeightedValue(
+                      Results.Item(i).ForecastItem.Forecast, Nothing,
+                      Results.Item(i-1).Timestamp,
+                      Results.Item(i+1).Timestamp)/2 ' c(w-u)/2, ...
+                  End If ' Stepped.
                 End If
-                i += 1 ' Increase iterator.
-              Loop ' Results.
+              End If
+              i += 1 ' Increase iterator.
+            Loop ' Results.
 
-              ' Phase 4: Add weight adjusted forecast.
-              i = 0
-              Do While i < Results.Count-1
-                If Results.Item(i).Timestamp >
-                  Values.Item(iFL-1).Timestamp.LocalTime And
-                  Results.Item(i).TimestampIsValid Then
-                  ' Insert scaled forecasts for valid timestamps after the
-                  ' last good value and before the first good value.
-                  Deflatline.Add(New AFValue(
-                    Results.Item(i).ForecastItem.Forecast*
-                    MeasurementWeight/ForecastWeight,
-                    New AFTime(Results.Item(i).Timestamp)))
-                  Deflatline.Item(Deflatline.Count-1).Substituted = True
-                End If
-                i += 1 ' Increase iterator.
-                If Results.Item(i).Timestamp >=
-                  Values.Item(iV+1).Timestamp.LocalTime Then Exit Do ' No more.
-              Loop ' Results.
+            ' Phase 4: Add weight adjusted forecast.
+            i = 0
+            Do While i < Results.Count-1
+              If Results.Item(i).Timestamp >
+                Values.Item(iFL-1).Timestamp.LocalTime And
+                Results.Item(i).TimestampIsValid Then
+                ' Insert scaled forecasts for valid timestamps after the last
+                ' good value and before the first good value.
+                Deflatline.Add(New AFValue(
+                  Results.Item(i).ForecastItem.Forecast*
+                  MeasurementWeight/ForecastWeight,
+                  New AFTime(Results.Item(i).Timestamp)))
+                Deflatline.Item(Deflatline.Count-1).Substituted = True
+              End If
+              i += 1 ' Increase iterator.
+              If Results.Item(i).Timestamp >=
+                Values.Item(iV+1).Timestamp.LocalTime Then Exit Do ' No more.
+            Loop ' Results.
 
-              Changed = True ' Mark as changed.
+            ' After deflatlining, skip the spike value interval, and the
+            ' interval after that, as flatline start index to avoid overwriting
+            ' data that has just been inserted. This could happen if the spike
+            ' value, or the value after that, is seen as the start value of a
+            ' new flatline. The value after the spike value has to be skipped
+            ' also because if it is the start of a flatline, scaled forecast
+            ' data inserted after the spike value would be overwritten. This
+            ' issue is solved by moving the flatline index two extra intervals,
+            ' to the value after the first good value. The downside to this is
+            ' that a new flatline starting on the first good value, or the value
+            ' after that (so zero or one values between flatlines), is not
+            ' automatically corrected.
+            iFL = iV+2
 
-            Else
+          Else
 
-              ' Values differ, but no flatline.
-              iFL = iV ' Set flatline start index to the current value.
+            ' Values differ, but no flatline.
+            iFL = iV ' Set flatline start index to the current value.
 
-            End If ' Check flatline.
+          End If ' Check flatline.
 
-          End If ' Check not changed and values differ.
+        End If ' Check values differ.
 
-          iV += 1 ' Move iterator to next value.
+        iV += 1 ' Move iterator to next value.
 
-        Next Value
-
-        ' If changed, perform the next iteration on the changed values and look
-        ' for more flatlines.
-        If Changed Then Values = Deflatline
-
-      Loop ' Values.
+      Next Value
 
       Return Deflatline
 
