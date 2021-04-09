@@ -387,46 +387,54 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' receive a flatline containing all zeroes, followed by a single spike
       ' value containing the total of the previous flatline time range.
 
-      Dim Value As AFValue
+      Dim Changed As Boolean = True ' First iteration.
       Dim iV, iFL, i As Integer ' Iterators
+      Dim Value As AFValue
       Dim MeasurementWeight, ForecastWeight As Double
 
-      Deflatline = New AFValues
+      Do While Changed
 
-      For Each Value In Values
+        Deflatline = New AFValues
+        Changed = False
+        iV = 0
+        iFL = 0
 
-        Deflatline.Add(Value) ' Add original value.
+        For Each Value In Values
 
-        ' The flatline ends when a value is different from the value that is
-        ' currently being monitored (iFL). This value is also replaced by the
-        ' scaled forecast, as it may contain a spike value which needs to be
-        ' redistributed.
-        If iV > iFL AndAlso Not Convert.ToDouble(Value.Value) =
-          Convert.ToDouble(Values.Item(iFL).Value) Then
+          Deflatline.Add(Value) ' Add original value.
 
-          ' The following timestamps are important:
-          '  * iFL-1 Last good value before flatline
-          '  * iFL   Start of flatline
-          '  * iV    End of flatline, spike value
-          '  * iV+1  First good value
+          ' The flatline ends when a value is different from the value that is
+          ' currently being monitored (iFL). This value is also replaced by the
+          ' scaled forecast, as it may contain a spike value which needs to be
+          ' redistributed. Only pass this check if the current iteration does
+          ' not already contain changes.
+          If Not Changed And Not Convert.ToDouble(Value.Value) =
+            Convert.ToDouble(Values.Item(iFL).Value) Then
 
-          ' If all of the following conditions are true, we can redistribute the
-          ' total:
-          '  1) A flatline can never start at the first value in the time
-          '       series, as we don't know if the start was already before this.
-          '  2) It also cannot end on the last value in the time series, as we
-          '       don't know if the end was after this. We need at least one
-          '       extra value after the spike value to determine it's length.
-          '  3) We need at least 3 values: two repeating values and one spike
-          '       value.
-          If iFL > 0 And iV < Values.Count-1 And iV-iFL > 1 Then
+            ' The following timestamps are important:
+            '  * iFL-1 Last good value before flatline
+            '  * iFL   Start of flatline
+            '  * iV    End of flatline, spike value
+            '  * iV+1  First good value
 
-            ' The duration between the last and first good values around the
-            ' flatline has to be at least 12 calculation intervals. With the
-            ' default calculation interval of 5 minutes, this equals one hour.
-            If Values.Item(iV+1).Timestamp.LocalTime.Subtract(
+            ' If all of the following conditions are true, we can redistribute
+            ' the total:
+            '  1) A flatline can never start at the first value in the time
+            '       series, as we don't know if the start was already before
+            '       this.
+            '  2) It also cannot end on the last value in the time series, as we
+            '       don't know if the end was after this. We need at least one
+            '       extra value after the spike value to determine it's length.
+            '  3) We need at least 3 values: two repeating values and one spike
+            '       value.
+            '  4) The duration between the last and first good values around the
+            '       flatline has to be at least 12 calculation intervals. With
+            '       the default calculation interval of 5 minutes, this equals
+            '       one hour.
+            If (iFL > 0 And iV < Values.Count-1 And iV-iFL > 1) AndAlso
+              (Values.Item(iV+1).Timestamp.LocalTime.Subtract(
               Values.Item(iFL-1).Timestamp.LocalTime).TotalSeconds/
-              CalculationInterval >= 12 Then
+              CalculationInterval >= 12) Then
 
               ' How to solve the scaling factor problem:
               '  * For stepped values:
@@ -462,7 +470,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                   Values.Item(iFL+i).Timestamp.LocalTime,
                   Values.Item(iFL+i+1).Timestamp.LocalTime, Stepped)
                 i += 1 ' Increase iterator.
-              Loop
+              Loop ' iFL-1 to iV.
 
               ' Phase 3: Calculate weight of forecast.
               i = 0
@@ -493,7 +501,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                         Results.Item(i).ForecastItem.Forecast, Nothing,
                         Values.Item(iFL-1).Timestamp.LocalTime,
                         Results.Item(i+1).Timestamp)/2 ' b(v-t)/2
-                    End If
+                    End If ' Stepped.
                   ElseIf Results.Item(i+1).Timestamp >=
                     Values.Item(iV+1).Timestamp.LocalTime Then
                     ' Last forecast to first good value.
@@ -511,7 +519,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                         Results.Item(i).ForecastItem.Forecast, Nothing,
                         Results.Item(i-1).Timestamp,
                         Values.Item(iV+1).Timestamp.LocalTime)/2 ' e(y-w)/2
-                    End If
+                    End If ' Stepped.
                     Exit Do ' No more.
                   Else
                     ' All forecasts after the last good value and before the
@@ -534,11 +542,11 @@ Namespace Vitens.DynamicBandwidthMonitor
                         Results.Item(i).ForecastItem.Forecast, Nothing,
                         Results.Item(i-1).Timestamp,
                         Results.Item(i+1).Timestamp)/2 ' c(w-u)/2, ...
-                    End If
+                    End If ' Stepped.
                   End If
                 End If
                 i += 1 ' Increase iterator.
-              Loop
+              Loop ' Results.
 
               ' Phase 4: Add weight adjusted forecast.
               i = 0
@@ -546,8 +554,8 @@ Namespace Vitens.DynamicBandwidthMonitor
                 If Results.Item(i).Timestamp >
                   Values.Item(iFL-1).Timestamp.LocalTime And
                   Results.Item(i).TimestampIsValid Then
-                  ' Insert scaled forecasts for valid timestamps after the last
-                  ' good value and before the first good value.
+                  ' Insert scaled forecasts for valid timestamps after the
+                  ' last good value and before the first good value.
                   Deflatline.Add(New AFValue(
                     Results.Item(i).ForecastItem.Forecast*
                     MeasurementWeight/ForecastWeight,
@@ -557,27 +565,28 @@ Namespace Vitens.DynamicBandwidthMonitor
                 i += 1 ' Increase iterator.
                 If Results.Item(i).Timestamp >=
                   Values.Item(iV+1).Timestamp.LocalTime Then Exit Do ' No more.
-              Loop
+              Loop ' Results.
 
-              ' After deflatlining, skip the spike value interval as flatline
-              ' start index to avoid overwriting data that has just been
-              ' inserted. This could happen if the spike value is seen as the
-              ' start value of a new flatline. This issue is solved by moving
-              ' the flatline index an extra interval, to the first good value.
-              iFL = iV+1
+              Changed = True ' Mark as changed.
 
-            End If
+            Else
 
-          Else
+              ' Values differ, but no flatline.
+              iFL = iV ' Set flatline start index to the current value.
 
-            iFL = iV ' Set flatline start index to the current value.
+            End If ' Check flatline.
 
-          End If
+          End If ' Check not changed and values differ.
 
-        End If
-        iV += 1 ' Move iterator to next value.
+          iV += 1 ' Move iterator to next value.
 
-      Next Value
+        Next Value
+
+        ' If changed, perform the next iteration on the changed values and look
+        ' for more flatlines.
+        If Changed Then Values = Deflatline
+
+      Loop ' Values.
 
       Return Deflatline
 
