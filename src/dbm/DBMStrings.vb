@@ -45,8 +45,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Const sStatisticsBrief As String =
       "Calibrated: {0} (" &
       "n {1}; " &
-      "Bias {2:" & sPercentageFormat & "}; " &
-      "Error {3:" & sPercentageFormat & "}; " &
+      "Systematic error {2:" & sPercentageFormat & "}; " &
+      "Random error {3:" & sPercentageFormat & "}; " &
       "Fit {4:" & sPercentageFormat & "})"
 
 
