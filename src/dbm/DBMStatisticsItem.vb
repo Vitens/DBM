@@ -69,14 +69,14 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Function Brief As String
 
-      ' Model calibration metrics: bias, variation, and fit
+      ' Model calibration metrics: bias, error, and fit
       ' DBM can calculate model calibration metrics. This information is exposed
       ' in the DBMTester utility and the DBMDataRef data reference. The model is
       ' considered to be calibrated if all of the following conditions are met:
       '   * the absolute normalized mean bias error (NMBE, as a measure of bias)
       '     is 10% or lower,
       '   * the absolute coefficient of variation of the root-mean-square
-      '     deviation (CV(RMSD), as a measure of variation) is 30% or lower,
+      '     deviation (CV(RMSD), as a measure of error) is 30% or lower,
       '   * the determination (R², as a measure of fit) is 0.75 or higher.
       ' There are several agencies that have developed guidelines and
       ' methodologies to establish a measure of the accuracy of models. We

@@ -46,7 +46,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       "Calibrated: {0} (" &
       "n {1}; " &
       "Bias {2:" & sPercentageFormat & "}; " &
-      "Variation {3:" & sPercentageFormat & "}; " &
+      "Error {3:" & sPercentageFormat & "}; " &
       "Fit {4:" & sPercentageFormat & "})"
 
 
