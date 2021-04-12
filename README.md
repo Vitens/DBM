@@ -114,6 +114,8 @@ DBMDataRef is a custom OSIsoft PI Asset Framework data reference which integrate
 The `Target` trait returns the original, valid raw measurements, augmented with forecast data for invalid and future data. Data quality is marked as `Substituted` for invalid data replaced by forecast data, or `Questionable` for future forecast data or data exceeding `Minimum` and `Maximum` control limits.
 ![Augmented](img/augmented.png)
 
+For the `Target` trait, DBM also detects and removes incorrect flatlines in the data and replaces them with forecast values, which are then weight adjusted to the original time range total. Data quality is marked as `Substituted` for this data.
+
 Beginning with PI AF 2018 SP3 Patch 2, all AF plugins must be signed with a valid certificate. Users must ensure any 3rd party or custom plugins are signed with a valid certificate. Digitally signing plugins increases the users' confidence that it is from a trusted entity. AF data references that are not signed could have been tampered with and are potentially dangerous. Therefore, in order to protect its users, OSIsoft software enforces that all AF 2.x data reference plugins be signed. Use `sign.bat` to sign the data reference and support assemblies with your pfx certificate file before registering the data reference with PI AF.
 
 ### Model calibration metrics: bias, variation, and fit
