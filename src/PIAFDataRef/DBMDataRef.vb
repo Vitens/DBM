@@ -571,7 +571,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             ' that a new flatline starting on the first good value, or the value
             ' after that (so zero or one values between flatlines), is not
             ' automatically corrected.
-            iFL = iV+2
+            iFL = iV+1 ' test
 
           Else
 
