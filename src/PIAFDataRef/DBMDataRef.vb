@@ -381,11 +381,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' De-flatline detects and removes incorrect flatlines in the data and
       ' replaces them with forecast values, which are then weight adjusted to
-      ' the original time range total. There are two situations we want to
-      ' automatically improve here: whenever data is manually replaced by
-      ' inserting an average value over a longer time range, and whenever we
-      ' receive a flatline containing all zeroes, followed by a single spike
-      ' value containing the total of the previous flatline time range.
+      ' the original time range total. Data quality is marked as Substituted for
+      ' this data. There are two situations we want to automatically improve
+      ' here: whenever data is manually replaced by inserting an average value
+      ' over a longer time range, and whenever we receive a flatline containing
+      ' all zeroes, followed by a single spike value containing the total of the
+      ' previous flatline time range.
 
       Dim Value As AFValue
       Dim iV, iFL, i As Integer ' Iterators
