@@ -39,7 +39,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Determination As Double
 
 
-    Private Function Calibrated As Boolean
+    Public Function Calibrated As Boolean
 
       ' ASHRAE Guideline 14-2014, Measurement of Energy, Demand, and Water
       ' Savings
@@ -67,9 +67,39 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Function SystematicError As Double
+
+      ' The normalized mean bias error is used as a measure of the systematic
+      ' error.
+
+      Return NMBE
+
+    End Function
+
+
+    Public Function RandomError As Double
+
+      ' For the random error, the difference between the absolute normalized
+      ' mean bias error and the absolute coefficient of variation of the
+      ' root-mean-square deviation is used.
+
+      Return Abs(CVRMSD)-Abs(SystematicError)
+
+    End Function
+
+
+    Public Function Fit As Double
+
+      ' The determination, R², as a measure of fit.
+
+      Return Determination
+
+    End Function
+
+
     Public Function Brief As String
 
-      ' Model calibration metrics: bias, error, and fit
+      ' Model calibration metrics: systematic error, random error, and fit
       ' DBM can calculate model calibration metrics. This information is exposed
       ' in the DBMTester utility and the DBMDataRef data reference. The model is
       ' considered to be calibrated if all of the following conditions are met:
@@ -78,6 +108,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       '   * the absolute coefficient of variation of the root-mean-square
       '     deviation (CV(RMSD), as a measure of error) is 30% or lower,
       '   * the determination (R², as a measure of fit) is 0.75 or higher.
+      ' The normalized mean bias error is used as a measure of the systematic
+      ' error. For the random error, the difference between the absolute
+      ' normalized mean bias error and the absolute coefficient of variation of
+      ' the root-mean-square deviation is used.
       ' There are several agencies that have developed guidelines and
       ' methodologies to establish a measure of the accuracy of models. We
       ' decided to follow the guidelines as documented in ASHRAE Guideline
@@ -90,7 +124,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       If Count < 3 Then Return sStatisticsInsufficientData ' Need at least 3 pts
 
       Return String.Format(sStatisticsBrief,
-        Calibrated, Count, NMBE, CVRMSD, Determination)
+        Calibrated, Count, SystematicError, RandomError, Fit)
 
     End Function
 

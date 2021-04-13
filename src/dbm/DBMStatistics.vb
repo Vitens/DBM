@@ -66,7 +66,6 @@ Namespace Vitens.DynamicBandwidthMonitor
           For i = 0 To Dependent.Length-1
             If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
               .Count += 1
-              .Mean += Independent(i)
               .NMBE += Dependent(i)-Independent(i)
               .RMSD += (Dependent(i)-Independent(i))^2
               SumX += Independent(i)
@@ -80,7 +79,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         If .Count = 0 Then Return Statistics ' Empty, non-eq, or no non-NaN pair
 
-        .Mean = .Mean/.Count ' Average
+        .Mean = SumX/.Count ' Average
 
         ' MBE (Mean Bias Error), as its name indicates, is the average of the
         ' errors of a sample space. Generally, it is a good indicator of the
@@ -90,7 +89,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' MBE, making them comparable. It quantifies the MBE index by dividing
         ' it by the mean of measured values, giving the global difference
         ' between the real values and the predicted ones.
-        .NMBE = .NMBE/(.Count-1)/.Mean
+        .NMBE = .NMBE/.Count/.Mean
 
         ' The root-mean-square deviation (RMSD) or root-mean-square error (RMSE)
         ' is a frequently used measure of the differences between values (sample
@@ -103,13 +102,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' prediction errors) when computed out-of-sample. The RMSD serves to
         ' aggregate the magnitudes of the errors in predictions for various data
         ' points into a single measure of predictive power.
-        .RMSD = Sqrt(.RMSD/(.Count-1))
-
-        ' For both NMBE and CV(RMSD), ASHRAE Guideline 14-2014 states: "For
-        ' calibrated simulations, the CV(RMSE) and NMBE of modeled energy use
-        ' shall be determined by comparing simulation predicted data to the
-        ' utility data used for calibration, with p = 1.". So we devide by n - 1
-        ' as in the stated equations where there is a division by n - p.
+        .RMSD = Sqrt(.RMSD/.Count)
 
         ' Normalizing the RMSD facilitates the comparison between datasets or
         ' models with different scales. Though there is no consistent means of
