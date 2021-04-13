@@ -67,16 +67,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Function Errors As Double
-
-      ' The errors are determined by the absolute coefficient of variation of
-      ' the root-mean-square deviation.
-
-      Return Abs(CVRMSD)
-
-    End Function
-
-
     Public Function SystematicError As Double
 
       ' The normalized mean bias error is used as a measure of the systematic
@@ -93,7 +83,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' mean bias error and the absolute coefficient of variation of the
       ' root-mean-square deviation is used.
 
-      Return Errors-Abs(SystematicError)
+      Return Abs(CVRMSD)-Abs(SystematicError)
 
     End Function
 
