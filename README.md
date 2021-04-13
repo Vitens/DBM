@@ -130,7 +130,7 @@ The normalized mean bias error is used as a measure of the systematic error. For
 There are several agencies that have developed guidelines and methodologies to establish a measure of the accuracy of models. We decided to follow the guidelines as documented in _ASHRAE Guideline 14-2014, Measurement of Energy, Demand, and Water Savings_, by the American Society of Heating, Refrigerating and Air Conditioning Engineers, and _International Performance Measurement and Verification Protocol: Concepts and Options for Determining Energy and Water Savings, Volume I_, by the Efficiency Valuation Organization.
 
 An example of the model calibration metrics:\
-`Calibrated: True (n 288; Systematic error 0.9%; Random error 3.2%; Fit 99.0%)`
+`Calibrated: True (n 2016; Systematic error 2,2%; Random error 4,2%; Fit 97,9%)`
 
 ### License
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
