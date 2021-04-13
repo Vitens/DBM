@@ -61,7 +61,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       '   causal relationship amongst the energy and independent variables."
 
       Return Abs(NMBE) <= 0.1 And
-        CVRMSD <= 0.3 And
+        Abs(CVRMSD) <= 0.3 And
         Determination >= 0.75
 
     End Function
@@ -72,7 +72,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' The errors are determined by the absolute coefficient of variation of
       ' the root-mean-square deviation.
 
-      Return CVRMSD
+      Return Abs(CVRMSD)
 
     End Function
 

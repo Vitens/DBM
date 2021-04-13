@@ -117,7 +117,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' measurements, the term coefficient of variation of the RMSD, CV(RMSD)
         ' may be used to avoid ambiguity. This is analogous to the coefficient
         ' of variation with the RMSD taking the place of the standard deviation.
-        .CVRMSD = Abs(.RMSD/.Mean)
+        .CVRMSD = .RMSD/.Mean
 
         .Slope = (.Count*SumXY-SumX*SumY)/(.Count*SumXX-SumX^2) ' Lin.regression
         .OriginSlope = SumXY/SumXX ' Lin.regression through the origin (alpha=0)
