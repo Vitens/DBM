@@ -39,7 +39,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Determination As Double
 
 
-    Private Function Calibrated As Boolean
+    Public Function Calibrated As Boolean
 
       ' ASHRAE Guideline 14-2014, Measurement of Energy, Demand, and Water
       ' Savings
@@ -61,8 +61,48 @@ Namespace Vitens.DynamicBandwidthMonitor
       '   causal relationship amongst the energy and independent variables."
 
       Return Abs(NMBE) <= 0.1 And
-        Abs(CVRMSD) <= 0.3 And
+        CVRMSD <= 0.3 And
         Determination >= 0.75
+
+    End Function
+
+
+    Public Function Errors As Double
+
+      ' The errors are determined by the absolute coefficient of variation of
+      ' the root-mean-square deviation.
+
+      Return CVRMSD
+
+    End Function
+
+
+    Public Function SystematicError As Double
+
+      ' The normalized mean bias error is used as a measure of the systematic
+      ' error.
+
+      Return NMBE
+
+    End Function
+
+
+    Public Function RandomError As Double
+
+      ' For the random error, the difference between the absolute normalized
+      ' mean bias error and the absolute coefficient of variation of the
+      ' root-mean-square deviation is used.
+
+      Return Errors-Abs(SystematicError)
+
+    End Function
+
+
+    Public Function Fit As Double
+
+      ' The determination, R², as a measure of fit.
+
+      Return Determination
 
     End Function
 
@@ -79,9 +119,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       '     deviation (CV(RMSD), as a measure of error) is 30% or lower,
       '   * the determination (R², as a measure of fit) is 0.75 or higher.
       ' The normalized mean bias error is used as a measure of the systematic
-      ' error. For the random error, the absolute difference between the
-      ' absolute normalized mean bias error and the absolute coefficient of
-      ' variation of the root-mean-square deviation is used.
+      ' error. For the random error, the difference between the absolute
+      ' normalized mean bias error and the absolute coefficient of variation of
+      ' the root-mean-square deviation is used.
       ' There are several agencies that have developed guidelines and
       ' methodologies to establish a measure of the accuracy of models. We
       ' decided to follow the guidelines as documented in ASHRAE Guideline
@@ -94,7 +134,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       If Count < 3 Then Return sStatisticsInsufficientData ' Need at least 3 pts
 
       Return String.Format(sStatisticsBrief,
-        Calibrated, Count, NMBE, Abs(Abs(CVRMSD)-Abs(NMBE)), Determination)
+        Calibrated, Count, SystematicError, RandomError, Fit)
 
     End Function
 

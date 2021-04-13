@@ -125,7 +125,7 @@ DBM can calculate model calibration metrics. This information is exposed in the 
 * the absolute coefficient of variation of the root-mean-square deviation (CV(RMSD), as a measure of error) is 30% or lower,
 * the determination (R², as a measure of fit) is 0.75 or higher.
 
-The normalized mean bias error is used as a measure of the systematic error. For the random error, the absolute difference between the absolute normalized mean bias error and the absolute coefficient of variation of the root-mean-square deviation is used.
+The normalized mean bias error is used as a measure of the systematic error. For the random error, the difference between the absolute normalized mean bias error and the absolute coefficient of variation of the root-mean-square deviation is used.
 
 There are several agencies that have developed guidelines and methodologies to establish a measure of the accuracy of models. We decided to follow the guidelines as documented in _ASHRAE Guideline 14-2014, Measurement of Energy, Demand, and Water Savings_, by the American Society of Heating, Refrigerating and Air Conditioning Engineers, and _International Performance Measurement and Verification Protocol: Concepts and Options for Determining Energy and Water Savings, Volume I_, by the Efficiency Valuation Organization.
 
