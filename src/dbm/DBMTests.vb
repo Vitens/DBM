@@ -35,6 +35,7 @@ Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
+Imports Vitens.DynamicBandwidthMonitor.DBMStrings
 Imports Vitens.DynamicBandwidthMonitor.DBMTimeSeries
 
 
@@ -1389,8 +1390,12 @@ Namespace Vitens.DynamicBandwidthMonitor
       CorrelationPoints.Add(
         New DBMCorrelationPoint(New DBMPointDriverTestModel(490), False))
 
-      Return Statistics(DBM.GetResults(InputPointDriver, CorrelationPoints,
-        New DateTime(2016, 1, 1), New DateTime(2017, 1, 1))).Brief
+      With Statistics(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1), New DateTime(2017, 1, 1)))
+        Return String.Format("SE {0:" & sPercentageFormat & "}; RE {0:" &
+          sPercentageFormat & "}; F {0:" & sPercentageFormat & "}",
+          .SystematicError, .RandomError, .Fit)
+      End With
 
     End Function
 
