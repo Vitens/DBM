@@ -151,8 +151,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Return "Certificate: " & CertificateInfo & NewLine &
         "Unit tests: " & Round(UTDurationMs).ToString & " ms" & NewLine &
         "Integration tests: " & Round(ITDurationMs).ToString & " ms" & NewLine &
-        "Quality tests: " & Round(QTDurationMs).ToString & " ms" &
-        " (" & QTResult & ")"
+        "Quality tests: " & Round(QTDurationMs).ToString & " ms; " & QTResult
 
     End Function
 

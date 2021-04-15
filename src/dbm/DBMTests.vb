@@ -1389,8 +1389,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       CorrelationPoints.Add(
         New DBMCorrelationPoint(New DBMPointDriverTestModel(490), False))
 
+      ' Not including the year boundaries, the test model has the least accurate
+      ' results in the week of the 2nd of May, 2016.
       Return Statistics(DBM.GetResults(InputPointDriver, CorrelationPoints,
-        New DateTime(2016, 6, 6), New DateTime(2016, 6, 13))).Brief
+        New DateTime(2016, 5, 2), New DateTime(2016, 5, 9))).Brief
 
     End Function
 
