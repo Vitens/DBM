@@ -134,6 +134,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim Timer As DateTime
       Dim UTDurationMs, ITDurationMs, QTDurationMs As Double
+      Dim QTResult As String
 
       Timer = Now
       RunUnitTests
@@ -144,13 +145,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       ITDurationMs = (Now.Ticks-Timer.Ticks)/TicksPerMillisecond
 
       Timer = Now
-      RunQualityTests
-      ITDurationMs = (Now.Ticks-Timer.Ticks)/TicksPerMillisecond
+      QTResult = RunQualityTests
+      QTDurationMs = (Now.Ticks-Timer.Ticks)/TicksPerMillisecond
 
       Return "Certificate: " & CertificateInfo & NewLine &
         "Unit tests: " & Round(UTDurationMs).ToString & " ms" & NewLine &
         "Integration tests: " & Round(ITDurationMs).ToString & " ms" & NewLine &
-        "Quality tests: " & Round(ITDurationMs).ToString & " ms"
+        "Quality tests: " & Round(QTDurationMs).ToString & " ms" &
+        " (" & QTResult & ")"
 
     End Function
 
