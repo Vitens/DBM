@@ -1392,9 +1392,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       With Statistics(DBM.GetResults(InputPointDriver, CorrelationPoints,
         New DateTime(2016, 6, 1), New DateTime(2016, 7, 1)))
-        Return String.Format("SE {0:" & sPercentageFormat & "} RE {1:" &
-          sPercentageFormat & "} F {2:" & sPercentageFormat & "}",
-          .SystematicError, .RandomError, .Fit)
+        Return String.Format("{0:" & sPercentageFormat & "}",
+          (1-Abs(.SystematicError))*(1-.RandomError)*.Fit)
       End With
 
     End Function
