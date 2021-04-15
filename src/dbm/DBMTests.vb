@@ -1391,7 +1391,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DBMCorrelationPoint(New DBMPointDriverTestModel(490), False))
 
       With Statistics(DBM.GetResults(InputPointDriver, CorrelationPoints,
-        New DateTime(2016, 6, 1), New DateTime(2016, 7, 1)))
+        New DateTime(2016, 8, 8), New DateTime(2016, 8, 15)))
         Return String.Format("{0:" & sPercentageFormat & "}",
           (1-Abs(.SystematicError))*(1-.RandomError)*.Fit)
       End With
