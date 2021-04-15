@@ -37,6 +37,7 @@ Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMInfo
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
+Imports Vitens.DynamicBandwidthMonitor.DBMStrings
 Imports Vitens.DynamicBandwidthMonitor.DBMTimeSeries
 
 
@@ -556,6 +557,14 @@ Namespace Vitens.DynamicBandwidthMonitor
                   MeasurementWeight/ForecastWeight,
                   New AFTime(Results.Item(i).Timestamp)))
                 Deflatline.Item(Deflatline.Count-1).Substituted = True
+                If Results.Item(i-1).Timestamp <=
+                  Values.Item(iFL-1).Timestamp.LocalTime Then
+                  ' Annotate the first weight adjusted forecast with the factor
+                  ' value.
+                  Annotate(Deflatline.Item(Deflatline.Count-1),
+                    String.Format(sForecastFactorAnnotation,
+                    MeasurementWeight/ForecastWeight))
+                End If
               End If
               i += 1 ' Increase iterator.
               If Results.Item(i).Timestamp >=
