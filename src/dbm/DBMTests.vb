@@ -1379,6 +1379,27 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
+    Public Shared Sub RunQualityTests
+
+      Dim InputPointDriver As DBMPointDriverTestModel
+      Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
+      Dim DBM As New DBM
+
+      InputPointDriver = New DBMPointDriverTestModel(0)
+      CorrelationPoints.Add(
+        New DBMCorrelationPoint(New DBMPointDriverTestModel(490), False))
+
+      Dim i As Integer
+      For i = 0 to 52
+        Console.WriteLine(i.ToString & " " &
+        Statistics(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 4).AddDays(i*7),
+        New DateTime(2016, 1, 4).AddDays((i+1)*7))).Brief)
+      Next i
+
+    End Sub
+
+
   End Class
 
 
