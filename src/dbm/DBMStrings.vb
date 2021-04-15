@@ -48,6 +48,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       "Systematic error {2:" & sPercentageFormat & "}; " &
       "Random error {3:" & sPercentageFormat & "}; " &
       "Fit {4:" & sPercentageFormat & "})"
+    Public Const sForecastFactorAnnotation As String =
+      sFactor & " {0:" & sNumberFormat & "}"
 
 
   End Class
