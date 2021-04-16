@@ -1395,7 +1395,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       For Week = 1 To 52
         With Statistics(DBM.GetResults(InputPointDriver, CorrelationPoints,
           New DateTime(2016, 1, 4).AddDays((Week-1)*7),
-          New DateTime(2016, 1, 4).AddDays(Week*7)))
+          New DateTime(2016, 1, 4).AddDays(Week*7), 0,
+          New CultureInfo("nl-NL")))
           If Week = 1 Or .SystematicError < SEMin Then SEMin = .SystematicError
           If Week = 1 Or .RandomError < REMin Then REMin = .RandomError
           If Week = 1 Or .Fit < FMin Then FMin = .Fit
