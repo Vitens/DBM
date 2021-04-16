@@ -1423,6 +1423,9 @@ Console.WriteLine(.ForecastItem.UpperControlLimit.ToString)
           SEAvg += .SystematicError
           REAvg += .RandomError
           FAvg += .Fit
+Console.Write(.SystematicError.ToString & ", ")
+Console.Write(.RandomError.ToString & ", ")
+Console.WriteLine(.Fit.ToString)
         End With
       Next Week
       Calibrated /= Week-1
