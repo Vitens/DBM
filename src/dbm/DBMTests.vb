@@ -1396,12 +1396,21 @@ Namespace Vitens.DynamicBandwidthMonitor
           New DateTime(2016, 1, 4).AddDays(Week*7), 0,
           New CultureInfo("nl-NL")))
           If .Calibrated Then Calibrated += 1
-          If Week = 1 Or .SystematicError < SEMin Then SEMin = .SystematicError
-          If Week = 1 Or .SystematicError > SEMax Then SEMax = .SystematicError
-          If Week = 1 Or .RandomError < REMin Then REMin = .RandomError
-          If Week = 1 Or .RandomError > REMax Then REMax = .RandomError
-          If Week = 1 Or .Fit < FMin Then FMin = .Fit
-          If Week = 1 Or .Fit > FMax Then FMax = .Fit
+          If Week = 1 Then
+            SEMin = .SystematicError
+            SEMax = .SystematicError
+            REMin = .RandomError
+            REMax = .RandomError
+            FMin = .Fit
+            FMax = .Fit
+          Else
+            SEMin = Min(SEMin, .SystematicError)
+            SEMax = Max(SEMax, .SystematicError)
+            REMin = Min(REMin, .RandomError)
+            REMax = Max(REMax, .RandomError)
+            FMin = Min(FMin, .Fit)
+            FMax = Max(FMax, .Fit)
+          End If
           SEAvg += .SystematicError
           REAvg += .RandomError
           FAvg += .Fit
