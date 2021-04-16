@@ -694,23 +694,22 @@ Namespace Vitens.DynamicBandwidthMonitor
       EndTimestamp As DateTime)
 
       Dim OffsetHours As Integer
+      Dim Index as Double
 
       If TypeOf Point Is Integer Then OffsetHours = DirectCast(Point, Integer)
 
       Do While EndTimestamp > StartTimestamp
 
-        With StartTimestamp.AddHours(OffsetHours)
+        ' Determine index. Shift day of week (5=Friday), add offset in hours.
+        Index = (5-New DateTime(StartTimestamp.Year, 1, 1).DayOfWeek)*24+
+          StartTimestamp.Subtract(
+          New DateTime(StartTimestamp.Year, 1, 1)).TotalHours+OffsetHours
 
-          ' Model based on hourly water usage in Leeuwarden (NL) 2016.
-          ' Calculated using polynomial regressions based on hourly (quintic),
-          ' daily (cubic) and monthly (quartic) periodicity.
-          DataStore.AddData(StartTimestamp, 790*(-0.00012*.Month^4+0.0035*
-            .Month^3-0.032*.Month^2+0.1*.Month+0.93)*(0.000917*.DayOfWeek^3-
-            0.0155*.DayOfWeek^2+0.0628*.DayOfWeek+0.956)*(-0.00001221*(.Hour+
-            .Minute/60)^5+0.0007805*(.Hour+.Minute/60)^4-0.01796*(.Hour+.Minute/
-            60)^3+0.1709*(.Hour+.Minute/60)^2-0.5032*(.Hour+.Minute/60)+0.7023))
-
-        End With
+        DataStore.AddData(StartTimestamp,
+          (1-Index Mod 1)*HourlyTimeSeriesData(
+          Floor(Index Mod HourlyTimeSeriesData.Length))+
+          (Index Mod 1)*HourlyTimeSeriesData(
+          Floor((Index+1) Mod HourlyTimeSeriesData.Length))) ' Interpolate.
 
         StartTimestamp =
           StartTimestamp.AddSeconds(CalculationInterval) ' Next interval.
