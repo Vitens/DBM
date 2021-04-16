@@ -1412,8 +1412,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       REAvg /= Week-1
       FAvg /= Week-1
 
-      Return String.Format(sQualityTests, SEMin, SEMax, SEAvg, REMin, REMax,
-        REAvg, FMin, FMax, FAvg)
+      Return String.Format(sQualityTests, SEMin, SEAvg, SEMax,
+        REMin, REAvg, REMax, FMin, FAvg, FMax)
 
     End Function
 
