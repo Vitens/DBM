@@ -1385,7 +1385,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim InputPointDriver As DBMPointDriverTestModel
       Dim Week As Integer
       Dim DBM As New DBM
-      Dim SEMin, SEMax, SEAvg, REMin, REMax, REAvg, FMin, FMax, FAvg As Double
+      Dim Calibrated, SEMin, SEMax, SEAvg, REMin, REMax, REAvg,
+        FMin, FMax, FAvg As Double
 
       InputPointDriver = New DBMPointDriverTestModel(0)
 
@@ -1394,6 +1395,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           New DateTime(2016, 1, 4).AddDays((Week-1)*7),
           New DateTime(2016, 1, 4).AddDays(Week*7), 0,
           New CultureInfo("nl-NL")))
+          If .Calibrated Then Calibrated += 1
           If Week = 1 Or .SystematicError < SEMin Then SEMin = .SystematicError
           If Week = 1 Or .RandomError < REMin Then REMin = .RandomError
           If Week = 1 Or .Fit < FMin Then FMin = .Fit
@@ -1405,11 +1407,12 @@ Namespace Vitens.DynamicBandwidthMonitor
           FAvg += .Fit
         End With
       Next Week
+      Calibrated /= Week-1
       SEAvg /= Week-1
       REAvg /= Week-1
       FAvg /= Week-1
 
-      Return String.Format(sQualityTests, SEMin, SEAvg, SEMax,
+      Return String.Format(sQualityTests, Calibrated, SEMin, SEAvg, SEMax,
         REMin, REAvg, REMax, FMin, FAvg, FMax)
 
     End Function
