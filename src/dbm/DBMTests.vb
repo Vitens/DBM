@@ -1383,14 +1383,11 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function RunQualityTests As String
 
       Dim InputPointDriver As DBMPointDriverTestModel
-      Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim Week As Integer
       Dim DBM As New DBM
       Dim SEMin, SEMax, SEAvg, REMin, REMax, REAvg, FMin, FMax, FAvg As Double
 
       InputPointDriver = New DBMPointDriverTestModel(0)
-      CorrelationPoints.Add(
-        New DBMCorrelationPoint(New DBMPointDriverTestModel(490), False))
 
       For Week = 1 To 52
         With Statistics(DBM.GetResults(InputPointDriver, CorrelationPoints,
