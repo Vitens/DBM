@@ -704,7 +704,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Index = (5-New DateTime(StartTimestamp.Year, 1, 1).DayOfWeek)*24+
           StartTimestamp.Subtract(
           New DateTime(StartTimestamp.Year, 1, 1)).TotalHours+OffsetHours
-
+Console.WriteLine(StartTimestamp.ToString & " " & (Index Mod HourlyTimeSeriesData.Length).ToString)
         ' Interpolate between two data points.
         DataStore.AddData(StartTimestamp,
           (1-Index Mod 1)*HourlyTimeSeriesData(

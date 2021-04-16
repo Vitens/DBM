@@ -1399,7 +1399,7 @@ Console.WriteLine(.ForecastItem.UpperControlLimit.ToString)
 
       InputPointDriver = New DBMPointDriverTestModel(0)
 
-      For Week = 1-4 To 52+4
+      For Week = 1 To 52
         With Statistics(DBM.GetResults(InputPointDriver, Nothing,
           New DateTime(2016, 1, 4).AddDays((Week-1)*7),
           New DateTime(2016, 1, 4).AddDays(Week*7), 0,
