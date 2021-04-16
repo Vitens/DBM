@@ -1265,24 +1265,27 @@ Namespace Vitens.DynamicBandwidthMonitor
         Result = DBM.GetResult(InputPointDriver, CorrelationPoints, Timestamp,
           New CultureInfo("nl-NL")) ' Use Dutch locale for New Year's Day test
         With Result
-          AssertAlmostEqual(.Factor, {0, 0, 0, 0, 0, 0, -11.8493, -22.9119, 0,
-            0, 0, 0, 1.1375, 0, 0, 0, 0, 0, 0, 0}(Abs(i)))
-          If {6, 7, 12}.Contains(Abs(i)) Then
-            AssertTrue(.HasEvent)
-          Else
-            AssertFalse(.HasEvent)
-          End If
-          If {5, 14}.Contains(Abs(i)) Then
-            AssertTrue(.HasSuppressedEvent)
-          Else
-            AssertFalse(.HasSuppressedEvent)
-          End If
+Console.Write(.Factor.ToString & ", ")
+Console.Write(.HasEvent.ToString & ", ")
+Console.Write(.HasSuppressedEvent.ToString & ", ")
 Console.Write(.ForecastItem.Measurement.ToString & ", ")
 Console.Write(.ForecastItem.Forecast.ToString & ", ")
 Console.Write(.ForecastItem.Range(0.95).ToString & ", ")
 Console.Write(.ForecastItem.Range(BandwidthCI).ToString & ", ")
 Console.Write(.ForecastItem.LowerControlLimit.ToString & ", ")
-Console.WriteLine(.ForecastItem.UpperControlLimit.ToString & ", ")
+Console.WriteLine(.ForecastItem.UpperControlLimit.ToString)
+'         AssertAlmostEqual(.Factor, {0, 0, 0, 0, 0, 0, -11.8493, -22.9119, 0,
+'           0, 0, 0, 1.1375, 0, 0, 0, 0, 0, 0, 0}(Abs(i)))
+'         If {6, 7, 12}.Contains(Abs(i)) Then
+'           AssertTrue(.HasEvent)
+'         Else
+'           AssertFalse(.HasEvent)
+'         End If
+'         If {5, 14}.Contains(Abs(i)) Then
+'           AssertTrue(.HasSuppressedEvent)
+'         Else
+'           AssertFalse(.HasSuppressedEvent)
+'         End If
 '         AssertAlmostEqual(.ForecastItem.Measurement, {511.0947, 714.6129,
 '           1093.1833, 949.5972, 508.9843, 700.7281, 1135.0766, 866.1744,
 '           505.9721, 682.8229, 1061.9115, 897.6165, 471.1027, 694.9479,
