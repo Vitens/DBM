@@ -1404,24 +1404,24 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function RunQualityTests As String
 
       Dim InputPointDriver As DBMPointDriverTestModel
-      Dim Month As Integer
+      Dim Week As Integer
       Dim DBM As New DBM
-      Dim Calibrated, SE(11), RE(11), F(11) As Double
+      Dim Calibrated, SE(51), RE(51), F(51) As Double
 
       InputPointDriver = New DBMPointDriverTestModel(0)
 
-      For Month = 1 To 12
+      For Week = 1 To 52
         With Statistics(DBM.GetResults(InputPointDriver, Nothing,
-          New DateTime(2016, 1, 1).AddMonths(Month-1),
-          New DateTime(2016, 1, 1).AddMonths(Month), 0,
+          New DateTime(2016, 1, 1).AddWeeks(Week-1),
+          New DateTime(2016, 1, 1).AddWeeks(Week), 0,
           New CultureInfo("nl-NL")))
           If .Calibrated Then Calibrated += 1
-          SE(Month-1) = .SystematicError
-          RE(Month-1) = .RandomError
-          F(Month-1) = .Fit
+          SE(Week-1) = .SystematicError
+          RE(Week-1) = .RandomError
+          F(Week-1) = .Fit
         End With
-      Next Month
-      Calibrated /= Month-1
+      Next Week
+      Calibrated /= Week-1
 
       Return String.Format(sQualityTests, Calibrated,
         Mean(SE), StDev(SE), Mean(RE), StDev(RE), Mean(F), StDev(F))
