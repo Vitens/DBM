@@ -1383,20 +1383,20 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function RunQualityTests As String
 
       Dim InputPointDriver As DBMPointDriverTestModel
-      Dim Day As Integer
+      Dim Month As Integer
       Dim DBM As New DBM
       Dim Calibrated, SEMin, SEMax, SEAvg, REMin, REMax, REAvg,
         FMin, FMax, FAvg As Double
 
       InputPointDriver = New DBMPointDriverTestModel(0)
 
-      For Day = 1 To 366
+      For Month = 1 To 12
         With Statistics(DBM.GetResults(InputPointDriver, Nothing,
-          New DateTime(2016, 1, 1).AddDays(Day-1),
-          New DateTime(2016, 1, 1).AddDays(Day), 0,
+          New DateTime(2016, 1, 1).AddMonths(Month-1),
+          New DateTime(2016, 1, 1).AddMonths(Month), 0,
           New CultureInfo("nl-NL")))
           If .Calibrated Then Calibrated += 1
-          If Day = 1 Then
+          If Month = 1 Then
             SEMin = .SystematicError
             SEMax = .SystematicError
             REMin = .RandomError
@@ -1415,11 +1415,11 @@ Namespace Vitens.DynamicBandwidthMonitor
           REAvg += .RandomError
           FAvg += .Fit
         End With
-      Next Day
-      Calibrated /= Day-1
-      SEAvg /= Day-1
-      REAvg /= Day-1
-      FAvg /= Day-1
+      Next Month
+      Calibrated /= Month-1
+      SEAvg /= Month-1
+      REAvg /= Month-1
+      FAvg /= Month-1
 
       Return String.Format(sQualityTests, Calibrated, SEMin, SEAvg, SEMax,
         REMin, REAvg, REMax, FMin, FAvg, FMax)
