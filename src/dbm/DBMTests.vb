@@ -1385,8 +1385,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim InputPointDriver As DBMPointDriverTestModel
       Dim Month As Integer
       Dim DBM As New DBM
-      Dim Calibrated, SE(11), SEMin, SEMax, SEAvg, RE(11), REMin, REMax, REAvg,
-        F(11), FMin, FMax, FAvg As Double
+      Dim Calibrated,
+        SE(12), SEMin, SEMax, SEAvg,
+        RE(12), REMin, REMax, REAvg,
+        F(12), FMin, FMax, FAvg As Double
 
       InputPointDriver = New DBMPointDriverTestModel(0)
 
