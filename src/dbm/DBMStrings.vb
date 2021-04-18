@@ -48,8 +48,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       "Systematic error {2:" & sPercentageFormat & "}; " &
       "Random error {3:" & sPercentageFormat & "}; " &
       "Fit {4:" & sPercentageFormat & "})"
-    Public Const sUCMu As String = "\\u03BC"
-    Public Const sUCSigma As String = "\\u03BC"
+    Public Const sUCMu As String = "\u03BC"
+    Public Const sUCSigma As String = "\u03BC"
     Public Const sQualityTests As String =
       "C {0:" & sPercentageFormat & "} (" &
       "SE " & sUCMu & "{1:" & sPercentageFormat & "} " &
