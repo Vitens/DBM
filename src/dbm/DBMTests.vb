@@ -1385,8 +1385,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim InputPointDriver As DBMPointDriverTestModel
       Dim Month As Integer
       Dim DBM As New DBM
-      Dim Calibrated, SEMin, SEMax, SEAvg, REMin, REMax, REAvg,
-        FMin, FMax, FAvg As Double
+      Dim Calibrated, SE(11), SEMin, SEMax, SEAvg, RE(11), REMin, REMax, REAvg,
+        F(11), FMin, FMax, FAvg As Double
 
       InputPointDriver = New DBMPointDriverTestModel(0)
 
@@ -1396,6 +1396,9 @@ Namespace Vitens.DynamicBandwidthMonitor
           New DateTime(2016, 1, 1).AddMonths(Month), 0,
           New CultureInfo("nl-NL")))
           If .Calibrated Then Calibrated += 1
+          SE(Month) = .SystematicError
+          RE(Month) = .RandomError
+          F(Month) = .Fit
           If Month = 1 Then
             SEMin = .SystematicError
             SEMax = .SystematicError
@@ -1414,10 +1417,6 @@ Namespace Vitens.DynamicBandwidthMonitor
           SEAvg += .SystematicError
           REAvg += .RandomError
           FAvg += .Fit
-Console.Write(.Calibrated.ToString & ", ")
-Console.Write(.SystematicError.ToString & ", ")
-Console.Write(.RandomError.ToString & ", ")
-Console.WriteLine(.Fit.ToString)
         End With
       Next Month
       Calibrated /= Month-1
@@ -1425,8 +1424,10 @@ Console.WriteLine(.Fit.ToString)
       REAvg /= Month-1
       FAvg /= Month-1
 
-      Return String.Format(sQualityTests, Calibrated, SEMin, SEAvg, SEMax,
-        REMin, REAvg, REMax, FMin, FAvg, FMax)
+      Return String.Format(sQualityTests, Calibrated,
+        SEMin, SEAvg, Mean(SE), SEMax,
+        REMin, REAvg, Mean(RE), REMax,
+        FMin, FAvg, Mean(F), FMax)
 
     End Function
 

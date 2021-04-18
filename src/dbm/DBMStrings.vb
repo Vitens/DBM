@@ -48,12 +48,13 @@ Namespace Vitens.DynamicBandwidthMonitor
       "Systematic error {2:" & sPercentageFormat & "}; " &
       "Random error {3:" & sPercentageFormat & "}; " &
       "Fit {4:" & sPercentageFormat & "})"
-    Public Const sQualityTests As String =
-      "C {0:" & sPercentageFormat & "} SE {1:" & sPercentageFormat & "}/{2:" &
-        sPercentageFormat & "}/{3:" & sPercentageFormat & "}; RE {4:" &
-        sPercentageFormat & "}/{5:" & sPercentageFormat & "}/{6:" &
-        sPercentageFormat & "}; F {7:" & sPercentageFormat & "}/{8:" &
-        sPercentageFormat & "}/{9:" & sPercentageFormat & "}"
+    Public Const sQualityTests As String = "C {0:" & sPercentageFormat & "} " &
+      "SE {1:" & sPercentageFormat & "}/{2:" & sPercentageFormat & "}/{3:" &
+      sPercentageFormat & "}/{4:" & sPercentageFormat & "}; " &
+      "RE {5:" & sPercentageFormat & "}/{6:" & sPercentageFormat & "}/{7:" &
+      sPercentageFormat & "}/{8:" & sPercentageFormat & "}; " &
+      "F {9:" & sPercentageFormat & "}/{10:" & sPercentageFormat & "}/{11:" &
+      sPercentageFormat & "}/{12:" & sPercentageFormat & "}"
     Public Const sForecastFactorAnnotation As String =
       sFactor & " {0:" & sNumberFormat & "}"
 
