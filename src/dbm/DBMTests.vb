@@ -1414,6 +1414,10 @@ Namespace Vitens.DynamicBandwidthMonitor
           SEAvg += .SystematicError
           REAvg += .RandomError
           FAvg += .Fit
+Console.Write(.Calibrated.ToString & ", ")
+Console.Write(.SystematicError.ToString & ", ")
+Console.Write(.RandomError.ToString & ", ")
+Console.WriteLine(.Fit.ToString)
         End With
       Next Month
       Calibrated /= Month-1
