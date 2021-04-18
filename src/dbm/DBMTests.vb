@@ -1404,28 +1404,28 @@ exit sub
     Public Shared Function RunQualityTests As String
 
       Dim InputPointDriver As DBMPointDriverTestModel
-      Dim Week As Integer
+      Dim Day As Integer
       Dim DBM As New DBM
-      Dim Calibrated, SE(51), RE(51), F(51) As Double
+      Dim Calibrated, SE(365), RE(365), F(365) As Double
 
       InputPointDriver = New DBMPointDriverTestModel(0)
 
-      For Week = 1 To 52
+      For Day = 1 To 366
         With Statistics(DBM.GetResults(InputPointDriver, Nothing,
-          New DateTime(2016, 1, 1).AddDays((Week-1)*7),
-          New DateTime(2016, 1, 1).AddDays(Week*7), 0,
+          New DateTime(2016, 1, 1).AddDays((Day-1)),
+          New DateTime(2016, 1, 1).AddDays(Day), 0,
           New CultureInfo("nl-NL")))
           If .Calibrated Then Calibrated += 1
-          SE(Week-1) = .SystematicError
-          RE(Week-1) = .RandomError
-          F(Week-1) = .Fit
+          SE(Day-1) = .SystematicError
+          RE(Day-1) = .RandomError
+          F(Day-1) = .Fit
 Console.Write(.Calibrated.ToString & ", ")
 Console.Write(.SystematicError.ToString & ", ")
 Console.Write(.RandomError.ToString & ", ")
 Console.WriteLine(.Fit.ToString)
         End With
-      Next Week
-      Calibrated /= Week-1
+      Next Day
+      Calibrated /= Day-1
 
       Return String.Format(sQualityTests, Calibrated,
         Mean(SE), StDev(SE), Mean(RE), StDev(RE), Mean(F), StDev(F))
