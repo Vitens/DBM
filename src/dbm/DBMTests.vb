@@ -1386,9 +1386,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim Month As Integer
       Dim DBM As New DBM
       Dim Calibrated,
-        SE(12), SEMin, SEMax, SEAvg,
-        RE(12), REMin, REMax, REAvg,
-        F(12), FMin, FMax, FAvg As Double
+        SE(11), SEMin, SEMax, SEAvg,
+        RE(11), REMin, REMax, REAvg,
+        F(11), FMin, FMax, FAvg As Double
 
       InputPointDriver = New DBMPointDriverTestModel(0)
 
@@ -1398,9 +1398,9 @@ Namespace Vitens.DynamicBandwidthMonitor
           New DateTime(2016, 1, 1).AddMonths(Month), 0,
           New CultureInfo("nl-NL")))
           If .Calibrated Then Calibrated += 1
-          SE(Month) = .SystematicError
-          RE(Month) = .RandomError
-          F(Month) = .Fit
+          SE(Month-1) = .SystematicError
+          RE(Month-1) = .RandomError
+          F(Month-1) = .Fit
           If Month = 1 Then
             SEMin = .SystematicError
             SEMax = .SystematicError
