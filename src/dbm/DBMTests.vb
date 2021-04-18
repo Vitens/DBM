@@ -1420,6 +1420,10 @@ exit sub
           RE(Week-1) = .RandomError
           F(Week-1) = .Fit
         End With
+Console.Write(.Calibrated.ToString & ", ")
+Console.Write(.SystematicError.ToString & ", ")
+Console.Write(.RandomError.ToString & ", ")
+Console.WriteLine(.Fit.ToString)
       Next Week
       Calibrated /= Week-1
 
