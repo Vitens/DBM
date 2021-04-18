@@ -1265,54 +1265,45 @@ Namespace Vitens.DynamicBandwidthMonitor
         Result = DBM.GetResult(InputPointDriver, CorrelationPoints, Timestamp,
           New CultureInfo("nl-NL")) ' Use Dutch locale for New Year's Day test
         With Result
-Console.Write(Math.Round(.Factor, 4).ToString & ", ")
-Console.Write(.HasEvent.ToString & ", ")
-Console.Write(.HasSuppressedEvent.ToString & ", ")
-Console.Write(Math.Round(.ForecastItem.Measurement, 4).ToString & ", ")
-Console.Write(Math.Round(.ForecastItem.Forecast, 4).ToString & ", ")
-Console.Write(Math.Round(.ForecastItem.Range(0.95), 4).ToString & ", ")
-Console.Write(Math.Round(.ForecastItem.Range(BandwidthCI), 4).ToString & ", ")
-Console.Write(Math.Round(.ForecastItem.LowerControlLimit, 4).ToString & ", ")
-Console.WriteLine(Math.Round(.ForecastItem.UpperControlLimit, 4).ToString)
-'         AssertAlmostEqual(.Factor, {0, 0, 0, 0, 0, 0, -11.8493, -22.9119, 0,
-'           0, 0, 0, 1.1375, 0, 0, 0, 0, 0, 0, 0}(Abs(i)))
-'         If {6, 7, 12}.Contains(Abs(i)) Then
-'           AssertTrue(.HasEvent)
-'         Else
-'           AssertFalse(.HasEvent)
-'         End If
-'         If {5, 14}.Contains(Abs(i)) Then
-'           AssertTrue(.HasSuppressedEvent)
-'         Else
-'           AssertFalse(.HasSuppressedEvent)
-'         End If
-'         AssertAlmostEqual(.ForecastItem.Measurement, {511.0947, 714.6129,
-'           1093.1833, 949.5972, 508.9843, 700.7281, 1135.0766, 866.1744,
-'           505.9721, 682.8229, 1061.9115, 897.6165, 471.1027, 694.9479,
-'           1099.9772, 896.426, 529.3383, 703.9149, 1178.8108,
-'           974.4184}(Abs(i)))
-'         AssertAlmostEqual(.ForecastItem.Forecast, {520.9651, 745.8112,
-'           1055.2258, 918.1396, 501.8384, 711.1466, 1151.4202, 894.3894,
-'           504.2845, 682.0616, 1057.391, 892.0543, 464.3571, 693.0681,
-'           1080.2326, 900.3481, 527.8378, 692.9434, 1186.047, 974.013}(Abs(i)))
-'         AssertAlmostEqual(.ForecastItem.Range(0.95), {7.7131, 45.224,
-'           57.3219, 51.6209, 28.7259, 0.5868, 0.9113, 0.8136, 5.6932, 7.6227,
-'           10.9745, 9.3513, 3.918, 4.6751, 6.8949, 9.2113, 8.4151, 9.9965,
-'           20.3125, 15.9376}(Abs(i)))
-'         AssertAlmostEqual(.ForecastItem.Range(BandwidthCI), {11.6737, 68.4467,
-'           86.757, 78.1285, 43.4768, 0.8881, 1.3793, 1.2315, 8.6167, 11.537,
-'           16.6099, 14.1533, 5.93, 7.0758, 10.4354, 13.9414, 12.7363, 15.1298,
-'           30.743, 24.1216}(Abs(i)))
-'         AssertAlmostEqual(.ForecastItem.LowerControlLimit, {509.2914,
-'           677.3645, 968.4688, 840.0111, 458.3617, 710.2585, 1150.0409,
-'           893.1579, 495.6678, 670.5246, 1040.7811, 877.9011, 458.4272,
-'           685.9923, 1069.7972, 886.4067, 515.1015, 677.8135, 1155.3039,
-'           949.8915}(Abs(i)))
-'         AssertAlmostEqual(.ForecastItem.UpperControlLimit, {532.6389,
-'           814.2578, 1141.9828, 996.2681, 545.3152, 712.0346, 1152.7995,
-'           895.6208, 512.9012, 693.5986, 1074.0009, 906.2076, 470.2871,
-'           700.1439, 1090.668, 914.2895, 540.5741, 708.0732, 1216.79,
-'           998.1346}(Abs(i)))
+          AssertAlmostEqual(.Factor, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            2.382, 0, 0, 0, 0, 0}(Abs(i)))
+          If {14}.Contains(Abs(i)) Then
+            AssertTrue(.HasEvent)
+          Else
+            AssertFalse(.HasEvent)
+          End If
+          If {7}.Contains(Abs(i)) Then
+            AssertTrue(.HasSuppressedEvent)
+          Else
+            AssertFalse(.HasSuppressedEvent)
+          End If
+          AssertAlmostEqual(.ForecastItem.Measurement, {1191.7319, 1031.2219,
+            375.0985, 360.5039, 994.1835, 1012.7519, 967.3466, 273.2758,
+            1135.1957, 940.6919, 1126.3698, 320.772, 956.7519, 947.0678,
+            1178.3421, 382.6318, 1159.8521, 1171.1957, 835.8071,
+            497.5021}(Abs(i)))
+          AssertAlmostEqual(.ForecastItem.Forecast, {1198.4036, 1025.0746,
+            547.9987, 294.608, 957.2585, 934.1951, 795.8777, 373.4849,
+            1081.5057, 924.4161, 1150.4076, 302.4683, 939.7953, 986.0159,
+            746.5008, 376.0612, 1247.3952, 1261.4302, 808.9633,
+            458.9855}(Abs(i)))
+          AssertAlmostEqual(.ForecastItem.Range(0.95), {103.8316, 120.5586,
+            120.9393, 64.3786, 122.2117, 76.2978, 171.073, 53.7541, 167.5899,
+            63.0143, 266.4882, 146.2168, 95.6141, 112.2598, 119.7835, 53.4552,
+            189.5538, 103.5046, 109.1347, 60.9247}(Abs(i)))
+          AssertAlmostEqual(.ForecastItem.Range(BandwidthCI), {157.1496,
+            182.4659, 183.0421, 97.4373, 184.9679, 115.477, 258.9197, 81.357,
+            253.6481, 95.3725, 403.331, 221.2998, 144.7124, 169.9057, 181.2928,
+            80.9047, 286.8905, 156.6547, 165.1757, 92.2098}(Abs(i)))
+          AssertAlmostEqual(.ForecastItem.LowerControlLimit, {1041.254,
+            842.6087, 364.9566, 197.1707, 772.2907, 818.7181, 536.958, 292.1279,
+            827.8576, 829.0436, 747.0766, 81.1685, 795.0829, 816.1101, 565.208,
+            295.1565, 960.5047, 1104.7755, 643.7875, 366.7757}(Abs(i)))
+          AssertAlmostEqual(.ForecastItem.UpperControlLimit, {1355.5532,
+            1207.5406, 731.0408, 392.0452, 1142.2264, 1049.6722, 1054.7973,
+            454.8419, 1335.1538, 1019.7886, 1553.7386, 523.7681, 1084.5077,
+            1155.9216, 927.7935, 456.9659, 1534.2857, 1418.0849, 974.139,
+            551.1953}(Abs(i)))
         End With
       Next i
 
@@ -1423,9 +1414,6 @@ Console.WriteLine(Math.Round(.ForecastItem.UpperControlLimit, 4).ToString)
           SEAvg += .SystematicError
           REAvg += .RandomError
           FAvg += .Fit
-Console.Write(.SystematicError.ToString & ", ")
-Console.Write(.RandomError.ToString & ", ")
-Console.WriteLine(.Fit.ToString)
         End With
       Next Week
       Calibrated /= Week-1
