@@ -33,6 +33,7 @@ environment:
 
 install:
   cmd: |-
+    chcp 65001
     powershell -Command "iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1')) | Out-Null"
     set PIHOME=%TEMP%
     set piafsdkpath=%PIHOME%\AF\PublicAssemblies\4.0
