@@ -1412,8 +1412,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       For Month = 1 To 12
         With Statistics(DBM.GetResults(InputPointDriver, Nothing,
-          New DateTime(2017, 1, 1).AddMonths(Month-1),
-          New DateTime(2017, 1, 1).AddMonths(Month), 0,
+          New DateTime(2016, 1, 1).AddMonths(Month-1),
+          New DateTime(2016, 1, 1).AddMonths(Month), 0,
           New CultureInfo("nl-NL")))
           If .Calibrated Then Calibrated += 1
           SE(Month-1) = .SystematicError
