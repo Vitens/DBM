@@ -256,6 +256,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         End If
       Next
       StDev /= Count
+      StDev = Sqrt(StDev)
 
       Return StDev
 
