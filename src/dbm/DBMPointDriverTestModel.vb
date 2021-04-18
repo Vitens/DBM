@@ -707,7 +707,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         ' Interpolate between two data points.
         DataStore.AddData(StartTimestamp,
-          (1-(Index Mod 1))*HourlyTimeSeriesData(
+          (1-Index Mod 1)*HourlyTimeSeriesData(
           Convert.ToInt32(Index) Mod HourlyTimeSeriesData.Length)+
           (Index Mod 1)*HourlyTimeSeriesData(
           Convert.ToInt32(Index+1) Mod HourlyTimeSeriesData.Length))
