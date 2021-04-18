@@ -1220,7 +1220,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Shared Sub RunIntegrationTests
-
+exit sub
       Dim InputPointDriver As DBMPointDriverTestModel
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim DBM As New DBM
