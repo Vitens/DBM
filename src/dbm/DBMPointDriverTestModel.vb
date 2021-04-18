@@ -706,7 +706,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           New DateTime(StartTimestamp.Year, 1, 1)).TotalHours+OffsetHours
 
         DataStore.AddData(StartTimestamp, HourlyTimeSeriesData(
-          (Index\1) Mod HourlyTimeSeriesData.Length))
+          Convert.ToInt32(Index) Mod HourlyTimeSeriesData.Length))
 
         StartTimestamp =
           StartTimestamp.AddSeconds(CalculationInterval) ' Next interval.
