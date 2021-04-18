@@ -702,11 +702,15 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         ' Determine index. Shift day of week (5=Friday), add offset in hours.
         Index = (5-New DateTime(StartTimestamp.Year, 1, 1).DayOfWeek)*24+
-          StartTimestamp.Subtract(
-          New DateTime(StartTimestamp.Year, 1, 1)).TotalHours+OffsetHours
+          StartTimestamp.Subtract(New DateTime(
+          StartTimestamp.Year, 1, 1)).TotalHours+OffsetHours
 
-        DataStore.AddData(StartTimestamp, HourlyTimeSeriesData(
-          Convert.ToInt32(Index) Mod HourlyTimeSeriesData.Length))
+        ' Interpolate between two data points.
+        DataStore.AddData(StartTimestamp,
+          (1-(Index Mod 1))*HourlyTimeSeriesData(
+          Convert.ToInt32(Index) Mod HourlyTimeSeriesData.Length)+
+          (Index Mod 1)*HourlyTimeSeriesData(
+          Convert.ToInt32(Index+1) Mod HourlyTimeSeriesData.Length))
 
         StartTimestamp =
           StartTimestamp.AddSeconds(CalculationInterval) ' Next interval.
