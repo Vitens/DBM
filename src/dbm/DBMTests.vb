@@ -1405,14 +1405,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim InputPointDriver As DBMPointDriverTestModel
       Dim Week As Integer
       Dim DBM As New DBM
-      Dim Calibrated, SE(156), RE(156), F(156) As Double
+      Dim Calibrated, SE(51), RE(51), F(51) As Double
 
       InputPointDriver = New DBMPointDriverTestModel(0)
 
-      For Week = 1 To 157
+      For Week = 1 To 52
         With Statistics(DBM.GetResults(InputPointDriver, Nothing,
-          New DateTime(2015, 1, 1).AddDays((Week-1)*7),
-          New DateTime(2015, 1, 1).AddDays(Week*7), 0,
+          New DateTime(2016, 1, 1).AddDays((Week-1)*7),
+          New DateTime(2016, 1, 1).AddDays(Week*7), 0,
           New CultureInfo("nl-NL")))
           Calibrated += Convert.ToInt32(.Calibrated)
           SE(Week-1) = .SystematicError
