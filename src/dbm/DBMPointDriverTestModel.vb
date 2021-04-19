@@ -709,6 +709,8 @@ Namespace Vitens.DynamicBandwidthMonitor
           OffsetHours+HourlyTimeSeriesData.Length
         Point1 = Convert.ToInt32(Floor(Index)) ' First data point.
         Point2 = Point1+1 ' Interpolate to next data point.
+        Point1 = Point1 Mod HourlyTimeSeriesData.Length
+        Point2 = Point2 Mod HourlyTimeSeriesData.Length
         If Point1 >= 2066 Then Point1 -= 1 ' End DST on day 86.
         If Point2 >= 2066 Then Point2 -= 1
         If Point1 >= 7274 Then Point1 += 1 ' Start DST on day 303.
