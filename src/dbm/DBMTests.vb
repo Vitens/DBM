@@ -28,7 +28,6 @@ Imports System.DateTime
 Imports System.Double
 Imports System.Globalization
 Imports System.Globalization.CultureInfo
-Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBM
 Imports Vitens.DynamicBandwidthMonitor.DBMAssert
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
