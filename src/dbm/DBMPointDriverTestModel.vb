@@ -24,6 +24,7 @@ Option Strict
 
 Imports System
 Imports System.DateTime
+Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
@@ -708,9 +709,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Interpolate between two data points.
         DataStore.AddData(StartTimestamp,
           (1-Index Mod 1)*HourlyTimeSeriesData(
-          Convert.ToInt32(Index) Mod HourlyTimeSeriesData.Length)+
+          Convert.ToInt32(Floor(Index)) Mod HourlyTimeSeriesData.Length)+
           (Index Mod 1)*HourlyTimeSeriesData(
-          Convert.ToInt32(Index+1) Mod HourlyTimeSeriesData.Length))
+          Convert.ToInt32(Floor(Index+1)) Mod HourlyTimeSeriesData.Length))
 
         StartTimestamp =
           StartTimestamp.AddSeconds(CalculationInterval) ' Next interval.
