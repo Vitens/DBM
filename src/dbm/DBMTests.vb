@@ -1417,7 +1417,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           New DateTime(2016, 1, 1).AddDays((Week-1)*7),
           New DateTime(2016, 1, 1).AddDays(Week*7), 0,
           New CultureInfo("nl-NL")))
-          If .Calibrated Then Calibrated += 1
+          Calibrated += Convert.ToInt32(.Calibrated)
           SE(Week-1) = .SystematicError
           RE(Week-1) = .RandomError
           F(Week-1) = .Fit
