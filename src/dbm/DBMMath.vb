@@ -236,7 +236,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function StDev(Values() As Double) As Double
+    Public Shared Function StDevP(Values() As Double) As Double
 
       ' In statistics, the standard deviation is a measure of the amount of
       ' variation or dispersion of a set of values. A low standard deviation
@@ -251,14 +251,14 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       For Each Value In Values
         If Not IsNaN(Value) Then
-          StDev += (Value-MeanValues)^2
+          StDevP += (Value-MeanValues)^2
           Count += 1
         End If
       Next
-      StDev /= Count
-      StDev = Sqrt(StDev)
+      StDevP /= Count
+      StDevP = Sqrt(StDevP)
 
-      Return StDev
+      Return StDevP
 
     End Function
 
