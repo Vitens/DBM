@@ -696,6 +696,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim OffsetHours As Integer
       Dim Index as Double
+      Dim Point1, Point2 as Integer
 
       If TypeOf Point Is Integer Then OffsetHours = DirectCast(Point, Integer)
 
@@ -705,15 +706,21 @@ Namespace Vitens.DynamicBandwidthMonitor
         Index = (New DateTime(StartTimestamp.Year, 1, 1).DayOfWeek-5)*24+
           StartTimestamp.Subtract(New DateTime(
           StartTimestamp.Year, 1, 1)).TotalHours+OffsetHours
+        Point1 = Convert.ToInt32(Floor(Index)) ' First data point.
+        Point2 = Point1+1 ' Interpolate to next data point.
+        If Point1 >= 1994 Then Point1 -= 1 ' DST
+        If Point2 >= 1994 Then Point2 -= 1
+        If Point1 >= 7202 Then Point1 += 1
+        If Point2 >= 7202 Then Point2 += 1
+        Point1 = (Point1+HourlyTimeSeriesData.Length) Mod
+          HourlyTimeSeriesData.Length
+        Point2 = (Point2+HourlyTimeSeriesData.Length) Mod
+          HourlyTimeSeriesData.Length
 
         ' Interpolate between two data points.
         DataStore.AddData(StartTimestamp,
-          (1-Index Mod 1)*HourlyTimeSeriesData(
-          Convert.ToInt32(Floor(Index)+HourlyTimeSeriesData.Length) Mod
-          HourlyTimeSeriesData.Length)+
-          (Index Mod 1)*HourlyTimeSeriesData(
-          Convert.ToInt32(Floor(Index+1)+HourlyTimeSeriesData.Length) Mod
-          HourlyTimeSeriesData.Length))
+          (1-Index Mod 1)*HourlyTimeSeriesData(Point1)+
+          (Index Mod 1)*HourlyTimeSeriesData(Point2))
 
         StartTimestamp =
           StartTimestamp.AddSeconds(CalculationInterval) ' Next interval.
