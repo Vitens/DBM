@@ -705,18 +705,17 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Determine index. Shift day of week (5=Friday), add offset in hours.
         Index = (New DateTime(StartTimestamp.Year, 1, 1).DayOfWeek-5)*24+
           StartTimestamp.Subtract(New DateTime(
-          StartTimestamp.Year, 1, 1)).TotalHours+OffsetHours
+          StartTimestamp.Year, 1, 1)).TotalHours+
+          OffsetHours+HourlyTimeSeriesData.Length
         Point1 = Convert.ToInt32(Floor(Index)) ' First data point.
         Point2 = Point1+1 ' Interpolate to next data point.
         If Point1 >= 2066 Then Point1 -= 1 ' End DST on day 86.
         If Point2 >= 2066 Then Point2 -= 1
         If Point1 >= 7274 Then Point1 += 1 ' Start DST on day 303.
         If Point2 >= 7274 Then Point2 += 1
-        Point1 = (Point1+HourlyTimeSeriesData.Length) Mod
-          HourlyTimeSeriesData.Length
-        Point2 = (Point2+HourlyTimeSeriesData.Length) Mod
-          HourlyTimeSeriesData.Length
-        Weight2 = (Index+HourlyTimeSeriesData.Length) Mod 1
+        Point1 = Point1 Mod HourlyTimeSeriesData.Length
+        Point2 = Point2 Mod HourlyTimeSeriesData.Length
+        Weight2 = Index Mod 1
         Weight1 = 1-(Weight2)
 
         ' Interpolate between two data points.
