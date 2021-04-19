@@ -24,7 +24,6 @@ Option Strict
 
 Imports System
 Imports System.DateTime
-Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
