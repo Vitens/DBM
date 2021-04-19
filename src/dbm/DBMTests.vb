@@ -1422,7 +1422,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Next Week
       Calibrated /= Week-1
 
-      Return String.Format(sQualityTests, Calibrated,
+      Return String.Format(sQualityTests, Week-1, Calibrated,
         Mean(SE), StDevP(SE), Mean(RE), StDevP(RE), Mean(F), StDevP(F))
 
     End Function
