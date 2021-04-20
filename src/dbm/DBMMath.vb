@@ -236,6 +236,33 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Shared Function StDevP(Values() As Double) As Double
+
+      ' In statistics, the standard deviation is a measure of the amount of
+      ' variation or dispersion of a set of values. A low standard deviation
+      ' indicates that the values tend to be close to the mean (also called the
+      ' expected value) of the set, while a high standard deviation indicates
+      ' that the values are spread out over a wider range.
+
+      Dim MeanValues, Value As Double
+      Dim Count As Integer
+
+      MeanValues = Mean(Values)
+
+      For Each Value In Values
+        If Not IsNaN(Value) Then
+          StDevP += (Value-MeanValues)^2
+          Count += 1
+        End If
+      Next
+      StDevP /= Count
+      StDevP = Sqrt(StDevP)
+
+      Return StDevP
+
+    End Function
+
+
     Public Shared Function AbsoluteDeviation(Values() As Double,
       From As Double) As Double()
 

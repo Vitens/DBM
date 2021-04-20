@@ -35,6 +35,7 @@ Imports Vitens.DynamicBandwidthMonitor.DBMDate
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
+Imports Vitens.DynamicBandwidthMonitor.DBMStrings
 Imports Vitens.DynamicBandwidthMonitor.DBMTimeSeries
 
 
@@ -286,6 +287,29 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertEqual(Median({81, 64, 5, 23, 48, 18, 19, 87, 15}), 23)
       AssertEqual(Median({33, 82, 42, 33, 81, 56, 13, 13, 54, 6}), 37.5)
       AssertEqual(Median({55, 40, 75, 23, 53, 85, 59, 9, 72, 44}), 54)
+
+      AssertEqual(StDevP({60}), 0)
+      AssertEqual(StDevP({72}), 0)
+      AssertEqual(StDevP({32, 95}), 31.5)
+      AssertEqual(StDevP({81, 75}), 3)
+      AssertAlmostEqual(StDevP({67, 76, 25}), 22.2261)
+      AssertEqual(StDevP({25, NaN, 27}), 1)
+      AssertAlmostEqual(StDevP({31, 73, 83, 81}), 21.1187)
+      AssertAlmostEqual(StDevP({18, 58, 47, 47}), 14.8408)
+      AssertAlmostEqual(StDevP({10, NaN, 20, 30, NaN}), 8.165)
+      AssertAlmostEqual(StDevP({67, 90, 74, 32, 62}), 19.0158)
+      AssertAlmostEqual(StDevP({78, 0, 98, 65, 69, 57}), 30.2072)
+      AssertAlmostEqual(StDevP({49, 35, 74, 25, 28, 92}), 24.7437)
+      AssertAlmostEqual(StDevP({7, 64, 22, 7, 42, 34, 30}), 18.6537)
+      AssertAlmostEqual(StDevP({13, 29, 39, 33, 96, 43, 17}), 25.5223)
+      AssertAlmostEqual(StDevP({59, 78, 53, 7, 18, 44, 63, 40}), 21.9986)
+      AssertAlmostEqual(StDevP({77, 71, 99, 39, 50, 94, 67, 30}), 23.1864)
+      AssertAlmostEqual(StDevP({91, 69, 63, 5, 44, 93, 89, 45, 50}), 27.035)
+      AssertAlmostEqual(StDevP({12, 84, 12, 94, 52, 17, 1, 13, 37}), 31.9575)
+      AssertAlmostEqual(StDevP({18, 14, 54, 40, 73, 77, 4, 91, 53, 10}),
+        29.4354)
+      AssertAlmostEqual(StDevP({80, 30, 1, 92, 44, 61, 18, 72, 63, 41}),
+        27.1654)
 
       AssertArrayEqual(AbsoluteDeviation({100, 44, 43, 45}, 44), {56, 0, 1, 1})
       AssertArrayEqual(AbsoluteDeviation({76, 70, 84, 39}, 77), {1, 7, 7, 38})
@@ -1264,45 +1288,42 @@ Namespace Vitens.DynamicBandwidthMonitor
         Result = DBM.GetResult(InputPointDriver, CorrelationPoints, Timestamp,
           New CultureInfo("nl-NL")) ' Use Dutch locale for New Year's Day test
         With Result
-          AssertAlmostEqual(.Factor, {0, 0, 0, 0, 0, 0, -11.8493, -22.9119, 0,
-            0, 0, 0, 1.1375, 0, 0, 0, 0, 0, 0, 0}(Abs(i)))
-          If {6, 7, 12}.Contains(Abs(i)) Then
+          AssertAlmostEqual(.Factor, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            -3.6938, 0, 0, 0, 0, 0, 0, 0}(Abs(i)))
+          If {12}.Contains(Abs(i)) Then
             AssertTrue(.HasEvent)
           Else
             AssertFalse(.HasEvent)
           End If
-          If {5, 14}.Contains(Abs(i)) Then
-            AssertTrue(.HasSuppressedEvent)
-          Else
-            AssertFalse(.HasSuppressedEvent)
-          End If
-          AssertAlmostEqual(.ForecastItem.Measurement, {511.0947, 714.6129,
-            1093.1833, 949.5972, 508.9843, 700.7281, 1135.0766, 866.1744,
-            505.9721, 682.8229, 1061.9115, 897.6165, 471.1027, 694.9479,
-            1099.9772, 896.426, 529.3383, 703.9149, 1178.8108,
-            974.4184}(Abs(i)))
-          AssertAlmostEqual(.ForecastItem.Forecast, {520.9651, 745.8112,
-            1055.2258, 918.1396, 501.8384, 711.1466, 1151.4202, 894.3894,
-            504.2845, 682.0616, 1057.391, 892.0543, 464.3571, 693.0681,
-            1080.2326, 900.3481, 527.8378, 692.9434, 1186.047, 974.013}(Abs(i)))
-          AssertAlmostEqual(.ForecastItem.Range(0.95), {7.7131, 45.224,
-            57.3219, 51.6209, 28.7259, 0.5868, 0.9113, 0.8136, 5.6932, 7.6227,
-            10.9745, 9.3513, 3.918, 4.6751, 6.8949, 9.2113, 8.4151, 9.9965,
-            20.3125, 15.9376}(Abs(i)))
-          AssertAlmostEqual(.ForecastItem.Range(BandwidthCI), {11.6737, 68.4467,
-            86.757, 78.1285, 43.4768, 0.8881, 1.3793, 1.2315, 8.6167, 11.537,
-            16.6099, 14.1533, 5.93, 7.0758, 10.4354, 13.9414, 12.7363, 15.1298,
-            30.743, 24.1216}(Abs(i)))
-          AssertAlmostEqual(.ForecastItem.LowerControlLimit, {509.2914,
-            677.3645, 968.4688, 840.0111, 458.3617, 710.2585, 1150.0409,
-            893.1579, 495.6678, 670.5246, 1040.7811, 877.9011, 458.4272,
-            685.9923, 1069.7972, 886.4067, 515.1015, 677.8135, 1155.3039,
-            949.8915}(Abs(i)))
-          AssertAlmostEqual(.ForecastItem.UpperControlLimit, {532.6389,
-            814.2578, 1141.9828, 996.2681, 545.3152, 712.0346, 1152.7995,
-            895.6208, 512.9012, 693.5986, 1074.0009, 906.2076, 470.2871,
-            700.1439, 1090.668, 914.2895, 540.5741, 708.0732, 1216.79,
-            998.1346}(Abs(i)))
+          AssertFalse(.HasSuppressedEvent)
+          AssertAlmostEqual(.ForecastItem.Measurement, {522.7266, 720.5181,
+            1199.5882, 1147.9954, 408.5934, 648.4205, 1028.9134, 905.432,
+            467.7113, 660.2066, 1000.0186, 1093.1967, 424.8118, 586.9614,
+            1068.0674, 1023.6862, 488.5748, 329.5925, 1043.0647,
+            1193.524}(Abs(i)))
+          AssertAlmostEqual(.ForecastItem.Forecast, {491.3151, 724.0301,
+            1243.0057, 1190.1063, 399.7788, 629.3338, 1045.6407, 989.6733,
+            429.8209, 662.3311, 1014.6907, 1101.6397, 537.8786, 472.0017,
+            1032.3165, 1025.2482, 414.2808, 331.7895, 1075.3413,
+            1181.5355}(Abs(i)))
+          AssertAlmostEqual(.ForecastItem.Range(0.95), {42.7345, 58.3084,
+            72.8726, 163.782, 65.6285, 83.475, 99.8565, 89.7709, 62.5721,
+            88.7267, 51.9719, 132.5133, 20.2244, 96.3907, 114.5565, 100.751,
+            72.7611, 53.6549, 108.2048, 55.1957}(Abs(i)))
+          AssertAlmostEqual(.ForecastItem.Range(BandwidthCI), {64.6789, 88.25,
+            110.293, 247.8847, 99.3291, 126.3397, 151.1333, 135.8687, 94.7031,
+            134.2882, 78.6597, 200.5594, 30.6097, 145.8878, 173.3817, 152.4871,
+            110.1242, 81.2069, 163.7685, 83.5389}(Abs(i)))
+          AssertAlmostEqual(.ForecastItem.LowerControlLimit, {426.6362,
+            635.7801, 1132.7128, 942.2217, 300.4497, 502.9941, 894.5074,
+            853.8046, 335.1178, 528.043, 936.0309, 901.0803, 507.2689, 326.114,
+            858.9348, 872.7611, 304.1566, 250.5825, 911.5729,
+            1097.9966}(Abs(i)))
+          AssertAlmostEqual(.ForecastItem.UpperControlLimit, {555.994, 812.2801,
+            1353.2987, 1437.991, 499.1079, 755.6735, 1196.7739, 1125.542,
+            524.5241, 796.6193, 1093.3504, 1302.1991, 568.4884, 617.8895,
+            1205.6982, 1177.7352, 524.405, 412.9964, 1239.1098,
+            1265.0743}(Abs(i)))
         End With
       Next i
 
@@ -1377,6 +1398,34 @@ Namespace Vitens.DynamicBandwidthMonitor
       Next i
 
     End Sub
+
+
+    Public Shared Function RunQualityTests As String
+
+      Dim InputPointDriver As DBMPointDriverTestModel
+      Dim Week As Integer
+      Dim SE(51), RE(SE.Length-1), F(SE.Length-1), Calibrated As Double
+      Dim DBM As New DBM
+
+      InputPointDriver = New DBMPointDriverTestModel(0)
+
+      For Week = 0 To SE.Length-1
+        With Statistics(DBM.GetResults(InputPointDriver, Nothing,
+          New DateTime(2016, 1, 1).AddDays(Week*7),
+          New DateTime(2016, 1, 1).AddDays((Week+1)*7), 0,
+          New CultureInfo("nl-NL")))
+          SE(Week) = .SystematicError
+          RE(Week) = .RandomError
+          F(Week) = .Fit
+          Calibrated += Convert.ToInt32(.Calibrated)
+        End With
+      Next Week
+      Calibrated /= SE.Length
+
+      Return String.Format(sQualityTests, SE.Length, Calibrated,
+        Mean(SE), StDevP(SE), Mean(RE), StDevP(RE), Mean(F), StDevP(F))
+
+    End Function
 
 
   End Class
