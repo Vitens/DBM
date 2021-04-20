@@ -36,7 +36,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     ' Hourly time-weighted averages for FRL-07-01 Leeuwarden-stad in 2016; 8736
-    ' values, 364 days, 52 weeks. First value at Friday, January 1st 2016 0:00.
+    ' values, 364 days, 52 weeks. First value at Friday, January 1st 2016 00:00.
+    ' DST ends on day 86 (index 2066) and starts on day 303 (index 7274).
     Private HourlyTimeSeriesData() As Double = {510, 592, 531, 439, 347, 349,
       329, 345, 471, 758, 1035, 1173, 1218, 1157, 1053, 905, 794, 800, 848, 853,
       693, 633, 681, 599, 440, 338, 280, 276, 261, 293, 303, 430, 748, 1106,
@@ -702,20 +703,20 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Do While EndTimestamp > StartTimestamp
 
-        ' Determine index. Shift day of week (5=Friday), add offset in hours,
-        ' add array length to avoid modulus with negative numbers.
-        Index =
-          (New DateTime(StartTimestamp.Year, 1, 1).DayOfWeek-5)*24+
+        ' Determine index. Shift day of week, add offset in hours, and add array
+        ' length to avoid modulus with negative numbers.
+        Index = (New DateTime(StartTimestamp.Year, 1, 1).
+          DayOfWeek-DayOfWeek.Friday)*24+
           StartTimestamp.Subtract(New DateTime(
           StartTimestamp.Year, 1, 1)).TotalHours+
           OffsetHours+HourlyTimeSeriesData.Length
-        Weight = Index Mod 1
+        Weight = Index Mod 1 ' Weight distribution between 1st and 2nd datapoint
         DataPoint =
-          Convert.ToInt32(Floor(Index)) Mod HourlyTimeSeriesData.Length
+          Convert.ToInt32(Floor(Index)) Mod HourlyTimeSeriesData.Length ' 1st pt
         If DataPoint >= 2066 And
           DataPoint < 7274 Then DataPoint -= 1 ' DST compensation.
 
-        ' Interpolate between two data points.
+        ' Interpolate between two data points using weight.
         DataStore.AddData(StartTimestamp,
           (1-Weight)*HourlyTimeSeriesData(DataPoint)+
           Weight*HourlyTimeSeriesData(
