@@ -1423,7 +1423,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       Calibrated /= SE.Length
 
       Return String.Format(sQualityTests, SE.Length, Calibrated,
-        Mean(SE), StDevP(SE), Mean(RE), StDevP(RE), Mean(F), StDevP(F))
+        Mean(SE), NormSInv(OutlierCI)*StDevP(SE), OutlierCI,
+        Mean(RE), NormSInv(OutlierCI)*StDevP(RE), OutlierCI,
+        Mean(F), NormSInv(OutlierCI)*StDevP(F)) OutlierCI
 
     End Function
 

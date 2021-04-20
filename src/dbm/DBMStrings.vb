@@ -50,9 +50,12 @@ Namespace Vitens.DynamicBandwidthMonitor
       "Fit {4:" & sPercentageFormat & "})"
     Public Const sQualityTests As String =
       "n {0}; C {1:" & sPercentageFormat & "}; " &
-      "SE {2:" & sPercentageFormat & "} (SD={3:" & sPercentageFormat & "}); " &
-      "RE {4:" & sPercentageFormat & "} (SD={5:" & sPercentageFormat & "}); " &
-      "F {6:" & sPercentageFormat & "} (SD={7:" & sPercentageFormat & "})"
+      "SE {2:" & sPercentageFormat & "} " &
+      "±{3:" & sPercentageFormat & "} CI{4:" & sPercentageFormat & "}; " &
+      "RE {5:" & sPercentageFormat & "} " &
+      "±{6:" & sPercentageFormat & "} CI{7:" & sPercentageFormat & "}; " &
+      "F {8:" & sPercentageFormat & "} " &
+      "±{9:" & sPercentageFormat & "} CI{10:" & sPercentageFormat & "}"
     Public Const sForecastFactorAnnotation As String =
       sFactor & " {0:" & sNumberFormat & "}"
 
