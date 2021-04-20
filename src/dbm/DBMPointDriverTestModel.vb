@@ -706,7 +706,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Determine index. Shift day of week, add offset in hours, and add array
         ' length to avoid modulus with negative numbers.
         Index = (New DateTime(StartTimestamp.Year, 1, 1).
-          DayOfWeek-DayOfWeek.Friday)*24+
+          DayOfWeek-System.DayOfWeek.Friday)*24+
           StartTimestamp.Subtract(New DateTime(
           StartTimestamp.Year, 1, 1)).TotalHours+
           OffsetHours+HourlyTimeSeriesData.Length
