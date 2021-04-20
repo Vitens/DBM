@@ -710,9 +710,8 @@ Namespace Vitens.DynamicBandwidthMonitor
           StartTimestamp.Subtract(New DateTime(
           StartTimestamp.Year, 1, 1)).TotalHours+
           OffsetHours+HourlyTimeSeriesData.Length
-        Weight = Index Mod 1 ' Weight distribution between 1st and 2nd datapoint
-        DataPoint =
-          Convert.ToInt32(Floor(Index)) Mod HourlyTimeSeriesData.Length ' 1st pt
+        Weight = Index Mod 1 ' Inv. weight distribution between 1st and 2nd pt.
+        DataPoint = Floor(Index) Mod HourlyTimeSeriesData.Length ' 1st point.
         If DataPoint >= 2066 And
           DataPoint < 7274 Then DataPoint -= 1 ' DST compensation.
 
