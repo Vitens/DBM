@@ -38,7 +38,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Hourly time-weighted averages for FRL-07-01 Leeuwarden-stad in 2016; 8736
     ' values, 364 days, 52 weeks. First value at Friday, January 1st 2016 00:00.
     ' DST ends on day 86 (index 2066) and starts on day 303 (index 7274).
-    Private HourlyTimeSeriesData() As Double = {510, 592, 531, 439, 347, 349,
+    Private HourlyTimeSeriesData() As Integer = {510, 592, 531, 439, 347, 349,
       329, 345, 471, 758, 1035, 1173, 1218, 1157, 1053, 905, 794, 800, 848, 853,
       693, 633, 681, 599, 440, 338, 280, 276, 261, 293, 303, 430, 748, 1106,
       1207, 1260, 1249, 1122, 999, 900, 871, 852, 931, 892, 747, 672, 639, 602,
