@@ -345,8 +345,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertEqual(MeanAbsoluteDeviation({3, 43, 53, 80}), 21.75)
       AssertEqual(MeanAbsoluteDeviation({17, 27, 98, 85, 51}), 28.72)
       AssertEqual(MeanAbsoluteDeviation({2, 82, 63, 1, 49}), 30.32)
-      AssertEqual(MeanAbsoluteDeviation({9, 25, 41, 85, 82, 55}),24.5)
-      AssertAlmostEqual(MeanAbsoluteDeviation({5, 74, 53, 97, 81, 21}),28.8333)
+      AssertEqual(MeanAbsoluteDeviation({9, 25, 41, 85, 82, 55}), 24.5)
+      AssertAlmostEqual(MeanAbsoluteDeviation({5, 74, 53, 97, 81, 21}), 28.8333)
       AssertAlmostEqual(MeanAbsoluteDeviation(
         {26, 81, 9, 18, 39, 97, 21}), 27.102)
       AssertAlmostEqual(MeanAbsoluteDeviation(
