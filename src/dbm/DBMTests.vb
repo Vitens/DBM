@@ -1418,9 +1418,6 @@ Namespace Vitens.DynamicBandwidthMonitor
           RE(Week) = .RandomError
           F(Week) = .Fit
           Calibrated += Convert.ToInt32(.Calibrated)
-Console.Write(.SystematicError.ToString & ", ")
-Console.Write(.RandomError.ToString & ", ")
-Console.WriteLine(.Fit.ToString)
         End With
       Next Week
       Calibrated /= SE.Length
