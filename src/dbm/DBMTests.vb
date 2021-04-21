@@ -1409,11 +1409,11 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       InputPointDriver = New DBMPointDriverTestModel(0)
 
-      For Week = 0 To SE.Length-1 ' 52 weeks.
+      For Week = 0 To SE.Length-1
         With Statistics(DBM.GetResults(InputPointDriver, Nothing,
-          New DateTime(2016, 1, 4).AddDays(Week*7),
-          New DateTime(2016, 1, 4).AddDays((Week+1)*7), 0,
-          New CultureInfo("nl-NL"))) ' Weekly, starting on Monday.
+          New DateTime(2016, 1, 1).AddDays(Week*7),
+          New DateTime(2016, 1, 1).AddDays((Week+1)*7), 0,
+          New CultureInfo("nl-NL")))
           SE(Week) = .SystematicError
           RE(Week) = .RandomError
           F(Week) = .Fit
