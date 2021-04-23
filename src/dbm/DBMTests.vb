@@ -1200,7 +1200,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             0.8561}(i))
           AssertAlmostEqual(.Determination, {0.0234, 0.1337, 0.0924, 0.0671,
             0.0148, 0, 0.0737, 0.1782, 0.0063, 0.1418, 0.1845, 0, 0.1029,
-            0.0412, 0.0146, 0.0002, 0.091, 0.022, 0.2803, 0.0974,}(i))
+            0.0412, 0.0146, 0.0002, 0.091, 0.022, 0.2803, 0.0974}(i))
           AssertEqual(.Calibrated, {False, False, False, False, False, False,
             False, False, False, False, False, False, False, False, False,
             False, False, False, False, False}(i))
