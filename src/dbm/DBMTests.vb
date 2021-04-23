@@ -1422,6 +1422,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       Next Week
       Calibrated /= SE.Length
 
+      Console.WriteLine("> " & String.Format(sQualityTests, SE.Length,
+        Calibrated, Mean(SE), StDevP(SE), Mean(RE), StDevP(RE), Mean(F),
+        StDevP(F)))
+
       Return String.Format(sQualityTests, SE.Length, Calibrated,
         Mean(SE), StDevP(SE), Mean(RE), StDevP(RE), Mean(F), StDevP(F))
 

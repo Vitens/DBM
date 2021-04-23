@@ -145,6 +145,13 @@ Namespace Vitens.DynamicBandwidthMonitor
       ITDurationMs = (Now.Ticks-Timer.Ticks)/TicksPerMillisecond
 
       Timer = Now
+
+      Dim i As Integer
+      For i = 100 to 200
+        DBMParameters.ExpRegGrowthRate = i/100
+        RunQualityTests
+      Next i
+
       QTResult = RunQualityTests
       QTDurationMs = (Now.Ticks-Timer.Ticks)/TicksPerMillisecond
 
