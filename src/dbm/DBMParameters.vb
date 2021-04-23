@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -45,6 +45,10 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Number of weeks to look back to forecast the current value and
     ' control limits.
     Public Shared ComparePatterns As Integer = 12 ' weeks
+
+    ' Growth rate for exponential weighting in regression.
+    Public Shared ExpRegGrowthRate As Double =
+      1.5^(1/(ComparePatterns-1)) ' Last value weighs 1.5 times the first
 
     ' Number of previous intervals used to smooth the data.
     Public Shared EMAPreviousPeriods As Integer =

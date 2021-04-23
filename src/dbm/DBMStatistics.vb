@@ -27,6 +27,7 @@ Imports System.Collections.Generic
 Imports System.Double
 Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
+Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -44,11 +45,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Performs calculation of several statistics functions on the input
       ' data. If no values for the independent variable are passed, a linear
-      ' scale starting at 0 is assumed.
+      ' scale starting at 0 is assumed and exponential weighting is used.
       ' The result of the calculation is returned as a new object.
 
       Dim i As Integer
-      Dim SumX, SumY, SumXX, SumYY, SumXY As Double
+      Dim ExponentialWeighting As Boolean
+      Dim Weight, SumX, SumY, SumXX, SumYY, SumXY As Double
 
       Statistics = New DBMStatisticsItem
 
@@ -59,27 +61,33 @@ Namespace Vitens.DynamicBandwidthMonitor
           For i = 0 To Dependent.Length-1
             Independent(i) = i
           Next i
+          ExponentialWeighting = True
+        Else
+          Weight = 1 ' Linear weight.
         End If
 
         ' Calculate sums
         If Dependent.Length > 0 And Dependent.Length = Independent.Length Then
           For i = 0 To Dependent.Length-1
             If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
+              If ExponentialWeighting Then Weight = ExpRegGrowthRate^i ' Expon.
               .Count += 1
+              .Weight += Weight
+              .Mean += Independent(i)
               .NMBE += Dependent(i)-Independent(i)
               .RMSD += (Dependent(i)-Independent(i))^2
-              SumX += Independent(i)
-              SumY += Dependent(i)
-              SumXX += Independent(i)^2
-              SumYY += Dependent(i)^2
-              SumXY += Independent(i)*Dependent(i)
+              SumX += Weight*Independent(i)
+              SumY += Weight*Dependent(i)
+              SumXX += Weight*Independent(i)^2
+              SumYY += Weight*Dependent(i)^2
+              SumXY += Weight*Independent(i)*Dependent(i)
             End If
           Next i
         End If
 
         If .Count = 0 Then Return Statistics ' Empty, non-eq, or no non-NaN pair
 
-        .Mean = SumX/.Count ' Average
+        .Mean = .Mean/.Count ' Average
 
         ' MBE (Mean Bias Error), as its name indicates, is the average of the
         ' errors of a sample space. Generally, it is a good indicator of the
@@ -119,11 +127,11 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' of variation with the RMSD taking the place of the standard deviation.
         .CVRMSD = .RMSD/.Mean
 
-        .Slope = (.Count*SumXY-SumX*SumY)/(.Count*SumXX-SumX^2) ' Lin.regression
+        .Slope = (.Weight*SumXY-SumX*SumY)/(.Weight*SumXX-SumX^2) ' Lin. reg.
         .OriginSlope = SumXY/SumXX ' Lin.regression through the origin (alpha=0)
         .Angle = SlopeToAngle(.Slope) ' Angle in degrees
         .OriginAngle = SlopeToAngle(.OriginSlope) ' Angle in degrees
-        .Intercept = (SumX*SumXY-SumY*SumXX)/(SumX^2-.Count*SumXX)
+        .Intercept = (SumX*SumXY-SumY*SumXX)/(SumX^2-.Weight*SumXX)
 
         ' Standard error of the predicted y-value for each x in the regression.
         ' The standard error is a measure of the amount of error in the
@@ -140,8 +148,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' A number that quantifies some type of correlation and dependence,
         ' meaning statistical relationships between two or more random
         ' variables or observed data values.
-        .Correlation = (.Count*SumXY-SumX*SumY)/
-          Sqrt((.Count*SumXX-SumX^2)*(.Count*SumYY-SumY^2))
+        .Correlation = (.Weight*SumXY-SumX*SumY)/
+          Sqrt((.Weight*SumXX-SumX^2)*(.Weight*SumYY-SumY^2))
 
         ' Average is not removed in modified correlation as the expected average
         ' is zero, assuming the calculated forecasts are correct.

@@ -34,8 +34,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Count As Integer
-    Public Mean, NMBE, RMSD, CVRMSD, Slope, OriginSlope, Angle, OriginAngle,
-      Intercept, StandardError, Correlation, ModifiedCorrelation,
+    Public Weight, Mean, NMBE, RMSD, CVRMSD, Slope, OriginSlope, Angle,
+      OriginAngle, Intercept, StandardError, Correlation, ModifiedCorrelation,
       Determination As Double
 
 
