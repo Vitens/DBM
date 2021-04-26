@@ -48,7 +48,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     ' Growth rate for exponential weighting in regression.
     Public Shared ExpRegGrowthRate As Double =
-      1.5^(1/(ComparePatterns-1)) ' Last value weighs 1.5 times the first
+      10^(1/(ComparePatterns-1)) ' Last value weighs 10 times the first
 
     ' Number of previous intervals used to smooth the data.
     Public Shared EMAPreviousPeriods As Integer =

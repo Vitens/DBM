@@ -141,17 +141,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       UTDurationMs = (Now.Ticks-Timer.Ticks)/TicksPerMillisecond
 
       Timer = Now
-'     RunIntegrationTests
+      RunIntegrationTests
       ITDurationMs = (Now.Ticks-Timer.Ticks)/TicksPerMillisecond
 
       Timer = Now
-
-      Dim i As Integer
-      For i = 100 to 200
-        DBMParameters.ExpRegGrowthRate = i/100
-        console.write((i/100).tostring & " " )
-        RunQualityTests
-      Next i
 
       QTResult = RunQualityTests
       QTDurationMs = (Now.Ticks-Timer.Ticks)/TicksPerMillisecond

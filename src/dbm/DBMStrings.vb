@@ -38,7 +38,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Const sLowerControlLimit As String = "Lower control limit"
     Public Const sUpperControlLimit As String = "Upper control limit"
     Public Const sNumberFormat As String = "G5"
-    Public Const sPercentageFormat As String = "0.00000%"
+    Public Const sPercentageFormat As String = "0.0%"
     Public Const sCsvComment As String = "# "
     Public Const sStatisticsInsufficientData As String =
       "Insufficient data for calculating model calibration metrics"
