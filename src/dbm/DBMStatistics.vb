@@ -152,8 +152,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' A number that quantifies some type of correlation and dependence,
         ' meaning statistical relationships between two or more random
         ' variables or observed data values.
-        .Correlation = (.Weight*SumXY-SumX*SumY)/
-          Sqrt((.Weight*SumXX-SumX^2)*(.Weight*SumYY-SumY^2))
+        .Correlation = (.Count*SumXY-SumX*SumY)/
+          Sqrt((.Count*SumXX-SumX^2)*(.Count*SumYY-SumY^2))
 
         ' Average is not removed in modified correlation as the expected average
         ' is zero, assuming the calculated forecasts are correct.
