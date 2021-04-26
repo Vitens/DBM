@@ -148,13 +148,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       QTResult = RunQualityTests
       QTDurationMs = (Now.Ticks-Timer.Ticks)/TicksPerMillisecond
 
-      Dim i As Integer
-      For i = 0 to 400
-        DBMParameters.ExpRegGrowthRate = i/100
-        console.write((i/100).tostring & " " )
-        RunQualityTests
-      Next i
-
       Return "Certificate: " & CertificateInfo & NewLine &
         "Unit tests: " & Round(UTDurationMs).ToString & " ms" & NewLine &
         "Integration tests: " & Round(ITDurationMs).ToString & " ms" & NewLine &
