@@ -149,6 +149,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim i As Integer
       For i = 100 to 200
         DBMParameters.ExpRegGrowthRate = i/100
+        console.write((i/100).tostring & " " )
         RunQualityTests
       Next i
 
