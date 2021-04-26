@@ -1415,7 +1415,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           New DateTime(2016, 1, 1).AddDays((Week+1)*7), 0,
           New CultureInfo("nl-NL")))
           SE(Week) = .SystematicError
-          RE(Week) = .RandomError
+          RE(Week) = .CVRMSD
           F(Week) = .Fit
           Calibrated += Convert.ToInt32(.Calibrated)
         End With
@@ -1423,7 +1423,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Calibrated /= SE.Length
 
       Console.WriteLine("> " & String.Format(sQualityTests, SE.Length,
-        Calibrated, 0, 0, Mean(CVRMSD), StDevP(CVRMSD), Mean(F),
+        Calibrated, 0, 0, Mean(RE), StDevP(RE), Mean(F),
         StDevP(F)))
 
       Return String.Format(sQualityTests, SE.Length, Calibrated,
