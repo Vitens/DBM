@@ -141,11 +141,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       UTDurationMs = (Now.Ticks-Timer.Ticks)/TicksPerMillisecond
 
       Timer = Now
-      RunIntegrationTests
+'     RunIntegrationTests
       ITDurationMs = (Now.Ticks-Timer.Ticks)/TicksPerMillisecond
 
       Timer = Now
-
       QTResult = RunQualityTests
       QTDurationMs = (Now.Ticks-Timer.Ticks)/TicksPerMillisecond
 
