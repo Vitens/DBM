@@ -54,8 +54,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim i As Integer
       Dim ExponentialWeighting As Boolean
-      Dim Weight, SumX, SumY, SumXX, SumYY, SumXY,
-        WSumX, WSumY, WSumXX, WSumXY As Double
+      Dim Weight, SumX, SumY, SumXX, SumYY, SumXY As Double
 
       Statistics = New DBMStatisticsItem
 
@@ -76,19 +75,14 @@ Namespace Vitens.DynamicBandwidthMonitor
           For i = 0 To Dependent.Length-1
             If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
               If ExponentialWeighting Then Weight = ExpRegGrowthRate^i ' Expon.
-              .Count += 1
-              .Weight += Weight
+              .Count += Weight
               .NMBE += Dependent(i)-Independent(i)
               .RMSD += (Dependent(i)-Independent(i))^2
-              SumX += Independent(i)
-              SumY += Dependent(i)
-              SumXX += Independent(i)^2
-              SumYY += Dependent(i)^2
-              SumXY += Independent(i)*Dependent(i)
-              WSumX += Weight*Independent(i)
-              WSumY += Weight*Dependent(i)
-              WSumXX += Weight*Independent(i)^2
-              WSumXY += Weight*Independent(i)*Dependent(i)
+              SumX += Weight*Independent(i)
+              SumY += Weight*Dependent(i)
+              SumXX += Weight*Independent(i)^2
+              SumYY += Weight*Dependent(i)^2
+              SumXY += Weight*Independent(i)*Dependent(i)
             End If
           Next i
         End If
@@ -135,11 +129,11 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' of variation with the RMSD taking the place of the standard deviation.
         .CVRMSD = .RMSD/.Mean
 
-        .Slope = (.Weight*WSumXY-WSumX*WSumY)/(.Weight*WSumXX-WSumX^2) ' Lin reg
-        .OriginSlope = WSumXY/WSumXX ' Linear regr. through the origin (alpha=0)
+        .Slope = (.Count*SumXY-SumX*SumY)/(.Count*SumXX-SumX^2) ' Lin.regression
+        .OriginSlope = SumXY/SumXX ' Lin.regression through the origin (alpha=0)
         .Angle = SlopeToAngle(.Slope) ' Angle in degrees
         .OriginAngle = SlopeToAngle(.OriginSlope) ' Angle in degrees
-        .Intercept = (WSumX*WSumXY-WSumY*WSumXX)/(WSumX^2-.Weight*WSumXX)
+        .Intercept = (SumX*SumXY-SumY*SumXX)/(SumX^2-.Count*SumXX)
 
         ' Standard error of the predicted y-value for each x in the regression.
         ' The standard error is a measure of the amount of error in the
