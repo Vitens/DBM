@@ -71,7 +71,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function TInv2T(p As Double, dof As Integer) As Double
+    Public Shared Function TInv2T(p As Double, dof As Double) As Double
 
       ' Returns the two-tailed inverse of the Student's t-distribution.
       ' Hill's approx. inverse t-dist.: Comm. of A.C.M Vol.13 No.10 1970 pg 620
