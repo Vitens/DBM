@@ -149,7 +149,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Shared Function ControlLimitRejectionCriterion(p As Double,
-      n As Integer) As Double
+      n As Double) As Double
 
       ' Return two-sided critical z-values for confidence interval p.
       ' Student's t-distribution approaches the normal z distribution at
