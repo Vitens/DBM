@@ -48,8 +48,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' scale starting at 0 is assumed and exponential weighting is used.
       ' Using exponential weighting with a growth rate of 10^(1/(n-1))≈1.233
       ' improves the total error of the model by 3.2% (SD by 9.4%) and the
-      ' determination by 0.14% (SD by 7.4%). This results in a 1.3% forecast
-      ' improvement.
+      ' determination by 0.14% (SD by 7.4%). This results in an overall 1.3%
+      ' forecast improvement.
       ' The result of the calculation is returned as a new object.
 
       Dim i As Integer
