@@ -74,7 +74,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         If Dependent.Length > 0 And Dependent.Length = Independent.Length Then
           For i = 0 To Dependent.Length-1
             If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
-              If ExponentialWeighting Then Weight = ExpRegGrowthRate^i ' Expon.
+              If ExponentialWeighting Then Weight = ExponentialGrowthRate^i
               .Count += Weight
               .NMBE += Dependent(i)-Independent(i)
               .RMSD += (Dependent(i)-Independent(i))^2

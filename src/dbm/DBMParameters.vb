@@ -47,7 +47,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared ComparePatterns As Integer = 12 ' weeks
 
     ' Growth rate for exponential weighting in regression.
-    Public Shared ExpRegGrowthRate As Double =
+    Public Shared ExponentialGrowthRate As Double =
       10^(1/(ComparePatterns-1)) ' Last value weighs 10 times the first
 
     ' Number of previous intervals used to smooth the data.
