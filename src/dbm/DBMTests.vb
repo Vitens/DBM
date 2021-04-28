@@ -1233,7 +1233,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       InputPointDriver = New DBMPointDriverTestModel(0)
       CorrelationPoints.Add(
-        New DBMCorrelationPoint(New DBMPointDriverTestModel(490), False))
+        New DBMCorrelationPoint(New DBMPointDriverTestModel(7*24), False))
 
       ' GetResult Timestamp - test alignment
       AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
