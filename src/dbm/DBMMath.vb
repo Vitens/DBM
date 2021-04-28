@@ -109,7 +109,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function TInv(p As Double, dof As Integer) As Double
+    Public Shared Function TInv(p As Double, dof As Double) As Double
 
       ' Returns the left-tailed inverse of the Student's t-distribution.
 
