@@ -1289,21 +1289,18 @@ Namespace Vitens.DynamicBandwidthMonitor
         Result = DBM.GetResult(InputPointDriver, CorrelationPoints, Timestamp,
           New CultureInfo("nl-NL")) ' Use Dutch locale for New Year's Day test
         With Result
-console.write    (Math.Round(.Factor,4).ToString & ", ")
-console.write    (.HasEvent.ToString & ", ")
-console.writeline(.HasSuppressedEvent.ToString)
-'         AssertAlmostEqual(.Factor, {1.4019, 0, 0, 0, 0, 0, 0, 0, 1.0342, 0, 0,
-'           0, -8.391, 1.8358, 0, 0, 2.0324, 0, 0, 0}(Abs(i)))
-'         If {0, 8, 12, 13, 16}.Contains(Abs(i)) Then
-'           AssertTrue(.HasEvent)
-'         Else
-'           AssertFalse(.HasEvent)
-'         End If
-'         If {7}.Contains(Abs(i)) Then
-'           AssertTrue(.HasSuppressedEvent)
-'         Else
-'           AssertFalse(.HasSuppressedEvent)
-'         End If
+          AssertAlmostEqual(.Factor, {0, 0, 0, 0, 0, 0, 0, 0, 1.0342, 0, 0, 0,
+            -8.391, 0, 0, 0, 2.0324, 0, 0, 0}(Abs(i)))
+          If {8, 12, 16}.Contains(Abs(i)) Then
+            AssertTrue(.HasEvent)
+          Else
+            AssertFalse(.HasEvent)
+          End If
+          If {0, 7, 13}.Contains(Abs(i)) Then
+            AssertTrue(.HasSuppressedEvent)
+          Else
+            AssertFalse(.HasSuppressedEvent)
+          End If
           AssertAlmostEqual(.ForecastItem.Measurement, {522.7266, 720.5181,
             1199.5882, 1147.9954, 408.5934, 648.4205, 1028.9134, 905.432,
             467.7113, 660.2066, 1000.0186, 1093.1967, 424.8118, 586.9614,
