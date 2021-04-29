@@ -155,6 +155,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               Factor*(Dependent(i)-Independent(i)*.Slope-.Intercept)^2
           End If
         Next i
+        .StandardError /= .Weight/.Count ' Re-scale
         ' n-2 is used because two parameters (slope and intercept) were
         ' estimated in order to estimate the sum of squares.
         .StandardError = Sqrt(.StandardError/Max(0, .Count-2))
