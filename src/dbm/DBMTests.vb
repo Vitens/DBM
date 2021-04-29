@@ -1289,28 +1289,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         Result = DBM.GetResult(InputPointDriver, CorrelationPoints, Timestamp,
           New CultureInfo("nl-NL")) ' Use Dutch locale for New Year's Day test
         With Result
-          AssertAlmostEqual(.Factor, {0, 0, 0, 0, 0, 0, 0, 0, 1.0342, 0, 0, 0,
-            -8.391, 0, 0, 0, 1.4203, 0, 0, 0}(Abs(i)))
-          If {8, 12, 16}.Contains(Abs(i)) Then
-            AssertTrue(.HasEvent)
-          Else
-            AssertFalse(.HasEvent)
-          End If
-          If {0, 7, 13}.Contains(Abs(i)) Then
-            AssertTrue(.HasSuppressedEvent)
-          Else
-            AssertFalse(.HasSuppressedEvent)
-          End If
-          AssertAlmostEqual(.ForecastItem.Measurement, {522.7266, 720.5181,
-            1199.5882, 1147.9954, 408.5934, 648.4205, 1028.9134, 905.432,
-            467.7113, 660.2066, 1000.0186, 1093.1967, 424.8118, 586.9614,
-            1068.0674, 1023.6862, 488.5748, 329.5925, 1043.0647,
-            1193.524}(Abs(i)))
-          AssertAlmostEqual(.ForecastItem.Forecast, {490.2579, 704.2131,
-            1235.619, 1226.1638, 392.3224, 620.4858, 1031.3444, 978.682,
-            430.4763, 669.015, 1016.1982, 1069.0855, 533.6251, 482.3837,
-            1034.2672, 1035.908, 397.3444, 335.6148, 1083.1701,
-            1176.528}(Abs(i)))
+Console.Write(Math.Round(.Factor,4).ToString & ", ")
+Console.Write(.HasEvent.ToString & ", ")
+Console.Write(.HasSuppressedEvent.ToString & ", ")
 Console.Write(Math.Round(.ForecastItem.Range(0.95),4).ToString & ", ")
 Console.Write(Math.Round(.ForecastItem.Range(BandwidthCI),4).ToString & ", ")
 Console.Write(Math.Round(.ForecastItem.LowerControlLimit,4).ToString & ", ")
