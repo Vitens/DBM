@@ -76,8 +76,8 @@ Namespace Vitens.DynamicBandwidthMonitor
             If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
               If ExponentialWeighting Then Weight = ExponentialGrowthRate^i
               .Count += Weight
-              .NMBE += Dependent(i)-Independent(i)
-              .RMSD += (Dependent(i)-Independent(i))^2
+              .NMBE += Weight*(Dependent(i)-Independent(i))
+              .RMSD += Weight*(Dependent(i)-Independent(i))^2
               SumX += Weight*Independent(i)
               SumY += Weight*Dependent(i)
               SumXX += Weight*Independent(i)^2
