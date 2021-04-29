@@ -54,7 +54,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim i As Integer
       Dim ExponentialWeighting As Boolean
-      Dim Weight, SumX, SumY, SumXX, SumYY, SumXY As Double
+      Dim Factor, SumX, SumY, SumXX, SumYY, SumXY As Double
 
       Statistics = New DBMStatisticsItem
 
@@ -67,24 +67,34 @@ Namespace Vitens.DynamicBandwidthMonitor
           Next i
           ExponentialWeighting = True
         Else
-          Weight = 1 ' Linear weight.
+          Factor = 1 ' Linear weight.
         End If
 
         ' Calculate sums
         If Dependent.Length > 0 And Dependent.Length = Independent.Length Then
           For i = 0 To Dependent.Length-1
             If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
-              If ExponentialWeighting Then Weight = ExponentialGrowthRate^i
-              .Count += Weight
-              .NMBE += Weight*(Dependent(i)-Independent(i))
-              .RMSD += Weight*(Dependent(i)-Independent(i))^2
-              SumX += Weight*Independent(i)
-              SumY += Weight*Dependent(i)
-              SumXX += Weight*Independent(i)^2
-              SumYY += Weight*Dependent(i)^2
-              SumXY += Weight*Independent(i)*Dependent(i)
+              If ExponentialWeighting Then Factor = ExponentialGrowthRate^i
+              .Count += 1
+              .Weight += Factor
+              ' Scale by weight factor.
+              .NMBE += Factor*(Dependent(i)-Independent(i))
+              .RMSD += Factor*(Dependent(i)-Independent(i))^2
+              SumX += Factor*Independent(i)
+              SumY += Factor*Dependent(i)
+              SumXX += Factor*Independent(i)^2
+              SumYY += Factor*Dependent(i)^2
+              SumXY += Factor*Independent(i)*Dependent(i)
             End If
           Next i
+          ' Re-scale so that the original count is preserved.
+          .NMBE /= .Weight/.Count
+          .RMSD /= .Weight/.Count
+          SumX /= .Weight/.Count
+          SumY /= .Weight/.Count
+          SumXX /= .Weight/.Count
+          SumYY /= .Weight/.Count
+          SumXY /= .Weight/.Count
         End If
 
         If .Count = 0 Then Return Statistics ' Empty, non-eq, or no non-NaN pair
@@ -140,9 +150,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' prediction of y for an individual x.
         For i = 0 to Dependent.Length-1
           If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
-            If ExponentialWeighting Then Weight = ExponentialGrowthRate^i
+            If ExponentialWeighting Then Factor = ExponentialGrowthRate^i
             .StandardError +=
-              Weight*(Dependent(i)-Independent(i)*.Slope-.Intercept)^2
+              Factor*(Dependent(i)-Independent(i)*.Slope-.Intercept)^2
           End If
         Next i
         ' n-2 is used because two parameters (slope and intercept) were
