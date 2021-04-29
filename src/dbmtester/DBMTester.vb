@@ -99,6 +99,8 @@ Namespace Vitens.DynamicBandwidthMonitor
               UseSundayForHolidays = Convert.ToBoolean(Value)
             ElseIf Parameter.Equals("p") Then
               ComparePatterns = Convert.ToInt32(Value)
+            ElseIf Parameter.Equals("gr") Then
+              ExponentialGrowthRate = Convert.ToDouble(Value)
             ElseIf Parameter.Equals("ep") Then
               EMAPreviousPeriods = Convert.ToInt32(Value)
             ElseIf Parameter.Equals("oi") Then

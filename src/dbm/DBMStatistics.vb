@@ -152,7 +152,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
             If ExponentialWeighting Then Factor = ExponentialGrowthRate^i
             .StandardError +=
-              Factor*(Dependent(i)-Independent(i)*.Slope-.Intercept)^2
+              Factor*(Dependent(i)-Independent(i)*.Slope-.Intercept)^2 ' Scale
           End If
         Next i
         .StandardError /= .Weight/.Count ' Re-scale

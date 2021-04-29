@@ -68,6 +68,7 @@ DBM can be configured using several parameters. The values for these parameters 
 | `CalculationInterval`        | 300           | seconds       | Time interval at which the calculation is run.                                                        |
 | `UseSundayForHolidays`       | True          |               | Use forecast of the previous Sunday for holidays.                                                     |
 | `ComparePatterns`            | 12            | weeks         | Number of weeks to look back to forecast the current value and control limits.                        |
+| `ExponentialGrowthRate`      | 1.2328        | dimensionless | Growth rate for exponential weighting in regression.                                                  |
 | `EMAPreviousPeriods`         | 5             | intervals     | Number of previous intervals used to smooth the data.                                                 |
 | `OutlierCI`                  | 0.99          | ratio         | Confidence interval used for removing outliers.                                                       |
 | `BandwidthCI`                | 0.99          | ratio         | Confidence interval used for determining control limits.                                              |
@@ -86,6 +87,7 @@ DBMTester is a command line utility that can be used to quickly calculate DBM re
 | `-iv=`   | 0..1   | Changes the `CalculationInterval` parameter.                                      |
 | `-us=`   | 0..1   | Changes the `UseSundayForHolidays` parameter.                                     |
 | `-p=`    | 0..1   | Changes the `ComparePatterns` parameter.                                          |
+| `-gr=`   | 0..1   | Changes the `ExponentialGrowthRate` parameter.                                    |
 | `-ep=`   | 0..1   | Changes the `EMAPreviousPeriods` parameter.                                       |
 | `-oi=`   | 0..1   | Changes the `OutlierCI` parameter.                                                |
 | `-bi=`   | 0..1   | Changes the `BandwidthCI` parameter.                                              |
