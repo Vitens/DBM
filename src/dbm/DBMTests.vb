@@ -1288,11 +1288,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         Result = DBM.GetResult(InputPointDriver, CorrelationPoints, Timestamp,
           New CultureInfo("nl-NL")) ' Use Dutch locale for New Year's Day test
         With Result
-Console.Write(Math.Round(.Factor,4).ToString & ", ")
-Console.Write(Math.Round(.ForecastItem.Range(0.95),4).ToString & ", ")
-Console.Write(Math.Round(.ForecastItem.Range(BandwidthCI),4).ToString & ", ")
-Console.Write(Math.Round(.ForecastItem.LowerControlLimit,4).ToString & ", ")
-Console.WriteLine(Math.Round(.ForecastItem.UpperControlLimit,4).ToString)
+          AssertAlmostEqual(.Factor, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            -3.968, 0, 0, 0, 1.0981, 0, 0, 0}(Abs(i)))
           If {12, 16}.Contains(Abs(i)) Then
             AssertTrue(.HasEvent)
           Else
@@ -1309,6 +1306,23 @@ Console.WriteLine(Math.Round(.ForecastItem.UpperControlLimit,4).ToString)
             430.4763, 669.015, 1016.1982, 1069.0855, 533.6251, 482.3837,
             1034.2672, 1035.908, 397.3444, 335.6148, 1083.1701,
             1176.528}(Abs(i)))
+          AssertAlmostEqual(.ForecastItem.Range(0.95), {44.7304, 62.571, 72.344,
+            153.3038, 47.8644, 94.7973, 106.9733, 81.5886, 63.1719, 82.8823,
+            45.9239, 93.5606, 18.1186, 103.646, 106.8617, 76.948, 54.8921,
+            52.1718, 108.3898, 51.1079}(Abs(i)))
+          AssertAlmostEqual(.ForecastItem.Range(BandwidthCI), {67.6997, 94.7014,
+            109.4929, 232.0259, 72.443, 143.4761, 161.9045, 123.4846, 95.611,
+            125.4427, 69.506, 141.6044, 27.4226, 156.8686, 161.7356, 116.4612,
+            83.0794, 78.9623, 164.0485, 77.352}(Abs(i)))
+          AssertAlmostEqual(.ForecastItem.LowerControlLimit, {422.5582,
+            609.5117, 1126.1261, 994.1379, 319.8794, 477.0097, 869.4399,
+            855.1973, 334.8653, 543.5723, 946.6923, 927.4811, 506.2024, 325.515,
+            872.5316, 919.4468, 314.265, 256.6525, 919.1216, 1099.176}(Abs(i)))
+          AssertAlmostEqual(.ForecastItem.UpperControlLimit, {557.9576,
+            798.9145, 1345.1119, 1458.1897, 464.7654, 763.9618, 1193.2488,
+            1102.1666, 526.0873, 794.4577, 1085.7042, 1210.6899, 561.0477,
+            639.2523, 1196.0028, 1152.3691, 480.4239, 414.5771, 1247.2186,
+            1253.88}(Abs(i)))
         End With
       Next i
 
