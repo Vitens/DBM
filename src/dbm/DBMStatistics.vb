@@ -140,7 +140,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' prediction of y for an individual x.
         For i = 0 to Dependent.Length-1
           If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
-            .StandardError += (Dependent(i)-Independent(i)*.Slope-.Intercept)^2
+            If ExponentialWeighting Then Weight = ExponentialGrowthRate^i
+            .StandardError +=
+              Weight*(Dependent(i)-Independent(i)*.Slope-.Intercept)^2
           End If
         Next i
         ' n-2 is used because two parameters (slope and intercept) were
