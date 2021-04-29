@@ -71,7 +71,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function TInv2T(p As Double, dof As Double) As Double
+    Public Shared Function TInv2T(p As Double, dof As Integer) As Double
 
       ' Returns the two-tailed inverse of the Student's t-distribution.
       ' Hill's approx. inverse t-dist.: Comm. of A.C.M Vol.13 No.10 1970 pg 620
@@ -109,7 +109,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function TInv(p As Double, dof As Double) As Double
+    Public Shared Function TInv(p As Double, dof As Integer) As Double
 
       ' Returns the left-tailed inverse of the Student's t-distribution.
 
@@ -149,7 +149,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Shared Function ControlLimitRejectionCriterion(p As Double,
-      n As Double) As Double
+      n As Integer) As Double
 
       ' Return two-sided critical z-values for confidence interval p.
       ' Student's t-distribution approaches the normal z distribution at
