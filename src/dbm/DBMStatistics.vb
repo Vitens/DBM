@@ -49,7 +49,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Using exponential weighting with a growth rate of 10^(1/(n-1))≈1.233
       ' improves the total error of the model by 3.2% (SD by 9.4%) and the
       ' determination by 0.14% (SD by 7.4%). This results in an overall 1.3%
-      ' forecast improvement.
+      ' forecast improvement. This optimum was found after calculating results
+      ' with growth rates r^(1/(n-1)), with r between 1 and 4, increasing in
+      ' steps of 0.01.
       ' The result of the calculation is returned as a new object.
 
       Dim i As Integer
@@ -150,12 +152,12 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' prediction of y for an individual x.
         For i = 0 to Dependent.Length-1
           If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
-            If ExponentialWeighting Then Factor = ExponentialGrowthRate^i
+            If ExponentialWeighting Then Factor =
+              ExponentialGrowthRate^i/.Weight*.Count
             .StandardError +=
-              Factor*(Dependent(i)-Independent(i)*.Slope-.Intercept)^2 ' Scale
+              Factor*(Dependent(i)-Independent(i)*.Slope-.Intercept)^2
           End If
         Next i
-        .StandardError /= .Weight/.Count ' Re-scale
         ' n-2 is used because two parameters (slope and intercept) were
         ' estimated in order to estimate the sum of squares.
         .StandardError = Sqrt(.StandardError/Max(0, .Count-2))
