@@ -1290,7 +1290,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           New CultureInfo("nl-NL")) ' Use Dutch locale for New Year's Day test
         With Result
           AssertAlmostEqual(.Factor, {0, 0, 0, 0, 0, 0, 0, 0, 1.0342, 0, 0, 0,
-            -8.391, 0, 0, 0, 2.0324, 0, 0, 0}(Abs(i)))
+            -8.391, 0, 0, 0, 1.4203, 0, 0, 0}(Abs(i)))
           If {8, 12, 16}.Contains(Abs(i)) Then
             AssertTrue(.HasEvent)
           Else
