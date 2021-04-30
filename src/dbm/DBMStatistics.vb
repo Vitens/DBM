@@ -74,12 +74,23 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         ' Calculate sums
         If Dependent.Length > 0 And Dependent.Length = Independent.Length Then
+
+          ' Iteration 1: Count number of values and calculate total weight.
           For i = 0 To Dependent.Length-1
             If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
               If ExponentialWeighting Then Factor = ExponentialGrowthRate^i
               .Count += 1
               .Weight += Factor
-              ' Scale by weight factor.
+            End If
+          Next i
+
+Console.WriteLine(.Count.ToString & " " & .Weight.ToString)
+
+          ' Iteration 2: Calculate weighted statistics.
+          For i = 0 To Dependent.Length-1
+            If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
+              If ExponentialWeighting Then Factor =
+                ExponentialGrowthRate^i/.Weight*.Count
               .NMBE += Factor*(Dependent(i)-Independent(i))
               .RMSD += Factor*(Dependent(i)-Independent(i))^2
               SumX += Factor*Independent(i)
@@ -89,14 +100,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               SumXY += Factor*Independent(i)*Dependent(i)
             End If
           Next i
-          ' Re-scale so that the original count is preserved.
-          .NMBE /= .Weight/.Count
-          .RMSD /= .Weight/.Count
-          SumX /= .Weight/.Count
-          SumY /= .Weight/.Count
-          SumXX /= .Weight/.Count
-          SumYY /= .Weight/.Count
-          SumXY /= .Weight/.Count
+
         End If
 
         If .Count = 0 Then Return Statistics ' Empty, non-eq, or no non-NaN pair
