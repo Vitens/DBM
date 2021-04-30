@@ -84,8 +84,6 @@ Namespace Vitens.DynamicBandwidthMonitor
             End If
           Next i
 
-Console.WriteLine(.Count.ToString & " " & .Weight.ToString)
-
           ' Iteration 2: Calculate weighted statistics.
           For i = 0 To Dependent.Length-1
             If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
