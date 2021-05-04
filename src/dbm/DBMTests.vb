@@ -1292,6 +1292,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 Console.Write(Math.Round(.Factor,4).ToString & ", ")
 Console.Write(.HasEvent.ToString & ", ")
 Console.Write(.HasSuppressedEvent.ToString & ", ")
+Console.Write(Math.Round(.ForecastItem.Measurement.ToString & ", ")
+Console.Write(Math.Round(.ForecastItem.Forecast.ToString & ", ")
 Console.Write(Math.Round(.ForecastItem.Range(0.95),4).ToString & ", ")
 Console.Write(Math.Round(.ForecastItem.Range(BandwidthCI),4).ToString & ", ")
 Console.Write(Math.Round(.ForecastItem.LowerControlLimit,4).ToString & ", ")
