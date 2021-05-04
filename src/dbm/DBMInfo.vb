@@ -137,7 +137,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim QTResult As String
 
       Timer = Now
-'     RunUnitTests
+      RunUnitTests
       UTDurationMs = (Now.Ticks-Timer.Ticks)/TicksPerMillisecond
 
       Timer = Now
