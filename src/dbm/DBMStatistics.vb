@@ -44,11 +44,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Performs calculation of several statistics functions on the input
       ' data. If no values for the independent variable are passed, a linear
-      ' scale starting at 0 is assumed.
+      ' scale starting at 0 is assumed and exponential weighting is used.
       ' The result of the calculation is returned as a new object.
 
       Dim i As Integer
-      Dim SumX, SumY, SumXX, SumYY, SumXY As Double
+      Dim ExponentialWeighting As Boolean
+      Dim Weights(), TotalWeight, SumX, SumY, SumXX, SumYY, SumXY As Double
 
       Statistics = New DBMStatisticsItem
 
@@ -59,22 +60,37 @@ Namespace Vitens.DynamicBandwidthMonitor
           For i = 0 To Dependent.Length-1
             Independent(i) = i
           Next i
+          ExponentialWeighting = True
         End If
+
+        Weights = ExponentialWeights(Dependent.Length) ' Get weights.
 
         ' Calculate sums
         If Dependent.Length > 0 And Dependent.Length = Independent.Length Then
+
+          ' Iteration 1: Count number of values and calculate total weight.
           For i = 0 To Dependent.Length-1
             If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
               .Count += 1
-              .NMBE += Dependent(i)-Independent(i)
-              .RMSD += (Dependent(i)-Independent(i))^2
-              SumX += Independent(i)
-              SumY += Dependent(i)
-              SumXX += Independent(i)^2
-              SumYY += Dependent(i)^2
-              SumXY += Independent(i)*Dependent(i)
+              If Not ExponentialWeighting Then Weights(i) = 1 ' Linear weight.
+              TotalWeight += Weights(i)
             End If
           Next i
+
+          ' Iteration 2: Calculate weighted statistics.
+          For i = 0 To Dependent.Length-1
+            If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
+              Weights(i) = Weights(i)/TotalWeight*.Count
+              .NMBE += Weights(i)*(Dependent(i)-Independent(i))
+              .RMSD += Weights(i)*(Dependent(i)-Independent(i))^2
+              SumX += Weights(i)*Independent(i)
+              SumY += Weights(i)*Dependent(i)
+              SumXX += Weights(i)*Independent(i)^2
+              SumYY += Weights(i)*Dependent(i)^2
+              SumXY += Weights(i)*Independent(i)*Dependent(i)
+            End If
+          Next i
+
         End If
 
         If .Count = 0 Then Return Statistics ' Empty, non-eq, or no non-NaN pair
@@ -130,7 +146,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' prediction of y for an individual x.
         For i = 0 to Dependent.Length-1
           If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
-            .StandardError += (Dependent(i)-Independent(i)*.Slope-.Intercept)^2
+            .StandardError +=
+              Weights(i)*(Dependent(i)-Independent(i)*.Slope-.Intercept)^2
           End If
         Next i
         ' n-2 is used because two parameters (slope and intercept) were
