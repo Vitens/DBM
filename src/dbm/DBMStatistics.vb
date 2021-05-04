@@ -27,7 +27,6 @@ Imports System.Collections.Generic
 Imports System.Double
 Imports System.Math
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
-Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -72,10 +71,10 @@ Namespace Vitens.DynamicBandwidthMonitor
           Factor = 1 ' Linear weight.
         End If
 
+        Weights = ExponentialWeights(Dependent.Length) ' Get weights.
+
         ' Calculate sums
         If Dependent.Length > 0 And Dependent.Length = Independent.Length Then
-
-          Weights = ExponentialWeights(Dependent.Length) ' Get weights.
 
           ' Iteration 1: Count number of values and calculate total weight.
           For i = 0 To Dependent.Length-1
