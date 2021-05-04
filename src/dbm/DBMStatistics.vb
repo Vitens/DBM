@@ -56,7 +56,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim i As Integer
       Dim ExponentialWeighting As Boolean
-      Dim Factor, SumX, SumY, SumXX, SumYY, SumXY As Double
+      Dim Factor, Weights(), SumX, SumY, SumXX, SumYY, SumXY As Double
 
       Statistics = New DBMStatisticsItem
 
@@ -75,10 +75,12 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Calculate sums
         If Dependent.Length > 0 And Dependent.Length = Independent.Length Then
 
+          Weights = ExponentialWeights(Dependent.Length) ' Get weights.
+
           ' Iteration 1: Count number of values and calculate total weight.
           For i = 0 To Dependent.Length-1
             If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
-              If ExponentialWeighting Then Factor = ExponentialGrowthRate^i
+              If ExponentialWeighting Then Factor = Weights(i)
               .Count += 1
               .Weight += Factor
             End If
@@ -87,8 +89,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' Iteration 2: Calculate weighted statistics.
           For i = 0 To Dependent.Length-1
             If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
-              If ExponentialWeighting Then Factor =
-                ExponentialGrowthRate^i/.Weight*.Count
+              If ExponentialWeighting Then Factor = Weights(i)/.Weight*.Count
               .NMBE += Factor*(Dependent(i)-Independent(i))
               .RMSD += Factor*(Dependent(i)-Independent(i))^2
               SumX += Factor*Independent(i)
@@ -154,8 +155,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' prediction of y for an individual x.
         For i = 0 to Dependent.Length-1
           If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
-            If ExponentialWeighting Then Factor =
-              ExponentialGrowthRate^i/.Weight*.Count
+            If ExponentialWeighting Then Factor = Weights(i)/.Weight*.Count
             .StandardError +=
               Factor*(Dependent(i)-Independent(i)*.Slope-.Intercept)^2
           End If
