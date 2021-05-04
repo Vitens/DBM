@@ -49,7 +49,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim i As Integer
       Dim ExponentialWeighting As Boolean
-      Dim Factor, Weights(), SumX, SumY, SumXX, SumYY, SumXY As Double
+      Dim Weights(), TotalWeight, SumX, SumY, SumXX, SumYY, SumXY As Double
 
       Statistics = New DBMStatisticsItem
 
@@ -61,8 +61,6 @@ Namespace Vitens.DynamicBandwidthMonitor
             Independent(i) = i
           Next i
           ExponentialWeighting = True
-        Else
-          Factor = 1 ' Linear weight.
         End If
 
         Weights = ExponentialWeights(Dependent.Length) ' Get weights.
@@ -73,24 +71,34 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' Iteration 1: Count number of values and calculate total weight.
           For i = 0 To Dependent.Length-1
             If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
-              If ExponentialWeighting Then Factor = Weights(i)
               .Count += 1
-              .TotalWeight += Factor
+              If ExponentialWeighting Then TotalWeight += Weights(i)
             End If
           Next i
 
-          ' Iteration 2: Calculate weighted statistics.
+          ' Iteration 2: Calculate scaled weights.
           For i = 0 To Dependent.Length-1
             If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
-              If ExponentialWeighting Then Factor =
-                Weights(i)/.TotalWeight*.Count
-              .NMBE += Factor*(Dependent(i)-Independent(i))
-              .RMSD += Factor*(Dependent(i)-Independent(i))^2
-              SumX += Factor*Independent(i)
-              SumY += Factor*Dependent(i)
-              SumXX += Factor*Independent(i)^2
-              SumYY += Factor*Dependent(i)^2
-              SumXY += Factor*Independent(i)*Dependent(i)
+              If ExponentialWeighting Then
+                Weights(i) = Weights(i)/TotalWeight*.Count
+              Else
+                Weights(i) = 1 ' Linear weight.
+              End If
+            Else
+              Weights(i) = NaN ' Invalid data.
+            End If
+          Next i
+
+          ' Iteration 3: Calculate weighted statistics.
+          For i = 0 To Dependent.Length-1
+            If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
+              .NMBE += Weights(i)*(Dependent(i)-Independent(i))
+              .RMSD += Weights(i)*(Dependent(i)-Independent(i))^2
+              SumX += Weights(i)*Independent(i)
+              SumY += Weights(i)*Dependent(i)
+              SumXX += Weights(i)*Independent(i)^2
+              SumYY += Weights(i)*Dependent(i)^2
+              SumXY += Weights(i)*Independent(i)*Dependent(i)
             End If
           Next i
 
@@ -149,9 +157,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' prediction of y for an individual x.
         For i = 0 to Dependent.Length-1
           If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
-            If ExponentialWeighting Then Factor = Weights(i)/.TotalWeight*.Count
             .StandardError +=
-              Factor*(Dependent(i)-Independent(i)*.Slope-.Intercept)^2
+              Weights(i)*(Dependent(i)-Independent(i)*.Slope-.Intercept)^2
           End If
         Next i
         ' n-2 is used because two parameters (slope and intercept) were
