@@ -75,14 +75,15 @@ Namespace Vitens.DynamicBandwidthMonitor
             If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
               If ExponentialWeighting Then Factor = Weights(i)
               .Count += 1
-              .Weight += Factor
+              .TotalWeight += Factor
             End If
           Next i
 
           ' Iteration 2: Calculate weighted statistics.
           For i = 0 To Dependent.Length-1
             If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
-              If ExponentialWeighting Then Factor = Weights(i)/.Weight*.Count
+              If ExponentialWeighting Then Factor =
+                Weights(i)/.TotalWeight*.Count
               .NMBE += Factor*(Dependent(i)-Independent(i))
               .RMSD += Factor*(Dependent(i)-Independent(i))^2
               SumX += Factor*Independent(i)
@@ -148,7 +149,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' prediction of y for an individual x.
         For i = 0 to Dependent.Length-1
           If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
-            If ExponentialWeighting Then Factor = Weights(i)/.Weight*.Count
+            If ExponentialWeighting Then Factor = Weights(i)/.TotalWeight*.Count
             .StandardError +=
               Factor*(Dependent(i)-Independent(i)*.Slope-.Intercept)^2
           End If
