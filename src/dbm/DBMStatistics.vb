@@ -72,18 +72,15 @@ Namespace Vitens.DynamicBandwidthMonitor
           For i = 0 To Dependent.Length-1
             If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
               .Count += 1
-              If ExponentialWeighting Then TotalWeight += Weights(i)
+              If Not ExponentialWeighting Then Weights(i) = 1 ' Linear weight.
+              TotalWeight += Weights(i)
             End If
           Next i
 
           ' Iteration 2: Calculate weighted statistics.
           For i = 0 To Dependent.Length-1
             If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
-              If ExponentialWeighting Then
-                Weights(i) = Weights(i)/TotalWeight*.Count
-              Else
-                Weights(i) = 1 ' Linear weight.
-              End If
+              Weights(i) = Weights(i)/TotalWeight*.Count
               .NMBE += Weights(i)*(Dependent(i)-Independent(i))
               .RMSD += Weights(i)*(Dependent(i)-Independent(i))^2
               SumX += Weights(i)*Independent(i)
