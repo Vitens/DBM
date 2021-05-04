@@ -76,7 +76,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             End If
           Next i
 
-          ' Iteration 2: Calculate scaled weights.
+          ' Iteration 2: Calculate weighted statistics.
           For i = 0 To Dependent.Length-1
             If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
               If ExponentialWeighting Then
@@ -84,14 +84,6 @@ Namespace Vitens.DynamicBandwidthMonitor
               Else
                 Weights(i) = 1 ' Linear weight.
               End If
-            Else
-              Weights(i) = NaN ' Invalid data.
-            End If
-          Next i
-
-          ' Iteration 3: Calculate weighted statistics.
-          For i = 0 To Dependent.Length-1
-            If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
               .NMBE += Weights(i)*(Dependent(i)-Independent(i))
               .RMSD += Weights(i)*(Dependent(i)-Independent(i))^2
               SumX += Weights(i)*Independent(i)
