@@ -39,6 +39,13 @@ Namespace Vitens.DynamicBandwidthMonitor
       Determination As Double
 
 
+    Public Function HasInsufficientData As Boolean
+
+      Return Count < 3 ' Need at least 3 data points.
+
+    End Function
+
+
     Public Function Calibrated As Boolean
 
       ' ASHRAE Guideline 14-2014, Measurement of Energy, Demand, and Water
@@ -121,7 +128,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Protocol: Concepts and Options for Determining Energy and Water Savings,
       ' Volume I, by the Efficiency Valuation Organization.
 
-      If Count < 3 Then Return sStatisticsInsufficientData ' Need at least 3 pts
+      If HasInsufficientData Then Return sStatisticsInsufficientData
 
       Return String.Format(sStatisticsBrief,
         Calibrated, Count, SystematicError, RandomError, Fit)
