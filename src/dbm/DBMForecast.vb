@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -23,6 +23,7 @@ Option Strict
 
 
 Imports System
+Imports System.Double
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
@@ -56,23 +57,35 @@ Namespace Vitens.DynamicBandwidthMonitor
         Array.Resize(Values, Values.Length-1)
         StatisticsItem = Statistics(RemoveOutliers(Values))
 
-        ' Extrapolate regression by one interval and use this result as a
-        ' forecast.
-        .Forecast =
-          ComparePatterns*StatisticsItem.Slope+StatisticsItem.Intercept
+        If StatisticsItem.HasInsufficientData Then
 
-        ' Control limits are determined by using measures of process variation
-        ' and are based on the concepts surrounding hypothesis testing and
-        ' interval estimation. They are used to detect signals in process data
-        ' that indicate that a process is not in control and, therefore, not
-        ' operating predictably.
-        Range = ControlLimitRejectionCriterion(BandwidthCI,
-          StatisticsItem.Count-1)*StatisticsItem.StandardError
+          ' Forecast and control limits cannot be calculated if there is
+          ' insufficient data. Return Not a Number.
+          .Forecast = NaN
+          .LowerControlLimit = NaN
+          .UpperControlLimit = NaN
 
-        ' Set upper and lower control limits based on forecast, rejection
-        ' criterion and standard error of the regression.
-        .LowerControlLimit = .Forecast-Range
-        .UpperControlLimit = .Forecast+Range
+        Else
+
+          ' Extrapolate regression by one interval and use this result as a
+          ' forecast.
+          .Forecast =
+            ComparePatterns*StatisticsItem.Slope+StatisticsItem.Intercept
+
+          ' Control limits are determined by using measures of process variation
+          ' and are based on the concepts surrounding hypothesis testing and
+          ' interval estimation. They are used to detect signals in process data
+          ' that indicate that a process is not in control and, therefore, not
+          ' operating predictably.
+          Range = ControlLimitRejectionCriterion(BandwidthCI,
+            StatisticsItem.Count-1)*StatisticsItem.StandardError
+
+          ' Set upper and lower control limits based on forecast, rejection
+          ' criterion and standard error of the regression.
+          .LowerControlLimit = .Forecast-Range
+          .UpperControlLimit = .Forecast+Range
+
+        End If
 
       End With
 
