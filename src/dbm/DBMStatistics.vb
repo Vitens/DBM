@@ -61,9 +61,13 @@ Namespace Vitens.DynamicBandwidthMonitor
             Independent(i) = i
           Next i
           ExponentialWeighting = True
+          Weights = ExponentialWeights(Dependent.Length) ' Get weights.
+        Else
+          ReDim Weights(Dependent.Length-1)
+          For i = 0 To Dependent.Length-1
+            Weights(i) = 1 ' Linear weight.
+          Next i
         End If
-
-        Weights = ExponentialWeights(Dependent.Length) ' Get weights.
 
         ' Calculate sums
         If Dependent.Length > 0 And Dependent.Length = Independent.Length Then
@@ -72,7 +76,6 @@ Namespace Vitens.DynamicBandwidthMonitor
           For i = 0 To Dependent.Length-1
             If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
               .Count += 1
-              If Not ExponentialWeighting Then Weights(i) = 1 ' Linear weight.
               TotalWeight += Weights(i)
             End If
           Next i
