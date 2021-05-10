@@ -9,6 +9,6 @@ jobs:
 
     steps:
     - name: Build
-      run: build.bat
+      run: .\build.bat
     - name: Test
-      run: build/DBMAbout.exe
+      run: build\DBMAbout.exe
