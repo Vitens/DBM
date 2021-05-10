@@ -12,7 +12,7 @@ jobs:
         CERTIFICATE: ${{ secrets.CERTIFICATE }}
       run: ([System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($Env:CERTIFICATE))) | Set-Content -NoNewline $Env:TEMP\certificate.pfx
     - name: testing
-      run: dir $Env:TEMP\*.pfx
+      run: dir $Env:TEMP
     - name: Build
       run: .\build.bat
     - name: Sign
