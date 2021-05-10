@@ -7,11 +7,11 @@ jobs:
     - uses: actions/checkout@v2
     - name: SetHash
       run: (Get-Content src\dbm\DBMInfo.vb) -replace 'Const GITHASH As String = ".*?"', ('Const GITHASH As String = "' + $Env:GITHUB_SHA.SubString(0, 8) + '"') | Set-Content src\dbm\DBMInfo.vb
+    - name: Certificate
+      env:
+        CERTIFICATE: ${{ secrets.CERTIFICATE }}
+      run: ([System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($Env:CERTIFICATE))) | Set-Content -NoNewline $Env:TEMP\certificate.pfx
     - name: Build
       run: .\build.bat
-  test:
-    runs-on: windows-latest
-    steps:
-    - uses: actions/checkout@v2
     - name: Test
       run: build\DBMAbout.exe
