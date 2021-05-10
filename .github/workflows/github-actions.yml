@@ -9,9 +9,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: SetHash
+      run: (Get-Content src\dbm\DBMInfo.vb) -replace 'Const GITHASH As String = ".*?"', ('Const GITHASH As String = "' + $Env:CI_COMMIT_SHORT_SHA + '"') | Set-Content src\dbm\DBMInfo.vb
     - name: Build
-      shell: cmd
-      run: build.bat
+      run: .\build.bat
     - name: Test
-      shell: cmd
       run: build\DBMAbout.exe
