@@ -9,5 +9,8 @@ jobs:
       run: (Get-Content src\dbm\DBMInfo.vb) -replace 'Const GITHASH As String = ".*?"', ('Const GITHASH As String = "' + $Env:GITHUB_SHA.SubString(0, 8) + '"') | Set-Content src\dbm\DBMInfo.vb
     - name: Build
       run: .\build.bat
+  test:
+    runs-on: windows-latest
+    steps:
     - name: Test
       run: build\DBMAbout.exe
