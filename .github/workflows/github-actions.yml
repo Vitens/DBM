@@ -12,5 +12,6 @@ jobs:
   test:
     runs-on: windows-latest
     steps:
+    - uses: actions/checkout@v2
     - name: Test
       run: build\DBMAbout.exe
