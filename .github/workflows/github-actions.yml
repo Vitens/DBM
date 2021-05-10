@@ -8,9 +8,10 @@ jobs:
     runs-on: windows-latest
 
     steps:
+    - uses: actions/checkout@v2
     - name: Build
       shell: cmd
-      run: dir
+      run: build.bat
     - name: Test
       shell: cmd
       run: build\DBMAbout.exe
