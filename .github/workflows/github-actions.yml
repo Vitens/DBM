@@ -10,9 +10,9 @@ jobs:
     - name: Certificate
       env:
         CERTIFICATE: ${{ secrets.CERTIFICATE }}
-      run: ([System.Text.Encoding]::Byte.GetString([System.Convert]::FromBase64String($Env:CERTIFICATE))) | Set-Content -NoNewline $Env:TEMP\certificate.pfx
+      run: ([System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($Env:CERTIFICATE))) | Set-Content -NoNewline $Env:TEMP\certificate.pfx
     - name: testing
-      run: dir $Env:TEMP
+      run: dir $Env:TEMP\*.pfx
     - name: Build
       run: .\build.bat
     - name: Sign
