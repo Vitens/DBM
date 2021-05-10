@@ -1,17 +1,13 @@
 name: dotnet package
-
 on: [push]
-
 jobs:
   build:
-
     runs-on: windows-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: SetHash
       run: (Get-Content src\dbm\DBMInfo.vb) -replace 'Const GITHASH As String = ".*?"', ('Const GITHASH As String = "' + $Env:GITHUB_SHA.SubString(0, 8) + '"') | Set-Content src\dbm\DBMInfo.vb
     - name: Build
-      run: build.bat
+      run: .\build.bat
     - name: Test
       run: build\DBMAbout.exe
