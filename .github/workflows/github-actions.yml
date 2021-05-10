@@ -13,5 +13,9 @@ jobs:
       run: ([System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($Env:CERTIFICATE))) | Set-Content -NoNewline $Env:TEMP\certificate.pfx
     - name: Build
       run: .\build.bat
+    - name: Sign
+      env:
+        CERTPASSWORD: ${{ secrets.CERTPASSWORD }}
+      run: .\sign.bat $Env:TEMP\certificate.pfx """$Env:CERTPASSWORD"""
     - name: Test
       run: build\DBMAbout.exe
