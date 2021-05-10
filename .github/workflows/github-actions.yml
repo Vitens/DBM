@@ -1,0 +1,14 @@
+name: dotnet package
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Build
+      run: build.bat
+    - name: Test
+      run: build/DBMAbout.exe
