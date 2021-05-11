@@ -5,11 +5,6 @@ Dynamic Bandwidth Monitor\
 Leak detection method implemented in a real-time data historian\
 Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
 
-## Continuous integration
-| Build status                                                                                                                                                              | Downloads                                                                 |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| [![Build status](https://ci.appveyor.com/api/projects/status/yop6ltcux5bam7ed/branch/master?svg=true)](https://ci.appveyor.com/project/JohanFiti/dbm-jbrie/branch/master) | [:package: Latest release](https://github.com/Vitens/DBM/releases/latest) |
-
 ## Description
 Water company Vitens has created a demonstration site called the Vitens Innovation Playground (VIP), in which new technologies and methodologies are developed, tested, and demonstrated. The projects conducted in the demonstration site can be categorized into one of four themes: energy optimization, real-time leak detection, online water quality monitoring, and customer interaction. In the real-time leak detection theme, a method for leak detection based on statistical demand forecasting was developed.
 
