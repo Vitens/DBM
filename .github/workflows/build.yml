@@ -28,7 +28,4 @@ jobs:
       - name: build
         run: .\build.bat
       - name: test
-        run: build\DBMAbout.exe > log.txt
-      - uses: actions/upload-artifact@v2
-        with:
-          path: log.txt
+        run: build\DBMAbout.exe
