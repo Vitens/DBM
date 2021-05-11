@@ -29,7 +29,7 @@ cache:
 build:
   stage: build
   before_script:
-    - (Get-Content src\dbm\DBMInfo.vb) -replace 'Const GITHASH As String = ".*?"', ('Const GITHASH As String = "' + $Env:CI_COMMIT_SHORT_SHA + '"') | Set-Content src\dbm\DBMInfo.vb
+    - (Get-Content src\dbm\DBMInfo.vb) -replace 'Const GITHASH As String = ".*?"', ('Const GITHASH As String = "' + $Env:CI_COMMIT_SHA.SubString(0, 8) + '"') | Set-Content src\dbm\DBMInfo.vb
     # Encrypt certificate file and password using:
     #   [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes((Get-Content -Raw certificate.pfx))) | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString
     #   Get-Content password.txt | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString
