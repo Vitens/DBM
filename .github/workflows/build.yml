@@ -27,8 +27,8 @@ jobs:
         run: (Get-Content src\dbm\DBMInfo.vb) -replace 'Const GITHASH As String = ".*?"', ('Const GITHASH As String = "' + $Env:GITHUB_SHA.SubString(0, 8) + '"') | Set-Content src\dbm\DBMInfo.vb
       - name: build
         run: .\build.bat
-      - name: test
-        run: build\DBMAbout.exe
       - uses: actions/upload-artifact@v2
         with:
           path: build
+      - name: test
+        run: build\DBMAbout.exe
