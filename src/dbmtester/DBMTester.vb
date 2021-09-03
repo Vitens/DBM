@@ -121,7 +121,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               End If
             End If
           Catch ex As Exception
-            Console.WriteLine(ex.ToString)
+            DBM.Logger.LogError(ex.ToString)
             Exit Sub
           End Try
         End If
@@ -136,10 +136,10 @@ Namespace Vitens.DynamicBandwidthMonitor
         End If
 
         ' Header
-        Console.WriteLine(
+        DBM.Logger.LogInformation(
           sCsvComment & Product.Replace(NewLine, NewLine & sCsvComment))
-        Console.WriteLine(sTimestamp & Separator & sFactor & Separator &
-          sMeasurement & Separator & sForecast & Separator &
+        DBM.Logger.LogInformation(sTimestamp & Separator & sFactor &
+          Separator & sMeasurement & Separator & sForecast & Separator &
           sLowerControlLimit & Separator & sUpperControlLimit)
 
         ' Get results for time range.
@@ -148,7 +148,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         For Each Result In Results
 
           With Result
-            Console.WriteLine(.Timestamp.ToString("s") & Separator &
+            DBM.Logger.LogInformation(.Timestamp.ToString("s") & Separator &
               FormatNumber(.Factor) & Separator &
               FormatNumber(.ForecastItem.Measurement) & Separator &
               FormatNumber(.ForecastItem.Forecast) & Separator &
@@ -158,7 +158,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         Next Result
 
-        Console.WriteLine(sCsvComment & Statistics(Results).Brief)
+        DBM.Logger.LogInformation(sCsvComment & Statistics(Results).Brief)
 
       End If
 

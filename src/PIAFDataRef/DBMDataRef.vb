@@ -93,7 +93,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private Annotations As New Dictionary(Of AFTime, Object)
-    Private Shared DBM As New DBM
+    Private Shared DBM As New DBM(New DBMLoggerAFTrace)
 
 
     Public Shared Function CreateDataPipe As Object

@@ -29,6 +29,7 @@ Imports System.Math
 Imports System.Threading
 Imports System.Threading.Thread
 Imports Vitens.DynamicBandwidthMonitor.DBMDate
+Imports Vitens.DynamicBandwidthMonitor.DBMInfo
 Imports Vitens.DynamicBandwidthMonitor.DBMMath
 Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 Imports Vitens.DynamicBandwidthMonitor.DBMStatistics
@@ -78,7 +79,16 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' distribution processes.
 
 
+    Public Shared Logger As DBMLoggerAbstract = New DBMLoggerConsole
     Private Points As New Dictionary(Of Object, DBMPoint)
+
+
+    Public Sub New(Optional Logger As DBMLoggerAbstract = Nothing)
+
+      If Logger IsNot Nothing Then DBM.Logger = Logger
+      DBM.Logger.LogDebug("New instance of " & Application)
+
+    End Sub
 
 
     Private Function Point(PointDriver As DBMPointDriverAbstract) As DBMPoint
