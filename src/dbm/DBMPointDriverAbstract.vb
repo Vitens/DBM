@@ -160,7 +160,8 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' calculations are required in the next step. The (aligned) end time
           ' itself is excluded.
           PrepareData(StartTimestamp, EndTimestamp)
-        Catch
+        Catch ex As Exception
+          DBM.Logger.LogWarning(ex.ToString)
         End Try
 
       Finally
