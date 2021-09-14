@@ -101,7 +101,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         If Not Points.ContainsKey(PointDriver.Point) Then
           Points.Add(PointDriver.Point, New DBMPoint(PointDriver))
-          DBM.Logger.LogDebug("DBM.Point Add new Point " & PointDriver.ToString)
+          DBM.Logger.LogDebug(
+            "DBM.Point Add new Point using " & PointDriver.ToString)
         End If
 
         Return Points.Item(PointDriver.Point)

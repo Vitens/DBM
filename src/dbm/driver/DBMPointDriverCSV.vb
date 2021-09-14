@@ -55,7 +55,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Overrides Function ToString As String
 
-      ToString = "CSVDriver"
+      ToString = "CSV Driver"
 
       If TypeOf Point Is String Then
         ToString = ToString & " " & DirectCast(Point, String)

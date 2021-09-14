@@ -52,7 +52,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Overrides Function ToString As String
 
-      ToString = "OSIsoftPIAFDriver"
+      ToString = "OSIsoft PI AF Driver"
 
       If TypeOf Point Is AFAttribute Then
         ToString = ToString & " " & DirectCast(Point, AFAttribute).GetPath
