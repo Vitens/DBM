@@ -130,6 +130,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           Return .Subject & " (" & .Issuer & ")"
         End With
       Catch
+        DBM.Logger.LogWarning("DBMInfo.CertificateInfo Unsigned assembly")
         Return "Unsigned"
       End Try
 
