@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -48,6 +48,19 @@ Namespace Vitens.DynamicBandwidthMonitor
       MyBase.New(Point)
 
     End Sub
+
+
+    Public Overrides Function ToString As String
+
+      ToString = "OSIsoftPIAFDriver"
+
+      If TypeOf Point Is AFAttribute Then
+        ToString = ToString & " " & DirectCast(Point, AFAttribute).GetPath
+      End If
+
+      Return ToString
+
+    End Function
 
 
     Public Overrides Function SnapshotTimestamp As DateTime

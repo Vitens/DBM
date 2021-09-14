@@ -121,7 +121,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               End If
             End If
           Catch ex As Exception
-            DBM.Logger.LogError(ex.ToString)
+            DBM.Logger.LogError("DBMTester.Main " & ex.ToString)
             Exit Sub
           End Try
         End If

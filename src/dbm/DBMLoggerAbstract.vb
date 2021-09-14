@@ -81,8 +81,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Sub LogDebug(Message As String)
 
       ' More detailed messages within a method (e.g., Sending email).
-      ' For debugging and development. Use with caution in production due to
-      ' the high volume.
+      ' For debugging and development.
 
       Log(Level.Debug, Message)
 
@@ -93,8 +92,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Data value messages (EmailAddress = john@invalidcompany.com).
       ' Contain the most detailed messages. These messages may contain
-      ' sensitive app data. These messages are disabled by default and should
-      ' not be enabled in production.
+      ' sensitive app data.
 
       Log(Level.Trace, Message)
 

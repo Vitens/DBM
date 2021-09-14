@@ -86,7 +86,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Sub New(Optional Logger As DBMLoggerAbstract = Nothing)
 
       If Logger IsNot Nothing Then DBM.Logger = Logger
-      DBM.Logger.LogDebug("New instance of " & Application)
+      DBM.Logger.LogDebug("DBM.New " & Application)
 
     End Sub
 
@@ -101,6 +101,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         If Not Points.ContainsKey(PointDriver.Point) Then
           Points.Add(PointDriver.Point, New DBMPoint(PointDriver))
+          DBM.Logger.LogDebug("DBM.Point Add new Point " & PointDriver.ToString)
         End If
 
         Return Points.Item(PointDriver.Point)
