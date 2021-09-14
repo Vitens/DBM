@@ -1420,10 +1420,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       Next Week
       Calibrated /= SE.Length
 
-      Score = Calibrated*
+      Score = (Calibrated*
         Max(0, 1-Abs(Mean(SE))-NormSInv((0.99+1)/2)*StDevP(SE))*
         Max(0, 1-Abs(Mean(RE))-NormSInv((0.99+1)/2)*StDevP(RE))*
-        Max(0, Mean(F)-NormSInv((0.99+1)/2)*StDevP(F))
+        Max(0, Mean(F)-NormSInv((0.99+1)/2)*StDevP(F)))^(1/4)
 
       Return String.Format(sQualityTests, SE.Length, Calibrated,
         Mean(SE), StDevP(SE), Mean(RE), StDevP(RE), Mean(F), StDevP(F), Score)
