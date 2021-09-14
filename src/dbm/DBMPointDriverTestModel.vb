@@ -687,7 +687,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Overrides Function ToString As String
 
-      ToString = "Test Model Driver"
+      ToString = "Test Model driver"
 
       If TypeOf Point Is Integer Then
         ToString = ToString & " " & DirectCast(Point, Integer).ToString
