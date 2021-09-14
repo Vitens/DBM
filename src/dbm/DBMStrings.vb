@@ -52,7 +52,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       "n {0}; C {1:" & sPercentageFormat & "}; " &
       "SE {2:" & sPercentageFormat & "} (SD={3:" & sPercentageFormat & "}); " &
       "RE {4:" & sPercentageFormat & "} (SD={5:" & sPercentageFormat & "}); " &
-      "F {6:" & sPercentageFormat & "} (SD={7:" & sPercentageFormat & "})"
+      "F {6:" & sPercentageFormat & "} (SD={7:" & sPercentageFormat & "}); " &
+      "Score {8:" & sPercentageFormat & "}"
     Public Const sForecastFactorAnnotation As String =
       sFactor & " {0:" & sNumberFormat & "}"
 
