@@ -166,7 +166,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           PrepareData(StartTimestamp, EndTimestamp)
         Catch ex As Exception
           DBM.Logger.LogWarning(
-            "DBMPointDriverAbstract.PrepareData " & ex.ToString)
+            "DBMPointDriverAbstract.PrepareData: " & ex.ToString)
         End Try
 
       Finally

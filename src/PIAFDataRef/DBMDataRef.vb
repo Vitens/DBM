@@ -666,6 +666,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Attribute or parent attribute is not configured properly, return a
         ' Configure system state. Definition: 'The point configuration has been
         ' rejected as invalid by the data source.'
+        DBM.Logger.LogWarning("DBMDataRef.GetValues: Invalid configuration")
         GetValues.Add(AFValue.CreateSystemStateValue(
           AFSystemStateCode.Configure, timeRange.StartTime))
         Return GetValues
@@ -673,6 +674,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Element = DirectCast(Attribute.Element, AFElement)
       InputPointDriver = New DBMPointDriver(Attribute.Parent) ' Parent attribute
+
+      DBM.Logger.LogDebug("DBMDataRef.GetValues: " &
+        "StartTime " & timeRange.StartTime.LocalTime.ToString("s") & "; " &
+        "EndTime " & timeRange.EndTime.LocalTime.ToString("s") & "; " &
+        "numberOfValues " & numberOfValues.ToString & "; " &
+        "InputPointDriver " & InputPointDriver.ToString)
 
       ' Retrieve correlation points from AF hierarchy for first-level child
       ' attributes in non-root elements only when calculating the DBM factor
