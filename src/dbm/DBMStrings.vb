@@ -31,6 +31,7 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMStrings
 
 
+    Public Const sUnsignedAssembly As String = "Unsigned assembly"
     Public Const sTimestamp As String = "Timestamp"
     Public Const sFactor As String = "Factor"
     Public Const sMeasurement As String = "Measurement"

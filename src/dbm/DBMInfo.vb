@@ -30,6 +30,7 @@ Imports System.Math
 Imports System.Reflection
 Imports System.Security.Cryptography.X509Certificates
 Imports System.TimeSpan
+Imports Vitens.DynamicBandwidthMonitor.DBMStrings
 Imports Vitens.DynamicBandwidthMonitor.DBMTests
 
 
@@ -122,7 +123,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function CertificateInfo As String
 
       ' Returns a string containing the certificate Subject and Issuer, if
-      ' available. Else returns 'Unsigned'.
+      ' available. Else returns 'Unsigned assembly'.
 
       Try
         With X509Certificate.CreateFromSignedFile(
@@ -130,8 +131,8 @@ Namespace Vitens.DynamicBandwidthMonitor
           Return .Subject & " (" & .Issuer & ")"
         End With
       Catch
-        DBM.Logger.LogWarning("DBMInfo.CertificateInfo Unsigned assembly")
-        Return "Unsigned"
+        DBM.Logger.LogWarning("DBMInfo.CertificateInfo " & sUnsignedAssembly)
+        Return sUnsignedAssembly
       End Try
 
     End Function
