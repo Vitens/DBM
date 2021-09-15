@@ -678,7 +678,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Attribute or parent attribute is not configured properly, return a
         ' Configure system state. Definition: 'The point configuration has been
         ' rejected as invalid by the data source.'
-        DBM.Logger.LogWarning("DBMDataRef.GetValues: Invalid configuration")
+        DBM.Logger.LogWarning("DBMDataRef.GetValues: " &
+          "Invalid configuration, return Configure")
         GetValues.Add(AFValue.CreateSystemStateValue(
           AFSystemStateCode.Configure, timeRange.StartTime))
         Return GetValues
@@ -752,7 +753,11 @@ Namespace Vitens.DynamicBandwidthMonitor
             GetValues(timeRange, numberOfValues, Nothing)
           ' If there are no DBM results to iterate over, and there are raw
           ' values for this time range, return the raw values directly.
-          If Results.Count = 0 And RawValues.Count > 0 Then Return RawValues
+          If Results.Count = 0 And RawValues.Count > 0 Then
+            DBM.Logger.LogTrace("DBMDataRef.GetValues: " &
+              "Return " & RawValues.Count.ToString & " raw values")
+            Return RawValues
+          End If
         Else
           RawValues = New AFValues ' Future data, no raw values.
         End If
@@ -887,6 +892,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' where no archive values for a tag can exist 10 minutes into the future
       ' or before the oldest mounted archive.'
       If GetValues.Count = 0 Then
+        DBM.Logger.LogTrace("DBMDataRef.GetValues: " &
+          "No values to return, return NoData")
         GetValues.Add(AFValue.CreateSystemStateValue(
           AFSystemStateCode.NoData, timeRange.StartTime))
         Return GetValues
@@ -905,6 +912,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Returns the collection of values for the attribute sorted in increasing
       ' time order.
+      DBM.Logger.LogTrace("DBMDataRef.GetValues: " &
+        "Return " & GetValues.Count.ToString & " values")
       Return GetValues
 
     End Function
