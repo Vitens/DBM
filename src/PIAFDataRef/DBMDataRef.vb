@@ -891,6 +891,46 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Overrides Function RecordedValues(timeRange As AFTimeRange,
+      boundaryType As AFBoundaryType, filterExpression As String,
+      includeFilteredValues As Boolean, inputAttributes As AFAttributeList,
+      inputValues As AFValues(), inputTimes As List(Of AFTime),
+      Optional maxCount As Integer = 0) As AFValues
+
+      ' https://techsupport.osisoft.com/Documentation/PI-AF-SDK/html/M_OSIsoft_A
+      ' F_Asset_AFDataReference_RecordedValues.htm
+      ' Returns a list of compressed values for the requested time range from
+      ' the source provider.
+      ' timeRange
+      '   The bounding time range for the recorded values request. If the
+      '   StartTime is earlier than the EndTime, the resulting values will be in
+      '   time-ascending order, otherwise they will be in time-descending order.
+      ' maxCount
+      '   The maximum number of values to be returned. If zero, then all of the
+      '   events within the requested time range will be returned.
+      ' Returned times are affected by the specified boundaryType. If no values
+      ' are found for the time range and conditions specified then the method
+      ' will return success and an empty AFValues collection.
+      ' When specifying True for the includeFilteredValues parameter,
+      ' consecutive filtered events are not returned. The first value that would
+      ' be filtered out is returned with its time and the enumeration value
+      ' "Filtered". The next value in the collection will be the next compressed
+      ' value in the specified direction that passes the filter criteria - if
+      ' any.
+      ' When both boundaryType and a filterExpression are specified, the events
+      ' returned for the boundary condition specified are passed through the
+      ' filter. If the includeFilteredValues parameter is True, the boundary
+      ' values will be reported at the proper timestamps with the enumeration
+      ' value "Filtered" when the filter conditions are not met at the boundary
+      ' time. If the includeFilteredValues parameter is False for this case, no
+      ' event is returned for the boundary time.
+
+      ' Returns an AFValues collection with the recorded values.
+      Return GetValues(Nothing, timeRange, maxCount, Nothing, Nothing)
+
+    End Function
+
+
   End Class
 
 
