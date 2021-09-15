@@ -40,12 +40,20 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMInfo
 
 
+    Private Shared Function AssemblyLocation As String
+
+      ' Returns assembly.
+
+      Return Assembly.GetExecutingAssembly.Location
+
+    End Function
+
+
     Private Shared Function GetFileVersionInfo As FileVersionInfo
 
       ' Returns FileVersionInfo for assembly.
 
-      Return FileVersionInfo.GetVersionInfo(
-        Assembly.GetExecutingAssembly.Location)
+      Return FileVersionInfo.GetVersionInfo(AssemblyLocation)
 
     End Function
 
@@ -126,12 +134,12 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' available. Else returns 'Unsigned assembly'.
 
       Try
-        With X509Certificate.CreateFromSignedFile(
-          Assembly.GetExecutingAssembly.Location)
+        With X509Certificate.CreateFromSignedFile(AssemblyLocation)
           Return .Subject & " (" & .Issuer & ")"
         End With
       Catch
-        DBM.Logger.LogWarning("DBMInfo.CertificateInfo " & sUnsignedAssembly)
+        DBM.Logger.LogWarning("DBMInfo.CertificateInfo " &
+          sUnsignedAssembly & " " & AssemblyLocation)
         Return sUnsignedAssembly
       End Try
 
