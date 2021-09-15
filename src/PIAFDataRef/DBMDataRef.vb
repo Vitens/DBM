@@ -276,12 +276,21 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' AFValue.
 
       If Value IsNot Nothing Then ' Key
+
         Annotations.Remove(Value.Timestamp) ' Remove existing
         Value.Annotated = False
+
         If Annotation IsNot Nothing Then ' Value
+
+          DBM.Logger.LogDebug("DBMDataRef.Annotate: " &
+            "Timestamp " & Value.Timestamp.LocalTime.ToString("s") & "; " &
+            "Annotation " & DirectCast(Annotation, String))
+
           Annotations.Add(Value.Timestamp, Annotation) ' Add
           Value.Annotated = True
+
         End If
+
       End If
 
     End Sub
