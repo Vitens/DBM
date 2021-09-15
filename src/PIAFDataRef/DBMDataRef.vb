@@ -899,7 +899,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         Return GetValues
       End If
 
-      If GetValues.Count > 1 And Attribute.Trait Is LimitTarget Then
+      If GetValues.Count > 1 And
+        Not numberOfValues = 1 And
+        Attribute.Trait Is LimitTarget Then
 
         ' De-flatline
         GetValues = Deflatline(GetValues, Results, [Step])
