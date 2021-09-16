@@ -161,9 +161,16 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Specifies which of the data methods are supported by the data
         ' reference. Its value can be one or more of the AFDataMethods
         ' enumeration values logically ORed together. The default value is None.
-        SupportedDataMethods = AFDataMethods.RecordedValue Or
-          AFDataMethods.RecordedValues Or AFDataMethods.PlotValues Or
-          AFDataMethods.Annotations Or AFDataMethods.Summary Or
+        SupportedDataMethods = AFDataMethods.InterpolatedValue Or
+          AFDataMethods.InterpolatedValues Or
+          AFDataMethods.InterpolatedValuesAtTimes Or
+          AFDataMethods.RecordedValue Or
+          AFDataMethods.RecordedValues Or
+          AFDataMethods.RecordedValuesByCount Or
+          AFDataMethods.PlotValues Or
+          AFDataMethods.Annotations Or
+          AFDataMethods.RecordedValuesAtTimes Or
+          AFDataMethods.Summary Or
           AFDataMethods.Summaries
         If SupportsFutureData Then
           ' Support future data if available.
@@ -269,12 +276,21 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' AFValue.
 
       If Value IsNot Nothing Then ' Key
+
         Annotations.Remove(Value.Timestamp) ' Remove existing
         Value.Annotated = False
+
         If Annotation IsNot Nothing Then ' Value
+
+          DBM.Logger.LogDebug(
+            "Timestamp " & Value.Timestamp.LocalTime.ToString("s") & "; " &
+            "Annotation " & DirectCast(Annotation, String))
+
           Annotations.Add(Value.Timestamp, Annotation) ' Add
           Value.Annotated = True
+
         End If
+
       End If
 
     End Sub
@@ -368,6 +384,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         End If
 
       End If
+
+      DBM.Logger.LogDebug("Timestamp " & Timestamp.ToString("s"))
 
       ' Returns the single value for the attribute.
       Return GetValues(Nothing, New AFTimeRange(New AFTime(Timestamp),
@@ -659,6 +677,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Attribute or parent attribute is not configured properly, return a
         ' Configure system state. Definition: 'The point configuration has been
         ' rejected as invalid by the data source.'
+        DBM.Logger.LogWarning("Invalid configuration, return Configure")
         GetValues.Add(AFValue.CreateSystemStateValue(
           AFSystemStateCode.Configure, timeRange.StartTime))
         Return GetValues
@@ -666,6 +685,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Element = DirectCast(Attribute.Element, AFElement)
       InputPointDriver = New DBMPointDriver(Attribute.Parent) ' Parent attribute
+
+      DBM.Logger.LogDebug(
+        "StartTime " & timeRange.StartTime.LocalTime.ToString("s") & "; " &
+        "EndTime " & timeRange.EndTime.LocalTime.ToString("s") & "; " &
+        "numberOfValues " & numberOfValues.ToString & "; " &
+        "InputPointDriver " & InputPointDriver.ToString)
 
       ' Retrieve correlation points from AF hierarchy for first-level child
       ' attributes in non-root elements only when calculating the DBM factor
@@ -726,7 +751,11 @@ Namespace Vitens.DynamicBandwidthMonitor
             GetValues(timeRange, numberOfValues, Nothing)
           ' If there are no DBM results to iterate over, and there are raw
           ' values for this time range, return the raw values directly.
-          If Results.Count = 0 And RawValues.Count > 0 Then Return RawValues
+          If Results.Count = 0 And RawValues.Count > 0 Then
+            DBM.Logger.LogTrace(
+              "Return " & RawValues.Count.ToString & " raw values")
+            Return RawValues
+          End If
         Else
           RawValues = New AFValues ' Future data, no raw values.
         End If
@@ -861,12 +890,15 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' where no archive values for a tag can exist 10 minutes into the future
       ' or before the oldest mounted archive.'
       If GetValues.Count = 0 Then
+        DBM.Logger.LogTrace("No values to return, return NoData")
         GetValues.Add(AFValue.CreateSystemStateValue(
           AFSystemStateCode.NoData, timeRange.StartTime))
         Return GetValues
       End If
 
-      If GetValues.Count > 1 And Attribute.Trait Is LimitTarget Then
+      If GetValues.Count > 1 And
+        Not numberOfValues = 1 And
+        Attribute.Trait Is LimitTarget Then
 
         ' De-flatline
         GetValues = Deflatline(GetValues, Results, [Step])
@@ -879,6 +911,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Returns the collection of values for the attribute sorted in increasing
       ' time order.
+      DBM.Logger.LogTrace("Return " & GetValues.Count.ToString & " values")
       Return GetValues
 
     End Function
@@ -920,34 +953,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Returns an AFValues collection with the recorded values.
       Return GetValues(Nothing, timeRange, maxCount, Nothing, Nothing)
-
-    End Function
-
-
-    Public Overrides Function PlotValues(timeRange As AFTimeRange,
-      intervals As Integer, inputAttributes As AFAttributeList,
-      inputValues As AFValues(), inputTimes As List(Of AFTime)) As AFValues
-
-      ' ## NOTE: There seems to be an issue with OSIsoft documentation for this
-      '          method. I have marked lines which I believe to be incorrect
-      '          with an asterisk.
-      ' https://techsupport.osisoft.com/Documentation/PI-AF-SDK/html/M_OSIsoft_A
-      ' F_Asset_AFDataReference_PlotValues.htm
-      ' * Returns a single AFValue whose value is interpolated at the passed
-      ' * time.
-      ' timeRange
-      '   The bounding time range for the plot values request.
-      ' intervals
-      '   The number of intervals to plot over. Typically, this would be the
-      '   number of horizontal pixels in the trend.
-      ' * To retrieve recorded values for multiple attributes, use the
-      ' * AFListData.InterpolatedValue to achieve better performance.
-
-      ' * Returns the AFValue for the attribute. If AFValue.IsGood returned by
-      ' * the data reference is True, then the returned value is converted to
-      ' * the proper UOM and Type. The timestamp of the value will be at the
-      ' * requested time.
-      Return GetValues(Nothing, timeRange, intervals, Nothing, Nothing)
 
     End Function
 

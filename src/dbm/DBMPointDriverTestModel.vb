@@ -685,6 +685,13 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
+    Public Overrides Function ToString As String
+
+      Return "Test Model driver " & DirectCast(Point, Integer).ToString
+
+    End Function
+
+
     Public Overrides Function SnapshotTimestamp As DateTime
 
       Return Now

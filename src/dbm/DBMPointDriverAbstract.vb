@@ -56,6 +56,10 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
+    Public MustOverride Overrides Function ToString As String
+      ' Return the name of this point as a string.
+
+
     Public Overridable Function SnapshotTimestamp As DateTime
 
       ' Return the latest data timestamp (snapshot) for which the source of data

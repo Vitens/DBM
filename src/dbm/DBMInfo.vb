@@ -30,6 +30,7 @@ Imports System.Math
 Imports System.Reflection
 Imports System.Security.Cryptography.X509Certificates
 Imports System.TimeSpan
+Imports Vitens.DynamicBandwidthMonitor.DBMStrings
 Imports Vitens.DynamicBandwidthMonitor.DBMTests
 
 
@@ -39,12 +40,20 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMInfo
 
 
+    Private Shared Function AssemblyLocation As String
+
+      ' Returns assembly.
+
+      Return Assembly.GetExecutingAssembly.Location
+
+    End Function
+
+
     Private Shared Function GetFileVersionInfo As FileVersionInfo
 
       ' Returns FileVersionInfo for assembly.
 
-      Return FileVersionInfo.GetVersionInfo(
-        Assembly.GetExecutingAssembly.Location)
+      Return FileVersionInfo.GetVersionInfo(AssemblyLocation)
 
     End Function
 
@@ -122,15 +131,15 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Shared Function CertificateInfo As String
 
       ' Returns a string containing the certificate Subject and Issuer, if
-      ' available. Else returns 'Unsigned'.
+      ' available. Else returns 'Unsigned assembly'.
 
       Try
-        With X509Certificate.CreateFromSignedFile(
-          Assembly.GetExecutingAssembly.Location)
+        With X509Certificate.CreateFromSignedFile(AssemblyLocation)
           Return .Subject & " (" & .Issuer & ")"
         End With
       Catch
-        Return "Unsigned"
+        DBM.Logger.LogWarning(sUnsignedAssembly & " " & AssemblyLocation)
+        Return sUnsignedAssembly
       End Try
 
     End Function
