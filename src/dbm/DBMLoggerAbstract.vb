@@ -49,11 +49,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Function AddPrefix(Level As Level, Message As String) As String
 
+      Dim i As Integer = 1
+      Dim FrameCount As Integer = (New StackTrace).FrameCount
       Dim Caller As StackFrame = New StackFrame(0)
       Dim LoggerClass As String = Caller.GetMethod.DeclaringType.Name.ToString
-      Dim i As Integer = 1
 
-      Do While True
+      Do While i < FrameCount
         Caller = New StackFrame(i)
         With Caller.GetMethod
           ' Find the first non-constructor (instance, static) method outside of
