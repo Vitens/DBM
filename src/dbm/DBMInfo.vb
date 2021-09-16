@@ -29,6 +29,7 @@ Imports System.Environment
 Imports System.Math
 Imports System.Reflection
 Imports System.Security.Cryptography.X509Certificates
+Imports System.Text.RegularExpressions
 Imports System.TimeSpan
 Imports Vitens.DynamicBandwidthMonitor.DBMStrings
 Imports Vitens.DynamicBandwidthMonitor.DBMTests
@@ -54,6 +55,15 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns FileVersionInfo for assembly.
 
       Return FileVersionInfo.GetVersionInfo(AssemblyLocation)
+
+    End Function
+
+
+    Public Shared Function ShortName As String
+
+      ' Returns the short name of the application.
+
+      Return Regex.Replace(GetFileVersionInfo.ProductName, "[^A-Z]", "")
 
     End Function
 
@@ -138,8 +148,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           Return .Subject & " (" & .Issuer & ")"
         End With
       Catch
-        DBM.Logger.LogWarning("DBMInfo.CertificateInfo: " &
-          sUnsignedAssembly & " " & AssemblyLocation)
+        DBM.Logger.LogWarning(sUnsignedAssembly & " " & AssemblyLocation)
         Return sUnsignedAssembly
       End Try
 

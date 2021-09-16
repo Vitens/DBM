@@ -282,7 +282,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         If Annotation IsNot Nothing Then ' Value
 
-          DBM.Logger.LogDebug("DBMDataRef.Annotate: " &
+          DBM.Logger.LogDebug(
             "Timestamp " & Value.Timestamp.LocalTime.ToString("s") & "; " &
             "Annotation " & DirectCast(Annotation, String))
 
@@ -385,8 +385,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       End If
 
-      DBM.Logger.LogDebug("DBMDataRef.GetValue: " &
-        "Timestamp " & Timestamp.ToString("s"))
+      DBM.Logger.LogDebug("Timestamp " & Timestamp.ToString("s"))
 
       ' Returns the single value for the attribute.
       Return GetValues(Nothing, New AFTimeRange(New AFTime(Timestamp),
@@ -678,8 +677,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Attribute or parent attribute is not configured properly, return a
         ' Configure system state. Definition: 'The point configuration has been
         ' rejected as invalid by the data source.'
-        DBM.Logger.LogWarning("DBMDataRef.GetValues: " &
-          "Invalid configuration, return Configure")
+        DBM.Logger.LogWarning("Invalid configuration, return Configure")
         GetValues.Add(AFValue.CreateSystemStateValue(
           AFSystemStateCode.Configure, timeRange.StartTime))
         Return GetValues
@@ -688,7 +686,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Element = DirectCast(Attribute.Element, AFElement)
       InputPointDriver = New DBMPointDriver(Attribute.Parent) ' Parent attribute
 
-      DBM.Logger.LogDebug("DBMDataRef.GetValues: " &
+      DBM.Logger.LogDebug(
         "StartTime " & timeRange.StartTime.LocalTime.ToString("s") & "; " &
         "EndTime " & timeRange.EndTime.LocalTime.ToString("s") & "; " &
         "numberOfValues " & numberOfValues.ToString & "; " &
@@ -754,7 +752,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' If there are no DBM results to iterate over, and there are raw
           ' values for this time range, return the raw values directly.
           If Results.Count = 0 And RawValues.Count > 0 Then
-            DBM.Logger.LogTrace("DBMDataRef.GetValues: " &
+            DBM.Logger.LogTrace(
               "Return " & RawValues.Count.ToString & " raw values")
             Return RawValues
           End If
@@ -892,8 +890,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' where no archive values for a tag can exist 10 minutes into the future
       ' or before the oldest mounted archive.'
       If GetValues.Count = 0 Then
-        DBM.Logger.LogTrace("DBMDataRef.GetValues: " &
-          "No values to return, return NoData")
+        DBM.Logger.LogTrace("No values to return, return NoData")
         GetValues.Add(AFValue.CreateSystemStateValue(
           AFSystemStateCode.NoData, timeRange.StartTime))
         Return GetValues
@@ -914,8 +911,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Returns the collection of values for the attribute sorted in increasing
       ' time order.
-      DBM.Logger.LogTrace("DBMDataRef.GetValues: " &
-        "Return " & GetValues.Count.ToString & " values")
+      DBM.Logger.LogTrace("Return " & GetValues.Count.ToString & " values")
       Return GetValues
 
     End Function

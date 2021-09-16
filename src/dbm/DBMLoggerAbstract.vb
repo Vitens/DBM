@@ -23,6 +23,9 @@ Option Strict
 
 
 Imports System
+Imports System.DateTime
+Imports System.Diagnostics
+Imports Vitens.DynamicBandwidthMonitor.DBMInfo
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -45,6 +48,31 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public MustOverride Sub Log(Level As Level, Message As String)
 
 
+    Private Function AddPrefix(Level As Level, Message As String) As String
+
+      Dim Caller As StackFrame = New StackFrame(0)
+      Dim LoggerClass As String = Caller.GetMethod.DeclaringType.Name.ToString
+      Dim i As Integer = 1
+
+      Do While True
+        Caller = New StackFrame(i)
+        With Caller.GetMethod
+          ' Find the first non-constructor method outside of this class.
+          If Not .DeclaringType.Name.ToString.Equals(LoggerClass) And
+            Not .Name.ToString.Equals(".ctor") Then Exit Do
+        End With
+        i+=1
+      Loop
+
+      Return Now.ToString("s") & " | " &
+        Level.ToString.ToUpper & " | " &
+        ShortName & " | " &
+        Caller.GetMethod.DeclaringType.Name.ToString & "." &
+        Caller.GetMethod.Name.ToString & " | " & Message
+
+    End Function
+
+
     Public Sub LogError(Message As String)
 
       ' Error messages.
@@ -52,7 +80,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' indicate a failure in the current operation or request, not an app-wide
       ' failure.
 
-      Log(Level.Error, Message)
+      Log(Level.Error, AddPrefix(Level.Error, Message))
 
     End Sub
 
@@ -63,7 +91,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' For abnormal or unexpected events. Typically includes errors or
       ' conditions that don't cause the app to fail.
 
-      Log(Level.Warning, Message)
+      Log(Level.Warning, AddPrefix(Level.Warning, Message))
 
     End Sub
 
@@ -72,6 +100,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Informational messages.
       ' Tracks the general flow of the app. May have long-term value.
+      ' No prefix is added to the message, can be used for application output.
 
       Log(Level.Information, Message)
 
@@ -83,7 +112,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' More detailed messages within a method (e.g., Sending email).
       ' For debugging and development.
 
-      Log(Level.Debug, Message)
+      Log(Level.Debug, AddPrefix(Level.Debug, Message))
 
     End Sub
 
@@ -94,7 +123,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Contain the most detailed messages. These messages may contain
       ' sensitive app data.
 
-      Log(Level.Trace, Message)
+      Log(Level.Trace, AddPrefix(Level.Trace, Message))
 
     End Sub
 
