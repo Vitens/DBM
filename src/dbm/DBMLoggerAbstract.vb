@@ -57,9 +57,11 @@ Namespace Vitens.DynamicBandwidthMonitor
       Do While True
         Caller = New StackFrame(i)
         With Caller.GetMethod
-          ' Find the first non-constructor method outside of this class.
+          ' Find the first non-constructor (instance, static) method outside of
+          ' this class.
           If Not .DeclaringType.Name.ToString.Equals(LoggerClass) And
-            Not .Name.ToString.Equals(".ctor") Then Exit Do
+            Not .Name.ToString.Equals(".ctor") And
+            Not .Name.ToString.Equals(".cctor") Then Exit Do
         End With
         i+=1
       Loop
