@@ -52,14 +52,15 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim i As Integer = 1
       Dim FrameCount As Integer = (New StackTrace).FrameCount
       Dim Caller As StackFrame = New StackFrame(0)
-      Dim LoggerClass As String = Caller.GetMethod.DeclaringType.Name.ToString
+      Dim LoggerClass As String =
+        Caller.GetMethod.DeclaringType.FullName.ToString
 
       Do While i < FrameCount
         Caller = New StackFrame(i)
         With Caller.GetMethod
           ' Find the first non-constructor (instance, static) method outside of
           ' this class.
-          If Not .DeclaringType.Name.ToString.Equals(LoggerClass) And
+          If Not .DeclaringType.FullName.ToString.Equals(LoggerClass) And
             Not .Name.ToString.Equals(".ctor") And
             Not .Name.ToString.Equals(".cctor") Then Exit Do
         End With
@@ -68,7 +69,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Return Now.ToString("s") & " | " &
         Level.ToString.ToUpper & " | " &
-        Caller.GetMethod.DeclaringType.Name.ToString & "." &
+        Caller.GetMethod.DeclaringType.FullName.ToString & "." &
         Caller.GetMethod.Name.ToString & " | " & Message
 
     End Function
