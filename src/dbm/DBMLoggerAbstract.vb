@@ -25,7 +25,6 @@ Option Strict
 Imports System
 Imports System.DateTime
 Imports System.Diagnostics
-Imports Vitens.DynamicBandwidthMonitor.DBMInfo
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -68,7 +67,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Return Now.ToString("s") & " | " &
         Level.ToString.ToUpper & " | " &
-        ShortName & " | " &
         Caller.GetMethod.DeclaringType.Name.ToString & "." &
         Caller.GetMethod.Name.ToString & " | " & Message
 
