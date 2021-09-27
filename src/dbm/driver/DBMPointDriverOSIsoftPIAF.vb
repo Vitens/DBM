@@ -77,7 +77,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       DBM.Logger.LogDebug(
         "StartTimestamp " & StartTimestamp.ToString("s") & "; " &
-        "EndTimestamp " & EndTimestamp.ToString("s"))
+        "EndTimestamp " & EndTimestamp.ToString("s") & "; " &
+        "Point " & Me.ToString)
 
       Values = DirectCast(Point, AFAttribute).Data.InterpolatedValues(
         New AFTimeRange(New AFTime(StartTimestamp),
@@ -85,7 +86,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         New AFTimeSpan(0, 0, 0, 0, 0, CalculationInterval, 0),
         Nothing, Nothing, True) ' Get interpolated values for time range.
 
-      DBM.Logger.LogTrace("Retrieved " & Values.Count.ToString & " values")
+      DBM.Logger.LogTrace("Retrieved " & Values.Count.ToString & " values; " &
+        "Point " & Me.ToString)
 
       For Each Value In Values
         DataStore.AddData(Value.Timestamp.LocalTime, Value.Value)
