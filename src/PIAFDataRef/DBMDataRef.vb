@@ -746,9 +746,19 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' next interval after the snapshot timestamp.
       If Attribute.Trait Is LimitTarget Then
         RawSnapshot = InputPointDriver.SnapshotTimestamp
+
         If timeRange.StartTime.LocalTime < NextInterval(RawSnapshot) Then
+
+          ' If the number of values requested is less than zero, then if
+          ' supported, the Data Reference will return evenly spaced
+          ' interpolated values across the timeRange, with a value returned at
+          ' both end points of the time range. For example, specifying -25 over
+          ' a 24 hour period will produce an hourly value.
           RawValues = Attribute.Parent.
-            GetValues(timeRange, numberOfValues, Nothing)
+            GetValues(timeRange, -Abs(numberOfValues), Nothing)
+          DBM.Logger.LogTrace(
+            "Retrieved " & RawValues.Count.ToString & " raw values")
+
           ' If there are no DBM results to iterate over, and there are raw
           ' values for this time range, return the raw values directly.
           If Results.Count = 0 And RawValues.Count > 0 Then
@@ -756,9 +766,13 @@ Namespace Vitens.DynamicBandwidthMonitor
               "Return " & RawValues.Count.ToString & " raw values")
             Return RawValues
           End If
+
         Else
+
           RawValues = New AFValues ' Future data, no raw values.
+
         End If
+
       End If
 
       ' Iterate over DBM results for time range.
@@ -953,6 +967,35 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Returns an AFValues collection with the recorded values.
       Return GetValues(Nothing, timeRange, maxCount, Nothing, Nothing)
+
+    End Function
+
+
+    Public Overrides Function PlotValues(timeRange As AFTimeRange,
+      intervals As Integer, inputAttributes As AFAttributeList,
+      inputValues As AFValues(), inputTimes As List(Of AFTime)) As AFValues
+
+      DBM.Logger.LogDebug(
+        "StartTime " & timeRange.StartTime.LocalTime.ToString("s") & "; " &
+        "EndTime " & timeRange.EndTime.LocalTime.ToString("s") & "; " &
+        "intervals " & intervals.ToString)
+
+      Return GetValues(Nothing, timeRange, intervals, Nothing, Nothing)
+
+    End Function
+
+
+    Public Overrides Function InterpolatedValuesByCount(
+      timeRange As AFTimeRange, numberOfValues As Integer,
+      filterExpression As String, includeFilteredValues As Boolean,
+      inputAttributes As AFAttributeList, inputValues As AFValues()) As AFValues
+
+      DBM.Logger.LogDebug(
+        "StartTime " & timeRange.StartTime.LocalTime.ToString("s") & "; " &
+        "EndTime " & timeRange.EndTime.LocalTime.ToString("s") & "; " &
+        "numberOfValues " & numberOfValues.ToString)
+
+      Return GetValues(Nothing, timeRange, numberOfValues, Nothing, Nothing)
 
     End Function
 
