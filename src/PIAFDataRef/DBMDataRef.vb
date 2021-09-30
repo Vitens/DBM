@@ -971,31 +971,67 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Overrides Function PlotValues(timeRange As AFTimeRange,
-      intervals As Integer, inputAttributes As AFAttributeList,
-      inputValues As AFValues(), inputTimes As List(Of AFTime)) As AFValues
-
-      DBM.Logger.LogDebug(
-        "StartTime " & timeRange.StartTime.LocalTime.ToString("s") & "; " &
-        "EndTime " & timeRange.EndTime.LocalTime.ToString("s") & "; " &
-        "intervals " & intervals.ToString)
-
-      Return GetValues(Nothing, timeRange, intervals, Nothing, Nothing)
-
-    End Function
-
-
     Public Overrides Function InterpolatedValuesByCount(
       timeRange As AFTimeRange, numberOfValues As Integer,
       filterExpression As String, includeFilteredValues As Boolean,
       inputAttributes As AFAttributeList, inputValues As AFValues()) As AFValues
+
+      ' https://docs.osisoft.com/bundle/af-sdk/page/html/M_OSIsoft_AF_Asset_AFDa
+      ' taReference_InterpolatedValuesByCount.htm
+      ' Retrieves interpolated values over the specified time range evenly
+      ' spaced using the numberOfValues.
+
+      Dim Interval As Double ' in seconds
 
       DBM.Logger.LogDebug(
         "StartTime " & timeRange.StartTime.LocalTime.ToString("s") & "; " &
         "EndTime " & timeRange.EndTime.LocalTime.ToString("s") & "; " &
         "numberOfValues " & numberOfValues.ToString)
 
-      Return GetValues(Nothing, timeRange, numberOfValues, Nothing, Nothing)
+      If timeRange.StartTime = timeRange.EndTime Or numberOfValues = 1 Then
+
+        ' Return a single value
+
+        InterpolatedValuesByCount = New AFValues
+        InterpolatedValuesByCount.Add(
+          GetValue(Nothing, timeRange.StartTime, Nothing, Nothing))
+        Return InterpolatedValuesByCount
+
+      Else
+
+        ' Return multiple values
+
+        Interval =
+          (timeRange.EndTime.UtcSeconds-timeRange.StartTime.UtcSeconds)/
+          (numberOfValues-1)
+
+        Return Summaries(
+          New AFTimeRange(timeRange.StartTime,
+          New AFTime(timeRange.EndTime.UtcSeconds+Interval)),
+          New AFTimeSpan(0, 0, 0, 0, 0, Interval, 0),
+          AFSummaryTypes.Average,
+          AFCalculationBasis.TimeWeighted,
+          AFTimestampCalculation.EarliestTime)(AFSummaryTypes.Average)
+
+      End If
+
+    End Function
+
+
+    Public Overrides Function PlotValues(timeRange As AFTimeRange,
+      intervals As Integer, inputAttributes As AFAttributeList,
+      inputValues As AFValues(), inputTimes As List(Of AFTime)) As AFValues
+
+      ' https://docs.osisoft.com/bundle/af-sdk/page/html/M_OSIsoft_AF_Asset_AFDa
+      ' taReference_PlotValues.htm
+
+      DBM.Logger.LogDebug(
+        "StartTime " & timeRange.StartTime.LocalTime.ToString("s") & "; " &
+        "EndTime " & timeRange.EndTime.LocalTime.ToString("s") & "; " &
+        "intervals " & intervals.ToString)
+
+      Return InterpolatedValuesByCount(
+        timeRange, intervals, Nothing, Nothing, Nothing, Nothing)
 
     End Function
 
