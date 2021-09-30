@@ -385,12 +385,13 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       End If
 
-      DBM.Logger.LogDebug("Timestamp " & Timestamp.ToString("s"))
-
       ' Returns the single value for the attribute.
-      Return GetValues(Nothing, New AFTimeRange(New AFTime(Timestamp),
+      DBM.Logger.LogDebug("Timestamp " & Timestamp.ToString("s"))
+      GetValue = GetValues(Nothing, New AFTimeRange(New AFTime(Timestamp),
         New AFTime(Timestamp.AddSeconds(CalculationInterval))), 1,
         Nothing, Nothing)(0) ' Request a single value
+      DBM.Logger.LogTrace("Return value")
+      Return GetValue
 
     End Function
 
@@ -749,6 +750,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         If timeRange.StartTime.LocalTime < NextInterval(RawSnapshot) Then
           RawValues = Attribute.Parent.
             GetValues(timeRange, numberOfValues, Nothing)
+          DBM.Logger.LogTrace(
+            "Retrieved " & RawValues.Count.ToString & " raw values")
           ' If there are no DBM results to iterate over, and there are raw
           ' values for this time range, return the raw values directly.
           If Results.Count = 0 And RawValues.Count > 0 Then
@@ -953,6 +956,48 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Returns an AFValues collection with the recorded values.
       Return GetValues(Nothing, timeRange, maxCount, Nothing, Nothing)
+
+    End Function
+
+
+    Public Overrides Function InterpolatedValuesByCount(
+      timeRange As AFTimeRange, numberOfValues As Integer,
+      filterExpression As String, includeFilteredValues As Boolean,
+      inputAttributes As AFAttributeList, inputValues As AFValues()) As AFValues
+
+      ' https://docs.osisoft.com/bundle/af-sdk/page/html/M_OSIsoft_AF_Asset_AFDa
+      ' taReference_InterpolatedValuesByCount.htm
+      ' Retrieves interpolated values over the specified time range evenly
+      ' spaced using the numberOfValues.
+
+      Dim Interval As AFTimeSpan
+
+      DBM.Logger.LogDebug(
+        "StartTime " & timeRange.StartTime.LocalTime.ToString("s") & "; " &
+        "EndTime " & timeRange.EndTime.LocalTime.ToString("s") & "; " &
+        "numberOfValues " & numberOfValues.ToString)
+
+      InterpolatedValuesByCount = New AFValues
+      If timeRange.StartTime = timeRange.EndTime Or numberOfValues = 1 Then
+        ' Return a single value.
+        InterpolatedValuesByCount.Add(
+          GetValue(Nothing, timeRange.StartTime, Nothing, Nothing))
+      Else
+        ' Return multiple values.
+        Interval = New AFTimeSpan(0, 0, 0, 0, 0,
+          (timeRange.EndTime.UtcSeconds-timeRange.StartTime.UtcSeconds)/
+          (numberOfValues-1), 0)
+        InterpolatedValuesByCount = Summaries(
+          New AFTimeRange(timeRange.StartTime, timeRange.EndTime+Interval),
+          Interval,
+          AFSummaryTypes.Average,
+          AFCalculationBasis.TimeWeighted,
+          AFTimestampCalculation.EarliestTime)(AFSummaryTypes.Average)
+      End If
+
+      DBM.Logger.LogTrace(
+        "Return " & InterpolatedValuesByCount.Count.ToString & " values")
+      Return InterpolatedValuesByCount
 
     End Function
 
