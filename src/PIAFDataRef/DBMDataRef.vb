@@ -992,7 +992,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         ' Return no values.
 
-        Return New AFValues
+        InterpolatedValuesByCount = New AFValues
 
       ElseIf timeRange.StartTime = timeRange.EndTime Or numberOfValues = 1 Then
 
@@ -1001,7 +1001,6 @@ Namespace Vitens.DynamicBandwidthMonitor
         InterpolatedValuesByCount = New AFValues
         InterpolatedValuesByCount.Add(
           GetValue(Nothing, timeRange.StartTime, Nothing, Nothing))
-        Return InterpolatedValuesByCount
 
       Else
 
@@ -1011,7 +1010,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           (timeRange.EndTime.UtcSeconds-timeRange.StartTime.UtcSeconds)/
           (numberOfValues-1), 0)
 
-        Return Summaries(
+        InterpolatedValuesByCount = Summaries(
           New AFTimeRange(timeRange.StartTime, timeRange.EndTime+Interval),
           Interval,
           AFSummaryTypes.Average,
@@ -1019,6 +1018,10 @@ Namespace Vitens.DynamicBandwidthMonitor
           AFTimestampCalculation.EarliestTime)(AFSummaryTypes.Average)
 
       End If
+
+      DBM.Logger.LogTrace(
+        "Return " & InterpolatedValuesByCount.Count.ToString & " values")
+      Return InterpolatedValuesByCount
 
     End Function
 
@@ -1035,8 +1038,10 @@ Namespace Vitens.DynamicBandwidthMonitor
         "EndTime " & timeRange.EndTime.LocalTime.ToString("s") & "; " &
         "intervals " & intervals.ToString)
 
-      Return InterpolatedValuesByCount(
+      PlotValues = InterpolatedValuesByCount(
         timeRange, intervals+1, Nothing, Nothing, Nothing, Nothing)
+      DBM.Logger.LogTrace("Return " & PlotValues.Count.ToString & " values")
+      Return PlotValues
 
     End Function
 
