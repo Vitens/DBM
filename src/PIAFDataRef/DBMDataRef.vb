@@ -976,12 +976,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         "EndTime " & timeRange.EndTime.LocalTime.ToString("s") & "; " &
         "numberOfValues " & numberOfValues.ToString)
 
-      If numberOfValues = 0 Then
-        ' Return no values.
-        InterpolatedValuesByCount = New AFValues
-      ElseIf timeRange.StartTime = timeRange.EndTime Or numberOfValues = 1 Then
+      InterpolatedValuesByCount = New AFValues
+      If timeRange.StartTime = timeRange.EndTime Or numberOfValues = 1 Then
         ' Return a single value.
-        InterpolatedValuesByCount = New AFValues
         InterpolatedValuesByCount.Add(
           GetValue(Nothing, timeRange.StartTime, Nothing, Nothing))
       Else
