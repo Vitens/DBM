@@ -981,16 +981,22 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Retrieves interpolated values over the specified time range evenly
       ' spaced using the numberOfValues.
 
-      Dim Interval As Double ' in seconds
+      Dim Interval As AFTimeSpan
 
       DBM.Logger.LogDebug(
         "StartTime " & timeRange.StartTime.LocalTime.ToString("s") & "; " &
         "EndTime " & timeRange.EndTime.LocalTime.ToString("s") & "; " &
         "numberOfValues " & numberOfValues.ToString)
 
-      If timeRange.StartTime = timeRange.EndTime Or numberOfValues = 1 Then
+      If numberOfValues = 0 Then
 
-        ' Return a single value
+        ' Return no values.
+
+        Return New AFValues
+
+      ElseIf timeRange.StartTime = timeRange.EndTime Or numberOfValues = 1 Then
+
+        ' Return a single value.
 
         InterpolatedValuesByCount = New AFValues
         InterpolatedValuesByCount.Add(
@@ -999,16 +1005,15 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Else
 
-        ' Return multiple values
+        ' Return multiple values.
 
-        Interval =
+        Interval = New AFTimeSpan(0, 0, 0, 0, 0,
           (timeRange.EndTime.UtcSeconds-timeRange.StartTime.UtcSeconds)/
-          (numberOfValues-1)
+          (numberOfValues-1), 0)
 
         Return Summaries(
-          New AFTimeRange(timeRange.StartTime,
-          New AFTime(timeRange.EndTime.UtcSeconds+Interval)),
-          New AFTimeSpan(0, 0, 0, 0, 0, Interval, 0),
+          New AFTimeRange(timeRange.StartTime, timeRange.EndTime+Interval),
+          Interval,
           AFSummaryTypes.Average,
           AFCalculationBasis.TimeWeighted,
           AFTimestampCalculation.EarliestTime)(AFSummaryTypes.Average)
@@ -1031,7 +1036,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         "intervals " & intervals.ToString)
 
       Return InterpolatedValuesByCount(
-        timeRange, intervals, Nothing, Nothing, Nothing, Nothing)
+        timeRange, intervals+1, Nothing, Nothing, Nothing, Nothing)
 
     End Function
 
