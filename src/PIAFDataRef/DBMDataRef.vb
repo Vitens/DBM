@@ -1026,26 +1026,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-'    Public Overrides Function PlotValues(timeRange As AFTimeRange,
-'      intervals As Integer, inputAttributes As AFAttributeList,
-'      inputValues As AFValues(), inputTimes As List(Of AFTime)) As AFValues
-'
-'      ' https://docs.osisoft.com/bundle/af-sdk/page/html/M_OSIsoft_AF_Asset_AFDa
-'      ' taReference_PlotValues.htm
-'
-'      DBM.Logger.LogDebug(
-'        "StartTime " & timeRange.StartTime.LocalTime.ToString("s") & "; " &
-'        "EndTime " & timeRange.EndTime.LocalTime.ToString("s") & "; " &
-'        "intervals " & intervals.ToString)
-'
-'      PlotValues = InterpolatedValuesByCount(
-'        timeRange, intervals+1, Nothing, Nothing, Nothing, Nothing)
-'      DBM.Logger.LogTrace("Return " & PlotValues.Count.ToString & " values")
-'      Return PlotValues
-'
-'    End Function
-
-
   End Class
 
 
