@@ -746,7 +746,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' next interval after the snapshot timestamp.
       If Attribute.Trait Is LimitTarget Then
         RawSnapshot = InputPointDriver.SnapshotTimestamp
-
         If timeRange.StartTime.LocalTime < NextInterval(RawSnapshot) Then
           RawValues = Attribute.Parent.
             GetValues(timeRange, numberOfValues, Nothing)
