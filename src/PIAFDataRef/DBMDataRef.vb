@@ -748,17 +748,10 @@ Namespace Vitens.DynamicBandwidthMonitor
         RawSnapshot = InputPointDriver.SnapshotTimestamp
 
         If timeRange.StartTime.LocalTime < NextInterval(RawSnapshot) Then
-
-          ' If the number of values requested is less than zero, then if
-          ' supported, the Data Reference will return evenly spaced
-          ' interpolated values across the timeRange, with a value returned at
-          ' both end points of the time range. For example, specifying -25 over
-          ' a 24 hour period will produce an hourly value.
           RawValues = Attribute.Parent.
-            GetValues(timeRange, -Abs(numberOfValues), Nothing)
+            GetValues(timeRange, numberOfValues, Nothing)
           DBM.Logger.LogTrace(
             "Retrieved " & RawValues.Count.ToString & " raw values")
-
           ' If there are no DBM results to iterate over, and there are raw
           ' values for this time range, return the raw values directly.
           If Results.Count = 0 And RawValues.Count > 0 Then
@@ -766,13 +759,9 @@ Namespace Vitens.DynamicBandwidthMonitor
               "Return " & RawValues.Count.ToString & " raw values")
             Return RawValues
           End If
-
         Else
-
           RawValues = New AFValues ' Future data, no raw values.
-
         End If
-
       End If
 
       ' Iterate over DBM results for time range.
