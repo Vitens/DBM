@@ -385,12 +385,13 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       End If
 
-      DBM.Logger.LogDebug("Timestamp " & Timestamp.ToString("s"))
-
       ' Returns the single value for the attribute.
-      Return GetValues(Nothing, New AFTimeRange(New AFTime(Timestamp),
+      DBM.Logger.LogDebug("Timestamp " & Timestamp.ToString("s"))
+      GetValue = GetValues(Nothing, New AFTimeRange(New AFTime(Timestamp),
         New AFTime(Timestamp.AddSeconds(CalculationInterval))), 1,
         Nothing, Nothing)(0) ' Request a single value
+      DBM.Logger.LogTrace("Return value")
+      Return GetValue
 
     End Function
 
