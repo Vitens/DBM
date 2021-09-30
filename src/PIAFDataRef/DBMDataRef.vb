@@ -977,34 +977,24 @@ Namespace Vitens.DynamicBandwidthMonitor
         "numberOfValues " & numberOfValues.ToString)
 
       If numberOfValues = 0 Then
-
         ' Return no values.
-
         InterpolatedValuesByCount = New AFValues
-
       ElseIf timeRange.StartTime = timeRange.EndTime Or numberOfValues = 1 Then
-
         ' Return a single value.
-
         InterpolatedValuesByCount = New AFValues
         InterpolatedValuesByCount.Add(
           GetValue(Nothing, timeRange.StartTime, Nothing, Nothing))
-
       Else
-
         ' Return multiple values.
-
         Interval = New AFTimeSpan(0, 0, 0, 0, 0,
           (timeRange.EndTime.UtcSeconds-timeRange.StartTime.UtcSeconds)/
           (numberOfValues-1), 0)
-
         InterpolatedValuesByCount = Summaries(
           New AFTimeRange(timeRange.StartTime, timeRange.EndTime+Interval),
           Interval,
           AFSummaryTypes.Average,
           AFCalculationBasis.TimeWeighted,
           AFTimestampCalculation.EarliestTime)(AFSummaryTypes.Average)
-
       End If
 
       DBM.Logger.LogTrace(
