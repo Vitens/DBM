@@ -560,6 +560,8 @@ Namespace Vitens.DynamicBandwidthMonitor
               End If
               i += 1 ' Increase iterator.
             Loop ' Results.
+
+            ' Log weights
             DBM.Logger.LogDebug(
               "MeasurementWeight " & MeasurementWeight.ToString & "; " &
               "ForecastWeight " & ForecastWeight.ToString)
