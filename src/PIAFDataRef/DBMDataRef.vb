@@ -567,6 +567,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               "ForecastWeight " & ForecastWeight.ToString)
 
             ' Phase 3: Remove all values after the last good value.
+            DBM.Logger.LogDebug("Remove " & (iV-iFL+1).ToString & " raw values")
             Do While Deflatline.Item(Deflatline.Count-1).
               Timestamp.LocalTime > Values.Item(iFL-1).Timestamp.LocalTime
               Deflatline.RemoveAt(Deflatline.Count-1)
