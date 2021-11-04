@@ -482,8 +482,6 @@ Namespace Vitens.DynamicBandwidthMonitor
                 Values.Item(iFL+i+1).Timestamp.LocalTime, Stepped)
               i += 1 ' Increase iterator.
             Loop ' iFL-1 to iV.
-            DBM.Logger.LogDebug(
-              "MeasurementWeight " & MeasurementWeight.ToString)
 
             ' Phase 2: Calculate weight of forecast.
             i = 0
@@ -563,6 +561,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               i += 1 ' Increase iterator.
             Loop ' Results.
             DBM.Logger.LogDebug(
+              "MeasurementWeight " & MeasurementWeight.ToString & "; " &
               "ForecastWeight " & ForecastWeight.ToString)
 
             ' Phase 3: Remove all values after the last good value.
