@@ -449,6 +449,10 @@ Namespace Vitens.DynamicBandwidthMonitor
             Values.Item(iFL-1).Timestamp.LocalTime).TotalSeconds/
             CalculationInterval >= 12 Then
 
+            DBM.Logger.LogDebug("Found flatline from " &
+              Values.Item(iFL).Timestamp.LocalTime.ToString & " to " &
+              Values.Item(iV).Timestamp.LocalTime.ToString)
+
             ' Determining the scaling factor for weight adjustment:
             '  * For stepped values:
             '      z = a(u-t)+qb(v-u)+qc(w-v)+qd(x-w)+qe(y-x)
@@ -478,6 +482,8 @@ Namespace Vitens.DynamicBandwidthMonitor
                 Values.Item(iFL+i+1).Timestamp.LocalTime, Stepped)
               i += 1 ' Increase iterator.
             Loop ' iFL-1 to iV.
+            DBM.Logger.LogDebug(
+              "MeasurementWeight " & MeasurementWeight.ToString)
 
             ' Phase 2: Calculate weight of forecast.
             i = 0
@@ -556,6 +562,8 @@ Namespace Vitens.DynamicBandwidthMonitor
               End If
               i += 1 ' Increase iterator.
             Loop ' Results.
+            DBM.Logger.LogDebug(
+              "ForecastWeight " & ForecastWeight.ToString)
 
             ' Phase 3: Remove all values after the last good value.
             Do While Deflatline.Item(Deflatline.Count-1).
