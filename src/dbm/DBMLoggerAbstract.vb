@@ -102,12 +102,12 @@ Namespace Vitens.DynamicBandwidthMonitor
       With Caller.GetMethod
         Return Now.ToString("yyyy-MM-ddTHH:mm:ss.fff") & " " &
           EncloseBrackets(MachineName) & " " &
-          EncloseBrackets(Level.ToString) & " " &
-          EncloseBrackets(.DeclaringType.FullName.ToString) & " " &
+          Level.ToString & " " &
+          .DeclaringType.FullName.ToString & " " &
           EncloseBrackets(ProcessName) & " " &
-          EncloseBrackets(ProcessId) & " " &
+          ProcessId & " " &
           EncloseBrackets(UserName) & " " &
-          EncloseBrackets(.Name.ToString) & " " &
+          .Name.ToString & " " &
           EncloseBrackets(Entity) & " " &
           Message
       End With
