@@ -35,8 +35,7 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public MustInherit Class DBMLoggerAbstract
 
 
-    Private MachineName, ApplicationDomain, ProcessName, ProcessId,
-      UserName As String
+    Private StaticLogInfo As String
 
 
     Public Enum Level
@@ -50,22 +49,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Enum
 
 
-    Public Sub New
-
-      MachineName = Environment.MachineName
-      ApplicationDomain = DBMInfo.ProductName
-      With Process.GetCurrentProcess
-        ProcessName = .ProcessName
-        ProcessId = .Id.ToString
-      End With
-      UserName = Environment.UserName
-
-    End Sub
-
-
-    Public MustOverride Sub Log(Level As Level, Message As String)
-
-
     Private Function EncloseBrackets(Text As String) As String
 
       If Text.Equals(String.Empty) Or Text.Contains(" ") Then
@@ -75,6 +58,22 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
 
     End Function
+
+
+    Public Sub New
+
+      With Process.GetCurrentProcess
+        StaticLogInfo = EncloseBrackets(Environment.MachineName) & " " &
+          EncloseBrackets(DBMInfo.ProductName) & " " &
+          EncloseBrackets(.ProcessName) & " " &
+          .Id.ToString & " " &
+          EncloseBrackets(Environment.UserName)
+      End With
+
+    End Sub
+
+
+    Public MustOverride Sub Log(Level As Level, Message As String)
 
 
     Private Function FormatLog(Level As Level, Entity As String,
@@ -105,11 +104,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       With Caller.GetMethod
         Return Now.ToString("yyyy-MM-ddTHH:mm:ss.fff") & " " &
           Level.ToString & " " &
-          EncloseBrackets(MachineName) & " " &
-          EncloseBrackets(ApplicationDomain) & " " &
-          EncloseBrackets(ProcessName) & " " &
-          ProcessId & " " &
-          EncloseBrackets(UserName) & " " &
+          StaticLogInfo & " " &
           .DeclaringType.FullName.ToString & "." & .Name.ToString & " " &
           EncloseBrackets(Entity) & " " &
           Message
