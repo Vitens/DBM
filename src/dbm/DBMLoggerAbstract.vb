@@ -26,6 +26,7 @@ Imports System
 Imports System.DateTime
 Imports System.Diagnostics
 Imports System.Environment
+Imports Vitens.DynamicBandwidthMonitor.DBMInfo
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -34,7 +35,8 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public MustInherit Class DBMLoggerAbstract
 
 
-    Private MachineName, ProcessName, ProcessId, UserName As String
+    Private MachineName, ApplicationDomain, ProcessName, ProcessId,
+      UserName As String
 
 
     Public Enum Level
@@ -51,6 +53,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Sub New
 
       MachineName = Environment.MachineName
+      ApplicationDomain = DBMInfo.ProductName
       With Process.GetCurrentProcess
         ProcessName = .ProcessName
         ProcessId = .Id.ToString
@@ -101,13 +104,13 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       With Caller.GetMethod
         Return Now.ToString("yyyy-MM-ddTHH:mm:ss.fff") & " " &
-          EncloseBrackets(MachineName) & " " &
           Level.ToString & " " &
-          .DeclaringType.FullName.ToString & " " &
+          EncloseBrackets(MachineName) & " " &
+          EncloseBrackets(ApplicationDomain) & " " &
           EncloseBrackets(ProcessName) & " " &
           ProcessId & " " &
           EncloseBrackets(UserName) & " " &
-          .Name.ToString & " " &
+          .DeclaringType.FullName.ToString & "." & .Name.ToString & " " &
           EncloseBrackets(Entity) & " " &
           Message
       End With
