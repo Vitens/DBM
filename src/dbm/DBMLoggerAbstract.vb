@@ -63,12 +63,12 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public MustOverride Sub Log(Level As Level, Message As String)
 
 
-    Private Function EncloseBrackets(Message As String) As String
+    Private Function EncloseBrackets(Text As String) As String
 
-      If Message.Equals(String.Empty) Or Message.Contains(" ") Then
-        Return "[" & Message & "]"
+      If Text.Equals(String.Empty) Or Text.Contains(" ") Then
+        Return "[" & Text & "]"
       Else
-        Return Message
+        Return Text
       End If
 
     End Function
@@ -95,7 +95,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         i+=1
       Loop
 
-      If Message.Contains(NewLine) Then
+      If Message.Contains(NewLine) Then ' Multi-line message
         Message = NewLine & "  " & Message.Replace(NewLine, NewLine & "  ")
       End If
 
