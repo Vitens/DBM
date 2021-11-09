@@ -25,6 +25,7 @@ Option Strict
 Imports System
 Imports System.DateTime
 Imports System.Diagnostics
+Imports System.Environment
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -94,6 +95,10 @@ Namespace Vitens.DynamicBandwidthMonitor
         i+=1
       Loop
 
+      If Message.Contains(NewLine) Then
+        Message = NewLine & "  " & Message.Replace(NewLine, NewLine & "  ")
+      End If
+
       With Caller.GetMethod
         Return Now.ToString("yyyy-MM-ddTHH:mm:ss.fff") & " " &
           EncloseBrackets(MachineName) & " " &
@@ -137,13 +142,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Informational messages.
       ' Tracks the general flow of the app. May have long-term value.
-      ' No prefix is added to the message, can be used for application output.
 
-      If Entity.Equals(String.Empty) Then
-        Log(Level.Information, Message)
-      Else
-        Log(Level.Information, EncloseBrackets(Entity) & " " & Message)
-      End If
+      Log(Level.Information, FormatLog(Level.Information, Entity, Message))
 
     End Sub
 
