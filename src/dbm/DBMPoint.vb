@@ -43,7 +43,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Sub New(PointDriver As DBMPointDriverAbstract)
 
-      DBM.Logger.LogDebug(PointDriver.ToString)
+      DBM.Logger.LogDebug(PointDriver.ToString, PointDriver.ToString)
       Me.PointDriver = PointDriver
 
     End Sub
