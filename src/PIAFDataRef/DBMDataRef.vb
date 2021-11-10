@@ -451,8 +451,9 @@ Namespace Vitens.DynamicBandwidthMonitor
             CalculationInterval >= 12 Then
 
             DBM.Logger.LogDebug("Found flatline from " &
-              Values.Item(iFL).Timestamp.LocalTime.ToString & " to " &
-              Values.Item(iV).Timestamp.LocalTime.ToString, Attribute.GetPath)
+              Values.Item(iFL).Timestamp.LocalTime.ToString("s") & " to " &
+              Values.Item(iV).Timestamp.LocalTime.ToString("s"),
+              Attribute.GetPath)
 
             ' Determining the scaling factor for weight adjustment:
             '  * For stepped values:
