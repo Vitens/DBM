@@ -140,7 +140,8 @@ Namespace Vitens.DynamicBandwidthMonitor
           sCsvComment & Product.Replace(NewLine, NewLine & sCsvComment))
         DBM.Logger.LogInformation(sTimestamp & Separator & sFactor &
           Separator & sMeasurement & Separator & sForecast & Separator &
-          sLowerControlLimit & Separator & sUpperControlLimit)
+          sLowerControlLimit & Separator & sUpperControlLimit,
+          InputPointDriver.ToString)
 
         ' Get results for time range.
         Results = DBM.GetResults(InputPointDriver, CorrelationPoints,
@@ -153,12 +154,14 @@ Namespace Vitens.DynamicBandwidthMonitor
               FormatNumber(.ForecastItem.Measurement) & Separator &
               FormatNumber(.ForecastItem.Forecast) & Separator &
               FormatNumber(.ForecastItem.LowerControlLimit) & Separator &
-              FormatNumber(.ForecastItem.UpperControlLimit))
+              FormatNumber(.ForecastItem.UpperControlLimit),
+              InputPointDriver.ToString)
           End With
 
         Next Result
 
-        DBM.Logger.LogInformation(sCsvComment & Statistics(Results).Brief)
+        DBM.Logger.LogInformation(
+          sCsvComment & Statistics(Results).Brief, InputPointDriver.ToString)
 
       End If
 

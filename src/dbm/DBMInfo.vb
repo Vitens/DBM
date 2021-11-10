@@ -82,11 +82,20 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Shared Function ProductName As String
+
+      ' Returns the name of the product.
+
+      Return GetFileVersionInfo.ProductName
+
+    End Function
+
+
     Public Shared Function Application As String
 
       ' Returns the name and version of the application.
 
-      Return GetFileVersionInfo.ProductName & " v" & Version
+      Return ProductName & " v" & Version
 
     End Function
 
