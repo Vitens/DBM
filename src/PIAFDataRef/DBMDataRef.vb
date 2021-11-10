@@ -701,7 +701,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         "StartTime " & timeRange.StartTime.LocalTime.ToString("s") & "; " &
         "EndTime " & timeRange.EndTime.LocalTime.ToString("s") & "; " &
         "numberOfValues " & numberOfValues.ToString & "; " &
-        "InputPointDriver " & InputPointDriver.ToString)
+        "InputPointDriver " & InputPointDriver.ToString, Attribute.Name)
 
       ' Retrieve correlation points from AF hierarchy for first-level child
       ' attributes in non-root elements only when calculating the DBM factor
