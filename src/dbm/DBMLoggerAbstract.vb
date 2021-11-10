@@ -105,7 +105,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         Return Now.ToString("yyyy-MM-ddTHH:mm:ss.fff") & " " &
           Level.ToString & " " &
           StaticLogInfo & " " &
-          .DeclaringType.FullName.ToString & "." & .Name.ToString & " " &
+          .DeclaringType.FullName.ToString.Substring(
+            .DeclaringType.Namespace.ToString.Length+1) &
+          "." & .Name.ToString & " " &
           EncloseBrackets(Entity) & " " &
           Message
       End With
