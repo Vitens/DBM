@@ -94,7 +94,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Annotations As New Dictionary(Of AFTime, Object)
     Private Shared DBM As New DBM(New DBMLoggerAFTrace)
-    Private Entity As String = String.Empty
+    Private Entity As String = Attribute.GetPath ' Full attribute path for logs.
 
 
     Public Shared Function CreateDataPipe As Object
@@ -698,7 +698,6 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Element = DirectCast(Attribute.Element, AFElement)
       InputPointDriver = New DBMPointDriver(Attribute.Parent) ' Parent attribute
-      Entity = InputPointDriver.ToString
 
       DBM.Logger.LogDebug(
         "StartTime " & timeRange.StartTime.LocalTime.ToString("s") & "; " &
