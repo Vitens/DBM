@@ -98,7 +98,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Loop
 
       If Message.Contains(NewLine) Then ' Multi-line message
-        Message = NewLine & "  " & Message.Replace(NewLine, NewLine & "  ")
+        Message = NewLine & "    " & Message.Replace(NewLine, NewLine & "    ")
       End If
 
       With Caller.GetMethod
