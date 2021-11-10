@@ -94,6 +94,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Annotations As New Dictionary(Of AFTime, Object)
     Private Shared DBM As New DBM(New DBMLoggerAFTrace)
+    Private Entity As String = String.Empty
 
 
     Public Shared Function CreateDataPipe As Object
@@ -284,7 +285,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
           DBM.Logger.LogDebug(
             "Timestamp " & Value.Timestamp.LocalTime.ToString("s") & "; " &
-            "Annotation " & DirectCast(Annotation, String))
+            "Annotation " & DirectCast(Annotation, String), Entity)
 
           Annotations.Add(Value.Timestamp, Annotation) ' Add
           Value.Annotated = True
@@ -386,11 +387,11 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
 
       ' Returns the single value for the attribute.
-      DBM.Logger.LogDebug("Timestamp " & Timestamp.ToString("s"))
+      DBM.Logger.LogDebug("Timestamp " & Timestamp.ToString("s"), Entity)
       GetValue = GetValues(Nothing, New AFTimeRange(New AFTime(Timestamp),
         New AFTime(Timestamp.AddSeconds(CalculationInterval))), 1,
         Nothing, Nothing)(0) ' Request a single value
-      DBM.Logger.LogTrace("Return value")
+      DBM.Logger.LogTrace("Return value", Entity)
       Return GetValue
 
     End Function
@@ -451,7 +452,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
             DBM.Logger.LogDebug("Found flatline from " &
               Values.Item(iFL).Timestamp.LocalTime.ToString & " to " &
-              Values.Item(iV).Timestamp.LocalTime.ToString)
+              Values.Item(iV).Timestamp.LocalTime.ToString, Entity)
 
             ' Determining the scaling factor for weight adjustment:
             '  * For stepped values:
@@ -564,10 +565,11 @@ Namespace Vitens.DynamicBandwidthMonitor
             ' Log weights
             DBM.Logger.LogDebug(
               "MeasurementWeight " & MeasurementWeight.ToString & "; " &
-              "ForecastWeight " & ForecastWeight.ToString)
+              "ForecastWeight " & ForecastWeight.ToString, Entity)
 
             ' Phase 3: Remove all values after the last good value.
-            DBM.Logger.LogDebug("Remove " & (iV-iFL+1).ToString & " raw values")
+            DBM.Logger.LogDebug(
+              "Remove " & (iV-iFL+1).ToString & " raw values", Entity)
             Do While Deflatline.Item(Deflatline.Count-1).
               Timestamp.LocalTime > Values.Item(iFL-1).Timestamp.LocalTime
               Deflatline.RemoveAt(Deflatline.Count-1)
@@ -688,7 +690,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Attribute or parent attribute is not configured properly, return a
         ' Configure system state. Definition: 'The point configuration has been
         ' rejected as invalid by the data source.'
-        DBM.Logger.LogWarning("Invalid configuration, return Configure")
+        DBM.Logger.LogWarning("Invalid configuration, return Configure", Entity)
         GetValues.Add(AFValue.CreateSystemStateValue(
           AFSystemStateCode.Configure, timeRange.StartTime))
         Return GetValues
@@ -696,12 +698,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Element = DirectCast(Attribute.Element, AFElement)
       InputPointDriver = New DBMPointDriver(Attribute.Parent) ' Parent attribute
+      Entity = InputPointDriver.ToString
 
       DBM.Logger.LogDebug(
         "StartTime " & timeRange.StartTime.LocalTime.ToString("s") & "; " &
         "EndTime " & timeRange.EndTime.LocalTime.ToString("s") & "; " &
-        "numberOfValues " & numberOfValues.ToString & "; " &
-        "InputPointDriver " & InputPointDriver.ToString, Attribute.Name)
+        "numberOfValues " & numberOfValues.ToString, Entity)
 
       ' Retrieve correlation points from AF hierarchy for first-level child
       ' attributes in non-root elements only when calculating the DBM factor
@@ -761,12 +763,12 @@ Namespace Vitens.DynamicBandwidthMonitor
           RawValues = Attribute.Parent.
             GetValues(timeRange, numberOfValues, Nothing)
           DBM.Logger.LogTrace(
-            "Retrieved " & RawValues.Count.ToString & " raw values")
+            "Retrieved " & RawValues.Count.ToString & " raw values", Entity)
           ' If there are no DBM results to iterate over, and there are raw
           ' values for this time range, return the raw values directly.
           If Results.Count = 0 And RawValues.Count > 0 Then
             DBM.Logger.LogTrace(
-              "Return " & RawValues.Count.ToString & " raw values")
+              "Return " & RawValues.Count.ToString & " raw values", Entity)
             Return RawValues
           End If
         Else
@@ -903,7 +905,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' where no archive values for a tag can exist 10 minutes into the future
       ' or before the oldest mounted archive.'
       If GetValues.Count = 0 Then
-        DBM.Logger.LogTrace("No values to return, return NoData")
+        DBM.Logger.LogTrace("No values to return, return NoData", Entity)
         GetValues.Add(AFValue.CreateSystemStateValue(
           AFSystemStateCode.NoData, timeRange.StartTime))
         Return GetValues
@@ -924,7 +926,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Returns the collection of values for the attribute sorted in increasing
       ' time order.
-      DBM.Logger.LogTrace("Return " & GetValues.Count.ToString & " values")
+      DBM.Logger.LogTrace(
+        "Return " & GetValues.Count.ToString & " values", Entity)
       Return GetValues
 
     End Function
@@ -985,7 +988,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       DBM.Logger.LogDebug(
         "StartTime " & timeRange.StartTime.LocalTime.ToString("s") & "; " &
         "EndTime " & timeRange.EndTime.LocalTime.ToString("s") & "; " &
-        "numberOfValues " & numberOfValues.ToString)
+        "numberOfValues " & numberOfValues.ToString, Entity)
 
       InterpolatedValuesByCount = New AFValues
       If timeRange.StartTime = timeRange.EndTime Or numberOfValues = 1 Then
@@ -1006,7 +1009,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
 
       DBM.Logger.LogTrace(
-        "Return " & InterpolatedValuesByCount.Count.ToString & " values")
+        "Return " & InterpolatedValuesByCount.Count.ToString & " values",
+        Entity)
       Return InterpolatedValuesByCount
 
     End Function
