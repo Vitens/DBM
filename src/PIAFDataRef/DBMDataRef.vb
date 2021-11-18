@@ -846,17 +846,29 @@ Namespace Vitens.DynamicBandwidthMonitor
                 Timestamp.LocalTime <= Results.Item(iD).Timestamp) OrElse
                 RawValues.Item(iR).Timestamp.LocalTime >=
                 Results.Item(Results.Count-1).Timestamp)
-                If RawValues.Item(iR).IsGood Then ' Only include good values
-                  ' Create a copy of the value, so that it's attribute is not
-                  ' linked to an attribute that might not support annotations.
-                  GetValues.Add(New AFValue(
-                    RawValues.Item(iR).Value, RawValues.Item(iR).Timestamp))
-                  ' Mark events (exceeding Minimum and Maximum control limits)
-                  ' as questionable.
-                  GetValues.Item(GetValues.Count-1).Questionable =
-                    Abs(.ForecastItem.Measurement-.ForecastItem.Forecast) >
-                    .ForecastItem.Range(pValueMinMax)
-                End If
+                ' Only append good raw values with a timestamp after the last
+                ' appended value (if any) to prevent out of sequence data
+                ' events.
+                If GetValues.Count = 0 OrElse
+                  RawValues.Item(iR).Timestamp.LocalTime >
+                  GetValues.Item(GetValues.Count-1).Timestamp.LocalTime Then
+                  If RawValues.Item(iR).IsGood Then ' Only include good values
+                    ' Create a copy of the value, so that it's attribute is not
+                    ' linked to an attribute that might not support annotations.
+                    GetValues.Add(New AFValue(
+                      RawValues.Item(iR).Value, RawValues.Item(iR).Timestamp))
+                    ' Mark events (exceeding Minimum and Maximum control limits)
+                    ' as questionable.
+                    GetValues.Item(GetValues.Count-1).Questionable =
+                      Abs(.ForecastItem.Measurement-.ForecastItem.Forecast) >
+                      .ForecastItem.Range(pValueMinMax)
+                  End If
+                Else
+                  DBM.Logger.LogWarning("Out of sequence data event, " &
+                    RawValues.Item(iR).Timestamp.LocalTime.ToString("s") &
+                    " not after " & GetValues.Item(GetValues.Count-1).
+                    Timestamp.LocalTime.ToString("s"), Attribute.GetPath)
+                End
                 iR += 1 ' Move iterator to next raw value.
               Loop
 
