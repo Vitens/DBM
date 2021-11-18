@@ -868,7 +868,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                     RawValues.Item(iR).Timestamp.LocalTime.ToString("s") &
                     " not after " & GetValues.Item(GetValues.Count-1).
                     Timestamp.LocalTime.ToString("s"), Attribute.GetPath)
-                End
+                End If
                 iR += 1 ' Move iterator to next raw value.
               Loop
 
