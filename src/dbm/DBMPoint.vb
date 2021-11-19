@@ -91,6 +91,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         Result = New DBMResult
         Result.Timestamp = PreviousInterval(StartTimestamp)
+        Result.Timestamp.Kind = DateTimeKind.Local
         Result.IsFutureData = Result.Timestamp > SnapshotTimestamp
 
         For CorrelationCounter = 0 To CorrelationPreviousPeriods ' Corr. loop.
