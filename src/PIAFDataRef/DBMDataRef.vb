@@ -809,6 +809,9 @@ Namespace Vitens.DynamicBandwidthMonitor
               '       exact same timestamp as this result.
               '  4) If the timestamp is past the raw snapshot timestamp. This
               '       appends forecast values to the future.
+              DBM.Logger.LogTrace(
+                "Result " & iD.ToString & " " & .Timestamp.ToString("s"),
+                Attribute.GetPath)
               If RawValues.Count = 0 OrElse
                 Not RawValues.Item(Max(0, iR-1)).IsGood OrElse
                 .Timestamp > RawSnapshot Then
@@ -846,6 +849,10 @@ Namespace Vitens.DynamicBandwidthMonitor
                 Timestamp.LocalTime <= Results.Item(iD).Timestamp) OrElse
                 RawValues.Item(iR).Timestamp.LocalTime >=
                 Results.Item(Results.Count-1).Timestamp)
+                DBM.Logger.LogTrace(
+                  "Raw value " & iR.ToString & " " &
+                  RawValues.Item(iR).Timestamp.LocalTime.ToString("s"),
+                  Attribute.GetPath)
                 ' Only append good raw values with a timestamp after the last
                 ' appended value (if any) to prevent out of sequence data
                 ' events.
