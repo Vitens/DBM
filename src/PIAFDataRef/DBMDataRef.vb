@@ -835,7 +835,6 @@ Namespace Vitens.DynamicBandwidthMonitor
                     .Timestamp > RawSnapshot
                 End If
               End If
-              iD += 1 ' Move iterator to next DBM result.
 
               ' Include valid raw values. Raw values are appended while there
               ' are still values available before or on the raw snapshot
@@ -847,8 +846,8 @@ Namespace Vitens.DynamicBandwidthMonitor
               '       This includes all remaining values after the last result.
               Do While iR < RawValues.Count AndAlso
                 RawValues.Item(iR).Timestamp.LocalTime <= RawSnapshot AndAlso
-                ((iD < Results.Count AndAlso RawValues.Item(iR).
-                Timestamp.LocalTime <= Results.Item(iD).Timestamp) OrElse
+                ((iD+1 < Results.Count AndAlso RawValues.Item(iR).
+                Timestamp.LocalTime <= Results.Item(iD+1).Timestamp) OrElse
                 RawValues.Item(iR).Timestamp.LocalTime >=
                 Results.Item(Results.Count-1).Timestamp)
                 DBM.Logger.LogTrace(
@@ -923,6 +922,8 @@ Namespace Vitens.DynamicBandwidthMonitor
           End If
 
         End With
+
+        iD += 1 ' Move iterator to next DBM result.
 
       Next Result
 
