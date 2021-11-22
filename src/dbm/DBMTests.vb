@@ -1328,7 +1328,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' GetResults Count - test number of results
       AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0),
-        New DateTime(2016, 1, 1, 0, 0, 0)).Count, 0)
+        New DateTime(2016, 1, 1, 0, 0, 0)).Count, 1)
       AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 1, 0, 5, 0)).Count, 1)
@@ -1385,7 +1385,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2016, 1, 2, 0, 0, 0), 289).Count, 288)
       AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0),
-        New DateTime(2016, 1, 1, 0, 0, 0), 1000).Count, 0)
+        New DateTime(2016, 1, 1, 0, 0, 0), 1000).Count, 1)
 
       ' GetResults Timestamp - test intervals
       For i = 0 To 4
