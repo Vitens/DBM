@@ -389,8 +389,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       DBM.Logger.LogDebug(
         "Timestamp " & Timestamp.ToString("s"), Attribute.GetPath)
       GetValue = GetValues(Nothing, New AFTimeRange(New AFTime(Timestamp),
-        New AFTime(Timestamp.AddSeconds(CalculationInterval))), 1,
-        Nothing, Nothing)(0) ' Request a single value
+        New AFTime(Timestamp)), 1, Nothing, Nothing)(0) ' Request a single value
       DBM.Logger.LogTrace("Return value", Attribute.GetPath)
       Return GetValue
 
