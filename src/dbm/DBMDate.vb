@@ -58,7 +58,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function IsOnInterval(Timestamp As DateTime) As Boolean
 
-      Return Timestamp.Ticks Mod CalculationInterval*TicksPerSecond = 0
+      Return Timestamp.Equals(PreviousInterval(Timestamp))
 
     End Function
 
