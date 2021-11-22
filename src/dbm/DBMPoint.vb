@@ -76,14 +76,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Align timestamps and determine interval.
       StartTimestamp = PreviousInterval(StartTimestamp)
-      EndTimestamp = PreviousInterval(EndTimestamp)
-      If StartTimestamp.Equals(EndTimestamp) Then
-        ' If the previous intervals for the start and end timestamp are equal,
-        ' then add one interval to the end timestamp, so that a single value for
-        ' the start timestamp - which is valid for the entire interval in which
-        ' both timestamps are contained - is returned.
-        EndTimestamp = NextInterval(EndTimestamp)
-      End If
+      EndTimestamp = NextInterval(EndTimestamp)
       TimeRangeInterval = IntervalSeconds(NumberOfValues,
         (EndTimestamp-StartTimestamp).TotalSeconds)
 
