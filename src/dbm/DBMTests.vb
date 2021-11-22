@@ -1330,6 +1330,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 1, 0, 0, 0)).Count, 1)
       AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        New DateTime(2016, 1, 1, 0, 2, 12),
+        New DateTime(2016, 1, 1, 0, 4, 48)).Count, 1)
+      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 1, 0, 5, 0)).Count, 1)
       AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
@@ -1362,9 +1365,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 2, 0, 0, 0), 1).Count, 1)
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
-        New DateTime(2016, 1, 1, 0, 0, 0),
-        New DateTime(2016, 1, 2, 0, 0, 0), 13).Count, 13)
       AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 2, 0, 0, 0), 24).Count, 24)
