@@ -131,8 +131,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         StartTimestamp > DateTime.MinValue Then
 
         If EndTimestamp = DateTime.MinValue Then
-          ' No end timestamp, set one interval after start timestamp.
-          EndTimestamp = NextInterval(StartTimestamp)
+          ' No end timestamp, use start timestamp.
+          EndTimestamp = StartTimestamp
         End If
 
         ' Header
