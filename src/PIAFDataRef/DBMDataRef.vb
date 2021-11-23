@@ -912,6 +912,27 @@ Namespace Vitens.DynamicBandwidthMonitor
         Annotate(GetValues.Item(0), Statistics(Results).Brief)
       End If
 
+      ' Perform linear interpolation if the first value is before the start
+      ' timestamp, or the last value is after the end timestamp.
+      If GetValues.Item(0).Timestamp < timeRange.StartTime Then
+        GetValues.Item(0).Value =
+          LinearInterpolation(timeRange.StartTime.LocalTime,
+          GetValues.Item(0).Timestamp.LocalTime, GetValues.Item(0).Value,
+          GetValues.Item(1).Timestamp.LocalTime, GetValues.Item(1).Value,
+          [Step])
+        GetValues.Item(0).Timestamp = timeRange.StartTime
+      End If
+      If GetValues.Item(GetValues.Count-1).Timestamp > timeRange.EndTime Then
+        GetValues.Item(GetValues.Count-1).Value =
+          LinearInterpolation(timeRange.EndTime.LocalTime,
+          GetValues.Item(GetValues.Count-2).Timestamp.LocalTime,
+          GetValues.Item(GetValues.Count-2).Value,
+          GetValues.Item(GetValues.Count-1).Timestamp.LocalTime,
+          GetValues.Item(GetValues.Count-1).Value,
+          [Step])
+        GetValues.Item(GetValues.Count-1).Timestamp = timeRange.EndTime
+      End If
+
       ' Returns the collection of values for the attribute sorted in increasing
       ' time order.
       DBM.Logger.LogTrace(
