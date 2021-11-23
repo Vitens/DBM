@@ -77,9 +77,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Align timestamps and determine interval.
       StartTimestamp = PreviousInterval(StartTimestamp)
       If Not IsOnInterval(EndTimestamp) Then
-        ' Add an extra interval if the end timestamp is not exactly on an
-        ' interval. This is useful for interpolating non-stepped data to the end
-        ' if the interval.
+        ' Add one extra interval if the end timestamp is not exactly on an
+        ' interval boundary. This is required for linear interpolation of
+        ' non-stepped data to the end of the interval.
         EndTimestamp = NextInterval(EndTimestamp)
       End If
       EndTimestamp = NextInterval(EndTimestamp)

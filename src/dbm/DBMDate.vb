@@ -58,6 +58,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function IsOnInterval(Timestamp As DateTime) As Boolean
 
+      ' Returns true if the end timestamp is exactly on an interval boundary.
+
       Return Timestamp.Equals(PreviousInterval(Timestamp))
 
     End Function
