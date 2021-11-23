@@ -917,8 +917,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       If GetValues.Item(0).Timestamp < timeRange.StartTime Then
         GetValues.Item(0).Value =
           LinearInterpolation(timeRange.StartTime.LocalTime,
-          GetValues.Item(0).Timestamp.LocalTime, GetValues.Item(0).Value,
-          GetValues.Item(1).Timestamp.LocalTime, GetValues.Item(1).Value,
+          GetValues.Item(0).Timestamp.LocalTime,
+          Convert.ToDouble(GetValues.Item(0).Value),
+          GetValues.Item(1).Timestamp.LocalTime,
+          Convert.ToDouble(GetValues.Item(1).Value),
           [Step])
         GetValues.Item(0).Timestamp = timeRange.StartTime
       End If
@@ -926,9 +928,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         GetValues.Item(GetValues.Count-1).Value =
           LinearInterpolation(timeRange.EndTime.LocalTime,
           GetValues.Item(GetValues.Count-2).Timestamp.LocalTime,
-          GetValues.Item(GetValues.Count-2).Value,
+          Convert.ToDouble(GetValues.Item(GetValues.Count-2).Value),
           GetValues.Item(GetValues.Count-1).Timestamp.LocalTime,
-          GetValues.Item(GetValues.Count-1).Value,
+          Convert.ToDouble(GetValues.Item(GetValues.Count-1).Value),
           [Step])
         GetValues.Item(GetValues.Count-1).Timestamp = timeRange.EndTime
       End If
