@@ -63,8 +63,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       If Stepped Then
         Return StartValue
       Else
-        Return StartValue+(Timestamp-StartTimestamp)/
-          (EndTimestamp-StartTimestamp)*(EndValue-StartValue)
+        Return StartValue+(Timestamp.Ticks-StartTimestamp.Ticks)/
+          (EndTimestamp.Ticks-StartTimestamp.Ticks)*(EndValue-StartValue)
       End If
 
     End Function
