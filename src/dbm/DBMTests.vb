@@ -1129,6 +1129,37 @@ Namespace Vitens.DynamicBandwidthMonitor
         New DateTime(2021, 4, 2, 19, 25, 36),
         New DateTime(2021, 4, 2, 19, 35, 35)), 0.6175)
 
+      AssertEqual(LinearInterpolation(New DateTime(2016, 1, 1, 0, 0, 0),
+        New DateTime(2016, 1, 1, 0, 0, 0), 100,
+        New DateTime(2016, 1, 1, 1, 0, 0), 200), 100)
+      AssertEqual(LinearInterpolation(New DateTime(2016, 1, 1, 0, 30, 0),
+        New DateTime(2016, 1, 1, 0, 0, 0), 100,
+        New DateTime(2016, 1, 1, 1, 0, 0), 200), 100)
+      AssertEqual(LinearInterpolation(New DateTime(2016, 1, 1, 0, 30, 0),
+        New DateTime(2016, 1, 1, 0, 0, 0), 100,
+        New DateTime(2016, 1, 1, 1, 0, 0), 200, True), 100)
+      AssertEqual(LinearInterpolation(New DateTime(2016, 1, 1, 0, 30, 0),
+        New DateTime(2016, 1, 1, 0, 0, 0), 100,
+        New DateTime(2016, 1, 1, 1, 0, 0), 200, False), 150)
+      AssertEqual(LinearInterpolation(New DateTime(2016, 1, 1, 1, 0, 0),
+        New DateTime(2016, 1, 1, 0, 0, 0), 100,
+        New DateTime(2016, 1, 1, 1, 0, 0), 200, True), 100)
+      AssertEqual(LinearInterpolation(New DateTime(2016, 1, 1, 1, 0, 0),
+        New DateTime(2016, 1, 1, 0, 0, 0), 100,
+        New DateTime(2016, 1, 1, 1, 0, 0), 200, False), 200)
+      AssertEqual(LinearInterpolation(New DateTime(2016, 1, 1, 0, 15, 0),
+        New DateTime(2016, 1, 1, 0, 0, 0), 100,
+        New DateTime(2016, 1, 1, 1, 0, 0), 200, False), 125)
+      AssertEqual(LinearInterpolation(New DateTime(2016, 1, 1, 0, 45, 0),
+        New DateTime(2016, 1, 1, 0, 0, 0), 100,
+        New DateTime(2016, 1, 1, 1, 0, 0), 200, False), 175)
+      AssertEqual(LinearInterpolation(New DateTime(2016, 1, 1, 2, 0, 0),
+        New DateTime(2016, 1, 1, 0, 0, 0), 100,
+        New DateTime(2016, 1, 1, 1, 0, 0), 200, False), 300)
+      AssertEqual(LinearInterpolation(New DateTime(2016, 1, 1, 2, 0, 0),
+        New DateTime(2016, 1, 1, 0, 0, 0), 100,
+        New DateTime(2016, 1, 1, 1, 0, 0), 200), 100)
+
       ' DBMStatistics
       For i = 0 To 19
         With {

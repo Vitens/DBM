@@ -55,6 +55,21 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Shared Function LinearInterpolation(Timestamp As DateTime,
+      StartTimestamp As DateTime, StartValue As Double,
+      EndTimestamp As DateTime, EndValue As Double,
+      Optional Stepped As Boolean = True) As Double
+
+      If Stepped Then
+        Return StartValue
+      Else
+        Return StartValue+(Timestamp-StartTimestamp)/
+          (EndTimestamp-StartTimestamp)*(EndValue-StartValue)
+      End If
+
+    End Function
+
+
   End Class
 
 
