@@ -915,23 +915,27 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Perform linear interpolation if the first value is before the start
       ' timestamp, or the last value is after the end timestamp.
       If GetValues.Item(0).Timestamp < timeRange.StartTime Then
-        GetValues.Item(0).Value =
-          LinearInterpolation(timeRange.StartTime.LocalTime,
-          GetValues.Item(0).Timestamp.LocalTime,
-          Convert.ToDouble(GetValues.Item(0).Value),
-          GetValues.Item(1).Timestamp.LocalTime,
-          Convert.ToDouble(GetValues.Item(1).Value),
-          [Step])
+        If GetValues.Count > 1 Then
+          GetValues.Item(0).Value =
+            LinearInterpolation(timeRange.StartTime.LocalTime,
+            GetValues.Item(0).Timestamp.LocalTime,
+            Convert.ToDouble(GetValues.Item(0).Value),
+            GetValues.Item(1).Timestamp.LocalTime,
+            Convert.ToDouble(GetValues.Item(1).Value),
+            [Step])
+        End If
         GetValues.Item(0).Timestamp = timeRange.StartTime
       End If
       If GetValues.Item(GetValues.Count-1).Timestamp > timeRange.EndTime Then
-        GetValues.Item(GetValues.Count-1).Value =
-          LinearInterpolation(timeRange.EndTime.LocalTime,
-          GetValues.Item(GetValues.Count-2).Timestamp.LocalTime,
-          Convert.ToDouble(GetValues.Item(GetValues.Count-2).Value),
-          GetValues.Item(GetValues.Count-1).Timestamp.LocalTime,
-          Convert.ToDouble(GetValues.Item(GetValues.Count-1).Value),
-          [Step])
+        If GetValues.Count > 1 Then
+          GetValues.Item(GetValues.Count-1).Value =
+            LinearInterpolation(timeRange.EndTime.LocalTime,
+            GetValues.Item(GetValues.Count-2).Timestamp.LocalTime,
+            Convert.ToDouble(GetValues.Item(GetValues.Count-2).Value),
+            GetValues.Item(GetValues.Count-1).Timestamp.LocalTime,
+            Convert.ToDouble(GetValues.Item(GetValues.Count-1).Value),
+            [Step])
+        End If
         GetValues.Item(GetValues.Count-1).Timestamp = timeRange.EndTime
       End If
 
