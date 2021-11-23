@@ -766,14 +766,6 @@ Namespace Vitens.DynamicBandwidthMonitor
           DBM.Logger.LogTrace(
             "Retrieved " & RawValues.Count.ToString & " raw values",
             Attribute.GetPath)
-          ' If there are no DBM results to iterate over, and there are raw
-          ' values for this time range, return the raw values directly.
-          If Results.Count = 0 And RawValues.Count > 0 Then
-            DBM.Logger.LogTrace(
-              "Return " & RawValues.Count.ToString & " raw values",
-              Attribute.GetPath)
-            Return RawValues
-          End If
         Else
           RawValues = New AFValues ' Future data, no raw values.
         End If
@@ -912,17 +904,12 @@ Namespace Vitens.DynamicBandwidthMonitor
         Return GetValues
       End If
 
-      If GetValues.Count > 1 And
-        Not numberOfValues = 1 And
-        Attribute.Trait Is LimitTarget Then
-
-        ' De-flatline
+      ' For the Target values, if there are more than two results, check for and
+      ' remove flatlines, and annotate the first value with model calibration
+      ' metrics.
+      If Attribute.Trait Is LimitTarget And Results.Count > 2 Then
         GetValues = Deflatline(GetValues, Results, [Step])
-
-        ' If there is more than one value, annotate the first value in the
-        ' Target values with model calibration metrics.
         Annotate(GetValues.Item(0), Statistics(Results).Brief)
-
       End If
 
       ' Returns the collection of values for the attribute sorted in increasing
