@@ -626,6 +626,27 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertAlmostEqual(SlopeToAngle(-1.6831), -59.2837)
       AssertAlmostEqual(SlopeToAngle(-2.0031), -63.4704)
 
+      AssertEqual(Lerp(78.18, 113.41, 0), 78.18)
+      AssertEqual(Lerp(92.64, 147.29, 0), 92.64)
+      AssertEqual(Lerp(86.31, 144.34, 0), 86.31)
+      AssertEqual(Lerp(75.26, 171.59, 0.93), 164.8469)
+      AssertEqual(Lerp(71.69, 99.25, 0.19), 76.9264)
+      AssertEqual(Lerp(45.89, 136.07, 0.08), 53.1044)
+      AssertEqual(Lerp(34.04, 117.75, 0.76), 97.6596)
+      AssertEqual(Lerp(71.79, 81.12, 0.75), 78.7875)
+      AssertEqual(Lerp(56.86, 108.88, 0.85), 101.077)
+      AssertEqual(Lerp(20.97, 21.8, 0.42), 21.3186)
+      AssertEqual(Lerp(37.58, 92.05, 0.86), 84.4242)
+      AssertEqual(Lerp(15.75, 70.04, 0.94), 66.7826)
+      AssertEqual(Lerp(30.32, 53.71, 0.48), 41.5472)
+      AssertEqual(Lerp(46.9, 94.51, 0.96), 92.6056)
+      AssertEqual(Lerp(29.98, 69.19, 0.28), 40.9588)
+      AssertEqual(Lerp(75.31, 116.31, 0.55), 97.86)
+      AssertEqual(Lerp(62.46, 156.19, 0.7), 128.071)
+      AssertEqual(Lerp(35.36, 91.4, 1), 91.4)
+      AssertEqual(Lerp(54.05, 122.81, 1), 122.81)
+      AssertEqual(Lerp(63.57, 105.8, 1), 105.8)
+
       ' DBMDate
       AssertEqual(PreviousInterval(
         New DateTime(2016, 4, 4, 16, 33, 2)),
