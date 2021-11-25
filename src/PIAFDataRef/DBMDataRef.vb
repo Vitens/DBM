@@ -815,8 +815,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
               ' Augment raw values with forecast. This is done if any of four
               ' conditions is true:
-              '  1) There are no raw values for the time period. Since there are
-              '       no values, the best we can do is return the forecast.
+              '  1) There are no raw values for the time period, or the start
+              '       timestamp is past the raw snapshot timestamp. Since there
+              '       are no values, the best we can do is return the forecast.
               '  2) For the first raw value, if this value is not good. The
               '       forecast is returned because either this value is before
               '       this result, or there are no values before this value.
@@ -826,7 +827,8 @@ Namespace Vitens.DynamicBandwidthMonitor
               '       exact same timestamp as this result.
               '  4) If the timestamp is past the raw snapshot timestamp. This
               '       appends forecast values to the future.
-              If RawValues.Count = 0 OrElse
+              If (RawValues.Count = 0 Or
+                timeRange.StartTime.LocalTime > RawSnapshot) OrElse
                 Not RawValues.Item(Max(0, iR-1)).IsGood OrElse
                 .Timestamp > RawSnapshot Then
                 If IsNaN(.ForecastItem.Forecast) Then
