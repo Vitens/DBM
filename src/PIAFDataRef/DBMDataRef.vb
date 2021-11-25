@@ -764,6 +764,9 @@ Namespace Vitens.DynamicBandwidthMonitor
           Attribute.GetPath)
       Next
 
+      DBM.Logger.LogTrace(
+        "Calculated " & Results.Count.ToString & " results", Attribute.GetPath)
+
       ' Retrieve raw snapshot timestamp and raw values for Target trait. Only
       ' retrieve values if the start timestamp for this time range is before the
       ' next interval after the snapshot timestamp.
