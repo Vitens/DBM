@@ -763,6 +763,16 @@ Namespace Vitens.DynamicBandwidthMonitor
         If timeRange.StartTime.LocalTime < NextInterval(RawSnapshot) Then
           RawValues = Attribute.Parent.
             GetValues(timeRange, numberOfValues, Nothing)
+
+          ' TEMP LOG
+          For Each v As AFValue In RawValues
+            DBM.Logger.LogTrace(
+              "### Raw value " &
+              v.Timestamp.LocalTime.ToString("s") & " " &
+              Convert.ToDouble(v.Value).ToString,
+              Attribute.GetPath)
+          Next
+
           DBM.Logger.LogTrace(
             "Retrieved " & RawValues.Count.ToString & " raw values",
             Attribute.GetPath)
@@ -939,9 +949,10 @@ Namespace Vitens.DynamicBandwidthMonitor
         GetValues.Item(GetValues.Count-1).Timestamp = timeRange.EndTime
       End If
 
+      ' TEMP LOG
       For Each v As AFValue In GetValues
         DBM.Logger.LogTrace(
-          "Return value " &
+          "### Return value " &
           v.Timestamp.LocalTime.ToString("s") & " " &
           Convert.ToDouble(v.Value).ToString & " " &
           v.Substituted.ToString,
