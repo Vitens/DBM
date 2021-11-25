@@ -755,6 +755,15 @@ Namespace Vitens.DynamicBandwidthMonitor
         timeRange.StartTime.LocalTime, timeRange.EndTime.LocalTime,
         numberOfValues)
 
+      ' TEMP LOG
+      For Each v As DBMResult In Results
+        DBM.Logger.LogTrace(
+          "### DBM value " &
+          v.Timestamp.ToString("s") & " " &
+          v.ForecastItem.Forecast.ToString,
+          Attribute.GetPath)
+      Next
+
       ' Retrieve raw snapshot timestamp and raw values for Target trait. Only
       ' retrieve values if the start timestamp for this time range is before the
       ' next interval after the snapshot timestamp.
