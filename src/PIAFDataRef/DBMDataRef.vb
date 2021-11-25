@@ -939,6 +939,15 @@ Namespace Vitens.DynamicBandwidthMonitor
         GetValues.Item(GetValues.Count-1).Timestamp = timeRange.EndTime
       End If
 
+      For Each v As AFValue In GetValues
+        DBM.Logger.LogTrace(
+          "Return value " &
+          v.Timestamp.LocalTime.ToString("s") & " " &
+          Convert.ToDouble(v.Value).ToString & " " &
+          v.Substituted.ToString,
+          Attribute.GetPath)
+      Next
+
       ' Returns the collection of values for the attribute sorted in increasing
       ' time order.
       DBM.Logger.LogTrace(
