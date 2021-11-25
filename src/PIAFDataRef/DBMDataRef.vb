@@ -912,17 +912,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         Annotate(GetValues.Item(0), Statistics(Results).Brief)
       End If
 
-      ' Remove any outside values with duplicate timestamp and perform linear
-      ' interpolation if the first value is before the start timestamp, or the
-      ' last value is after the end timestamp.
-      If GetValues.Count > 1 Then
-        If GetValues.Item(1).Timestamp = timeRange.StartTime Then
-          GetValues.RemoveAt(0)
-        End If
-        If GetValues.Item(GetValues.Count-2).Timestamp = timeRange.EndTime Then
-          GetValues.RemoveAt(GetValues.Count-1)
-        End If
-      End If
+      ' Perform linear interpolation if the first value is before the start
+      ' timestamp, or the last value is after the end timestamp.
       If GetValues.Item(0).Timestamp < timeRange.StartTime Then
         If GetValues.Count > 1 Then
           GetValues.Item(0).Value =
