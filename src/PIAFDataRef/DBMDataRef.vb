@@ -754,16 +754,6 @@ Namespace Vitens.DynamicBandwidthMonitor
       Results = DBM.GetResults(InputPointDriver, CorrelationPoints,
         timeRange.StartTime.LocalTime, timeRange.EndTime.LocalTime,
         numberOfValues)
-
-      ' TEMP LOG
-      For Each v As DBMResult In Results
-        DBM.Logger.LogTrace(
-          "### DBM value " &
-          v.Timestamp.ToString("s") & " " &
-          v.ForecastItem.Forecast.ToString,
-          Attribute.GetPath)
-      Next
-
       DBM.Logger.LogTrace(
         "Calculated " & Results.Count.ToString & " results", Attribute.GetPath)
 
@@ -778,16 +768,6 @@ Namespace Vitens.DynamicBandwidthMonitor
         If timeRange.StartTime.LocalTime < NextInterval(RawSnapshot) Then
           RawValues = Attribute.Parent.
             GetValues(timeRange, numberOfValues, Nothing)
-
-          ' TEMP LOG
-          For Each v As AFValue In RawValues
-            DBM.Logger.LogTrace(
-              "### Raw value " &
-              v.Timestamp.LocalTime.ToString("s") & " " &
-              Convert.ToDouble(v.Value).ToString,
-              Attribute.GetPath)
-          Next
-
           DBM.Logger.LogTrace(
             "Retrieved " & RawValues.Count.ToString & " raw values",
             Attribute.GetPath)
@@ -965,16 +945,6 @@ Namespace Vitens.DynamicBandwidthMonitor
         End If
         GetValues.Item(GetValues.Count-1).Timestamp = timeRange.EndTime
       End If
-
-      ' TEMP LOG
-      For Each v As AFValue In GetValues
-        DBM.Logger.LogTrace(
-          "### Return value " &
-          v.Timestamp.LocalTime.ToString("s") & " " &
-          Convert.ToDouble(v.Value).ToString & " " &
-          v.Substituted.ToString,
-          Attribute.GetPath)
-      Next
 
       ' Returns the collection of values for the attribute sorted in increasing
       ' time order.
