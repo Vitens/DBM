@@ -24,6 +24,7 @@ Option Strict
 
 Imports System
 Imports System.Double
+Imports Vitens.DynamicBandwidthMonitor.DBMMath
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -63,8 +64,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       If Stepped Then
         Return StartValue
       Else
-        Return StartValue+(Timestamp.Ticks-StartTimestamp.Ticks)/
-          (EndTimestamp.Ticks-StartTimestamp.Ticks)*(EndValue-StartValue)
+        Return Lerp(StartValue, EndValue,
+          (Timestamp.Ticks-StartTimestamp.Ticks)/
+          (EndTimestamp.Ticks-StartTimestamp.Ticks))
       End If
 
     End Function

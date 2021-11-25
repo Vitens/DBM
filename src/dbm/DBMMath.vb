@@ -441,6 +441,26 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
+    Public Shared Function Lerp(v0 As Double, v1 As Double,
+      t As Double) As Double
+
+      ' In mathematics, linear interpolation is a method of curve fitting using
+      ' linear polynomials to construct new data points within the range of a
+      ' discrete set of known data points.
+
+      ' Imprecise method, which does not guarantee v = v1 when t = 1, due to
+      ' floating-point arithmetic error. This method is monotonic. This form may
+      ' be used when the hardware has a native fused multiply-add instruction.
+      'Return v0+t*(v1-v0)
+
+      ' Precise method, which guarantees v = v1 when t = 1. This method is
+      ' monotonic only when v0 * v1 < 0. Lerping between same values might not
+      ' produce the same value
+      Return (1-t)*v0+t*v1
+
+    End Function
+
+
   End Class
 
 
