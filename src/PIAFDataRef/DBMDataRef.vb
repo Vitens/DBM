@@ -758,8 +758,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         "Calculated " & Results.Count.ToString & " results", Attribute.GetPath)
 
       ' Retrieve raw snapshot timestamp and raw values for Target trait. Only
-      ' retrieve values if the start timestamp for this time range is before the
-      ' next interval after the snapshot timestamp.
+      ' retrieve values if the start timestamp for this time range is on or
+      ' before the snapshot timestamp.
       If Attribute.Trait Is LimitTarget Then
         RawSnapshot = InputPointDriver.SnapshotTimestamp
         If timeRange.StartTime.LocalTime <= RawSnapshot Then
