@@ -908,14 +908,6 @@ Namespace Vitens.DynamicBandwidthMonitor
         Return GetValues
       End If
 
-      ' For the Target values, if there are more than two results, check for and
-      ' remove flatlines, and annotate the first value with model calibration
-      ' metrics.
-      If Attribute.Trait Is LimitTarget And Results.Count > 2 Then
-        GetValues = Deflatline(GetValues, Results, [Step])
-        Annotate(GetValues.Item(0), Statistics(Results).Brief)
-      End If
-
       ' Perform linear interpolation if the first value is before the start
       ' timestamp, or the last value is after the end timestamp.
       If GetValues.Item(0).Timestamp < timeRange.StartTime Then
@@ -941,6 +933,14 @@ Namespace Vitens.DynamicBandwidthMonitor
             [Step])
         End If
         GetValues.Item(GetValues.Count-1).Timestamp = timeRange.EndTime
+      End If
+
+      ' For the Target values, if there are more than two results, check for and
+      ' remove flatlines, and annotate the first value with model calibration
+      ' metrics.
+      If Attribute.Trait Is LimitTarget And Results.Count > 2 Then
+        GetValues = Deflatline(GetValues, Results, [Step])
+        Annotate(GetValues.Item(0), Statistics(Results).Brief)
       End If
 
       ' Returns the collection of values for the attribute sorted in increasing
