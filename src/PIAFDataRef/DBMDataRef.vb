@@ -933,6 +933,13 @@ Namespace Vitens.DynamicBandwidthMonitor
         End If
         GetValues.Item(GetValues.Count-1).Timestamp = timeRange.EndTime
       End If
+<<<<<<< HEAD
+=======
+
+      If GetValues.Count > 1 And
+        Not numberOfValues = 1 And
+        Attribute.Trait Is LimitTarget Then
+>>>>>>> master
 
       ' For the Target values, if there are more than two results, check for and
       ' remove flatlines, and annotate the first value with model calibration
