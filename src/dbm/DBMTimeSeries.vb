@@ -24,6 +24,7 @@ Option Strict
 
 Imports System
 Imports System.Double
+Imports Vitens.DynamicBandwidthMonitor.DBMMath
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -51,6 +52,22 @@ Namespace Vitens.DynamicBandwidthMonitor
       TimeWeightedValue *= NextTimestamp.Subtract(Timestamp).TotalDays
 
       Return TimeWeightedValue
+
+    End Function
+
+
+    Public Shared Function LinearInterpolation(Timestamp As DateTime,
+      StartTimestamp As DateTime, StartValue As Double,
+      EndTimestamp As DateTime, EndValue As Double,
+      Optional Stepped As Boolean = True) As Double
+
+      If Stepped Then
+        Return StartValue
+      Else
+        Return Lerp(StartValue, EndValue,
+          (Timestamp.Ticks-StartTimestamp.Ticks)/
+          (EndTimestamp.Ticks-StartTimestamp.Ticks))
+      End If
 
     End Function
 
