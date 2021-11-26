@@ -915,6 +915,34 @@ Namespace Vitens.DynamicBandwidthMonitor
         Return GetValues
       End If
 
+      ' Perform linear interpolation if the first (forecast) value is before the
+      ' start timestamp, or the last (forecast) value is after the end
+      ' timestamp.
+      If GetValues.Item(0).Timestamp < timeRange.StartTime Then
+        If GetValues.Count > 1 Then
+          GetValues.Item(0).Value =
+            LinearInterpolation(timeRange.StartTime.LocalTime,
+            GetValues.Item(0).Timestamp.LocalTime,
+            Convert.ToDouble(GetValues.Item(0).Value),
+            GetValues.Item(1).Timestamp.LocalTime,
+            Convert.ToDouble(GetValues.Item(1).Value),
+            [Step])
+        End If
+        GetValues.Item(0).Timestamp = timeRange.StartTime
+      End If
+      If GetValues.Item(GetValues.Count-1).Timestamp > timeRange.EndTime Then
+        If GetValues.Count > 1 Then
+          GetValues.Item(GetValues.Count-1).Value =
+            LinearInterpolation(timeRange.EndTime.LocalTime,
+            GetValues.Item(GetValues.Count-2).Timestamp.LocalTime,
+            Convert.ToDouble(GetValues.Item(GetValues.Count-2).Value),
+            GetValues.Item(GetValues.Count-1).Timestamp.LocalTime,
+            Convert.ToDouble(GetValues.Item(GetValues.Count-1).Value),
+            [Step])
+        End If
+        GetValues.Item(GetValues.Count-1).Timestamp = timeRange.EndTime
+      End If
+
       If GetValues.Count > 1 And
         Not numberOfValues = 1 And
         Attribute.Trait Is LimitTarget Then
