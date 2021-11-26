@@ -728,7 +728,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         DataStore.AddData(StartTimestamp,
           Lerp(HourlyTimeSeriesData(DataPoint),
           HourlyTimeSeriesData((DataPoint+1) Mod HourlyTimeSeriesData.Length),
-          1-Weight))
+          Weight))
 
         StartTimestamp =
           StartTimestamp.AddSeconds(CalculationInterval) ' Next interval.
