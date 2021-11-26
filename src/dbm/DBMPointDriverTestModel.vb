@@ -727,8 +727,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Interpolate between two data points using weight.
         DataStore.AddData(StartTimestamp,
           Lerp(HourlyTimeSeriesData(DataPoint),
-          HourlyTimeSeriesData(DataPoint+1), 1-Weight)
-          Mod HourlyTimeSeriesData.Length))
+          HourlyTimeSeriesData(DataPoint+1), Weight) Mod
+          HourlyTimeSeriesData.Length))
 
         StartTimestamp =
           StartTimestamp.AddSeconds(CalculationInterval) ' Next interval.
