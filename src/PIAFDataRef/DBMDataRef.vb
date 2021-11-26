@@ -793,8 +793,9 @@ Namespace Vitens.DynamicBandwidthMonitor
               ' The Target trait returns the original, valid raw measurements,
               ' augmented with forecast data for invalid and future data. Data
               ' quality is marked as Substituted for invalid data replaced by
-              ' forecast data, or Questionable for future forecast data or data
-              ' exceeding Minimum and Maximum control limits.
+              ' forecast values and for future forecast values, or as
+              ' Questionable for data exceeding Minimum and Maximum control
+              ' limits.
 
               ' Augment raw values with forecast. This is done if any of four
               ' conditions is true:
@@ -819,15 +820,10 @@ Namespace Vitens.DynamicBandwidthMonitor
                     AFSystemStateCode.InvalidData, New AFTime(.Timestamp)))
                 Else
                   ' Replace bad values with forecast, append forecast values to
-                  ' the future.
+                  ' the future. Mark as substituted.
                   GetValues.Add(New AFValue(
                     .ForecastItem.Forecast, New AFTime(.Timestamp)))
-                  ' Mark replaced (not good) values as substituted.
-                  GetValues.Item(GetValues.Count-1).Substituted =
-                    .Timestamp <= RawSnapshot
-                  ' Mark forecast values as questionable.
-                  GetValues.Item(GetValues.Count-1).Questionable =
-                    .Timestamp > RawSnapshot
+                  GetValues.Item(GetValues.Count-1).Substituted = True
                 End If
               End If
 

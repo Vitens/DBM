@@ -106,7 +106,7 @@ DBMDataRef is a custom OSIsoft PI Asset Framework data reference which integrate
 | `HiHi`         | Upper control limit (default)             | Indicates a very high measurement value or process output, typically an abnormal one that initiates an alarm. |
 | `Maximum`      | Upper control limit (p = 0.9999)          | Indicates the very highest possible measurement value or process output.                                      |
 
-The `Target` trait returns the original, valid raw measurements, augmented with forecast data for invalid and future data. Data quality is marked as `Substituted` for invalid data replaced by forecast data, or `Questionable` for future forecast data or data exceeding `Minimum` and `Maximum` control limits.
+The `Target` trait returns the original, valid raw measurements, augmented with forecast data for invalid and future data. Data quality is marked as `Substituted` for invalid data replaced by forecast values and for future forecast values, or as `Questionable` for data exceeding `Minimum` and `Maximum` control limits.
 ![Augmented](img/augmented.png)
 
 For the `Target` trait, DBM also detects and removes incorrect flatlines in the data and replaces them with forecast values, which are then weight adjusted to the original time range total. Data quality is marked as `Substituted` for this data.
