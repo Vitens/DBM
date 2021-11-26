@@ -906,8 +906,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         Return GetValues
       End If
 
-      ' Perform linear interpolation if the first value is before the start
-      ' timestamp, or the last value is after the end timestamp.
+      ' Perform linear interpolation if the first (forecast) value is before the
+      ' start timestamp, or the last (forecast) value is after the end
+      ' timestamp.
       If GetValues.Item(0).Timestamp < timeRange.StartTime Then
         If GetValues.Count > 1 Then
           GetValues.Item(0).Value =
