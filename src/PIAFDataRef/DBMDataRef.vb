@@ -87,6 +87,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     '             process output.
 
 
+    Const StaleDataMinutes As Integer = 10 ' Minutes until data is stale
     Const CategoryNoCorrelation As String = "NoCorrelation"
     Const pValueLoHi As Double = 0.95 ' Confidence interval for Lo and Hi
     Const pValueMinMax As Double = 0.9999 ' CI for Minimum and Maximum
@@ -377,7 +378,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' system state instead.
           If (Not SupportsFutureData Or Attribute.Trait Is LimitTarget) And
             Timestamp > SourceTimestamp And
-            Timestamp < SourceTimestamp.AddMinutes(10) Then
+            Timestamp < SourceTimestamp.AddMinutes(StaleDataMinutes) Then
             Timestamp = SourceTimestamp
           End If
 
@@ -801,11 +802,13 @@ Namespace Vitens.DynamicBandwidthMonitor
               '       is not good. While this value is not good, the forecast is
               '       returned. Note that the previous raw value can be on the
               '       exact same timestamp as this result.
-              '  4) If the timestamp is past the raw snapshot timestamp. This
-              '       appends forecast values to the future.
+              '  4) If the timestamp is past the raw snapshot timestamp and the
+              '       end timestamp at least 10 minutes after the raw snapshot
+              '       timestamp. This appends forecast values to the future.
               If RawValues.Count = 0 OrElse
                 Not RawValues.Item(Max(0, iR-1)).IsGood OrElse
-                .Timestamp > RawSnapshot Then
+                (.Timestamp > RawSnapshot And timeRange.EndTime.LocalTime >=
+                RawSnapshot.AddMinutes(StaleDataMinutes)) Then
                 If IsNaN(.ForecastItem.Forecast) Then
                   ' If there is no valid forecast result, return an InvalidData
                   ' state. Definition: 'Invalid Data state.'
