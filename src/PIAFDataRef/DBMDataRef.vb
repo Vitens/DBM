@@ -760,7 +760,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Retrieve raw snapshot timestamp and raw values for Target trait. Only
       ' retrieve values if the start timestamp for this time range is on or
-      ' before the snapshot timestamp.
+      ' before the snapshot timestamp, else retrieve the snapshot.
       If Attribute.Trait Is LimitTarget Then
         RawSnapshot = InputPointDriver.SnapshotTimestamp
         If timeRange.StartTime.LocalTime <= RawSnapshot Then
@@ -771,6 +771,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             Attribute.GetPath)
         Else
           RawValues = New AFValues ' Future data, no raw values.
+          RawValues.Add(Attribute.Parent.GetValue) ' Snapshot.
         End If
       End If
 
