@@ -760,7 +760,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Retrieve raw snapshot timestamp and raw values for Target trait. Only
       ' retrieve values if the start timestamp for this time range is on or
-      ' before the snapshot timestamp.
+      ' before the snapshot timestamp, else retrieve the snapshot for up to 10
+      ' minutes after.
       If Attribute.Trait Is LimitTarget Then
         RawSnapshot = InputPointDriver.SnapshotTimestamp
         If timeRange.StartTime.LocalTime <= RawSnapshot Then
@@ -771,6 +772,12 @@ Namespace Vitens.DynamicBandwidthMonitor
             Attribute.GetPath)
         Else
           RawValues = New AFValues ' Future data, no raw values.
+          If timeRange.StartTime.LocalTime <
+            RawSnapshot.AddMinutes(StaleDataMinutes) Then
+            RawValues.Add(Attribute.Parent.GetValue) ' Snapshot.
+            RawSnapshot = timeRange.StartTime.LocalTime
+            RawValues(0).Timestamp = New AFTime(RawSnapshot)
+          End If
         End If
       End If
 
@@ -807,7 +814,8 @@ Namespace Vitens.DynamicBandwidthMonitor
               '       timestamp. This appends forecast values to the future.
               If RawValues.Count = 0 OrElse
                 Not RawValues.Item(Max(0, iR-1)).IsGood OrElse
-                (.Timestamp > RawSnapshot And timeRange.EndTime.LocalTime >=
+                (.Timestamp > RawSnapshot And
+                timeRange.EndTime.LocalTime >=
                 RawSnapshot.AddMinutes(StaleDataMinutes)) Then
                 If IsNaN(.ForecastItem.Forecast) Then
                   ' If there is no valid forecast result, return an InvalidData
