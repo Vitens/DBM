@@ -772,6 +772,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         Else
           RawValues = New AFValues ' Future data, no raw values.
           RawValues.Add(Attribute.Parent.GetValue) ' Snapshot.
+          RawSnapshot = timeRange.StartTime.LocalTime
+          RawValues(0).Timestamp = New AFTime(RawSnapshot)
         End If
       End If
 
