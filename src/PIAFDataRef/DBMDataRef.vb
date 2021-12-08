@@ -765,6 +765,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' minutes after.
       If Attribute.Trait Is LimitTarget Then
         RawSnapshot = InputPointDriver.SnapshotTimestamp
+        ' The timerange should have forecast values appended after the raw
+        ' snapshot timestamp only if the end timestamp is at least 10 minutes
+        ' past the raw snapshot timestamp. This ensures that the snapshot value
+        ' stays valid until 10 minutes past it's timestamp.
         TimerangeContainsForecast = timeRange.EndTime.LocalTime >=
           RawSnapshot.AddMinutes(StaleDataMinutes)
         If timeRange.StartTime.LocalTime <= RawSnapshot Then
@@ -777,7 +781,11 @@ Namespace Vitens.DynamicBandwidthMonitor
           RawValues = New AFValues ' Future data, no raw values.
           If timeRange.StartTime.LocalTime <
             RawSnapshot.AddMinutes(StaleDataMinutes) Then
-            RawValues.Add(Attribute.Parent.GetValue) ' Snapshot.
+            ' If the start timestamp of the timerange is less than 10 minutes
+            ' after the raw snapshot timestamp, return the raw snapshot with
+            ' it's timestamp adjusted to the timerange start timestamp as it is
+            ' still valid during this period.
+            RawValues.Add(Attribute.Parent.GetValue)
             RawSnapshot = timeRange.StartTime.LocalTime
             RawValues(0).Timestamp = New AFTime(RawSnapshot)
           End If
