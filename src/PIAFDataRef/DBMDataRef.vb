@@ -87,7 +87,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     '             process output.
 
 
-    Const StaleDataMinutes As Integer = 10 ' Minutes until data is stale
+    Const StaleDataMinutes As Integer = 10 ' Minutes until snapshot is stale
     Const CategoryNoCorrelation As String = "NoCorrelation"
     Const pValueLoHi As Double = 0.95 ' Confidence interval for Lo and Hi
     Const pValueMinMax As Double = 0.9999 ' CI for Minimum and Maximum
@@ -681,7 +681,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim Results As List(Of DBMResult)
       Dim RawSnapshot As DateTime
-      Dim TimerangeContainsForecast As Boolean
+      Dim AppendForecast As Boolean
       Dim RawValues As AFValues = Nothing
       Dim Result As DBMResult
       Dim iR, iD As Integer ' Iterators for raw values and DBM results.
@@ -766,7 +766,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' snapshot timestamp only if the end timestamp is at least 10 minutes
         ' past the raw snapshot timestamp. This ensures that the raw snapshot
         ' value stays valid until 10 minutes past it's timestamp.
-        TimerangeContainsForecast = timeRange.EndTime.LocalTime >=
+        AppendForecast = timeRange.EndTime.LocalTime >=
           RawSnapshot.AddMinutes(StaleDataMinutes)
         If timeRange.StartTime.LocalTime <= RawSnapshot Then
           ' Retrieve raw values if the start timestamp for this time range is on
@@ -826,7 +826,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               '       timestamp. This appends forecast values to the future.
               If RawValues.Count = 0 OrElse
                 Not RawValues.Item(Max(0, iR-1)).IsGood OrElse
-                (.Timestamp > RawSnapshot And TimerangeContainsForecast) Then
+                (.Timestamp > RawSnapshot And AppendForecast) Then
                 If IsNaN(.ForecastItem.Forecast) Then
                   ' If there is no valid forecast result, return an InvalidData
                   ' state. Definition: 'Invalid Data state.'
