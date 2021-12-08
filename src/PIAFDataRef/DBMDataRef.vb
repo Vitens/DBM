@@ -765,7 +765,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' The timerange should have forecast values appended after the raw
         ' snapshot timestamp only if the end timestamp is at least 10 minutes
         ' past the raw snapshot timestamp. This ensures that the raw snapshot
-        ' value stays valid until 10 minutes past it's timestamp.
+        ' value stays valid up to 10 minutes past it's timestamp.
         AppendForecast = timeRange.EndTime.LocalTime >=
           RawSnapshot.AddMinutes(StaleDataMinutes)
         If timeRange.StartTime.LocalTime <= RawSnapshot Then
