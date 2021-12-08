@@ -681,10 +681,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim Results As List(Of DBMResult)
       Dim RawSnapshot As DateTime
+      Dim TimerangeContainsForecast As Boolean
       Dim RawValues As AFValues = Nothing
       Dim Result As DBMResult
       Dim iR, iD As Integer ' Iterators for raw values and DBM results.
-      Dim TimerangeContainsForecast As Boolean
 
       GetValues = New AFValues
 
@@ -759,26 +759,24 @@ Namespace Vitens.DynamicBandwidthMonitor
       DBM.Logger.LogTrace(
         "Calculated " & Results.Count.ToString & " results", Attribute.GetPath)
 
-      ' Retrieve raw snapshot timestamp and raw values for Target trait. Only
-      ' retrieve values if the start timestamp for this time range is on or
-      ' before the snapshot timestamp, else retrieve the snapshot for up to 10
-      ' minutes after.
+      ' Retrieve raw values for Target trait.
       If Attribute.Trait Is LimitTarget Then
         RawSnapshot = InputPointDriver.SnapshotTimestamp
         ' The timerange should have forecast values appended after the raw
         ' snapshot timestamp only if the end timestamp is at least 10 minutes
-        ' past the raw snapshot timestamp. This ensures that the snapshot value
-        ' stays valid until 10 minutes past it's timestamp.
+        ' past the raw snapshot timestamp. This ensures that the raw snapshot
+        ' value stays valid until 10 minutes past it's timestamp.
         TimerangeContainsForecast = timeRange.EndTime.LocalTime >=
           RawSnapshot.AddMinutes(StaleDataMinutes)
         If timeRange.StartTime.LocalTime <= RawSnapshot Then
+          ' Retrieve raw values if the start timestamp for this time range is on
+          ' or before the raw snapshot timestamp.
           RawValues = Attribute.Parent.
             GetValues(timeRange, numberOfValues, Nothing)
-          DBM.Logger.LogTrace(
-            "Retrieved " & RawValues.Count.ToString & " raw values",
-            Attribute.GetPath)
         Else
-          RawValues = New AFValues ' Future data, no raw values.
+          ' Start timestamp is after the raw snapshot timestamp. This is future
+          ' data, so there are no raw values.
+          RawValues = New AFValues
           If timeRange.StartTime.LocalTime <
             RawSnapshot.AddMinutes(StaleDataMinutes) Then
             ' If the start timestamp of the timerange is less than 10 minutes
@@ -790,6 +788,9 @@ Namespace Vitens.DynamicBandwidthMonitor
             RawValues(0).Timestamp = New AFTime(RawSnapshot)
           End If
         End If
+        If RawValues.Count > 0 Then DBM.Logger.LogTrace(
+          "Retrieved " & RawValues.Count.ToString & " raw values",
+          Attribute.GetPath)
       End If
 
       ' Iterate over DBM results for time range.
