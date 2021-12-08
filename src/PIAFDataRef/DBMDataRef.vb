@@ -684,6 +684,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim RawValues As AFValues = Nothing
       Dim Result As DBMResult
       Dim iR, iD As Integer ' Iterators for raw values and DBM results.
+      Dim TimerangeContainsForecast As Boolean
 
       GetValues = New AFValues
 
@@ -764,6 +765,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' minutes after.
       If Attribute.Trait Is LimitTarget Then
         RawSnapshot = InputPointDriver.SnapshotTimestamp
+        TimerangeContainsForecast = timeRange.EndTime.LocalTime >=
+          RawSnapshot.AddMinutes(StaleDataMinutes)
         If timeRange.StartTime.LocalTime <= RawSnapshot Then
           RawValues = Attribute.Parent.
             GetValues(timeRange, numberOfValues, Nothing)
@@ -814,9 +817,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               '       timestamp. This appends forecast values to the future.
               If RawValues.Count = 0 OrElse
                 Not RawValues.Item(Max(0, iR-1)).IsGood OrElse
-                (.Timestamp > RawSnapshot And
-                timeRange.EndTime.LocalTime >=
-                RawSnapshot.AddMinutes(StaleDataMinutes)) Then
+                (.Timestamp > RawSnapshot And TimerangeContainsForecast) Then
                 If IsNaN(.ForecastItem.Forecast) Then
                   ' If there is no valid forecast result, return an InvalidData
                   ' state. Definition: 'Invalid Data state.'
