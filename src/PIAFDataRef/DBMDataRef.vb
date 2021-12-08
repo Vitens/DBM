@@ -87,6 +87,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     '             process output.
 
 
+    Const StaleDataMinutes As Integer = 10 ' Minutes until snapshot is stale
     Const CategoryNoCorrelation As String = "NoCorrelation"
     Const pValueLoHi As Double = 0.95 ' Confidence interval for Lo and Hi
     Const pValueMinMax As Double = 0.9999 ' CI for Minimum and Maximum
@@ -377,7 +378,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' system state instead.
           If (Not SupportsFutureData Or Attribute.Trait Is LimitTarget) And
             Timestamp > SourceTimestamp And
-            Timestamp < SourceTimestamp.AddMinutes(10) Then
+            Timestamp < SourceTimestamp.AddMinutes(StaleDataMinutes) Then
             Timestamp = SourceTimestamp
           End If
 
@@ -680,6 +681,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
       Dim Results As List(Of DBMResult)
       Dim RawSnapshot As DateTime
+      Dim AppendForecast As Boolean
       Dim RawValues As AFValues = Nothing
       Dim Result As DBMResult
       Dim iR, iD As Integer ' Iterators for raw values and DBM results.
@@ -757,20 +759,38 @@ Namespace Vitens.DynamicBandwidthMonitor
       DBM.Logger.LogTrace(
         "Calculated " & Results.Count.ToString & " results", Attribute.GetPath)
 
-      ' Retrieve raw snapshot timestamp and raw values for Target trait. Only
-      ' retrieve values if the start timestamp for this time range is before the
-      ' next interval after the snapshot timestamp.
+      ' Retrieve raw values for Target trait.
       If Attribute.Trait Is LimitTarget Then
         RawSnapshot = InputPointDriver.SnapshotTimestamp
-        If timeRange.StartTime.LocalTime < NextInterval(RawSnapshot) Then
+        ' The timerange should have forecast values appended after the raw
+        ' snapshot timestamp only if the end timestamp is at least 10 minutes
+        ' past the raw snapshot timestamp. This ensures that the raw snapshot
+        ' value stays valid up to 10 minutes past it's timestamp.
+        AppendForecast = timeRange.EndTime.LocalTime >=
+          RawSnapshot.AddMinutes(StaleDataMinutes)
+        If timeRange.StartTime.LocalTime <= RawSnapshot Then
+          ' Retrieve raw values if the start timestamp for this time range is on
+          ' or before the raw snapshot timestamp.
           RawValues = Attribute.Parent.
             GetValues(timeRange, numberOfValues, Nothing)
-          DBM.Logger.LogTrace(
-            "Retrieved " & RawValues.Count.ToString & " raw values",
-            Attribute.GetPath)
         Else
-          RawValues = New AFValues ' Future data, no raw values.
+          ' Start timestamp is after the raw snapshot timestamp. This is future
+          ' data, so there are no raw values.
+          RawValues = New AFValues
+          If timeRange.StartTime.LocalTime <
+            RawSnapshot.AddMinutes(StaleDataMinutes) Then
+            ' If the start timestamp of the timerange is less than 10 minutes
+            ' after the raw snapshot timestamp, return the raw snapshot with
+            ' it's timestamp adjusted to the timerange start timestamp as it is
+            ' still valid during this period.
+            RawValues.Add(Attribute.Parent.GetValue)
+            RawSnapshot = timeRange.StartTime.LocalTime
+            RawValues(0).Timestamp = New AFTime(RawSnapshot)
+          End If
         End If
+        If RawValues.Count > 0 Then DBM.Logger.LogTrace(
+          "Retrieved " & RawValues.Count.ToString & " raw values",
+          Attribute.GetPath)
       End If
 
       ' Iterate over DBM results for time range.
@@ -801,11 +821,12 @@ Namespace Vitens.DynamicBandwidthMonitor
               '       is not good. While this value is not good, the forecast is
               '       returned. Note that the previous raw value can be on the
               '       exact same timestamp as this result.
-              '  4) If the timestamp is past the raw snapshot timestamp. This
-              '       appends forecast values to the future.
+              '  4) If the timestamp is past the raw snapshot timestamp and the
+              '       end timestamp at least 10 minutes after the raw snapshot
+              '       timestamp. This appends forecast values to the future.
               If RawValues.Count = 0 OrElse
                 Not RawValues.Item(Max(0, iR-1)).IsGood OrElse
-                .Timestamp > RawSnapshot Then
+                (.Timestamp > RawSnapshot And AppendForecast) Then
                 If IsNaN(.ForecastItem.Forecast) Then
                   ' If there is no valid forecast result, return an InvalidData
                   ' state. Definition: 'Invalid Data state.'
