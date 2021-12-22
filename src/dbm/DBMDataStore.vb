@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -34,6 +34,7 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMDataStore
 
 
+    Private _lock As New Object ' Object for exclusive lock on critical section.
     Private DataStore As New Dictionary(Of DateTime, Double) ' In-memory data
 
 
@@ -45,7 +46,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       If TypeOf Data Is Double Then
 
-        Monitor.Enter(DataStore) ' Lock
+        Monitor.Enter(_lock) ' Block
         Try
 
           If Not DataStore.ContainsKey(Timestamp) Then
@@ -53,7 +54,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           End If
 
         Finally
-          Monitor.Exit(DataStore)
+          Monitor.Exit(_lock) ' Unblock
         End Try
 
       End If
@@ -63,13 +64,13 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Sub RemoveData(Timestamp As DateTime)
 
-      Monitor.Enter(DataStore) ' Lock
+      Monitor.Enter(_lock) ' Block
       Try
 
         DataStore.Remove(Timestamp)
 
       Finally
-        Monitor.Exit(DataStore)
+        Monitor.Exit(_lock) ' Unblock
       End Try
 
     End Sub
@@ -77,13 +78,13 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Sub ClearData
 
-      Monitor.Enter(DataStore) ' Lock
+      Monitor.Enter(_lock) ' Block
       Try
 
         DataStore.Clear ' Clear all
 
       Finally
-        Monitor.Exit(DataStore)
+        Monitor.Exit(_lock) ' Unblock
       End Try
 
     End Sub
@@ -94,7 +95,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Retrieves data from the DataStore dictionary. If there is no data for
       ' the timestamp, return Not a Number.
 
-      Monitor.Enter(DataStore) ' Lock
+      Monitor.Enter(_lock) ' Block
       Try
 
         GetData = Nothing
@@ -105,7 +106,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         End If
 
       Finally
-        Monitor.Exit(DataStore)
+        Monitor.Exit(_lock) ' Unblock
       End Try
 
     End Function
