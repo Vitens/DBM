@@ -42,6 +42,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Point As Object
     Public DataStore As New DBMDataStore ' In-memory data
+    Private _lock As New Object ' Object for exclusive lock on critical section.
     Private PreviousStartTimestamp As DateTime = DateTime.MaxValue
     Private PreviousEndTimestamp As DateTime
 
@@ -107,7 +108,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' timestamp is not before the end timestamp.
       If Not StartTimestamp < EndTimestamp Then Exit Sub
 
-      Monitor.Enter(Point) ' Lock
+      Monitor.Enter(_lock) ' Block
       Try
 
         ' Determine what data stored in memory can be reused, what needs to be
@@ -169,7 +170,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         End Try
 
       Finally
-        Monitor.Exit(Point)
+        Monitor.Exit(_lock) ' Unblock
       End Try
 
     End Sub

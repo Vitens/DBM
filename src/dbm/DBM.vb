@@ -80,6 +80,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Shared Logger As DBMLoggerAbstract = New DBMLoggerConsole
+    Private _lock As New Object ' Object for exclusive lock on critical section.
     Private Points As New Dictionary(Of Object, DBMPoint)
 
 
@@ -96,7 +97,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns DBMPoint object from the dictionary. If dictionary does not yet
       ' contain object, it is added.
 
-      Monitor.Enter(Points) ' Lock
+      Monitor.Enter(_lock) ' Block
       Try
 
         If Not Points.ContainsKey(PointDriver.Point) Then
@@ -106,7 +107,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Return Points.Item(PointDriver.Point)
 
       Finally
-        Monitor.Exit(Points)
+        Monitor.Exit(_lock) ' Unblock
       End Try
 
     End Function
