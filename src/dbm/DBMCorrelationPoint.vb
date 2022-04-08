@@ -42,6 +42,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       Get
         Return _pointDriver
       End Get
+      Set(value As DBMPointDriverAbstract)
+        _pointDriver = value
+      End Set
     End Property
 
 
@@ -49,6 +52,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       Get
         Return _subtractSelf
       End Get
+      Set(value As Boolean)
+        _subtractSelf = value
+      End Set
     End Property
 
 
