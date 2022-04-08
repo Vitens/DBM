@@ -87,7 +87,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' and not on a single forecast result from which outliers might be
       ' removed.
 
-      Return (UpperControlLimit-Forecast)/
+      Return (Me.UpperControlLimit-Me.Forecast)/
         ControlLimitRejectionCriterion(2*BandwidthCI-1, ComparePatterns-1)*
         ControlLimitRejectionCriterion(2*p-1, ComparePatterns-1)
 

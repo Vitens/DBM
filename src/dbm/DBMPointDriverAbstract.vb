@@ -72,7 +72,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' When inheriting from this base class, call MyBase.New(Point) from Sub
       ' New to store the unique identifier in the Point object.
 
-      Point = point
+      Me.Point = point
 
     End Sub
 
@@ -151,7 +151,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           endTimestamp > _previousEndTimestamp) Or
           endTimestamp <= _previousStartTimestamp Or
           startTimestamp >= _previousEndTimestamp Then ' Cases 8, 10a), 10b)
-          DataStore.ClearData ' Clear all
+          Me.DataStore.ClearData ' Clear all
           _previousStartTimestamp = startTimestamp
           _previousEndTimestamp = endTimestamp
         Else If startTimestamp >= _previousStartTimestamp And
@@ -162,7 +162,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             Do While endTimestamp < _previousEndTimestamp ' Remove forward
               _previousEndTimestamp = _previousEndTimestamp.
                 AddSeconds(-CalculationInterval)
-              DataStore.RemoveData(_previousEndTimestamp)
+              Me.DataStore.RemoveData(_previousEndTimestamp)
             Loop
           End If
           endTimestamp = _previousStartTimestamp ' Add backward
@@ -170,7 +170,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Else If endTimestamp > _previousEndTimestamp Then ' Cases 7, 9
           If startTimestamp > _previousStartTimestamp Then ' Case 9
             Do While _previousStartTimestamp < startTimestamp ' Remove backward
-              DataStore.RemoveData(_previousStartTimestamp)
+              Me.DataStore.RemoveData(_previousStartTimestamp)
               _previousStartTimestamp = _previousStartTimestamp.
                 AddSeconds(CalculationInterval)
             Loop

@@ -61,8 +61,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Sub New(pointDriver As DBMPointDriverAbstract,
       subtractSelf As Boolean)
 
-      _pointDriver = pointDriver
-      _subtractSelf = subtractSelf
+      Me.pointDriver = pointDriver
+      Me.subtractSelf = subtractSelf
 
     End Sub
 
