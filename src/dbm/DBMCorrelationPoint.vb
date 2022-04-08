@@ -52,6 +52,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       Get
         Return _subtractSelf
       End Get
+      Set(value As Boolean)
+        _subtractSelf = value
+      End Set
     End Property
 
 
