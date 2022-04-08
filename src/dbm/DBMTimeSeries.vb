@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -36,37 +36,37 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Contains time series functions.
 
 
-    Public Shared Function TimeWeightedValue(Value As Double,
-      NextValue As Double, Timestamp As DateTime, NextTimestamp As DateTime,
-      Optional Stepped As Boolean = True) As Double
+    Public Shared Function TimeWeightedValue(value As Double,
+      nextValue As Double, timestamp As DateTime, nextTimestamp As DateTime,
+      Optional stepped As Boolean = True) As Double
 
-      TimeWeightedValue = Value
+      TimeWeightedValue = value
 
       ' When not stepped, using interpolation, the value to be used for the
       ' interval is the average value of the current value and the next value.
-      If Not Stepped Then
-        TimeWeightedValue += NextValue
+      If Not stepped Then
+        TimeWeightedValue += nextValue
         TimeWeightedValue /= 2
       End If
 
-      TimeWeightedValue *= NextTimestamp.Subtract(Timestamp).TotalDays
+      TimeWeightedValue *= nextTimestamp.Subtract(timestamp).TotalDays
 
       Return TimeWeightedValue
 
     End Function
 
 
-    Public Shared Function LinearInterpolation(Timestamp As DateTime,
-      StartTimestamp As DateTime, StartValue As Double,
-      EndTimestamp As DateTime, EndValue As Double,
-      Optional Stepped As Boolean = True) As Double
+    Public Shared Function LinearInterpolation(timestamp As DateTime,
+      startTimestamp As DateTime, startValue As Double,
+      endTimestamp As DateTime, endValue As Double,
+      Optional stepped As Boolean = True) As Double
 
-      If Stepped Then
-        Return StartValue
+      If stepped Then
+        Return startValue
       Else
-        Return Lerp(StartValue, EndValue,
-          (Timestamp.Ticks-StartTimestamp.Ticks)/
-          (EndTimestamp.Ticks-StartTimestamp.Ticks))
+        Return Lerp(startValue, endValue,
+          (timestamp.Ticks-startTimestamp.Ticks)/
+          (endTimestamp.Ticks-startTimestamp.Ticks))
       End If
 
     End Function
