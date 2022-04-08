@@ -85,7 +85,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
-    Public Property AbsoluteErrors As Double
+    Public Property AbsoluteErrors() As Double
       Get
         Return _absoluteErrors
       End Get
@@ -95,7 +95,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
-    Public Property RelativeErrors As Double
+    Public Property RelativeErrors() As Double
       Get
         Return _relativeErrors
       End Get
