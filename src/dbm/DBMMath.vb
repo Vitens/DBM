@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -167,76 +167,76 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function NonNaNCount(Values() As Double) As Integer
+    Public Shared Function NonNaNCount(values() As Double) As Integer
 
       ' Returns number of values in the array excluding NaNs.
 
-      Dim Value As Double
-      Dim Count As Integer
+      Dim value As Double
+      Dim count As Integer
 
-      For Each Value In Values
-        If Not IsNaN(Value) Then
-          Count += 1
+      For Each value In values
+        If Not IsNaN(value) Then
+          count += 1
         End If
       Next
 
-      Return Count
+      Return count
 
     End Function
 
 
-    Public Shared Function Mean(Values() As Double) As Double
+    Public Shared Function Mean(values() As Double) As Double
 
       ' Returns the arithmetic mean; the sum of the sampled values divided
       ' by the number of items in the sample. NaNs are excluded.
 
-      Dim Value, Sum As Double
-      Dim Count As Integer
+      Dim value, sum As Double
+      Dim count As Integer
 
-      For Each Value In Values
-        If Not IsNaN(Value) Then
-          Sum += Value
-          Count += 1
+      For Each value In values
+        If Not IsNaN(value) Then
+          sum += value
+          count += 1
         End If
       Next
 
-      Return Sum/Count
+      Return sum/count
 
     End Function
 
 
-    Public Shared Function Median(Values() As Double) As Double
+    Public Shared Function Median(values() As Double) As Double
 
       ' The median is the value separating the higher half of a data sample,
       ' a population, or a probability distribution, from the lower half. In
       ' simple terms, it may be thought of as the "middle" value of a data set.
       ' NaNs are excluded.
 
-      Dim MedianValues(NonNaNCount(Values)-1), Value As Double
-      Dim Count As Integer
+      Dim medianValues(NonNaNCount(values)-1), Value As Double
+      Dim count As Integer
 
-      If MedianValues.Length = 0 Then Return NaN ' No non-NaN values.
+      If medianValues.Length = 0 Then Return NaN ' No non-NaN values.
 
-      For Each Value In Values
+      For Each Value In values
         If Not IsNaN(Value) Then
-          MedianValues(Count) = Value
-          Count += 1
+          medianValues(count) = Value
+          count += 1
         End If
       Next
 
-      Array.Sort(MedianValues)
+      Array.Sort(medianValues)
 
-      If MedianValues.Length Mod 2 = 0 Then
-        Return (MedianValues(MedianValues.Length\2)+
-          MedianValues(MedianValues.Length\2-1))/2
+      If medianValues.Length Mod 2 = 0 Then
+        Return (medianValues(medianValues.Length\2)+
+          medianValues(medianValues.Length\2-1))/2
       Else
-        Return MedianValues(MedianValues.Length\2)
+        Return medianValues(medianValues.Length\2)
       End If
 
     End Function
 
 
-    Public Shared Function StDevP(Values() As Double) As Double
+    Public Shared Function StDevP(values() As Double) As Double
 
       ' In statistics, the standard deviation is a measure of the amount of
       ' variation or dispersion of a set of values. A low standard deviation
@@ -244,18 +244,18 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' expected value) of the set, while a high standard deviation indicates
       ' that the values are spread out over a wider range.
 
-      Dim MeanValues, Value As Double
-      Dim Count As Integer
+      Dim meanValues, value As Double
+      Dim count As Integer
 
-      MeanValues = Mean(Values)
+      meanValues = Mean(values)
 
-      For Each Value In Values
-        If Not IsNaN(Value) Then
-          StDevP += (Value-MeanValues)^2
-          Count += 1
+      For Each value In values
+        If Not IsNaN(value) Then
+          StDevP += (value-meanValues)^2
+          count += 1
         End If
       Next
-      StDevP /= Count
+      StDevP /= count
       StDevP = Sqrt(StDevP)
 
       Return StDevP
@@ -263,73 +263,73 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function AbsoluteDeviation(Values() As Double,
-      From As Double) As Double()
+    Public Shared Function AbsoluteDeviation(values() As Double,
+      from As Double) As Double()
 
       ' Returns an array which contains the absolute values of the input
       ' array from which the central tendency has been subtracted.
 
       Dim i As Integer
-      Dim AbsDev(Values.Length-1) As Double
+      Dim absDev(values.Length-1) As Double
 
-      For i = 0 to Values.Length-1
-        AbsDev(i) = Abs(Values(i)-From)
+      For i = 0 to values.Length-1
+        absDev(i) = Abs(values(i)-from)
       Next i
 
-      Return AbsDev
+      Return absDev
 
     End Function
 
 
-    Public Shared Function MeanAbsoluteDeviation(Values() As Double) As Double
+    Public Shared Function MeanAbsoluteDeviation(values() As Double) As Double
 
       ' The mean absolute deviation (MAD) of a set of data
       ' is the average distance between each data value and the mean.
 
-      Return Mean(AbsoluteDeviation(Values, Mean(Values)))
+      Return Mean(AbsoluteDeviation(values, Mean(values)))
 
     End Function
 
 
-    Public Shared Function MedianAbsoluteDeviation(Values() As Double) As Double
+    Public Shared Function MedianAbsoluteDeviation(values() As Double) As Double
 
       ' The median absolute deviation (MAD) is a robust measure of the
       ' variability of a univariate sample of quantitative data.
 
-      Return Median(AbsoluteDeviation(Values, Median(Values)))
+      Return Median(AbsoluteDeviation(values, Median(values)))
 
     End Function
 
 
     Public Shared Function UseMeanAbsoluteDeviation(
-      Values() As Double) As Boolean
+      values() As Double) As Boolean
 
       ' Returns true if the Mean Absolute Deviation has to be used instead of
       ' the Median Absolute Deviation to detect outliers. Median absolute
       ' deviation has a 50% breakdown point.
 
-      Return MedianAbsoluteDeviation(Values) = 0
+      Return MedianAbsoluteDeviation(values) = 0
 
     End Function
 
 
-    Public Shared Function CentralTendency(Values() As Double) As Double
+    Public Shared Function CentralTendency(values() As Double) As Double
 
       ' Returns the central tendency for the data series, based on either the
       ' mean or median absolute deviation. In statistics, a central tendency
       ' (or measure of central tendency) is a central or typical value for a
       ' probability distribution.
 
-      If UseMeanAbsoluteDeviation(Values) Then
-        Return Mean(Values)
+      If UseMeanAbsoluteDeviation(values) Then
+        Return Mean(values)
       Else
-        Return Median(Values)
+        Return Median(values)
       End If
 
     End Function
 
 
-    Public Shared Function ControlLimit(Values() As Double,
+    Public Shared Function ControlLimit(values() As Double,
       p As Double) As Double
 
       ' Returns the control limits for the data series, based on either the
@@ -338,14 +338,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' that a process is not in control and, therefore, not operating
       ' predictably.
 
-      Dim Count As Integer = NonNaNCount(Values)
+      Dim Count As Integer = NonNaNCount(values)
 
-      If UseMeanAbsoluteDeviation(Values) Then
-        Return MeanAbsoluteDeviation(Values)*
+      If UseMeanAbsoluteDeviation(values) Then
+        Return MeanAbsoluteDeviation(values)*
           MeanAbsoluteDeviationScaleFactor*
           ControlLimitRejectionCriterion(p, Count-1)
       Else
-        Return MedianAbsoluteDeviation(Values)*
+        Return MedianAbsoluteDeviation(values)*
           MedianAbsoluteDeviationScaleFactor(Count-1)*
           ControlLimitRejectionCriterion(p, Count-1)
       End If
@@ -353,57 +353,57 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function RemoveOutliers(Values() As Double) As Double()
+    Public Shared Function RemoveOutliers(values() As Double) As Double()
 
       ' Returns an array which contains the input data from which outliers
       ' are filtered (replaced with NaNs) using either the mean or median
       ' absolute deviation function.
 
-      Dim ValuesCentralTendency, ValuesControlLimit,
-        FilteredValues(Values.Length-1) As Double
+      Dim valuesCentralTendency, valuesControlLimit,
+        filteredValues(values.Length-1) As Double
       Dim i As Integer
 
-      ValuesCentralTendency = CentralTendency(Values)
-      ValuesControlLimit = ControlLimit(Values, OutlierCI)
+      valuesCentralTendency = CentralTendency(values)
+      valuesControlLimit = ControlLimit(values, OutlierCI)
 
-      For i = 0 to Values.Length-1
-        If Abs(Values(i)-ValuesCentralTendency) > ValuesControlLimit Then
-          FilteredValues(i) = NaN ' Filter outlier
+      For i = 0 to values.Length-1
+        If Abs(values(i)-valuesCentralTendency) > valuesControlLimit Then
+          filteredValues(i) = NaN ' Filter outlier
         Else
-          FilteredValues(i) = Values(i) ' Keep inlier
+          filteredValues(i) = values(i) ' Keep inlier
         End If
       Next i
 
-      Return FilteredValues
+      Return filteredValues
 
     End Function
 
 
-    Public Shared Function ExponentialWeights(Count As Integer) As Double()
+    Public Shared Function ExponentialWeights(count As Integer) As Double()
 
-      Dim Alpha, Weight, Weights(Count-1), TotalWeight As Double
+      Dim alpha, weight, weights(count-1), totalWeight As Double
       Dim i As Integer
 
-      Alpha = 2/(Count+1) ' Smoothing factor
-      Weight = 1 ' Initial weight
+      alpha = 2/(count+1) ' Smoothing factor
+      weight = 1 ' Initial weight
 
-      For i = 0 To Count-1
-        Weights(i) = Weight
-        TotalWeight += Weight
-        Weight /= 1-Alpha ' Increase weight
+      For i = 0 To count-1
+        weights(i) = weight
+        totalWeight += weight
+        weight /= 1-alpha ' Increase weight
       Next i
 
-      For i = 0 To Count-1
-        Weights(i) /= TotalWeight ' Normalise weights
+      For i = 0 To count-1
+        weights(i) /= totalWeight ' Normalise weights
       Next i
 
-      Return Weights
+      Return weights
 
     End Function
 
 
     Public Shared Function ExponentialMovingAverage(
-      Values() As Double) As Double
+      values() As Double) As Double
 
       ' Filter high frequency variation
       ' An exponential moving average (EMA), is a type of infinite impulse
@@ -411,32 +411,32 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' exponentially.
 
       Dim i As Integer
-      Dim Weights() As Double = ExponentialWeights(Values.Length)
-      Dim TotalWeight As Double
+      Dim weights() As Double = ExponentialWeights(values.Length)
+      Dim totalWeight As Double
 
-      For i = 0 To Values.Length-1
-        If Not IsNaN(Values(i)) Then ' Exclude NaN values.
-          ExponentialMovingAverage += Values(i)*Weights(i)
-          TotalWeight += Weights(i) ' Used to correct for NaN values.
+      For i = 0 To values.Length-1
+        If Not IsNaN(values(i)) Then ' Exclude NaN values.
+          ExponentialMovingAverage += values(i)*weights(i)
+          totalWeight += weights(i) ' Used to correct for NaN values.
         End If
       Next i
 
       ' Return NaN if there are no non-NaN values, or if the most recent value
       ' is NaN.
-      If TotalWeight = 0 Or IsNaN(Values(Values.Length-1)) Then Return NaN
+      If totalWeight = 0 Or IsNaN(values(values.Length-1)) Then Return NaN
 
-      ExponentialMovingAverage /= TotalWeight
+      ExponentialMovingAverage /= totalWeight
 
       Return ExponentialMovingAverage
 
     End Function
 
 
-    Public Shared Function SlopeToAngle(Slope As Double) As Double
+    Public Shared Function SlopeToAngle(slope As Double) As Double
 
       ' Returns angle in degrees for Slope.
 
-      Return Atan(Slope)/(2*PI)*360
+      Return Atan(slope)/(2*PI)*360
 
     End Function
 
