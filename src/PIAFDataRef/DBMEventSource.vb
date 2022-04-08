@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -39,8 +39,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const UpdateSeconds As Integer = 60 ' Time limiter for update checking.
 
 
-    Private PreviousTimestamp As DateTime
-    Private PreviousSnapshots As New Dictionary(Of AFAttribute, DateTime)
+    Private _previousTimestamp As DateTime
+    Private _previousSnapshots As New Dictionary(Of AFAttribute, DateTime)
 
 
     Protected Overrides Function GetEvents As Boolean
@@ -48,43 +48,43 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' The GetEvents method is designed to get data pipe events from the System
       ' of record.
 
-      Dim Attribute As AFAttribute
-      Dim Snapshot As AFValue
+      Dim attribute As AFAttribute
+      Dim snapshot As AFValue
 
       ' Limit update checking to once every minute.
-      If (Now-PreviousTimestamp).TotalSeconds < UpdateSeconds Then Return False
-      PreviousTimestamp = Now
+      If (Now-_previousTimestamp).TotalSeconds < UpdateSeconds Then Return False
+      _previousTimestamp = Now
 
       ' Iterate over all signed up attributes in this data pipe. For some
       ' services signing up to many attributes, initialization might take some
       ' time. After data is retrieved for all attributes for the first time,
       ' only small amounts of new data are needed for all consequent
       ' evaluations, greatly speeding them up.
-      For Each Attribute In MyBase.Signups
+      For Each attribute In MyBase.Signups
 
         ' Check if we need to perform an action on this attribute. This is only
         ' needed if the attribute is an instance of an object.
-        If Attribute IsNot Nothing Then
+        If attribute IsNot Nothing Then
 
-          Snapshot = Attribute.GetValue ' Retrieve latest value.
+          snapshot = attribute.GetValue ' Retrieve latest value.
 
-          If PreviousSnapshots.ContainsKey(Attribute) Then
+          If _previousSnapshots.ContainsKey(attribute) Then
             ' If newer, store snapshot timestamp as previous snapshot timestamp
             ' for this attribute and publish new snapshot to the data pipe.
-            If Snapshot.Timestamp.LocalTime >
-              PreviousSnapshots.Item(Attribute) Then
-              PreviousSnapshots.Item(Attribute) = Snapshot.Timestamp.LocalTime
-              MyBase.PublishEvent(Attribute,
-                New AFDataPipeEvent(AFDataPipeAction.Add, Snapshot))
+            If snapshot.Timestamp.LocalTime >
+              _previousSnapshots.Item(attribute) Then
+              _previousSnapshots.Item(attribute) = snapshot.Timestamp.LocalTime
+              MyBase.PublishEvent(attribute,
+                New AFDataPipeEvent(AFDataPipeAction.Add, snapshot))
             End If
           Else
             ' Store the initial previous snapshot timestamp for this attribute.
-            PreviousSnapshots.Add(Attribute, Snapshot.Timestamp.LocalTime)
+            _previousSnapshots.Add(attribute, snapshot.Timestamp.LocalTime)
           End If
 
         End If
 
-      Next Attribute
+      Next attribute
 
       Return False ' Required.
 
