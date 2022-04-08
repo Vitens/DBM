@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2019  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -34,15 +34,29 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' tag. Set to false for adjacent areas.
 
 
-    Public PointDriver As DBMPointDriverAbstract
-    Public SubtractSelf As Boolean ' True if input needs to be subtracted
+    Public _pointDriver As DBMPointDriverAbstract
+    Public _subtractSelf As Boolean ' True if input needs to be subtracted
+
+
+    Public Property PointDriver As DBMPointDriverAbstract
+      Get
+        Return _pointDriver
+      End Get
+    End Property
+
+
+    Public Property SubtractSelf As Boolean
+      Get
+        Return _subtractSelf
+      End Get
+    End Property
 
 
     Public Sub New(PointDriver As DBMPointDriverAbstract,
       SubtractSelf As Boolean)
 
-      Me.PointDriver = PointDriver
-      Me.SubtractSelf = SubtractSelf
+      _pointDriver = PointDriver
+      _subtractSelf = SubtractSelf
 
     End Sub
 
