@@ -84,7 +84,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private _points As New Dictionary(Of Object, DBMPoint)
 
 
-    Public Shared Property Logger As DBMLoggerAbstract
+    Public Property Logger As DBMLoggerAbstract
       Get
         Return _logger
       End Get
@@ -96,8 +96,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Sub New(Optional logger As DBMLoggerAbstract = Nothing)
 
-      If logger IsNot Nothing Then DBM.Logger = logger
-      DBM.Logger.LogDebug(Product)
+      If logger IsNot Nothing Then Me.Logger = logger
+      Me.Logger.LogDebug(Product)
 
     End Sub
 
