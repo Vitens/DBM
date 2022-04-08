@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -60,108 +60,108 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Private Shared Function FormatNumber(Value As Double) As String
+    Private Shared Function FormatNumber(value As Double) As String
 
-      Return Value.ToString(sNumberFormat)
+      Return value.ToString(sNumberFormat)
 
     End Function
 
 
     Public Shared Sub Main
 
-      Dim CommandLineArg, Substrings(), Parameter, Value As String
-      Dim InputPointDriver As DBMPointDriver = Nothing
-      Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
-      Dim StartTimestamp, EndTimestamp As DateTime
-      Dim Results As List(Of DBMResult)
-      Dim DBM As New DBM
-      Dim Result As DBMResult
+      Dim commandLineArg, substrings(), parameter, value As String
+      Dim inputPointDriver As DBMPointDriver = Nothing
+      Dim correlationPoints As New List(Of DBMCorrelationPoint)
+      Dim startTimestamp, endTimestamp As DateTime
+      Dim results As List(Of DBMResult)
+      Dim dbm As New DBM
+      Dim result As DBMResult
 
       ' Parse command line arguments
-      For Each CommandLineArg In GetCommandLineArgs
+      For Each commandLineArg In GetCommandLineArgs
         ' Parameter=Value
-        If Regex.IsMatch(CommandLineArg, "^[-/].+=.+$") Then
-          Substrings = CommandLineArg.Split(New Char(){"="c}, 2)
-          Parameter = Substrings(0).Substring(1).ToLower
-          Value = Substrings(1)
+        If Regex.IsMatch(commandLineArg, "^[-/].+=.+$") Then
+          substrings = commandLineArg.Split(New Char(){"="c}, 2)
+          parameter = substrings(0).Substring(1).ToLower
+          value = substrings(1)
           Try
-            If Parameter.Equals("i") Then
-              InputPointDriver = New DBMPointDriver(Value)
-            ElseIf Parameter.Equals("c") Then
-              CorrelationPoints.Add(
-                New DBMCorrelationPoint(New DBMPointDriver(Value), False))
-            ElseIf Parameter.Equals("cs") Then
-              CorrelationPoints.Add(
-                New DBMCorrelationPoint(New DBMPointDriver(Value), True))
-            ElseIf Parameter.Equals("iv") Then
-              CalculationInterval = Convert.ToInt32(Value)
-            ElseIf Parameter.Equals("us") Then
-              UseSundayForHolidays = Convert.ToBoolean(Value)
-            ElseIf Parameter.Equals("p") Then
-              ComparePatterns = Convert.ToInt32(Value)
-            ElseIf Parameter.Equals("ep") Then
-              EMAPreviousPeriods = Convert.ToInt32(Value)
-            ElseIf Parameter.Equals("oi") Then
-              OutlierCI = Convert.ToDouble(Value)
-            ElseIf Parameter.Equals("bi") Then
-              BandwidthCI = Convert.ToDouble(Value)
-            ElseIf Parameter.Equals("cp") Then
-              CorrelationPreviousPeriods = Convert.ToInt32(Value)
-            ElseIf Parameter.Equals("ct") Then
-              CorrelationThreshold = Convert.ToDouble(Value)
-            ElseIf Parameter.Equals("ra") Then
-              RegressionAngleRange = Convert.ToDouble(Value)
-            ElseIf Parameter.Equals("st") Then
-              StartTimestamp = Convert.ToDateTime(Value)
-            ElseIf Parameter.Equals("et") Then
-              EndTimestamp = Convert.ToDateTime(Value)
-            ElseIf Parameter.Equals("f") Then
-              If Value.ToLower.Equals("intl") Then
+            If parameter.Equals("i") Then
+              inputPointDriver = New DBMPointDriver(value)
+            ElseIf parameter.Equals("c") Then
+              correlationPoints.Add(
+                New DBMCorrelationPoint(New DBMPointDriver(value), False))
+            ElseIf parameter.Equals("cs") Then
+              correlationPoints.Add(
+                New DBMCorrelationPoint(New DBMPointDriver(value), True))
+            ElseIf parameter.Equals("iv") Then
+              CalculationInterval = Convert.ToInt32(value)
+            ElseIf parameter.Equals("us") Then
+              UseSundayForHolidays = Convert.ToBoolean(value)
+            ElseIf parameter.Equals("p") Then
+              ComparePatterns = Convert.ToInt32(value)
+            ElseIf parameter.Equals("ep") Then
+              EMAPreviousPeriods = Convert.ToInt32(value)
+            ElseIf parameter.Equals("oi") Then
+              OutlierCI = Convert.ToDouble(value)
+            ElseIf parameter.Equals("bi") Then
+              BandwidthCI = Convert.ToDouble(value)
+            ElseIf parameter.Equals("cp") Then
+              CorrelationPreviousPeriods = Convert.ToInt32(value)
+            ElseIf parameter.Equals("ct") Then
+              CorrelationThreshold = Convert.ToDouble(value)
+            ElseIf parameter.Equals("ra") Then
+              RegressionAngleRange = Convert.ToDouble(value)
+            ElseIf parameter.Equals("st") Then
+              startTimestamp = Convert.ToDateTime(value)
+            ElseIf parameter.Equals("et") Then
+              endTimestamp = Convert.ToDateTime(value)
+            ElseIf parameter.Equals("f") Then
+              If value.ToLower.Equals("intl") Then
                 CurrentThread.CurrentCulture = InvariantCulture
               End If
             End If
           Catch ex As Exception
-            DBM.Logger.LogError(ex.ToString)
+            dbm.Logger.LogError(ex.ToString)
             Exit Sub
           End Try
         End If
-      Next CommandLineArg
+      Next commandLineArg
 
-      If InputPointDriver IsNot Nothing And
-        StartTimestamp > DateTime.MinValue Then
+      If inputPointDriver IsNot Nothing And
+        startTimestamp > DateTime.MinValue Then
 
-        If EndTimestamp = DateTime.MinValue Then
+        If endTimestamp = DateTime.MinValue Then
           ' No end timestamp, use start timestamp.
-          EndTimestamp = StartTimestamp
+          endTimestamp = startTimestamp
         End If
 
         ' Header
-        DBM.Logger.LogInformation(
+        dbm.Logger.LogInformation(
           sCsvComment & Product.Replace(NewLine, NewLine & sCsvComment))
-        DBM.Logger.LogInformation(sTimestamp & Separator & sFactor &
+        dbm.Logger.LogInformation(sTimestamp & Separator & sFactor &
           Separator & sMeasurement & Separator & sForecast & Separator &
           sLowerControlLimit & Separator & sUpperControlLimit,
-          InputPointDriver.ToString)
+          inputPointDriver.ToString)
 
         ' Get results for time range.
-        Results = DBM.GetResults(InputPointDriver, CorrelationPoints,
-          StartTimestamp, EndTimestamp)
-        For Each Result In Results
+        results = dbm.GetResults(inputPointDriver, correlationPoints,
+          startTimestamp, endTimestamp)
+        For Each result In results
 
-          With Result
-            DBM.Logger.LogInformation(.Timestamp.ToString("s") & Separator &
+          With result
+            dbm.Logger.LogInformation(.Timestamp.ToString("s") & Separator &
               FormatNumber(.Factor) & Separator &
               FormatNumber(.ForecastItem.Measurement) & Separator &
               FormatNumber(.ForecastItem.Forecast) & Separator &
               FormatNumber(.ForecastItem.LowerControlLimit) & Separator &
               FormatNumber(.ForecastItem.UpperControlLimit),
-              InputPointDriver.ToString)
+              inputPointDriver.ToString)
           End With
 
-        Next Result
+        Next result
 
-        DBM.Logger.LogInformation(
-          sCsvComment & Statistics(Results).Brief, InputPointDriver.ToString)
+        dbm.Logger.LogInformation(
+          sCsvComment & Statistics(results).Brief, inputPointDriver.ToString)
 
       End If
 
