@@ -84,7 +84,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private _points As New Dictionary(Of Object, DBMPoint)
 
 
-    Public Property Logger As DBMLoggerAbstract
+    Public Shared Property Logger As DBMLoggerAbstract
       Get
         Return _logger
       End Get
