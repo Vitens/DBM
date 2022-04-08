@@ -283,7 +283,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         If Annotation IsNot Nothing Then ' Value
 
-          _dbm.Logger.LogDebug(
+          DBM.Logger.LogDebug(
             "Timestamp " & Value.Timestamp.LocalTime.ToString("s") & "; " &
             "Annotation " & DirectCast(Annotation, String), Attribute.GetPath)
 
@@ -387,11 +387,11 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
 
       ' Returns the single value for the attribute.
-      _dbm.Logger.LogDebug(
+      DBM.Logger.LogDebug(
         "Timestamp " & Timestamp.ToString("s"), Attribute.GetPath)
       GetValue = GetValues(Nothing, New AFTimeRange(New AFTime(Timestamp),
         New AFTime(Timestamp)), 1, Nothing, Nothing)(0) ' Request a single value
-      _dbm.Logger.LogTrace("Return value", Attribute.GetPath)
+      DBM.Logger.LogTrace("Return value", Attribute.GetPath)
       Return GetValue
 
     End Function
@@ -450,7 +450,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             Values.Item(iFL-1).Timestamp.LocalTime).TotalSeconds/
             CalculationInterval >= 12 Then
 
-            _dbm.Logger.LogDebug("Found flatline from " &
+            DBM.Logger.LogDebug("Found flatline from " &
               Values.Item(iFL).Timestamp.LocalTime.ToString("s") & " to " &
               Values.Item(iV).Timestamp.LocalTime.ToString("s"),
               Attribute.GetPath)
@@ -564,12 +564,12 @@ Namespace Vitens.DynamicBandwidthMonitor
             Loop ' Results.
 
             ' Log weights
-            _dbm.Logger.LogDebug(
+            DBM.Logger.LogDebug(
               "MeasurementWeight " & MeasurementWeight.ToString & "; " &
               "ForecastWeight " & ForecastWeight.ToString, Attribute.GetPath)
 
             ' Phase 3: Remove all values after the last good value.
-            _dbm.Logger.LogDebug(
+            DBM.Logger.LogDebug(
               "Remove " & (iV-iFL+1).ToString & " raw values",
               Attribute.GetPath)
             Do While Deflatline.Item(Deflatline.Count-1).
@@ -693,7 +693,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Attribute or parent attribute is not configured properly, return a
         ' Configure system state. Definition: 'The point configuration has been
         ' rejected as invalid by the data source.'
-        _dbm.Logger.LogWarning(
+        DBM.Logger.LogWarning(
           "Invalid configuration, return Configure", Attribute.GetPath)
         GetValues.Add(AFValue.CreateSystemStateValue(
           AFSystemStateCode.Configure, timeRange.StartTime))
@@ -703,7 +703,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Element = DirectCast(Attribute.Element, AFElement)
       InputPointDriver = New DBMPointDriver(Attribute.Parent) ' Parent attribute
 
-      _dbm.Logger.LogDebug(
+      DBM.Logger.LogDebug(
         "StartTime " & timeRange.StartTime.LocalTime.ToString("s") & "; " &
         "EndTime " & timeRange.EndTime.LocalTime.ToString("s") & "; " &
         "numberOfValues " & numberOfValues.ToString, Attribute.GetPath)
@@ -756,7 +756,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Results = _dbm.GetResults(InputPointDriver, CorrelationPoints,
         timeRange.StartTime.LocalTime, timeRange.EndTime.LocalTime,
         numberOfValues)
-      _dbm.Logger.LogTrace(
+      DBM.Logger.LogTrace(
         "Calculated " & Results.Count.ToString & " results", Attribute.GetPath)
 
       ' Retrieve raw values for Target trait.
@@ -788,7 +788,7 @@ Namespace Vitens.DynamicBandwidthMonitor
             RawValues(0).Timestamp = New AFTime(RawSnapshot)
           End If
         End If
-        If RawValues.Count > 0 Then _dbm.Logger.LogTrace(
+        If RawValues.Count > 0 Then DBM.Logger.LogTrace(
           "Retrieved " & RawValues.Count.ToString & " raw values",
           Attribute.GetPath)
       End If
@@ -920,7 +920,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' where no archive values for a tag can exist 10 minutes into the future
       ' or before the oldest mounted archive.'
       If GetValues.Count = 0 Then
-        _dbm.Logger.LogTrace(
+        DBM.Logger.LogTrace(
           "No values to return, return NoData", Attribute.GetPath)
         GetValues.Add(AFValue.CreateSystemStateValue(
           AFSystemStateCode.NoData, timeRange.StartTime))
@@ -965,7 +965,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Returns the collection of values for the attribute sorted in increasing
       ' time order.
-      _dbm.Logger.LogTrace(
+      DBM.Logger.LogTrace(
         "Return " & GetValues.Count.ToString & " values", Attribute.GetPath)
       Return GetValues
 
@@ -1024,7 +1024,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim Interval As AFTimeSpan
 
-      _dbm.Logger.LogDebug(
+      DBM.Logger.LogDebug(
         "StartTime " & timeRange.StartTime.LocalTime.ToString("s") & "; " &
         "EndTime " & timeRange.EndTime.LocalTime.ToString("s") & "; " &
         "numberOfValues " & numberOfValues.ToString, Attribute.GetPath)
@@ -1047,7 +1047,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           AFTimestampCalculation.EarliestTime)(AFSummaryTypes.Average)
       End If
 
-      _dbm.Logger.LogTrace(
+      DBM.Logger.LogTrace(
         "Return " & InterpolatedValuesByCount.Count.ToString & " values",
         Attribute.GetPath)
       Return InterpolatedValuesByCount
