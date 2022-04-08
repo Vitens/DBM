@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -39,10 +39,70 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' results of (correlation) calculation results from a DBMPoint object.
 
 
-    Public Timestamp As DateTime
-    Public IsFutureData As Boolean
-    Public ForecastItem As DBMForecastItem
-    Public Factor, AbsoluteErrors(), RelativeErrors() As Double
+    Private _timestamp As DateTime
+    Private _isFutureData As Boolean
+    Private _forecastItem As DBMForecastItem
+    Private _factor, _absoluteErrors(), _relativeErrors() As Double
+
+
+    Public Property Timestamp As DateTime
+      Get
+        Return _timestamp
+      End Get
+      Set(value As DateTime)
+        _timestamp = value
+      End Set
+    End Property
+
+
+    Public Property IsFutureData As Boolean
+      Get
+        Return _isFutureData
+      End Get
+      Set(value As Boolean)
+        _isFutureData = value
+      End Set
+    End Property
+
+
+    Public Property ForecastItem As DBMForecastItem
+      Get
+        Return _forecastItem
+      End Get
+      Set(value As DBMForecastItem)
+        _forecastItem = value
+      End Set
+    End Property
+
+
+    Public Property Factor As Double
+      Get
+        Return _factor
+      End Get
+      Set(value As Double)
+        _factor = value
+      End Set
+    End Property
+
+
+    Public Property AbsoluteErrors As Double
+      Get
+        Return _absoluteErrors
+      End Get
+      Set(values() As Double)
+        _absoluteErrors = values
+      End Set
+    End Property
+
+
+    Public Property RelativeErrors As Double
+      Get
+        Return _relativeErrors
+      End Get
+      Set(values() As Double)
+        _relativeErrors = values
+      End Set
+    End Property
 
 
     Public Sub New
@@ -52,8 +112,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' correlation points specified) only the last item in the arrays contains
       ' a value.
 
-      ReDim AbsoluteErrors(CorrelationPreviousPeriods)
-      ReDim RelativeErrors(CorrelationPreviousPeriods)
+      ReDim Me.AbsoluteErrors(CorrelationPreviousPeriods)
+      ReDim Me.RelativeErrors(CorrelationPreviousPeriods)
 
     End Sub
 
@@ -62,7 +122,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Returns true if there is an event.
 
-      Return Abs(Factor) > 1
+      Return Abs(Me.Factor) > 1
 
     End Function
 
@@ -71,8 +131,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Returns true if there is a suppressed event.
 
-      With ForecastItem
-        Return Factor = 0 And
+      With Me.ForecastItem
+        Return Me.Factor = 0 And
           (.Measurement < .LowerControlLimit Or
           .Measurement > .UpperControlLimit)
       End With
@@ -85,47 +145,47 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Returns true if the timestamp is valid. When DST goes in effect, there
       ' is a missing hour in local time.
 
-      Return Not TimeZoneInfo.Local.IsInvalidTime(Timestamp)
+      Return Not TimeZoneInfo.Local.IsInvalidTime(Me.Timestamp)
 
     End Function
 
 
-    Public Sub Calculate(Index As Integer, MeasurementEMA As Double,
-      ForecastEMA As Double, LowerControlLimitEMA As Double,
-      UpperControlLimitEMA As Double)
+    Public Sub Calculate(index As Integer, measurementEMA As Double,
+      forecastEMA As Double, lowerControlLimitEMA As Double,
+      upperControlLimitEMA As Double)
 
       ' Calculates and stores forecast errors and initial results.
 
       ' Forecast error (for forecast error correlation calculations).
-      AbsoluteErrors(Index) = ForecastEMA-MeasurementEMA
-      RelativeErrors(Index) = ForecastEMA/MeasurementEMA-1
+      Me.AbsoluteErrors(index) = forecastEMA-measurementEMA
+      Me.RelativeErrors(index) = forecastEMA/measurementEMA-1
 
-      If ForecastItem Is Nothing Then
+      If Me.ForecastItem Is Nothing Then
 
         ' Store EMA results in new DBMForecastItem object for current timestamp.
-        ForecastItem = New DBMForecastItem
-        With ForecastItem
-          .Measurement = MeasurementEMA
-          .Forecast = ForecastEMA
-          .LowerControlLimit = LowerControlLimitEMA
-          .UpperControlLimit = UpperControlLimitEMA
+        Me.ForecastItem = New DBMForecastItem
+        With Me.ForecastItem
+          .Measurement = measurementEMA
+          .Forecast = forecastEMA
+          .LowerControlLimit = lowerControlLimitEMA
+          .UpperControlLimit = upperControlLimitEMA
         End With
 
         ' No factor if there is no valid measurement.
-        If IsNaN(MeasurementEMA) Then
-          Factor = NaN
+        If IsNaN(measurementEMA) Then
+          Me.Factor = NaN
         End If
 
         ' Lower control limit exceeded, calculate factor.
-        If MeasurementEMA < LowerControlLimitEMA Then
-          Factor = (ForecastEMA-MeasurementEMA)/
-            (LowerControlLimitEMA-ForecastEMA)
+        If measurementEMA < lowerControlLimitEMA Then
+          Me.Factor = (forecastEMA-measurementEMA)/
+            (lowerControlLimitEMA-forecastEMA)
         End If
 
         ' Upper control limit exceeded, calculate factor.
-        If MeasurementEMA > UpperControlLimitEMA Then
-          Factor = (MeasurementEMA-ForecastEMA)/
-            (UpperControlLimitEMA-ForecastEMA)
+        If measurementEMA > upperControlLimitEMA Then
+          Me.Factor = (measurementEMA-forecastEMA)/
+            (upperControlLimitEMA-forecastEMA)
         End If
 
       End If
