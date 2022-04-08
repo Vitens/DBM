@@ -34,8 +34,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' tag. Set to false for adjacent areas.
 
 
-    Public _pointDriver As DBMPointDriverAbstract
-    Public _subtractSelf As Boolean ' True if input needs to be subtracted
+    Private _pointDriver As DBMPointDriverAbstract
+    Private _subtractSelf As Boolean ' True if input needs to be subtracted
 
 
     Public Property PointDriver As DBMPointDriverAbstract
