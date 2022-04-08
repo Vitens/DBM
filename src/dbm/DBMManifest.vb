@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -26,7 +26,7 @@ Option Strict
 ' returned using the DBM.Version function.
 
 
-<assembly:System.Reflection.AssemblyVersion("1.70.*")>
+<assembly:System.Reflection.AssemblyVersion("1.71.*")>
 
 <assembly:System.Reflection.AssemblyProduct("Dynamic Bandwidth Monitor")>
 
@@ -34,6 +34,6 @@ Option Strict
   "Leak detection method implemented in a real-time data historian")>
 
 <assembly:System.Reflection.AssemblyCopyright(
-  "Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.")>
+  "Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.")>
 
 <assembly:System.Reflection.AssemblyCompany("Vitens N.V.")>
