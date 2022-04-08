@@ -79,20 +79,30 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' distribution processes.
 
 
-    Public Shared Logger As DBMLoggerAbstract = New DBMLoggerConsole
+    Private Shared _logger As DBMLoggerAbstract = New DBMLoggerConsole
     Private _lock As New Object ' Object for exclusive lock on critical section.
-    Private Points As New Dictionary(Of Object, DBMPoint)
+    Private _points As New Dictionary(Of Object, DBMPoint)
 
 
-    Public Sub New(Optional Logger As DBMLoggerAbstract = Nothing)
+    Public Property Logger As DBMLoggerAbstract
+      Get
+        Return _logger
+      End Get
+      Set(value As DBMLoggerAbstract)
+        _logger = value
+      End Set
+    End Property
 
-      If Logger IsNot Nothing Then DBM.Logger = Logger
-      DBM.Logger.LogDebug(Product)
+
+    Public Sub New(Optional logger As DBMLoggerAbstract = Nothing)
+
+      If logger IsNot Nothing Then Me.Logger = logger
+      Me.Logger.LogDebug(Product)
 
     End Sub
 
 
-    Private Function Point(PointDriver As DBMPointDriverAbstract) As DBMPoint
+    Private Function Point(pointDriver As DBMPointDriverAbstract) As DBMPoint
 
       ' Returns DBMPoint object from the dictionary. If dictionary does not yet
       ' contain object, it is added.
@@ -100,11 +110,11 @@ Namespace Vitens.DynamicBandwidthMonitor
       Monitor.Enter(_lock) ' Block
       Try
 
-        If Not Points.ContainsKey(PointDriver.Point) Then
-          Points.Add(PointDriver.Point, New DBMPoint(PointDriver))
+        If Not _points.ContainsKey(pointDriver.Point) Then
+          _points.Add(pointDriver.Point, New DBMPoint(pointDriver))
         End If
 
-        Return Points.Item(PointDriver.Point)
+        Return _points.Item(pointDriver.Point)
 
       Finally
         Monitor.Exit(_lock) ' Unblock
@@ -113,35 +123,35 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function HasCorrelation(RelErrCorr As Double,
-      RelErrAngle As Double) As Boolean
+    Public Shared Function HasCorrelation(relErrCorr As Double,
+      relErrAngle As Double) As Boolean
 
       ' If correlation with measurement and (relative) forecast errors are
       ' about the same size.
 
-      Return RelErrCorr > CorrelationThreshold And
-        Abs(RelErrAngle-SlopeToAngle(1)) <= RegressionAngleRange
+      Return relErrCorr > CorrelationThreshold And
+        Abs(relErrAngle-SlopeToAngle(1)) <= RegressionAngleRange
 
     End Function
 
 
-    Public Shared Function HasAnticorrelation(AbsErrCorr As Double,
-      AbsErrAngle As Double, SubtractSelf As Boolean) As Boolean
+    Public Shared Function HasAnticorrelation(absErrCorr As Double,
+      absErrAngle As Double, subtractSelf As Boolean) As Boolean
 
       ' If anticorrelation with adjacent measurement and (absolute) forecast
       ' errors are about the same size.
 
-      Return AbsErrCorr < -CorrelationThreshold And
-        Abs(AbsErrAngle+SlopeToAngle(1)) <= RegressionAngleRange And
-        Not SubtractSelf
+      Return absErrCorr < -CorrelationThreshold And
+        Abs(absErrAngle+SlopeToAngle(1)) <= RegressionAngleRange And
+        Not subtractSelf
 
     End Function
 
 
-    Public Shared Function Suppress(Factor As Double,
-      AbsErrCorr As Double, AbsErrAngle As Double,
-      RelErrCorr As Double, RelErrAngle As Double,
-      SubtractSelf As Boolean) As Double
+    Public Shared Function Suppress(factor As Double,
+      absErrCorr As Double, absErrAngle As Double,
+      relErrCorr As Double, relErrAngle As Double,
+      subtractSelf As Boolean) As Double
 
       ' Events can be suppressed when a strong correlation is found in the
       ' relative forecast errors of a containing area, or if a strong
@@ -150,74 +160,74 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' of the error point cloud has to be around -45 or +45 degrees to indicate
       ' that both errors are about the same (absolute) size.
 
-      If HasCorrelation(RelErrCorr, RelErrAngle) Or
-        HasAnticorrelation(AbsErrCorr, AbsErrAngle, SubtractSelf) Then
+      If HasCorrelation(relErrCorr, relErrAngle) Or
+        HasAnticorrelation(absErrCorr, absErrAngle, subtractSelf) Then
         Return 0
       Else
-        Return Factor
+        Return factor
       End If
 
     End Function
 
 
-    Public Function GetResult(InputPointDriver As DBMPointDriverAbstract,
-      CorrelationPoints As List(Of DBMCorrelationPoint), Timestamp As DateTime,
-      Optional Culture As CultureInfo = Nothing) As DBMResult
+    Public Function GetResult(inputPointDriver As DBMPointDriverAbstract,
+      correlationPoints As List(Of DBMCorrelationPoint), timestamp As DateTime,
+      Optional culture As CultureInfo = Nothing) As DBMResult
 
       ' This is the main function to call to calculate a result for a specific
       ' timestamp. If a list of DBMCorrelationPoints is passed, events can be
       ' suppressed if a strong correlation is found.
 
-      Return GetResults(InputPointDriver, CorrelationPoints,
-        Timestamp, NextInterval(Timestamp), 1, Culture)(0)
+      Return GetResults(inputPointDriver, correlationPoints,
+        timestamp, NextInterval(timestamp), 1, culture)(0)
 
     End Function
 
 
-    Public Function GetResults(InputPointDriver As DBMPointDriverAbstract,
-      CorrelationPoints As List(Of DBMCorrelationPoint),
-      StartTimestamp As DateTime, EndTimestamp As DateTime,
-      Optional NumberOfValues As Integer = 0,
-      Optional Culture As CultureInfo = Nothing) As List(Of DBMResult)
+    Public Function GetResults(inputPointDriver As DBMPointDriverAbstract,
+      correlationPoints As List(Of DBMCorrelationPoint),
+      startTimestamp As DateTime, endTimestamp As DateTime,
+      Optional numberOfValues As Integer = 0,
+      Optional culture As CultureInfo = Nothing) As List(Of DBMResult)
 
       ' This is the main function to call to calculate results for a time range.
       ' The end timestamp is exclusive. If a list of DBMCorrelationPoints is
       ' passed, events can be suppressed if a strong correlation is found.
 
-      Dim Offset As Integer = EMATimeOffset(EMAPreviousPeriods+1)
-      Dim Result As DBMResult
-      Dim CorrelationPoint As DBMCorrelationPoint
-      Dim CorrelationResult As DBMResult
-      Dim AbsoluteErrorStatsItem,
-        RelativeErrorStatsItem As New DBMStatisticsItem
+      Dim offset As Integer = EMATimeOffset(EMAPreviousPeriods+1)
+      Dim result As DBMResult
+      Dim correlationPoint As DBMCorrelationPoint
+      Dim correlationResult As DBMResult
+      Dim absoluteErrorStatsItem,
+        relativeErrorStatsItem As New DBMStatisticsItem
 
-      If CorrelationPoints Is Nothing Then ' Empty list if Nothing was passed.
-        CorrelationPoints = New List(Of DBMCorrelationPoint)
+      If correlationPoints Is Nothing Then ' Empty list if Nothing was passed.
+        correlationPoints = New List(Of DBMCorrelationPoint)
       End If
 
       ' Shift the start and end timestamps into the future using the negative
       ' EMA time offset. Then later on, shift the resulting timestamps back to
       ' the original value.
-      StartTimestamp = StartTimestamp.AddSeconds(-Offset)
-      EndTimestamp = EndTimestamp.AddSeconds(-Offset)
+      startTimestamp = startTimestamp.AddSeconds(-offset)
+      endTimestamp = endTimestamp.AddSeconds(-offset)
 
       ' Use culture used by the current thread if no culture was passed.
-      If Culture Is Nothing Then Culture = CurrentThread.CurrentCulture
+      If culture Is Nothing Then culture = CurrentThread.CurrentCulture
 
       ' Calculate results for input point.
-      GetResults = Point(InputPointDriver).GetResults(StartTimestamp,
-        EndTimestamp, NumberOfValues, True, CorrelationPoints.Count > 0,
-        Nothing, Culture)
+      GetResults = Point(inputPointDriver).GetResults(startTimestamp,
+        endTimestamp, numberOfValues, True, correlationPoints.Count > 0,
+        Nothing, culture)
 
-      If CorrelationPoints.Count > 0 Then ' If correlation points are available.
+      If correlationPoints.Count > 0 Then ' If correlation points are available.
 
-        For Each Result In GetResults ' Iterate over results for time range.
+        For Each result In GetResults ' Iterate over results for time range.
 
-          With Result
+          With result
 
             If Abs(.Factor) > 0 Then ' If there is an event for this result.
 
-              For Each CorrelationPoint In CorrelationPoints ' Iterate over pts.
+              For Each correlationPoint In correlationPoints ' Iterate over pts.
 
                 If Abs(.Factor) > 0 Then ' Keep going while event not suppressed
 
@@ -226,48 +236,48 @@ Namespace Vitens.DynamicBandwidthMonitor
                   ' only request a single result), so that we already have all
                   ' required data for any next intervals we might need this for
                   ' (Case 3 instead of Case 9).
-                  If CorrelationPoint.SubtractSelf Then
-                    CorrelationResult = Point(CorrelationPoint.PointDriver).
-                      GetResults(.Timestamp, EndTimestamp, 1, False, True,
-                      Point(InputPointDriver), Culture)(0) ' Subtract input.
+                  If correlationPoint.SubtractSelf Then
+                    correlationResult = Point(correlationPoint.PointDriver).
+                      GetResults(.Timestamp, endTimestamp, 1, False, True,
+                      Point(inputPointDriver), culture)(0) ' Subtract input.
                   Else
-                    CorrelationResult = Point(CorrelationPoint.PointDriver).
-                      GetResults(.Timestamp, EndTimestamp, 1, False, True,
-                      Nothing, Culture)(0)
+                    correlationResult = Point(correlationPoint.PointDriver).
+                      GetResults(.Timestamp, endTimestamp, 1, False, True,
+                      Nothing, culture)(0)
                   End If
 
                   ' Calculate statistics of errors compared to forecast.
-                  AbsoluteErrorStatsItem = Statistics(
-                    CorrelationResult.GetAbsoluteErrors, .GetAbsoluteErrors)
-                  RelativeErrorStatsItem = Statistics(
-                    CorrelationResult.GetRelativeErrors, .GetRelativeErrors)
+                  absoluteErrorStatsItem = Statistics(
+                    correlationResult.GetAbsoluteErrors, .GetAbsoluteErrors)
+                  relativeErrorStatsItem = Statistics(
+                    correlationResult.GetRelativeErrors, .GetRelativeErrors)
 
                   ' Suppress if not local event.
                   .Factor = Suppress(.Factor,
-                    AbsoluteErrorStatsItem.ModifiedCorrelation,
-                    AbsoluteErrorStatsItem.OriginAngle,
-                    RelativeErrorStatsItem.ModifiedCorrelation,
-                    RelativeErrorStatsItem.OriginAngle,
-                    CorrelationPoint.SubtractSelf)
+                    absoluteErrorStatsItem.ModifiedCorrelation,
+                    absoluteErrorStatsItem.OriginAngle,
+                    relativeErrorStatsItem.ModifiedCorrelation,
+                    relativeErrorStatsItem.OriginAngle,
+                    correlationPoint.SubtractSelf)
 
                 End If
 
-              Next CorrelationPoint
+              Next correlationPoint
 
             End If
 
           End With
 
-        Next Result
+        Next result
 
       End If
 
       ' Shift the resulting timestamps back to the original value since they
       ' were moved into the future before to compensate for exponential moving
       ' average (EMA) time shifting.
-      For Each Result In GetResults
-        Result.Timestamp = Result.Timestamp.AddSeconds(Offset)
-      Next Result
+      For Each result In GetResults
+        result.Timestamp = result.Timestamp.AddSeconds(offset)
+      Next result
 
       Return GetResults
 
