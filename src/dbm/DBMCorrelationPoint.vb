@@ -48,16 +48,6 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
-    Public Property SubtractSelf As Boolean
-      Get
-        Return _subtractSelf
-      End Get
-      Set(value As Boolean)
-        _subtractSelf = value
-      End Set
-    End Property
-
-
     Public Sub New(PointDriver As DBMPointDriverAbstract,
       SubtractSelf As Boolean)
 
