@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -35,22 +35,22 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private _lock As New Object ' Object for exclusive lock on critical section.
-    Private DataStore As New Dictionary(Of DateTime, Double) ' In-memory data
+    Private _dataStore As New Dictionary(Of DateTime, Double) ' In-memory data
 
 
-    Public Sub AddData(Timestamp As DateTime, Data As Object)
+    Public Sub AddData(timestamp As DateTime, data As Object)
 
       ' Make sure that the retrieved data type is a Double and also that the
       ' timestamp is not already stored in memory (could happen because of DST
       ' time overlap).
 
-      If TypeOf Data Is Double Then
+      If TypeOf data Is Double Then
 
         Monitor.Enter(_lock) ' Block
         Try
 
-          If Not DataStore.ContainsKey(Timestamp) Then
-            DataStore.Add(Timestamp, DirectCast(Data, Double))
+          If Not _dataStore.ContainsKey(timestamp) Then
+            _dataStore.Add(timestamp, DirectCast(data, Double))
           End If
 
         Finally
@@ -62,12 +62,12 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Sub RemoveData(Timestamp As DateTime)
+    Public Sub RemoveData(timestamp As DateTime)
 
       Monitor.Enter(_lock) ' Block
       Try
 
-        DataStore.Remove(Timestamp)
+        _dataStore.Remove(timestamp)
 
       Finally
         Monitor.Exit(_lock) ' Unblock
@@ -81,7 +81,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Monitor.Enter(_lock) ' Block
       Try
 
-        DataStore.Clear ' Clear all
+        _dataStore.Clear ' Clear all
 
       Finally
         Monitor.Exit(_lock) ' Unblock
@@ -90,7 +90,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public Function GetData(Timestamp As DateTime) As Double
+    Public Function GetData(timestamp As DateTime) As Double
 
       ' Retrieves data from the DataStore dictionary. If there is no data for
       ' the timestamp, return Not a Number.
@@ -99,7 +99,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Try
 
         GetData = Nothing
-        If DataStore.TryGetValue(Timestamp, GetData) Then ' In dictionary.
+        If _dataStore.TryGetValue(timestamp, GetData) Then ' In dictionary.
           Return GetData ' Return value from dictionary.
         Else
           Return NaN ' No data in dictionary for timestamp, return Not a Number.
