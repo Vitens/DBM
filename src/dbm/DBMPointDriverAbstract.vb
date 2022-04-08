@@ -72,7 +72,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' When inheriting from this base class, call MyBase.New(Point) from Sub
       ' New to store the unique identifier in the Point object.
 
-      Me.Point = point
+      Point = point
 
     End Sub
 
