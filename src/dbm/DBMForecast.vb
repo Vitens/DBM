@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -35,7 +35,7 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMForecast
 
 
-    Public Shared Function Forecast(Values() As Double) As DBMForecastItem
+    Public Shared Function Forecast(values() As Double) As DBMForecastItem
 
       ' Calculates and stores forecast and control limits by removing
       ' outliers from the Values array and extrapolating the regression
@@ -49,13 +49,13 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       With Forecast
 
-        .Measurement = Values(Values.Length-1)
+        .Measurement = values(values.Length-1)
 
         ' Calculate statistics for data after removing outliers. Exclude the
         ' last item in the array as this is the current measured value for
         ' which we need to calculate a forecast and control limits.
-        Array.Resize(Values, Values.Length-1)
-        StatisticsItem = Statistics(RemoveOutliers(Values))
+        Array.Resize(values, values.Length-1)
+        StatisticsItem = Statistics(RemoveOutliers(values))
 
         If StatisticsItem.HasInsufficientData Then
 
