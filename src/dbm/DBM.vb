@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -238,9 +238,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
                   ' Calculate statistics of errors compared to forecast.
                   AbsoluteErrorStatsItem = Statistics(
-                    CorrelationResult.AbsoluteErrors, .AbsoluteErrors)
+                    CorrelationResult.GetAbsoluteErrors, .GetAbsoluteErrors)
                   RelativeErrorStatsItem = Statistics(
-                    CorrelationResult.RelativeErrors, .RelativeErrors)
+                    CorrelationResult.GetRelativeErrors, .GetRelativeErrors)
 
                   ' Suppress if not local event.
                   .Factor = Suppress(.Factor,

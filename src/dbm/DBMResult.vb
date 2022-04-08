@@ -85,24 +85,14 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
-    Public Property AbsoluteErrors() As Double
-      Get
-        Return _absoluteErrors
-      End Get
-      Set(values() As Double)
-        _absoluteErrors = values
-      End Set
-    End Property
+    Public Function GetAbsoluteErrors As Double()
+      Return _absoluteErrors
+    End Function
 
 
-    Public Property RelativeErrors() As Double
-      Get
-        Return _relativeErrors
-      End Get
-      Set(values() As Double)
-        _relativeErrors = values
-      End Set
-    End Property
+    Public Function GetRelativeErrors As Double()
+      Return _relativeErrors
+    End Function
 
 
     Public Sub New
@@ -112,8 +102,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' correlation points specified) only the last item in the arrays contains
       ' a value.
 
-      ReDim Me.AbsoluteErrors(CorrelationPreviousPeriods)
-      ReDim Me.RelativeErrors(CorrelationPreviousPeriods)
+      ReDim _absoluteErrors(CorrelationPreviousPeriods)
+      ReDim _relativeErrors(CorrelationPreviousPeriods)
 
     End Sub
 
@@ -157,8 +147,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Calculates and stores forecast errors and initial results.
 
       ' Forecast error (for forecast error correlation calculations).
-      Me.AbsoluteErrors(index) = forecastEMA-measurementEMA
-      Me.RelativeErrors(index) = forecastEMA/measurementEMA-1
+      _absoluteErrors(index) = forecastEMA-measurementEMA
+      _relativeErrors(index) = forecastEMA/measurementEMA-1
 
       If Me.ForecastItem Is Nothing Then
 
