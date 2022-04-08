@@ -96,8 +96,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Sub New(Optional logger As DBMLoggerAbstract = Nothing)
 
-      If logger IsNot Nothing Then Me.Logger = logger
-      Me.Logger.LogDebug(Product)
+      If logger IsNot Nothing Then DBM.Logger = logger
+      DBM.Logger.LogDebug(Product)
 
     End Sub
 
