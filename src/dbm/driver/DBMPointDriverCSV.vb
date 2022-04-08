@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -43,12 +43,12 @@ Namespace Vitens.DynamicBandwidthMonitor
     '          parameter.
 
 
-    Private SplitChars As Char() = {","c, "	"c} ' Comma and tab
+    Private _splitChars As Char() = {","c, "	"c} ' Comma and tab
 
 
-    Public Sub New(Point As Object)
+    Public Sub New(point As Object)
 
-      MyBase.New(Point)
+      MyBase.New(point)
 
     End Sub
 
@@ -60,26 +60,26 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Overrides Sub PrepareData(StartTimestamp As DateTime,
-      EndTimestamp As DateTime)
+    Public Overrides Sub PrepareData(startTimestamp As DateTime,
+      endTimestamp As DateTime)
 
       ' Retrieves information from a CSV file and stores this in memory. Passed
       ' timestamps are ignored and all data in the CSV is loaded into memory.
 
-      Dim Substrings() As String
-      Dim Timestamp As DateTime
-      Dim Value As Double
+      Dim substrings() As String
+      Dim timestamp As DateTime
+      Dim value As Double
 
       If File.Exists(DirectCast(Point, String)) Then
         Using StreamReader As New StreamReader(DirectCast(Point, String))
           Do While Not StreamReader.EndOfStream
             ' Comma and tab delimiters; split timestamp and value
-            Substrings = StreamReader.ReadLine.Split(SplitChars, 2)
-            If Substrings.Length = 2 AndAlso
-              DateTime.TryParse(Substrings(0), Timestamp) AndAlso
-              Timestamp >= StartTimestamp And Timestamp < EndTimestamp And
-              Double.TryParse(Substrings(1), Value) Then
-              DataStore.AddData(Timestamp, Value)
+            substrings = StreamReader.ReadLine.Split(_splitChars, 2)
+            If substrings.Length = 2 AndAlso
+              DateTime.TryParse(substrings(0), timestamp) AndAlso
+              timestamp >= startTimestamp And timestamp < endTimestamp And
+              Double.TryParse(substrings(1), value) Then
+              DataStore.AddData(timestamp, value)
             End If
           Loop
         End Using ' Close CSV file
