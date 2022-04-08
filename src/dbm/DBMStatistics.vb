@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -39,8 +39,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' calling the Statistics method.
 
 
-    Public Overloads Shared Function Statistics(Dependent() As Double,
-      Optional Independent() As Double = Nothing) As DBMStatisticsItem
+    Public Overloads Shared Function Statistics(dependent() As Double,
+      Optional independent() As Double = Nothing) As DBMStatisticsItem
 
       ' Performs calculation of several statistics functions on the input
       ' data. If no values for the independent variable are passed, a linear
@@ -48,49 +48,47 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' The result of the calculation is returned as a new object.
 
       Dim i As Integer
-      Dim ExponentialWeighting As Boolean
-      Dim Weights(), TotalWeight, SumX, SumY, SumXX, SumYY, SumXY As Double
+      Dim weights(), totalWeight, sumX, sumY, sumXX, sumYY, sumXY As Double
 
       Statistics = New DBMStatisticsItem
 
       With Statistics
 
-        If Independent Is Nothing Then ' No independent var, assume linear scale
-          ReDim Independent(Dependent.Length-1)
-          For i = 0 To Dependent.Length-1
-            Independent(i) = i
+        If independent Is Nothing Then ' No independent var, assume linear scale
+          ReDim independent(dependent.Length-1)
+          For i = 0 To dependent.Length-1
+            independent(i) = i
           Next i
-          ExponentialWeighting = True
-          Weights = ExponentialWeights(Dependent.Length) ' Get weights.
+          weights = ExponentialWeights(dependent.Length) ' Get weights.
         Else
-          ReDim Weights(Dependent.Length-1)
-          For i = 0 To Dependent.Length-1
-            Weights(i) = 1 ' Linear weight.
+          ReDim weights(dependent.Length-1)
+          For i = 0 To dependent.Length-1
+            weights(i) = 1 ' Linear weight.
           Next i
         End If
 
         ' Calculate sums
-        If Dependent.Length > 0 And Dependent.Length = Independent.Length Then
+        If dependent.Length > 0 And dependent.Length = independent.Length Then
 
           ' Iteration 1: Count number of values and calculate total weight.
-          For i = 0 To Dependent.Length-1
-            If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
+          For i = 0 To dependent.Length-1
+            If Not IsNaN(dependent(i)) And Not IsNaN(independent(i)) Then
               .Count += 1
-              TotalWeight += Weights(i)
+              totalWeight += weights(i)
             End If
           Next i
 
           ' Iteration 2: Calculate weighted statistics.
-          For i = 0 To Dependent.Length-1
-            If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
-              Weights(i) = Weights(i)/TotalWeight*.Count
-              .NMBE += Weights(i)*(Dependent(i)-Independent(i))
-              .RMSD += Weights(i)*(Dependent(i)-Independent(i))^2
-              SumX += Weights(i)*Independent(i)
-              SumY += Weights(i)*Dependent(i)
-              SumXX += Weights(i)*Independent(i)^2
-              SumYY += Weights(i)*Dependent(i)^2
-              SumXY += Weights(i)*Independent(i)*Dependent(i)
+          For i = 0 To dependent.Length-1
+            If Not IsNaN(dependent(i)) And Not IsNaN(independent(i)) Then
+              weights(i) = weights(i)/totalWeight*.Count
+              .NMBE += weights(i)*(dependent(i)-independent(i))
+              .RMSD += weights(i)*(dependent(i)-independent(i))^2
+              sumX += weights(i)*independent(i)
+              sumY += weights(i)*dependent(i)
+              sumXX += weights(i)*independent(i)^2
+              sumYY += weights(i)*dependent(i)^2
+              sumXY += weights(i)*independent(i)*dependent(i)
             End If
           Next i
 
@@ -98,7 +96,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         If .Count = 0 Then Return Statistics ' Empty, non-eq, or no non-NaN pair
 
-        .Mean = SumX/.Count ' Average
+        .Mean = sumX/.Count ' Average
 
         ' MBE (Mean Bias Error), as its name indicates, is the average of the
         ' errors of a sample space. Generally, it is a good indicator of the
@@ -138,19 +136,19 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' of variation with the RMSD taking the place of the standard deviation.
         .CVRMSD = .RMSD/.Mean
 
-        .Slope = (.Count*SumXY-SumX*SumY)/(.Count*SumXX-SumX^2) ' Lin.regression
-        .OriginSlope = SumXY/SumXX ' Lin.regression through the origin (alpha=0)
+        .Slope = (.Count*sumXY-sumX*sumY)/(.Count*sumXX-sumX^2) ' Lin.regression
+        .OriginSlope = sumXY/sumXX ' Lin.regression through the origin (alpha=0)
         .Angle = SlopeToAngle(.Slope) ' Angle in degrees
         .OriginAngle = SlopeToAngle(.OriginSlope) ' Angle in degrees
-        .Intercept = (SumX*SumXY-SumY*SumXX)/(SumX^2-.Count*SumXX)
+        .Intercept = (sumX*sumXY-sumY*sumXX)/(sumX^2-.Count*sumXX)
 
         ' Standard error of the predicted y-value for each x in the regression.
         ' The standard error is a measure of the amount of error in the
         ' prediction of y for an individual x.
-        For i = 0 to Dependent.Length-1
-          If Not IsNaN(Dependent(i)) And Not IsNaN(Independent(i)) Then
+        For i = 0 to dependent.Length-1
+          If Not IsNaN(dependent(i)) And Not IsNaN(independent(i)) Then
             .StandardError +=
-              Weights(i)*(Dependent(i)-Independent(i)*.Slope-.Intercept)^2
+              weights(i)*(dependent(i)-independent(i)*.Slope-.Intercept)^2
           End If
         Next i
         ' n-2 is used because two parameters (slope and intercept) were
@@ -160,12 +158,12 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' A number that quantifies some type of correlation and dependence,
         ' meaning statistical relationships between two or more random
         ' variables or observed data values.
-        .Correlation = (.Count*SumXY-SumX*SumY)/
-          Sqrt((.Count*SumXX-SumX^2)*(.Count*SumYY-SumY^2))
+        .Correlation = (.Count*sumXY-sumX*sumY)/
+          Sqrt((.Count*sumXX-sumX^2)*(.Count*sumYY-sumY^2))
 
         ' Average is not removed in modified correlation as the expected average
         ' is zero, assuming the calculated forecasts are correct.
-        .ModifiedCorrelation = SumXY/Sqrt(SumXX*SumYY)
+        .ModifiedCorrelation = sumXY/Sqrt(sumXX*sumYY)
 
         ' A number that indicates the proportion of the variance in the
         ' dependent variable that is predictable from the independent variable.
@@ -179,19 +177,19 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Overloads Shared Function Statistics(
-      Results As List(Of DBMResult)) As DBMStatisticsItem
+      results As List(Of DBMResult)) As DBMStatisticsItem
 
       Dim i As Integer
-      Dim Forecasts(Results.Count-1), Measurements(Results.Count-1) As Double
+      Dim forecasts(results.Count-1), measurements(results.Count-1) As Double
 
-      For i = 0 To Results.Count-1
-        With Results.Item(i).ForecastItem
-          Forecasts(i) = .Forecast
-          Measurements(i) = .Measurement
+      For i = 0 To results.Count-1
+        With results.Item(i).ForecastItem
+          forecasts(i) = .Forecast
+          measurements(i) = .Measurement
         End With
       Next i
 
-      Return Statistics(Forecasts, Measurements)
+      Return Statistics(forecasts, measurements)
 
     End Function
 
