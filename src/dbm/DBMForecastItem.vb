@@ -33,48 +33,8 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMForecastItem
 
 
-    Private _measurement, _forecast, _lowerControlLimit,
-      _upperControlLimit As Double
-
-
-    Public Property Measurement As Double
-      Get
-        Return _measurement
-      End Get
-      Set(value As Double)
-        _measurement = value
-      End Set
-    End Property
-
-
-    Public Property Forecast As Double
-      Get
-        Return _forecast
-      End Get
-      Set(value As Double)
-        _forecast = value
-      End Set
-    End Property
-
-
-    Public Property LowerControlLimit As Double
-      Get
-        Return _lowerControlLimit
-      End Get
-      Set(value As Double)
-        _lowerControlLimit = value
-      End Set
-    End Property
-
-
-    Public Property UpperControlLimit As Double
-      Get
-        Return _upperControlLimit
-      End Get
-      Set(value As Double)
-        _upperControlLimit = value
-      End Set
-    End Property
+    Property Measurement, Forecast, LowerControlLimit,
+      UpperControlLimit As Double
 
 
     Public Function Range(p As Double) As Double
