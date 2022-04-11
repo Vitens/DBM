@@ -121,7 +121,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               End If
             End If
           Catch ex As Exception
-            dbm.Logger.LogError(ex.ToString)
+            DBM.Logger.LogError(ex.ToString)
             Exit Sub
           End Try
         End If
@@ -136,9 +136,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         End If
 
         ' Header
-        dbm.Logger.LogInformation(
+        DBM.Logger.LogInformation(
           CSVComment & Product.Replace(NewLine, NewLine & CSVComment))
-        dbm.Logger.LogInformation(
+        DBM.Logger.LogInformation(
           TimestampText & Separator &
           FactorText & Separator &
           MeasurementText & Separator &
@@ -153,7 +153,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         For Each result In results
 
           With result
-            dbm.Logger.LogInformation(
+            DBM.Logger.LogInformation(
               .Timestamp.ToString("s") & Separator &
               FormatNumber(.Factor) & Separator &
               FormatNumber(.ForecastItem.Measurement) & Separator &
@@ -165,7 +165,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         Next result
 
-        dbm.Logger.LogInformation(
+        DBM.Logger.LogInformation(
           CSVComment & Statistics(results).Brief, inputPointDriver.ToString)
 
       End If
