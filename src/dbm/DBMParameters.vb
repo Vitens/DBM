@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -37,37 +37,126 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' at runtime.
 
     ' Time interval at which the calculation is run.
-    Public Shared CalculationInterval As Integer = 300 ' seconds, 5 minutes
+    Private Shared _calculationInterval As Integer = 300 ' seconds, 5 minutes
+
+    Public Shared Property CalculationInterval As Integer
+      Get
+        Return _calculationInterval
+      End Get
+      Set(value As Integer)
+        _calculationInterval = value
+      End Set
+    End Property
+
 
     ' Use forecast of the previous Sunday for holidays.
-    Public Shared UseSundayForHolidays As Boolean = True
+    Public Shared _useSundayForHolidays As Boolean = True
+
+    Public Shared Property UseSundayForHolidays As Boolean
+      Get
+        Return _useSundayForHolidays
+      End Get
+      Set(value As Boolean)
+        _useSundayForHolidays = value
+      End Set
+    End Property
+
 
     ' Number of weeks to look back to forecast the current value and
     ' control limits.
-    Public Shared ComparePatterns As Integer = 12 ' weeks
+    Public Shared _comparePatterns As Integer = 12 ' weeks
+
+    Public Shared Property ComparePatterns As Integer
+      Get
+        Return _comparePatterns
+      End Get
+      Set(value As Integer)
+        _comparePatterns = value
+      End Set
+    End Property
+
 
     ' Number of previous intervals used to smooth the data.
-    Public Shared EMAPreviousPeriods As Integer =
+    Public Shared _emaPreviousPeriods As Integer =
       CInt(0.5*3600/CalculationInterval-1) ' 5 intervals, 30 minutes
 
+    Public Shared Property EMAPreviousPeriods As Integer
+      Get
+        Return _emaPreviousPeriods
+      End Get
+      Set(value As Integer)
+        _emaPreviousPeriods = value
+      End Set
+    End Property
+
+
     ' Confidence interval used for removing outliers.
-    Public Shared OutlierCI As Double = 0.99
+    Public Shared _outlierCI As Double = 0.99
+
+    Public Shared Property OutlierCI As Double
+      Get
+        Return _outlierCI
+      End Get
+      Set(value As Double)
+        _outlierCI = value
+      End Set
+    End Property
+
 
     ' Confidence interval used for determining control limits.
-    Public Shared BandwidthCI As Double = 0.99
+    Public Shared _bandwidthCI As Double = 0.99
+
+    Public Shared Property BandwidthCI As Double
+      Get
+        Return _bandwidthCI
+      End Get
+      Set(value As Double)
+        _bandwidthCI = value
+      End Set
+    End Property
+
 
     ' Number of previous intervals used to calculate forecast error correlation
     ' when an event is found.
-    Public Shared CorrelationPreviousPeriods As Integer =
+    Public Shared _correlationPreviousPeriods As Integer =
       CInt(2*3600/CalculationInterval-1) ' 23 intervals, 2 hours
 
+    Public Shared Property CorrelationPreviousPeriods As Integer
+      Get
+        Return _correlationPreviousPeriods
+      End Get
+      Set(value As Integer)
+        _correlationPreviousPeriods = value
+      End Set
+    End Property
+
+
     ' Absolute correlation lower limit for detecting (anti)correlation.
-    Public Shared CorrelationThreshold As Double = Sqrt(0.7) ' 0.83666
+    Public Shared _correlationThreshold As Double = Sqrt(0.7) ' 0.83666
+
+    Public Shared Property CorrelationThreshold As Double
+      Get
+        Return _correlationThreshold
+      End Get
+      Set(value As Double)
+        _correlationThreshold = value
+      End Set
+    End Property
+
 
     ' Regression angle range (around -45/+45 degrees) required when suppressing
     ' based on (anti)correlation.
-    Public Shared RegressionAngleRange As Double =
+    Public Shared _regressionAngleRange As Double =
       SlopeToAngle(2)-SlopeToAngle(1) ' 18.435 degrees, factor 2
+
+    Public Shared Property RegressionAngleRange As Double
+      Get
+        Return _regressionAngleRange
+      End Get
+      Set(value As Double)
+        _regressionAngleRange = value
+      End Set
+    End Property
 
 
   End Class
