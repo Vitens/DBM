@@ -139,12 +139,12 @@ Namespace Vitens.DynamicBandwidthMonitor
         dbm.Logger.LogInformation(
           CSVComment & Product.Replace(NewLine, NewLine & CSVComment))
         dbm.Logger.LogInformation(
-          Timestamp & Separator &
-          Factor & Separator &
-          Measurement & Separator &
-          Forecast & Separator &
-          LowerControlLimit & Separator &
-          UpperControlLimit,
+          TimestampText & Separator &
+          FactorText & Separator &
+          MeasurementText & Separator &
+          ForecastText & Separator &
+          LowerControlLimitText & Separator &
+          UpperControlLimitText,
           inputPointDriver.ToString)
 
         ' Get results for time range.

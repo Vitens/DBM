@@ -32,12 +32,12 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Const UnsignedAssembly As String = "Unsigned assembly"
-    Public Const Timestamp As String = "Timestamp"
-    Public Const Factor As String = "Factor"
-    Public Const Measurement As String = "Measurement"
-    Public Const Forecast As String = "Forecast"
-    Public Const LowerControlLimit As String = "Lower control limit"
-    Public Const UpperControlLimit As String = "Upper control limit"
+    Public Const TimestampText As String = "Timestamp"
+    Public Const FactorText As String = "Factor"
+    Public Const MeasurementText As String = "Measurement"
+    Public Const ForecastText As String = "Forecast"
+    Public Const LowerControlLimitText As String = "Lower control limit"
+    Public Const UpperControlLimitText As String = "Upper control limit"
     Public Const DecimalFormat As String = "G5"
     Public Const PercentageFormat As String = "0.0%"
     Public Const CSVComment As String = "# "
