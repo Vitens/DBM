@@ -33,8 +33,8 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMStatisticsItem
 
 
-    Public _count As Integer
-    Public _mean, _nmbe, _rmsd, _cvrmsd, _slope, _originSlope, _angle,
+    Private _count As Integer
+    Private _mean, _nmbe, _rmsd, _cvrmsd, _slope, _originSlope, _angle,
       _originAngle, _intercept, _standardError, _correlation,
       _modifiedCorrelation, _determination As Double
 

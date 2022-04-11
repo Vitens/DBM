@@ -50,7 +50,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     ' Use forecast of the previous Sunday for holidays.
-    Public Shared _useSundayForHolidays As Boolean = True
+    Private Shared _useSundayForHolidays As Boolean = True
 
     Public Shared Property UseSundayForHolidays As Boolean
       Get
@@ -64,7 +64,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     ' Number of weeks to look back to forecast the current value and
     ' control limits.
-    Public Shared _comparePatterns As Integer = 12 ' weeks
+    Private Shared _comparePatterns As Integer = 12 ' weeks
 
     Public Shared Property ComparePatterns As Integer
       Get
@@ -77,7 +77,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     ' Number of previous intervals used to smooth the data.
-    Public Shared _emaPreviousPeriods As Integer =
+    Private Shared _emaPreviousPeriods As Integer =
       CInt(0.5*3600/CalculationInterval-1) ' 5 intervals, 30 minutes
 
     Public Shared Property EMAPreviousPeriods As Integer
@@ -91,7 +91,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     ' Confidence interval used for removing outliers.
-    Public Shared _outlierCI As Double = 0.99
+    Private Shared _outlierCI As Double = 0.99
 
     Public Shared Property OutlierCI As Double
       Get
@@ -104,7 +104,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     ' Confidence interval used for determining control limits.
-    Public Shared _bandwidthCI As Double = 0.99
+    Private Shared _bandwidthCI As Double = 0.99
 
     Public Shared Property BandwidthCI As Double
       Get
@@ -118,7 +118,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     ' Number of previous intervals used to calculate forecast error correlation
     ' when an event is found.
-    Public Shared _correlationPreviousPeriods As Integer =
+    Private Shared _correlationPreviousPeriods As Integer =
       CInt(2*3600/CalculationInterval-1) ' 23 intervals, 2 hours
 
     Public Shared Property CorrelationPreviousPeriods As Integer
@@ -132,7 +132,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     ' Absolute correlation lower limit for detecting (anti)correlation.
-    Public Shared _correlationThreshold As Double = Sqrt(0.7) ' 0.83666
+    Private Shared _correlationThreshold As Double = Sqrt(0.7) ' 0.83666
 
     Public Shared Property CorrelationThreshold As Double
       Get
@@ -146,7 +146,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     ' Regression angle range (around -45/+45 degrees) required when suppressing
     ' based on (anti)correlation.
-    Public Shared _regressionAngleRange As Double =
+    Private Shared _regressionAngleRange As Double =
       SlopeToAngle(2)-SlopeToAngle(1) ' 18.435 degrees, factor 2
 
     Public Shared Property RegressionAngleRange As Double
