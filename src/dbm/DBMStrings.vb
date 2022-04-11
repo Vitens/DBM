@@ -56,7 +56,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       "F {6:" & PercentageFormat & "} (SD={7:" & PercentageFormat & "}); " &
       "Score {8:" & PercentageFormat & "}"
     Public Const ForecastFactorAnnotation As String =
-      Factor & " {0:" & DecimalFormat & "}"
+      FactorText & " {0:" & DecimalFormat & "}"
 
 
   End Class
