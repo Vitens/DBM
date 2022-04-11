@@ -38,7 +38,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Const Forecast As String = "Forecast"
     Public Const LowerControlLimit As String = "Lower control limit"
     Public Const UpperControlLimit As String = "Upper control limit"
-    Public Const NumberFormat As String = "G5"
+    Public Const DecimalFormat As String = "G5"
     Public Const PercentageFormat As String = "0.0%"
     Public Const CSVComment As String = "# "
     Public Const StatisticsInsufficientData As String =
@@ -56,7 +56,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       "F {6:" & PercentageFormat & "} (SD={7:" & PercentageFormat & "}); " &
       "Score {8:" & PercentageFormat & "}"
     Public Const ForecastFactorAnnotation As String =
-      Factor & " {0:" & NumberFormat & "}"
+      Factor & " {0:" & DecimalFormat & "}"
 
 
   End Class
