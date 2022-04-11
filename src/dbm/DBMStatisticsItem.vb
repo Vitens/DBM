@@ -268,9 +268,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Protocol: Concepts and Options for Determining Energy and Water Savings,
       ' Volume I, by the Efficiency Valuation Organization.
 
-      If HasInsufficientData Then Return sStatisticsInsufficientData
+      If HasInsufficientData Then Return StatisticsInsufficientData
 
-      Return String.Format(sStatisticsBrief,
+      Return String.Format(StatisticsBrief,
         Calibrated, Me.Count, SystematicError, RandomError, Fit)
 
     End Function

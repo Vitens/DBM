@@ -1499,7 +1499,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Max(0, 1-Abs(Mean(re))-NormSInv((0.99+1)/2)*StDevP(re))*
         Max(0, Mean(f)-NormSInv((0.99+1)/2)*StDevP(f)))^(1/4)
 
-      Return String.Format(sQualityTests, se.Length, calibrated,
+      Return String.Format(QualityTests, se.Length, calibrated,
         Mean(se), StDevP(se), Mean(re), StDevP(re), Mean(f), StDevP(f), score)
 
     End Function

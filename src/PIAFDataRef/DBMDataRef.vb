@@ -288,8 +288,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         If annotation IsNot Nothing Then ' Value
 
           DBM.Logger.LogDebug(
-            "Timestamp " & value.Timestamp.LocalTime.ToString("s") & "; " &
-            "Annotation " & DirectCast(annotation, String), Attribute.GetPath)
+            "value.Timestamp " &
+            value.Timestamp.LocalTime.ToString("s") & "; " &
+            "annotation " & DirectCast(annotation, String), Attribute.GetPath)
 
           _annotations.Add(value.Timestamp, annotation) ' Add
           value.Annotated = True
@@ -599,7 +600,7 @@ Namespace Vitens.DynamicBandwidthMonitor
                   ' Annotate the first weight adjusted forecast with the factor
                   ' value.
                   Annotate(Deflatline.Item(Deflatline.Count-1),
-                    String.Format(sForecastFactorAnnotation,
+                    String.Format(ForecastFactorAnnotation,
                     measurementWeight/forecastWeight))
                 End If
               End If
@@ -708,8 +709,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       inputPointDriver = New DBMPointDriver(Attribute.Parent) ' Parent attribute
 
       DBM.Logger.LogDebug(
-        "StartTime " & timeRange.StartTime.LocalTime.ToString("s") & "; " &
-        "EndTime " & timeRange.EndTime.LocalTime.ToString("s") & "; " &
+        "timeRange.StartTime " &
+        timeRange.StartTime.LocalTime.ToString("s") & "; " &
+        "timeRange.EndTime " &
+        timeRange.EndTime.LocalTime.ToString("s") & "; " &
         "numberOfValues " & numberOfValues.ToString, Attribute.GetPath)
 
       ' Retrieve correlation points from AF hierarchy for first-level child
@@ -1029,8 +1032,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim interval As AFTimeSpan
 
       DBM.Logger.LogDebug(
-        "StartTime " & timeRange.StartTime.LocalTime.ToString("s") & "; " &
-        "EndTime " & timeRange.EndTime.LocalTime.ToString("s") & "; " &
+        "timeRange.StartTime " &
+        timeRange.StartTime.LocalTime.ToString("s") & "; " &
+        "timeRange.EndTime " &
+        timeRange.EndTime.LocalTime.ToString("s") & "; " &
         "numberOfValues " & numberOfValues.ToString, Attribute.GetPath)
 
       InterpolatedValuesByCount = New AFValues

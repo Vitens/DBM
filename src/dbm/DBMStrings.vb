@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -31,32 +31,32 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMStrings
 
 
-    Public Const sUnsignedAssembly As String = "Unsigned assembly"
-    Public Const sTimestamp As String = "Timestamp"
-    Public Const sFactor As String = "Factor"
-    Public Const sMeasurement As String = "Measurement"
-    Public Const sForecast As String = "Forecast"
-    Public Const sLowerControlLimit As String = "Lower control limit"
-    Public Const sUpperControlLimit As String = "Upper control limit"
-    Public Const sNumberFormat As String = "G5"
-    Public Const sPercentageFormat As String = "0.0%"
-    Public Const sCsvComment As String = "# "
-    Public Const sStatisticsInsufficientData As String =
+    Public Const UnsignedAssembly As String = "Unsigned assembly"
+    Public Const Timestamp As String = "Timestamp"
+    Public Const Factor As String = "Factor"
+    Public Const Measurement As String = "Measurement"
+    Public Const Forecast As String = "Forecast"
+    Public Const LowerControlLimit As String = "Lower control limit"
+    Public Const UpperControlLimit As String = "Upper control limit"
+    Public Const NumberFormat As String = "G5"
+    Public Const PercentageFormat As String = "0.0%"
+    Public Const CSVComment As String = "# "
+    Public Const StatisticsInsufficientData As String =
       "Insufficient data for calculating model calibration metrics"
-    Public Const sStatisticsBrief As String =
+    Public Const StatisticsBrief As String =
       "Calibrated: {0} (" &
       "n {1}; " &
-      "Systematic error {2:" & sPercentageFormat & "}; " &
-      "Random error {3:" & sPercentageFormat & "}; " &
-      "Fit {4:" & sPercentageFormat & "})"
-    Public Const sQualityTests As String =
-      "n {0}; C {1:" & sPercentageFormat & "}; " &
-      "SE {2:" & sPercentageFormat & "} (SD={3:" & sPercentageFormat & "}); " &
-      "RE {4:" & sPercentageFormat & "} (SD={5:" & sPercentageFormat & "}); " &
-      "F {6:" & sPercentageFormat & "} (SD={7:" & sPercentageFormat & "}); " &
-      "Score {8:" & sPercentageFormat & "}"
-    Public Const sForecastFactorAnnotation As String =
-      sFactor & " {0:" & sNumberFormat & "}"
+      "Systematic error {2:" & PercentageFormat & "}; " &
+      "Random error {3:" & PercentageFormat & "}; " &
+      "Fit {4:" & PercentageFormat & "})"
+    Public Const QualityTests As String =
+      "n {0}; C {1:" & PercentageFormat & "}; " &
+      "SE {2:" & PercentageFormat & "} (SD={3:" & PercentageFormat & "}); " &
+      "RE {4:" & PercentageFormat & "} (SD={5:" & PercentageFormat & "}); " &
+      "F {6:" & PercentageFormat & "} (SD={7:" & PercentageFormat & "}); " &
+      "Score {8:" & PercentageFormat & "}"
+    Public Const ForecastFactorAnnotation As String =
+      Factor & " {0:" & NumberFormat & "}"
 
 
   End Class

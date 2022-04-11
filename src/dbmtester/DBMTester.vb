@@ -62,7 +62,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Shared Function FormatNumber(value As Double) As String
 
-      Return value.ToString(sNumberFormat)
+      Return value.ToString(NumberFormat)
 
     End Function
 
@@ -137,10 +137,14 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         ' Header
         dbm.Logger.LogInformation(
-          sCsvComment & Product.Replace(NewLine, NewLine & sCsvComment))
-        dbm.Logger.LogInformation(sTimestamp & Separator & sFactor &
-          Separator & sMeasurement & Separator & sForecast & Separator &
-          sLowerControlLimit & Separator & sUpperControlLimit,
+          CSVComment & Product.Replace(NewLine, NewLine & CSVComment))
+        dbm.Logger.LogInformation(
+          Timestamp & Separator &
+          Factor & Separator &
+          Measurement & Separator &
+          Forecast & Separator &
+          LowerControlLimit & Separator &
+          UpperControlLimit,
           inputPointDriver.ToString)
 
         ' Get results for time range.
@@ -149,7 +153,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         For Each result In results
 
           With result
-            dbm.Logger.LogInformation(.Timestamp.ToString("s") & Separator &
+            dbm.Logger.LogInformation(
+              .Timestamp.ToString("s") & Separator &
               FormatNumber(.Factor) & Separator &
               FormatNumber(.ForecastItem.Measurement) & Separator &
               FormatNumber(.ForecastItem.Forecast) & Separator &
@@ -161,7 +166,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Next result
 
         dbm.Logger.LogInformation(
-          sCsvComment & Statistics(results).Brief, inputPointDriver.ToString)
+          CSVComment & Statistics(results).Brief, inputPointDriver.ToString)
 
       End If
 
