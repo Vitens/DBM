@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -32,9 +32,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     Inherits DBMLoggerAbstract
 
 
-    Public Overrides Sub Log(Level As Level, Message As String)
+    Public Overrides Sub Log(level As Level, message As String)
 
-      Select Case Level
+      Select Case level
         Case Level.Error
           Console.ForegroundColor = ConsoleColor.Red
         Case Level.Warning
@@ -46,7 +46,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         Case Level.Trace
           Console.ForegroundColor = ConsoleColor.DarkGray
       End Select
-      Console.WriteLine(Message)
+      Console.WriteLine(message)
       Console.ResetColor
 
     End Sub

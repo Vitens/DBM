@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -147,8 +147,8 @@ Namespace Vitens.DynamicBandwidthMonitor
           Return .Subject & " (" & .Issuer & ")"
         End With
       Catch
-        DBM.Logger.LogWarning(sUnsignedAssembly & " " & AssemblyLocation)
-        Return sUnsignedAssembly
+        DBM.Logger.LogWarning(UnsignedAssembly & " " & AssemblyLocation)
+        Return UnsignedAssembly
       End Try
 
     End Function

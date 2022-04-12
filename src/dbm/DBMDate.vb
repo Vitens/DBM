@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -38,35 +38,35 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Contains date and time functions.
 
 
-    Public Shared Function PreviousInterval(Timestamp As DateTime) As DateTime
+    Public Shared Function PreviousInterval(timestamp As DateTime) As DateTime
 
       ' Returns a DateTime for the passed timestamp aligned on the previous
       ' interval.
 
-      Return Timestamp.AddTicks(
-        -Timestamp.Ticks Mod CalculationInterval*TicksPerSecond)
+      Return timestamp.AddTicks(
+        -timestamp.Ticks Mod CalculationInterval*TicksPerSecond)
 
     End Function
 
 
-    Public Shared Function NextInterval(Timestamp As DateTime) As DateTime
+    Public Shared Function NextInterval(timestamp As DateTime) As DateTime
 
-      Return PreviousInterval(Timestamp.AddSeconds(CalculationInterval))
+      Return PreviousInterval(timestamp.AddSeconds(CalculationInterval))
 
     End Function
 
 
-    Public Shared Function IsOnInterval(Timestamp As DateTime) As Boolean
+    Public Shared Function IsOnInterval(timestamp As DateTime) As Boolean
 
       ' Returns true if the end timestamp is exactly on an interval boundary.
 
-      Return Timestamp.Equals(PreviousInterval(Timestamp))
+      Return timestamp.Equals(PreviousInterval(timestamp))
 
     End Function
 
 
-    Public Shared Function IntervalSeconds(NumberOfValues As Integer,
-      DurationSeconds As Double) As Double
+    Public Shared Function IntervalSeconds(numberOfValues As Integer,
+      durationSeconds As Double) As Double
 
       ' Number of values desired. If =0, all intervals will be returned. If >0,
       ' that number of values will be returned. If <0, the negative value minus
@@ -78,18 +78,18 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' minutes will return an interval of 660 seconds which will then return
       ' values at :00, :11, :22, :33, :44, and :55).
 
-      If NumberOfValues < 0 Then NumberOfValues = -NumberOfValues-1
-      If NumberOfValues = 1 Then
-        Return DurationSeconds ' Return a single value
+      If numberOfValues < 0 Then numberOfValues = -numberOfValues-1
+      If numberOfValues = 1 Then
+        Return durationSeconds ' Return a single value
       Else
-        Return Max(1, (DurationSeconds/CalculationInterval-1)/
-          (NumberOfValues-1))*CalculationInterval ' Required interval
+        Return Max(1, (durationSeconds/CalculationInterval-1)/
+          (numberOfValues-1))*CalculationInterval ' Required interval
       End If
 
     End Function
 
 
-    Public Shared Function Computus(Year As Integer) As DateTime
+    Public Shared Function Computus(year As Integer) As DateTime
 
       ' Computus (Latin for computation) is the calculation of the date of
       ' Easter in the Christian calendar. The computus is used to set the time
@@ -98,31 +98,31 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       Dim H, i, L As Integer
 
-      H = (Year\100-Year\400-(8*(Year\100)+13)\25+19*(Year Mod 19)+15) Mod 30
-      i = H-H\28-(H\28)*(29\H+1)*(21-Year Mod 19)\11
-      L = i-(Year+Year\4+i+2-Year\100+Year\400) Mod 7
+      H = (year\100-year\400-(8*(year\100)+13)\25+19*(year Mod 19)+15) Mod 30
+      i = H-H\28-(H\28)*(29\H+1)*(21-year Mod 19)\11
+      L = i-(year+year\4+i+2-year\100+year\400) Mod 7
 
-      Return New DateTime(Year, 3+(L+40)\44, L+28-31*((172+L)\176))
+      Return New DateTime(year, 3+(L+40)\44, L+28-31*((172+L)\176))
 
     End Function
 
 
-    Public Shared Function IsHoliday(Timestamp As DateTime,
-      Culture As CultureInfo) As Boolean
+    Public Shared Function IsHoliday(timestamp As DateTime,
+      culture As CultureInfo) As Boolean
 
       ' Returns True if the passed date is a holiday.
 
       Dim DaysSinceEaster As Integer =
-        Timestamp.Subtract(Computus(Timestamp.Year)).Days
+        timestamp.Subtract(Computus(timestamp.Year)).Days
 
-      With Timestamp
+      With timestamp
         ' For any culture, consider the following days a holiday:
         '  New Year's Day, Easter, Ascension Day, Pentecost,
         '  Christmas Day, and New Year's Eve.
         IsHoliday = (.Month = 1 And .Day = 1) Or
           {0, 39, 49}.Contains(DaysSinceEaster) Or
           (.Month = 12 And {25, 31}.Contains(.Day))
-        If Culture.Name.Equals("nl-NL") Then
+        If culture.Name.Equals("nl-NL") Then
           ' For the Netherlands, consider the following days a holiday:
           '  2nd day of Easter, Royal day, Liberation Day (lustrum),
           '  2nd day of Pentecost, and Boxing Day
@@ -140,52 +140,52 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function DaysSinceSunday(Timestamp As DateTime) As Integer
+    Public Shared Function DaysSinceSunday(timestamp As DateTime) As Integer
 
       ' Return the number of days between the passed timestamp and the
       ' preceding Sunday.
 
-      Return Timestamp.DayOfWeek ' 0=Sunday, 6=Saturday
+      Return timestamp.DayOfWeek ' 0=Sunday, 6=Saturday
 
     End Function
 
 
-    Public Shared Function PreviousSunday(Timestamp As DateTime) As DateTime
+    Public Shared Function PreviousSunday(timestamp As DateTime) As DateTime
 
       ' Returns a DateTime for the Sunday preceding the timestamp passed.
 
-      Return Timestamp.AddDays(-DaysSinceSunday(Timestamp))
+      Return timestamp.AddDays(-DaysSinceSunday(timestamp))
 
     End Function
 
 
-    Public Shared Function OffsetHoliday(Timestamp As DateTime,
-      Culture As CultureInfo) As DateTime
+    Public Shared Function OffsetHoliday(timestamp As DateTime,
+      culture As CultureInfo) As DateTime
 
-      If UseSundayForHolidays And IsHoliday(Timestamp, Culture) Then
-        Return PreviousSunday(Timestamp) ' Offset holidays
+      If UseSundayForHolidays And IsHoliday(timestamp, culture) Then
+        Return PreviousSunday(timestamp) ' Offset holidays
       Else
-        Return Timestamp
+        Return timestamp
       End If
 
     End Function
 
 
     Public Shared Function DataPreparationTimestamp(
-      StartTimestamp As DateTime) As DateTime
+      startTimestamp As DateTime) As DateTime
 
-      StartTimestamp = PreviousInterval(StartTimestamp.AddDays(
+      startTimestamp = PreviousInterval(startTimestamp.AddDays(
         -7*ComparePatterns).AddSeconds(
         -(EMAPreviousPeriods+CorrelationPreviousPeriods)*CalculationInterval))
-      If UseSundayForHolidays Then StartTimestamp =
-        PreviousSunday(StartTimestamp)
+      If UseSundayForHolidays Then startTimestamp =
+        PreviousSunday(startTimestamp)
 
-      Return StartTimestamp
+      Return startTimestamp
 
     End Function
 
 
-    Public Shared Function EMATimeOffset(Count As Integer) As Integer
+    Public Shared Function EMATimeOffset(count As Integer) As Integer
 
       ' The use of an exponential moving average (EMA) time shifts the resulting
       ' calculated data. To compensate for this, an offset should be applied
@@ -193,7 +193,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' is in seconds and is only shifted in whole intervals.
 
       ' Floor(n/2.91136) is a fast approximation of Round(n-EMA(1..n)).
-      Return CInt(-Floor(Count/2.91136)*CalculationInterval)
+      Return CInt(-Floor(count/2.91136)*CalculationInterval)
 
     End Function
 

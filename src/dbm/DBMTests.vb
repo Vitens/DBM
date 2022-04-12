@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -1295,71 +1295,71 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Sub RunIntegrationTests
 
-      Dim InputPointDriver As DBMPointDriverTestModel
-      Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
-      Dim DBM As New DBM
+      Dim inputPointDriver As DBMPointDriverTestModel
+      Dim correlationPoints As New List(Of DBMCorrelationPoint)
+      Dim dbm As New DBM
       Dim i As Integer
-      Dim Timestamp As DateTime
-      Dim Result As DBMResult
+      Dim timestamp As DateTime
+      Dim result As DBMResult
 
-      InputPointDriver = New DBMPointDriverTestModel(0)
-      CorrelationPoints.Add(
+      inputPointDriver = New DBMPointDriverTestModel(0)
+      correlationPoints.Add(
         New DBMCorrelationPoint(New DBMPointDriverTestModel(168), False))
 
       ' GetResult Timestamp - test alignment
-      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+      AssertEqual(dbm.GetResult(inputPointDriver, correlationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0)).Timestamp,
         New DateTime(2016, 1, 1, 0, 0, 0))
-      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+      AssertEqual(dbm.GetResult(inputPointDriver, correlationPoints,
         New DateTime(2016, 1, 1, 0, 0, 1)).Timestamp,
         New DateTime(2016, 1, 1, 0, 0, 0))
-      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+      AssertEqual(dbm.GetResult(inputPointDriver, correlationPoints,
         New DateTime(2016, 1, 1, 0, 4, 59)).Timestamp,
         New DateTime(2016, 1, 1, 0, 0, 0))
-      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+      AssertEqual(dbm.GetResult(inputPointDriver, correlationPoints,
         New DateTime(2016, 1, 1, 0, 5, 0)).Timestamp,
         New DateTime(2016, 1, 1, 0, 5, 0))
-      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
+      AssertEqual(dbm.GetResult(inputPointDriver, correlationPoints,
         New DateTime(2016, 1, 1, 0, 7, 12)).Timestamp,
         New DateTime(2016, 1, 1, 0, 5, 0))
 
       ' GetResult IsFutureData - test future data
-      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
-        InputPointDriver.SnapshotTimestamp.AddSeconds(
+      AssertEqual(dbm.GetResult(inputPointDriver, correlationPoints,
+        inputPointDriver.SnapshotTimestamp.AddSeconds(
         -2*CalculationInterval)).IsFutureData, False)
-      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
-        InputPointDriver.SnapshotTimestamp.AddSeconds(
+      AssertEqual(dbm.GetResult(inputPointDriver, correlationPoints,
+        inputPointDriver.SnapshotTimestamp.AddSeconds(
         -CalculationInterval)).IsFutureData, True)
-      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
-        InputPointDriver.SnapshotTimestamp).IsFutureData, True)
-      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
-        InputPointDriver.SnapshotTimestamp.AddSeconds(
+      AssertEqual(dbm.GetResult(inputPointDriver, correlationPoints,
+        inputPointDriver.SnapshotTimestamp).IsFutureData, True)
+      AssertEqual(dbm.GetResult(inputPointDriver, correlationPoints,
+        inputPointDriver.SnapshotTimestamp.AddSeconds(
         CalculationInterval)).IsFutureData, True)
-      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
-        InputPointDriver.SnapshotTimestamp.AddSeconds(
+      AssertEqual(dbm.GetResult(inputPointDriver, correlationPoints,
+        inputPointDriver.SnapshotTimestamp.AddSeconds(
         2*CalculationInterval)).IsFutureData, True)
-      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
-        InputPointDriver.CalculationTimestamp.AddSeconds(
+      AssertEqual(dbm.GetResult(inputPointDriver, correlationPoints,
+        inputPointDriver.CalculationTimestamp.AddSeconds(
         -2*CalculationInterval)).IsFutureData, False)
-      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
-        InputPointDriver.CalculationTimestamp.AddSeconds(
+      AssertEqual(dbm.GetResult(inputPointDriver, correlationPoints,
+        inputPointDriver.CalculationTimestamp.AddSeconds(
         -CalculationInterval)).IsFutureData, False)
-      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
-        InputPointDriver.CalculationTimestamp).IsFutureData, False)
-      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
-        InputPointDriver.CalculationTimestamp.AddSeconds(
+      AssertEqual(dbm.GetResult(inputPointDriver, correlationPoints,
+        inputPointDriver.CalculationTimestamp).IsFutureData, False)
+      AssertEqual(dbm.GetResult(inputPointDriver, correlationPoints,
+        inputPointDriver.CalculationTimestamp.AddSeconds(
         CalculationInterval)).IsFutureData, True)
-      AssertEqual(DBM.GetResult(InputPointDriver, CorrelationPoints,
-        InputPointDriver.CalculationTimestamp.AddSeconds(
+      AssertEqual(dbm.GetResult(inputPointDriver, correlationPoints,
+        inputPointDriver.CalculationTimestamp.AddSeconds(
         2*CalculationInterval)).IsFutureData, True)
 
       ' GetResult - test calculation results
       For i = -19 To 19
-        Timestamp = New DateTime(2016, 1, 1, 0, 0, 0).
+        timestamp = New DateTime(2016, 1, 1, 0, 0, 0).
           AddSeconds(Abs(i)*365*24*60*60/20) ' 19 backwards to 0, forwards to 19
-        Result = DBM.GetResult(InputPointDriver, CorrelationPoints, Timestamp,
+        result = dbm.GetResult(inputPointDriver, correlationPoints, timestamp,
           New CultureInfo("nl-NL")) ' Use Dutch locale for New Year's Day test
-        With Result
+        With result
           AssertAlmostEqual(.Factor, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             -3.8809, 0, 0, 0, 0, 0, 0, 0}(Abs(i)))
           If {12}.Contains(Abs(i)) Then
@@ -1399,70 +1399,70 @@ Namespace Vitens.DynamicBandwidthMonitor
       Next i
 
       ' GetResults Count - test number of results
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+      AssertEqual(dbm.GetResults(inputPointDriver, correlationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 1, 0, 0, 0)).Count, 1)
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+      AssertEqual(dbm.GetResults(inputPointDriver, correlationPoints,
         New DateTime(2016, 1, 1, 0, 2, 12),
         New DateTime(2016, 1, 1, 0, 4, 48)).Count, 2)
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+      AssertEqual(dbm.GetResults(inputPointDriver, correlationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 1, 0, 5, 0)).Count, 2)
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+      AssertEqual(dbm.GetResults(inputPointDriver, correlationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 1, 0, 6, 12)).Count, 3)
-      AssertEqual(DBM.GetResults(InputPointDriver, Nothing,
+      AssertEqual(dbm.GetResults(inputPointDriver, Nothing,
         New DateTime(2016, 1, 1, 0, 3, 55),
         New DateTime(2016, 1, 1, 0, 8, 55)).Count, 3)
-      AssertEqual(DBM.GetResults(InputPointDriver, Nothing,
+      AssertEqual(dbm.GetResults(inputPointDriver, Nothing,
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 1, 0, 10, 0)).Count, 3)
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+      AssertEqual(dbm.GetResults(inputPointDriver, correlationPoints,
         New DateTime(2016, 1, 1, 0, 2, 41),
         New DateTime(2016, 1, 1, 0, 10, 0)).Count, 3)
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+      AssertEqual(dbm.GetResults(inputPointDriver, correlationPoints,
         New DateTime(2016, 1, 1, 0, 1, 9),
         New DateTime(2016, 1, 1, 0, 14, 57)).Count, 4)
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+      AssertEqual(dbm.GetResults(inputPointDriver, correlationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 1, 1, 0, 0)).Count, 13)
-      AssertEqual(DBM.GetResults(InputPointDriver, Nothing,
+      AssertEqual(dbm.GetResults(inputPointDriver, Nothing,
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 1, 12, 0, 0)).Count, 145)
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+      AssertEqual(dbm.GetResults(inputPointDriver, correlationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 2, 0, 0, 0)).Count, 289)
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+      AssertEqual(dbm.GetResults(inputPointDriver, correlationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 2, 0, 0, 0), 0).Count, 289)
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+      AssertEqual(dbm.GetResults(inputPointDriver, correlationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 2, 0, 0, 0), 1).Count, 1)
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+      AssertEqual(dbm.GetResults(inputPointDriver, correlationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 2, 0, 0, 0), 24).Count, 24)
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+      AssertEqual(dbm.GetResults(inputPointDriver, correlationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 2, 0, 0, 0), -2).Count, 1)
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+      AssertEqual(dbm.GetResults(inputPointDriver, correlationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 2, 0, 0, 0), -1).Count, 289)
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+      AssertEqual(dbm.GetResults(inputPointDriver, correlationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 2, 0, 0, 0), 288).Count, 288)
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+      AssertEqual(dbm.GetResults(inputPointDriver, correlationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 2, 0, 0, 0), 289).Count, 289)
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+      AssertEqual(dbm.GetResults(inputPointDriver, correlationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 2, 0, 0, 0), 290).Count, 289)
-      AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+      AssertEqual(dbm.GetResults(inputPointDriver, correlationPoints,
         New DateTime(2016, 1, 1, 0, 0, 0),
         New DateTime(2016, 1, 1, 0, 0, 0), 1000).Count, 1)
 
       ' GetResults Timestamp - test intervals
       For i = 0 To 4
-        AssertEqual(DBM.GetResults(InputPointDriver, CorrelationPoints,
+        AssertEqual(dbm.GetResults(inputPointDriver, correlationPoints,
           New DateTime(2016, 1, 1, 0, 0, 0),
           New DateTime(2016, 1, 1, 1, 0, 0), 5)(i).Timestamp,
           New DateTime(2016, 1, 1,
@@ -1474,33 +1474,33 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function RunQualityTests As String
 
-      Dim InputPointDriver As DBMPointDriverTestModel
-      Dim Week As Integer
-      Dim SE(51), RE(SE.Length-1), F(SE.Length-1), Calibrated, Score As Double
-      Dim DBM As New DBM
+      Dim inputPointDriver As DBMPointDriverTestModel
+      Dim week As Integer
+      Dim se(51), re(se.Length-1), f(se.Length-1), calibrated, score As Double
+      Dim dbm As New DBM
 
-      InputPointDriver = New DBMPointDriverTestModel(0)
+      inputPointDriver = New DBMPointDriverTestModel(0)
 
-      For Week = 0 To SE.Length-1
-        With Statistics(DBM.GetResults(InputPointDriver, Nothing,
-          New DateTime(2016, 1, 1).AddDays(Week*7),
-          New DateTime(2016, 1, 1).AddDays((Week+1)*7), 0,
+      For week = 0 To se.Length-1
+        With Statistics(dbm.GetResults(inputPointDriver, Nothing,
+          New DateTime(2016, 1, 1).AddDays(week*7),
+          New DateTime(2016, 1, 1).AddDays((week+1)*7), 0,
           New CultureInfo("nl-NL")))
-          SE(Week) = .SystematicError
-          RE(Week) = .RandomError
-          F(Week) = .Fit
-          Calibrated += Convert.ToInt32(.Calibrated)
+          se(week) = .SystematicError
+          re(week) = .RandomError
+          f(week) = .Fit
+          calibrated += Convert.ToInt32(.Calibrated)
         End With
-      Next Week
-      Calibrated /= SE.Length
+      Next week
+      calibrated /= se.Length
 
-      Score = (Calibrated*
-        Max(0, 1-Abs(Mean(SE))-NormSInv((0.99+1)/2)*StDevP(SE))*
-        Max(0, 1-Abs(Mean(RE))-NormSInv((0.99+1)/2)*StDevP(RE))*
-        Max(0, Mean(F)-NormSInv((0.99+1)/2)*StDevP(F)))^(1/4)
+      score = (calibrated*
+        Max(0, 1-Abs(Mean(se))-NormSInv((0.99+1)/2)*StDevP(se))*
+        Max(0, 1-Abs(Mean(re))-NormSInv((0.99+1)/2)*StDevP(re))*
+        Max(0, Mean(f)-NormSInv((0.99+1)/2)*StDevP(f)))^(1/4)
 
-      Return String.Format(sQualityTests, SE.Length, Calibrated,
-        Mean(SE), StDevP(SE), Mean(RE), StDevP(RE), Mean(F), StDevP(F), Score)
+      Return String.Format(QualityTests, se.Length, calibrated,
+        Mean(se), StDevP(se), Mean(re), StDevP(re), Mean(f), StDevP(f), score)
 
     End Function
 

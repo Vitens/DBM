@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -33,15 +33,155 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMStatisticsItem
 
 
-    Public Count As Integer
-    Public Mean, NMBE, RMSD, CVRMSD, Slope, OriginSlope, Angle, OriginAngle,
-      Intercept, StandardError, Correlation, ModifiedCorrelation,
-      Determination As Double
+    Private _count As Integer
+    Private _mean, _nmbe, _rmsd, _cvrmsd, _slope, _originSlope, _angle,
+      _originAngle, _intercept, _standardError, _correlation,
+      _modifiedCorrelation, _determination As Double
+
+
+    Public Property Count As Integer
+      Get
+        Return _count
+      End Get
+      Set(value As Integer)
+        _count = value
+      End Set
+    End Property
+
+
+    Public Property Mean As Double
+      Get
+        Return _mean
+      End Get
+      Set(value As Double)
+        _mean = value
+      End Set
+    End Property
+
+
+    Public Property NMBE As Double
+      Get
+        Return _nmbe
+      End Get
+      Set(value As Double)
+        _nmbe = value
+      End Set
+    End Property
+
+
+    Public Property RMSD As Double
+      Get
+        Return _rmsd
+      End Get
+      Set(value As Double)
+        _rmsd = value
+      End Set
+    End Property
+
+
+    Public Property CVRMSD As Double
+      Get
+        Return _cvrmsd
+      End Get
+      Set(value As Double)
+        _cvrmsd = value
+      End Set
+    End Property
+
+
+    Public Property Slope As Double
+      Get
+        Return _slope
+      End Get
+      Set(value As Double)
+        _slope = value
+      End Set
+    End Property
+
+
+    Public Property OriginSlope As Double
+      Get
+        Return _originSlope
+      End Get
+      Set(value As Double)
+        _originSlope = value
+      End Set
+    End Property
+
+
+    Public Property Angle As Double
+      Get
+        Return _angle
+      End Get
+      Set(value As Double)
+        _angle = value
+      End Set
+    End Property
+
+
+    Public Property OriginAngle As Double
+      Get
+        Return _originAngle
+      End Get
+      Set(value As Double)
+        _originAngle = value
+      End Set
+    End Property
+
+
+    Public Property Intercept As Double
+      Get
+        Return _intercept
+      End Get
+      Set(value As Double)
+        _intercept = value
+      End Set
+    End Property
+
+
+    Public Property StandardError As Double
+      Get
+        Return _standardError
+      End Get
+      Set(value As Double)
+        _standardError = value
+      End Set
+    End Property
+
+
+    Public Property Correlation As Double
+      Get
+        Return _correlation
+      End Get
+      Set(value As Double)
+        _correlation = value
+      End Set
+    End Property
+
+
+    Public Property ModifiedCorrelation As Double
+      Get
+        Return _modifiedCorrelation
+      End Get
+      Set(value As Double)
+        _modifiedCorrelation = value
+      End Set
+    End Property
+
+
+    Public Property Determination As Double
+      Get
+        Return _determination
+      End Get
+      Set(value As Double)
+        _determination = value
+      End Set
+    End Property
 
 
     Public Function HasInsufficientData As Boolean
 
-      Return Count < 3 ' Need at least 3 data points.
+      Return Me.Count < 3 ' Need at least 3 data points.
 
     End Function
 
@@ -67,9 +207,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       '   value, 0.75 is often considered a reasonable indicator of a good
       '   causal relationship amongst the energy and independent variables."
 
-      Return Abs(NMBE) <= 0.1 And
-        Abs(CVRMSD) <= 0.3 And
-        Determination >= 0.75
+      Return Abs(Me.NMBE) <= 0.1 And
+        Abs(Me.CVRMSD) <= 0.3 And
+        Me.Determination >= 0.75
 
     End Function
 
@@ -79,7 +219,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' The normalized mean bias error is used as a measure of the systematic
       ' error.
 
-      Return NMBE
+      Return Me.NMBE
 
     End Function
 
@@ -90,7 +230,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' mean bias error and the absolute coefficient of variation of the
       ' root-mean-square deviation is used.
 
-      Return Abs(CVRMSD)-Abs(SystematicError)
+      Return Abs(Me.CVRMSD)-Abs(SystematicError)
 
     End Function
 
@@ -99,7 +239,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' The determination, R², as a measure of fit.
 
-      Return Determination
+      Return Me.Determination
 
     End Function
 
@@ -128,10 +268,10 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Protocol: Concepts and Options for Determining Energy and Water Savings,
       ' Volume I, by the Efficiency Valuation Organization.
 
-      If HasInsufficientData Then Return sStatisticsInsufficientData
+      If HasInsufficientData Then Return StatisticsInsufficientData
 
-      Return String.Format(sStatisticsBrief,
-        Calibrated, Count, SystematicError, RandomError, Fit)
+      Return String.Format(StatisticsBrief,
+        Calibrated, Me.Count, SystematicError, RandomError, Fit)
 
     End Function
 

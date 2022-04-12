@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -33,7 +33,48 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMForecastItem
 
 
-    Public Measurement, Forecast, LowerControlLimit, UpperControlLimit As Double
+    Private _measurement, _forecast, _lowerControlLimit,
+      _upperControlLimit As Double
+
+
+    Public Property Measurement As Double
+      Get
+        Return _measurement
+      End Get
+      Set(value As Double)
+        _measurement = value
+      End Set
+    End Property
+
+
+    Public Property Forecast As Double
+      Get
+        Return _forecast
+      End Get
+      Set(value As Double)
+        _forecast = value
+      End Set
+    End Property
+
+
+    Public Property LowerControlLimit As Double
+      Get
+        Return _lowerControlLimit
+      End Get
+      Set(value As Double)
+        _lowerControlLimit = value
+      End Set
+    End Property
+
+
+    Public Property UpperControlLimit As Double
+      Get
+        Return _upperControlLimit
+      End Get
+      Set(value As Double)
+        _upperControlLimit = value
+      End Set
+    End Property
 
 
     Public Function Range(p As Double) As Double
@@ -46,7 +87,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' and not on a single forecast result from which outliers might be
       ' removed.
 
-      Return (UpperControlLimit-Forecast)/
+      Return (Me.UpperControlLimit-Me.Forecast)/
         ControlLimitRejectionCriterion(2*BandwidthCI-1, ComparePatterns-1)*
         ControlLimitRejectionCriterion(2*p-1, ComparePatterns-1)
 

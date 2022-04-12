@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -35,7 +35,7 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public MustInherit Class DBMLoggerAbstract
 
 
-    Private StaticLogInfo As String
+    Private _staticLogInfo As String
 
 
     Public Enum Level
@@ -49,12 +49,12 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Enum
 
 
-    Private Function EncloseBrackets(Text As String) As String
+    Private Function EncloseBrackets(text As String) As String
 
-      If Text.Equals(String.Empty) Or Text.Contains(" ") Then
-        Return "[" & Text & "]"
+      If text.Equals(String.Empty) Or text.Contains(" ") Then
+        Return "[" & text & "]"
       Else
-        Return Text
+        Return text
       End If
 
     End Function
@@ -63,7 +63,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Sub New
 
       With Process.GetCurrentProcess
-        StaticLogInfo = EncloseBrackets(Environment.MachineName) & " " &
+        _staticLogInfo = EncloseBrackets(Environment.MachineName) & " " &
           EncloseBrackets(DBMInfo.ProductName) & " " &
           EncloseBrackets(.ProcessName) & " " &
           .Id.ToString & " " &
@@ -73,98 +73,98 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Sub
 
 
-    Public MustOverride Sub Log(Level As Level, Message As String)
+    Public MustOverride Sub Log(level As Level, message As String)
 
 
-    Private Function FormatLog(Level As Level, Entity As String,
-      Message As String) As String
+    Private Function FormatLog(level As Level, entity As String,
+      message As String) As String
 
       Dim i As Integer = 1
-      Dim FrameCount As Integer = (New StackTrace).FrameCount
-      Dim Caller As StackFrame = New StackFrame(0)
-      Dim LoggerClass As String =
-        Caller.GetMethod.DeclaringType.FullName.ToString
+      Dim frameCount As Integer = (New StackTrace).FrameCount
+      Dim caller As StackFrame = New StackFrame(0)
+      Dim loggerClass As String =
+        caller.GetMethod.DeclaringType.FullName.ToString
 
-      Do While i < FrameCount
-        Caller = New StackFrame(i)
-        With Caller.GetMethod
+      Do While i < frameCount
+        caller = New StackFrame(i)
+        With caller.GetMethod
           ' Find the first non-constructor (instance, static) method outside of
           ' this class.
-          If Not .DeclaringType.FullName.ToString.Equals(LoggerClass) And
+          If Not .DeclaringType.FullName.ToString.Equals(loggerClass) And
             Not .Name.ToString.Equals(".ctor") And
             Not .Name.ToString.Equals(".cctor") Then Exit Do
         End With
         i+=1
       Loop
 
-      If Message.Contains(NewLine) Then ' Multi-line message
-        Message = NewLine & "    " & Message.Replace(NewLine, NewLine & "    ")
+      If message.Contains(NewLine) Then ' Multi-line message
+        message = NewLine & "    " & message.Replace(NewLine, NewLine & "    ")
       End If
 
-      With Caller.GetMethod
+      With caller.GetMethod
         Return Now.ToString("yyyy-MM-ddTHH:mm:ss.fff") & " " &
-          Level.ToString & " " &
-          StaticLogInfo & " " &
+          level.ToString & " " &
+          _staticLogInfo & " " &
           .DeclaringType.FullName.ToString.Substring(
             .DeclaringType.Namespace.ToString.Length+1) &
           "." & .Name.ToString & " " &
-          EncloseBrackets(Entity) & " " &
-          Message
+          EncloseBrackets(entity) & " " &
+          message
       End With
 
     End Function
 
 
-    Public Sub LogError(Message As String, Optional Entity As String = "")
+    Public Sub LogError(message As String, Optional entity As String = "")
 
       ' Error messages.
       ' For errors and exceptions that cannot be handled. These messages
       ' indicate a failure in the current operation or request, not an app-wide
       ' failure.
 
-      Log(Level.Error, FormatLog(Level.Error, Entity, Message))
+      Log(Level.Error, FormatLog(Level.Error, entity, message))
 
     End Sub
 
 
-    Public Sub LogWarning(Message As String, Optional Entity As String = "")
+    Public Sub LogWarning(message As String, Optional entity As String = "")
 
       ' Warning messages. Encountered a recoverable error.
       ' For abnormal or unexpected events. Typically includes errors or
       ' conditions that don't cause the app to fail.
 
-      Log(Level.Warning, FormatLog(Level.Warning, Entity, Message))
+      Log(Level.Warning, FormatLog(Level.Warning, entity, message))
 
     End Sub
 
 
-    Public Sub LogInformation(Message As String, Optional Entity As String = "")
+    Public Sub LogInformation(message As String, Optional entity As String = "")
 
       ' Informational messages.
       ' Tracks the general flow of the app. May have long-term value.
 
-      Log(Level.Information, FormatLog(Level.Information, Entity, Message))
+      Log(Level.Information, FormatLog(Level.Information, entity, message))
 
     End Sub
 
 
-    Public Sub LogDebug(Message As String, Optional Entity As String = "")
+    Public Sub LogDebug(message As String, Optional entity As String = "")
 
       ' More detailed messages within a method (e.g., Sending email).
       ' For debugging and development.
 
-      Log(Level.Debug, FormatLog(Level.Debug, Entity, Message))
+      Log(Level.Debug, FormatLog(Level.Debug, entity, message))
 
     End Sub
 
 
-    Public Sub LogTrace(Message As String, Optional Entity As String = "")
+    Public Sub LogTrace(message As String, Optional entity As String = "")
 
       ' Data value messages (EmailAddress = john@invalidcompany.com).
       ' Contain the most detailed messages. These messages may contain
       ' sensitive app data.
 
-      Log(Level.Trace, FormatLog(Level.Trace, Entity, Message))
+      Log(Level.Trace, FormatLog(Level.Trace, entity, message))
 
     End Sub
 

@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -93,8 +93,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const pValueMinMax As Double = 0.9999 ' CI for Minimum and Maximum
 
 
-    Private Annotations As New Dictionary(Of AFTime, Object)
-    Private Shared DBM As New DBM(New DBMLoggerAFTrace)
+    Private _annotations As New Dictionary(Of AFTime, Object)
+    Private Shared _dbm As New DBM(New DBMLoggerAFTrace)
 
 
     Public Shared Function CreateDataPipe As Object
@@ -138,10 +138,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' to use future data because the snapshot timestamp is seen as the last
       ' available timestamp.
 
-      Return Attribute.Trait Is LimitTarget Or Attribute.Trait Is Forecast Or
-        Attribute.Trait Is LimitMinimum Or Attribute.Trait Is LimitLoLo Or
-        Attribute.Trait Is LimitLo Or Attribute.Trait Is LimitHi Or
-        Attribute.Trait Is LimitHiHi Or Attribute.Trait Is LimitMaximum
+      Return Attribute.Trait Is LimitTarget Or
+        Attribute.Trait Is Forecast Or
+        Attribute.Trait Is LimitMinimum Or
+        Attribute.Trait Is LimitLoLo Or
+        Attribute.Trait Is LimitLo Or
+        Attribute.Trait Is LimitHi Or
+        Attribute.Trait Is LimitHiHi Or
+        Attribute.Trait Is LimitMaximum
 
     End Function
 
@@ -271,24 +275,25 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Property
 
 
-    Private Sub Annotate(Value As AFValue, Annotation As Object)
+    Private Sub Annotate(value As AFValue, annotation As Object)
 
       ' Stores the annotation object in a dictionary for the timestamp of the
       ' AFValue.
 
-      If Value IsNot Nothing Then ' Key
+      If value IsNot Nothing Then ' Key
 
-        Annotations.Remove(Value.Timestamp) ' Remove existing
-        Value.Annotated = False
+        _annotations.Remove(value.Timestamp) ' Remove existing
+        value.Annotated = False
 
-        If Annotation IsNot Nothing Then ' Value
+        If annotation IsNot Nothing Then ' Value
 
           DBM.Logger.LogDebug(
-            "Timestamp " & Value.Timestamp.LocalTime.ToString("s") & "; " &
-            "Annotation " & DirectCast(Annotation, String), Attribute.GetPath)
+            "value.Timestamp " &
+            value.Timestamp.LocalTime.ToString("s") & "; " &
+            "annotation " & DirectCast(annotation, String), Attribute.GetPath)
 
-          Annotations.Add(Value.Timestamp, Annotation) ' Add
-          Value.Annotated = True
+          _annotations.Add(value.Timestamp, annotation) ' Add
+          value.Annotated = True
 
         End If
 
@@ -307,8 +312,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       GetAnnotation = Nothing
       If value IsNot Nothing AndAlso
-        Annotations.TryGetValue(value.Timestamp, GetAnnotation) Then
-        Annotations.Remove(value.Timestamp) ' Remove after get
+        _annotations.TryGetValue(value.Timestamp, GetAnnotation) Then
+        _annotations.Remove(value.Timestamp) ' Remove after get
         Return GetAnnotation
       Else
         Return String.Empty ' Default
@@ -344,8 +349,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' AFAttribute.GetValue Overload methods which will in-turn, invoke this
       ' method.
 
-      Dim SourceTimestamp As DateTime
-      Dim Timestamp As DateTime = Now
+      Dim sourceTimestamp As DateTime
+      Dim timestamp As DateTime = Now
 
       ' Check if this attribute is properly configured. If it is not configured
       ' properly, return a Configure system state. This will be done in the
@@ -354,22 +359,22 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         ' Retrieve current calculation timestamp.
         If Attribute.Trait Is LimitTarget Then
-          SourceTimestamp =
+          sourceTimestamp =
             New DBMPointDriver(Attribute.Parent).SnapshotTimestamp
         Else
-          SourceTimestamp =
+          sourceTimestamp =
             New DBMPointDriver(Attribute.Parent).CalculationTimestamp
         End If
 
         If timeContext Is Nothing Then
 
           ' No passed timestamp, use current calculation timestamp.
-          Timestamp = SourceTimestamp
+          timestamp = sourceTimestamp
 
         Else
 
           ' Use passed timestamp.
-          Timestamp = DirectCast(timeContext, AFTime).LocalTime
+          timestamp = DirectCast(timeContext, AFTime).LocalTime
 
           ' For attributes without future data, as well as for Target, return
           ' the snapshot value for timestamps up to 10 minutes into the future.
@@ -377,9 +382,9 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' beyond 10 minutes past the snapshot timestamp, but return a No Data
           ' system state instead.
           If (Not SupportsFutureData Or Attribute.Trait Is LimitTarget) And
-            Timestamp > SourceTimestamp And
-            Timestamp < SourceTimestamp.AddMinutes(StaleDataMinutes) Then
-            Timestamp = SourceTimestamp
+            timestamp > sourceTimestamp And
+            timestamp < sourceTimestamp.AddMinutes(StaleDataMinutes) Then
+            timestamp = sourceTimestamp
           End If
 
         End If
@@ -388,17 +393,17 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Returns the single value for the attribute.
       DBM.Logger.LogDebug(
-        "Timestamp " & Timestamp.ToString("s"), Attribute.GetPath)
-      GetValue = GetValues(Nothing, New AFTimeRange(New AFTime(Timestamp),
-        New AFTime(Timestamp)), 1, Nothing, Nothing)(0) ' Request a single value
+        "timestamp " & timestamp.ToString("s"), Attribute.GetPath)
+      GetValue = GetValues(Nothing, New AFTimeRange(New AFTime(timestamp),
+        New AFTime(timestamp)), 1, Nothing, Nothing)(0) ' Request a single value
       DBM.Logger.LogTrace("Return value", Attribute.GetPath)
       Return GetValue
 
     End Function
 
 
-    Private Function Deflatline(Values As AFValues,
-      Results As List(Of DBMResult), Stepped As Boolean) As AFValues
+    Private Function Deflatline(values As AFValues,
+      results As List(Of DBMResult), stepped As Boolean) As AFValues
 
       ' De-flatline detects and removes incorrect flatlines in the data and
       ' replaces them with forecast values, which are then weight adjusted to
@@ -409,22 +414,22 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' all zeroes, followed by a single spike value containing the total of the
       ' previous flatline time range.
 
-      Dim Value As AFValue
+      Dim value As AFValue
       Dim iV, iFL, i As Integer ' Iterators
-      Dim MeasurementWeight, ForecastWeight As Double
+      Dim measurementWeight, forecastWeight As Double
 
       Deflatline = New AFValues
 
-      For Each Value In Values
+      For Each value In values
 
-        Deflatline.Add(Value) ' Add original value.
+        Deflatline.Add(value) ' Add original value.
 
         ' The flatline ends when a value is different from the value that is
         ' currently being monitored. This value is also replaced by the weight
         ' adjusted forecast, as it may contain a spike value which needs to be
         ' redistributed.
-        If iV > iFL AndAlso Not Convert.ToDouble(Value.Value) =
-          Convert.ToDouble(Values.Item(iFL).Value) Then
+        If iV > iFL AndAlso Not Convert.ToDouble(value.Value) =
+          Convert.ToDouble(values.Item(iFL).Value) Then
 
           ' The following timestamps are important:
           '  * iFL-1 Last good value before flatline
@@ -445,14 +450,14 @@ Namespace Vitens.DynamicBandwidthMonitor
           '       flatline has to be at least 12 calculation intervals. With the
           '       default calculation interval of 5 minutes, this equals one
           '       hour.
-          If (iFL > 0 And iV < Values.Count-1 And iV-iFL > 1) AndAlso
-            Values.Item(iV+1).Timestamp.LocalTime.Subtract(
-            Values.Item(iFL-1).Timestamp.LocalTime).TotalSeconds/
+          If (iFL > 0 And iV < values.Count-1 And iV-iFL > 1) AndAlso
+            values.Item(iV+1).Timestamp.LocalTime.Subtract(
+            values.Item(iFL-1).Timestamp.LocalTime).TotalSeconds/
             CalculationInterval >= 12 Then
 
             DBM.Logger.LogDebug("Found flatline from " &
-              Values.Item(iFL).Timestamp.LocalTime.ToString("s") & " to " &
-              Values.Item(iV).Timestamp.LocalTime.ToString("s"),
+              values.Item(iFL).Timestamp.LocalTime.ToString("s") & " to " &
+              values.Item(iV).Timestamp.LocalTime.ToString("s"),
               Attribute.GetPath)
 
             ' Determining the scaling factor for weight adjustment:
@@ -474,76 +479,76 @@ Namespace Vitens.DynamicBandwidthMonitor
             ' the first good value. These two values are unmodified in the end
             ' result.
             i = -1 ' Start at the last good value.
-            MeasurementWeight = 0 ' Initial weight.
+            measurementWeight = 0 ' Initial weight.
             Do While iFL+i < iV+1
               ' Add weight.
-              MeasurementWeight += TimeWeightedValue(
-                Convert.ToDouble(Values.Item(iFL+i).Value),
-                Convert.ToDouble(Values.Item(iFL+i+1).Value),
-                Values.Item(iFL+i).Timestamp.LocalTime,
-                Values.Item(iFL+i+1).Timestamp.LocalTime, Stepped)
+              measurementWeight += TimeWeightedValue(
+                Convert.ToDouble(values.Item(iFL+i).Value),
+                Convert.ToDouble(values.Item(iFL+i+1).Value),
+                values.Item(iFL+i).Timestamp.LocalTime,
+                values.Item(iFL+i+1).Timestamp.LocalTime, stepped)
               i += 1 ' Increase iterator.
             Loop ' iFL-1 to iV.
 
             ' Phase 2: Calculate weight of forecast.
             i = 0
-            ForecastWeight = 0 ' Initial weight.
-            Do While i < Results.Count-1 ' Exclude last value, we need i+1.
-              If Results.Item(i).Timestamp >
-                Values.Item(iFL-1).Timestamp.LocalTime Then
+            forecastWeight = 0 ' Initial weight.
+            Do While i < results.Count-1 ' Exclude last value, we need i+1.
+              If results.Item(i).Timestamp >
+                values.Item(iFL-1).Timestamp.LocalTime Then
                 ' All forecasts after the last good value and before the first
                 ' good value.
-                If Results.Item(i-1).Timestamp <=
-                  Values.Item(iFL-1).Timestamp.LocalTime Then
-                  If Stepped Then
+                If results.Item(i-1).Timestamp <=
+                  values.Item(iFL-1).Timestamp.LocalTime Then
+                  If stepped Then
                     ' Last good value to first forecast for stepped values.
-                    MeasurementWeight -= TimeWeightedValue(
-                      Convert.ToDouble(Values.Item(iFL-1).Value), Nothing,
-                      Values.Item(iFL-1).Timestamp.LocalTime,
-                      Results.Item(i).Timestamp) ' -a(u-t)
-                    ForecastWeight += TimeWeightedValue(
-                      Results.Item(i).ForecastItem.Forecast, Nothing,
-                      Results.Item(i).Timestamp,
-                      Results.Item(i+1).Timestamp) ' b(v-u)
+                    measurementWeight -= TimeWeightedValue(
+                      Convert.ToDouble(values.Item(iFL-1).Value), Nothing,
+                      values.Item(iFL-1).Timestamp.LocalTime,
+                      results.Item(i).Timestamp) ' -a(u-t)
+                    forecastWeight += TimeWeightedValue(
+                      results.Item(i).ForecastItem.Forecast, Nothing,
+                      results.Item(i).Timestamp,
+                      results.Item(i+1).Timestamp) ' b(v-u)
                   Else
                     ' Last good value to first forecast for non-stepped values.
-                    MeasurementWeight -= TimeWeightedValue(
-                      Convert.ToDouble(Values.Item(iFL-1).Value), Nothing,
-                      Values.Item(iFL-1).Timestamp.LocalTime,
-                      Results.Item(i).Timestamp)/2 ' -a(u-t)/2
-                    ForecastWeight += TimeWeightedValue(
-                      Results.Item(i).ForecastItem.Forecast, Nothing,
-                      Values.Item(iFL-1).Timestamp.LocalTime,
-                      Results.Item(i+1).Timestamp)/2 ' b(v-t)/2
+                    measurementWeight -= TimeWeightedValue(
+                      Convert.ToDouble(values.Item(iFL-1).Value), Nothing,
+                      values.Item(iFL-1).Timestamp.LocalTime,
+                      results.Item(i).Timestamp)/2 ' -a(u-t)/2
+                    forecastWeight += TimeWeightedValue(
+                      results.Item(i).ForecastItem.Forecast, Nothing,
+                      values.Item(iFL-1).Timestamp.LocalTime,
+                      results.Item(i+1).Timestamp)/2 ' b(v-t)/2
                   End If ' Stepped.
-                ElseIf Results.Item(i+1).Timestamp >=
-                  Values.Item(iV+1).Timestamp.LocalTime Then
-                  If Stepped Then
+                ElseIf results.Item(i+1).Timestamp >=
+                  values.Item(iV+1).Timestamp.LocalTime Then
+                  If stepped Then
                     ' Last forecast to first good value for stepped values.
-                    ForecastWeight += TimeWeightedValue(
-                      Results.Item(i).ForecastItem.Forecast, Nothing,
-                      Results.Item(i).Timestamp,
-                      Values.Item(iV+1).Timestamp.LocalTime) ' e(y-x)
+                    forecastWeight += TimeWeightedValue(
+                      results.Item(i).ForecastItem.Forecast, Nothing,
+                      results.Item(i).Timestamp,
+                      values.Item(iV+1).Timestamp.LocalTime) ' e(y-x)
                   Else
                     ' Last forecast to first good value for non-stepped values.
-                    MeasurementWeight -= TimeWeightedValue(
-                      Convert.ToDouble(Values.Item(iV+1).Value), Nothing,
-                      Results.Item(i).Timestamp,
-                      Values.Item(iV+1).Timestamp.LocalTime)/2 ' -f(y-x)/2
-                    ForecastWeight += TimeWeightedValue(
-                      Results.Item(i).ForecastItem.Forecast, Nothing,
-                      Results.Item(i-1).Timestamp,
-                      Values.Item(iV+1).Timestamp.LocalTime)/2 ' e(y-w)/2
+                    measurementWeight -= TimeWeightedValue(
+                      Convert.ToDouble(values.Item(iV+1).Value), Nothing,
+                      results.Item(i).Timestamp,
+                      values.Item(iV+1).Timestamp.LocalTime)/2 ' -f(y-x)/2
+                    forecastWeight += TimeWeightedValue(
+                      results.Item(i).ForecastItem.Forecast, Nothing,
+                      results.Item(i-1).Timestamp,
+                      values.Item(iV+1).Timestamp.LocalTime)/2 ' e(y-w)/2
                   End If ' Stepped.
                   Exit Do ' Done.
                 Else
                   ' All forecasts after the last good value and before the first
                   ' good value, except first and last.
-                  If Stepped Then
-                    ForecastWeight += TimeWeightedValue(
-                      Results.Item(i).ForecastItem.Forecast, Nothing,
-                      Results.Item(i).Timestamp,
-                      Results.Item(i+1).Timestamp) ' c(w-v), ...
+                  If stepped Then
+                    forecastWeight += TimeWeightedValue(
+                      results.Item(i).ForecastItem.Forecast, Nothing,
+                      results.Item(i).Timestamp,
+                      results.Item(i+1).Timestamp) ' c(w-v), ...
                   Else
                     ' If not stepped, each value has a certain weight in it's
                     ' previous and it's next interval. For both of these
@@ -553,10 +558,10 @@ Namespace Vitens.DynamicBandwidthMonitor
                     ' other half of the weight coming from it's previous and
                     ' next values. So we can just add half the total weight from
                     ' the previous interval to the next.
-                    ForecastWeight += TimeWeightedValue(
-                      Results.Item(i).ForecastItem.Forecast, Nothing,
-                      Results.Item(i-1).Timestamp,
-                      Results.Item(i+1).Timestamp)/2 ' c(w-u)/2, ...
+                    forecastWeight += TimeWeightedValue(
+                      results.Item(i).ForecastItem.Forecast, Nothing,
+                      results.Item(i-1).Timestamp,
+                      results.Item(i+1).Timestamp)/2 ' c(w-u)/2, ...
                   End If ' Stepped.
                 End If
               End If
@@ -565,43 +570,43 @@ Namespace Vitens.DynamicBandwidthMonitor
 
             ' Log weights
             DBM.Logger.LogDebug(
-              "MeasurementWeight " & MeasurementWeight.ToString & "; " &
-              "ForecastWeight " & ForecastWeight.ToString, Attribute.GetPath)
+              "measurementWeight " & measurementWeight.ToString & "; " &
+              "forecastWeight " & forecastWeight.ToString, Attribute.GetPath)
 
             ' Phase 3: Remove all values after the last good value.
             DBM.Logger.LogDebug(
               "Remove " & (iV-iFL+1).ToString & " raw values",
               Attribute.GetPath)
             Do While Deflatline.Item(Deflatline.Count-1).
-              Timestamp.LocalTime > Values.Item(iFL-1).Timestamp.LocalTime
+              Timestamp.LocalTime > values.Item(iFL-1).Timestamp.LocalTime
               Deflatline.RemoveAt(Deflatline.Count-1)
             Loop
 
             ' Phase 4: Add weight adjusted forecasts.
             i = 0
-            Do While i < Results.Count-1
-              If Results.Item(i).Timestamp >
-                Values.Item(iFL-1).Timestamp.LocalTime And
-                Results.Item(i).TimestampIsValid Then
+            Do While i < results.Count-1
+              If results.Item(i).Timestamp >
+                values.Item(iFL-1).Timestamp.LocalTime And
+                results.Item(i).TimestampIsValid Then
                 ' Add weight adjusted forecasts for valid timestamps after the
                 ' last good value and before the first good value.
                 Deflatline.Add(New AFValue(
-                  Results.Item(i).ForecastItem.Forecast*
-                  MeasurementWeight/ForecastWeight,
-                  New AFTime(Results.Item(i).Timestamp)))
+                  results.Item(i).ForecastItem.Forecast*
+                  measurementWeight/forecastWeight,
+                  New AFTime(results.Item(i).Timestamp)))
                 Deflatline.Item(Deflatline.Count-1).Substituted = True
-                If Results.Item(i-1).Timestamp <=
-                  Values.Item(iFL-1).Timestamp.LocalTime Then
+                If results.Item(i-1).Timestamp <=
+                  values.Item(iFL-1).Timestamp.LocalTime Then
                   ' Annotate the first weight adjusted forecast with the factor
                   ' value.
                   Annotate(Deflatline.Item(Deflatline.Count-1),
-                    String.Format(sForecastFactorAnnotation,
-                    MeasurementWeight/ForecastWeight))
+                    String.Format(ForecastFactorAnnotation,
+                    measurementWeight/forecastWeight))
                 End If
               End If
               i += 1 ' Increase iterator.
-              If Results.Item(i).Timestamp >=
-                Values.Item(iV+1).Timestamp.LocalTime Then Exit Do ' Done.
+              If results.Item(i).Timestamp >=
+                values.Item(iV+1).Timestamp.LocalTime Then Exit Do ' Done.
             Loop ' Results.
 
             ' After deflatlining, set the flatline start index to the value
@@ -620,7 +625,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         iV += 1 ' Move iterator to next value.
 
-      Next Value
+      Next value
 
       Return Deflatline
 
@@ -676,14 +681,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' not be invoked directly by the user. Instead, the user should call the
       ' AFAttribute.GetValues method which will in-turn, invoke this method.
 
-      Dim Element, ParentElement, SiblingElement As AFElement
-      Dim InputPointDriver As DBMPointDriver
-      Dim CorrelationPoints As New List(Of DBMCorrelationPoint)
-      Dim Results As List(Of DBMResult)
-      Dim RawSnapshot As DateTime
-      Dim AppendForecast As Boolean
-      Dim RawValues As AFValues = Nothing
-      Dim Result As DBMResult
+      Dim element, parentElement, siblingElement As AFElement
+      Dim inputPointDriver As DBMPointDriver
+      Dim correlationPoints As New List(Of DBMCorrelationPoint)
+      Dim results As List(Of DBMResult)
+      Dim rawSnapshot As DateTime
+      Dim appendForecast As Boolean
+      Dim rawValues As AFValues = Nothing
+      Dim result As DBMResult
       Dim iR, iD As Integer ' Iterators for raw values and DBM results.
 
       GetValues = New AFValues
@@ -700,103 +705,105 @@ Namespace Vitens.DynamicBandwidthMonitor
         Return GetValues
       End If
 
-      Element = DirectCast(Attribute.Element, AFElement)
-      InputPointDriver = New DBMPointDriver(Attribute.Parent) ' Parent attribute
+      element = DirectCast(Attribute.Element, AFElement)
+      inputPointDriver = New DBMPointDriver(Attribute.Parent) ' Parent attribute
 
       DBM.Logger.LogDebug(
-        "StartTime " & timeRange.StartTime.LocalTime.ToString("s") & "; " &
-        "EndTime " & timeRange.EndTime.LocalTime.ToString("s") & "; " &
+        "timeRange.StartTime " &
+        timeRange.StartTime.LocalTime.ToString("s") & "; " &
+        "timeRange.EndTime " &
+        timeRange.EndTime.LocalTime.ToString("s") & "; " &
         "numberOfValues " & numberOfValues.ToString, Attribute.GetPath)
 
       ' Retrieve correlation points from AF hierarchy for first-level child
       ' attributes in non-root elements only when calculating the DBM factor
       ' value and if correlation calculations are not disabled using
       ' categories.
-      If Not Element.IsRoot And Attribute.Parent.Parent Is Nothing And
+      If Not element.IsRoot And Attribute.Parent.Parent Is Nothing And
         Attribute.Trait Is Nothing And
         Not Attribute.CategoriesString.Contains(CategoryNoCorrelation) Then
 
-        ParentElement = Element.Parent
+        parentElement = element.Parent
 
         ' Find siblings
-        If ParentElement IsNot Nothing Then
-          For Each SiblingElement In ParentElement.Elements
-            If Not SiblingElement.UniqueID.Equals(Element.UniqueID) And
-              SiblingElement.Template IsNot Nothing AndAlso
-              SiblingElement.Template.UniqueID.Equals(
-              Element.Template.UniqueID) Then ' Same template, skip self
-              If SiblingElement.Attributes(Attribute.Parent.Name).
+        If parentElement IsNot Nothing Then
+          For Each siblingElement In parentElement.Elements
+            If Not siblingElement.UniqueID.Equals(element.UniqueID) And
+              siblingElement.Template IsNot Nothing AndAlso
+              siblingElement.Template.UniqueID.Equals(
+              element.Template.UniqueID) Then ' Same template, skip self
+              If siblingElement.Attributes(Attribute.Parent.Name).
                 GetValue.IsGood Then ' Add only if has good data
-                CorrelationPoints.Add(New DBMCorrelationPoint(
-                  New DBMPointDriver(SiblingElement.Attributes(
+                correlationPoints.Add(New DBMCorrelationPoint(
+                  New DBMPointDriver(siblingElement.Attributes(
                   Attribute.Parent.Name)), False))
               End If
             End If
-          Next SiblingElement
+          Next siblingElement
         End If
 
         ' Find parents recursively
-        Do While ParentElement IsNot Nothing
-          If ParentElement.Template IsNot Nothing AndAlso
-            ParentElement.Template.UniqueID.Equals(
-            Element.Template.UniqueID) Then ' Same template
-            If ParentElement.Attributes(Attribute.Parent.Name).
+        Do While parentElement IsNot Nothing
+          If parentElement.Template IsNot Nothing AndAlso
+            parentElement.Template.UniqueID.Equals(
+            element.Template.UniqueID) Then ' Same template
+            If parentElement.Attributes(Attribute.Parent.Name).
               GetValue.IsGood Then ' Add only if has good data
-              CorrelationPoints.Add(New DBMCorrelationPoint(
-                New DBMPointDriver(ParentElement.Attributes(
+              correlationPoints.Add(New DBMCorrelationPoint(
+                New DBMPointDriver(parentElement.Attributes(
                 Attribute.Parent.Name)), True))
             End If
           End If
-          ParentElement = ParentElement.Parent
+          parentElement = parentElement.Parent
         Loop
 
       End If
 
       ' Get DBM results for time range.
-      Results = DBM.GetResults(InputPointDriver, CorrelationPoints,
+      results = _dbm.GetResults(inputPointDriver, correlationPoints,
         timeRange.StartTime.LocalTime, timeRange.EndTime.LocalTime,
         numberOfValues)
       DBM.Logger.LogTrace(
-        "Calculated " & Results.Count.ToString & " results", Attribute.GetPath)
+        "Calculated " & results.Count.ToString & " results", Attribute.GetPath)
 
       ' Retrieve raw values for Target trait.
       If Attribute.Trait Is LimitTarget Then
-        RawSnapshot = InputPointDriver.SnapshotTimestamp
+        rawSnapshot = inputPointDriver.SnapshotTimestamp
         ' The timerange should have forecast values appended after the raw
         ' snapshot timestamp only if the end timestamp is at least 10 minutes
         ' past the raw snapshot timestamp. This ensures that the raw snapshot
         ' value stays valid up to 10 minutes past it's timestamp.
-        AppendForecast = timeRange.EndTime.LocalTime >=
-          RawSnapshot.AddMinutes(StaleDataMinutes)
-        If timeRange.StartTime.LocalTime <= RawSnapshot Then
+        appendForecast = timeRange.EndTime.LocalTime >=
+          rawSnapshot.AddMinutes(StaleDataMinutes)
+        If timeRange.StartTime.LocalTime <= rawSnapshot Then
           ' Retrieve raw values if the start timestamp for this time range is on
           ' or before the raw snapshot timestamp.
-          RawValues = Attribute.Parent.
+          rawValues = Attribute.Parent.
             GetValues(timeRange, numberOfValues, Nothing)
         Else
           ' Start timestamp is after the raw snapshot timestamp. This is future
           ' data, so there are no raw values.
-          RawValues = New AFValues
+          rawValues = New AFValues
           If timeRange.StartTime.LocalTime <
-            RawSnapshot.AddMinutes(StaleDataMinutes) Then
+            rawSnapshot.AddMinutes(StaleDataMinutes) Then
             ' If the start timestamp of the timerange is less than 10 minutes
             ' after the raw snapshot timestamp, return the raw snapshot with
             ' it's timestamp adjusted to the timerange start timestamp as it is
             ' still valid during this period.
-            RawValues.Add(Attribute.Parent.GetValue)
-            RawSnapshot = timeRange.StartTime.LocalTime
-            RawValues(0).Timestamp = New AFTime(RawSnapshot)
+            rawValues.Add(Attribute.Parent.GetValue)
+            rawSnapshot = timeRange.StartTime.LocalTime
+            rawValues(0).Timestamp = New AFTime(rawSnapshot)
           End If
         End If
-        If RawValues.Count > 0 Then DBM.Logger.LogTrace(
-          "Retrieved " & RawValues.Count.ToString & " raw values",
+        If rawValues.Count > 0 Then DBM.Logger.LogTrace(
+          "Retrieved " & rawValues.Count.ToString & " raw values",
           Attribute.GetPath)
       End If
 
       ' Iterate over DBM results for time range.
-      For Each Result In Results
+      For Each result In results
 
-        With Result
+        With result
 
           If .TimestampIsValid And
             (SupportsFutureData Or Not .IsFutureData) Then
@@ -824,9 +831,9 @@ Namespace Vitens.DynamicBandwidthMonitor
               '  4) If the timestamp is past the raw snapshot timestamp and the
               '       end timestamp at least 10 minutes after the raw snapshot
               '       timestamp. This appends forecast values to the future.
-              If RawValues.Count = 0 OrElse
-                Not RawValues.Item(Max(0, iR-1)).IsGood OrElse
-                (.Timestamp > RawSnapshot And AppendForecast) Then
+              If rawValues.Count = 0 OrElse
+                Not rawValues.Item(Max(0, iR-1)).IsGood OrElse
+                (.Timestamp > rawSnapshot And appendForecast) Then
                 If IsNaN(.ForecastItem.Forecast) Then
                   ' If there is no valid forecast result, return an InvalidData
                   ' state. Definition: 'Invalid Data state.'
@@ -849,17 +856,17 @@ Namespace Vitens.DynamicBandwidthMonitor
               '       until the timestamp of the next DBM result (inclusive).
               '  2) The raw value timestamp is on or after the last DBM result.
               '       This includes all remaining values after the last result.
-              Do While iR < RawValues.Count AndAlso
-                RawValues.Item(iR).Timestamp.LocalTime <= RawSnapshot AndAlso
-                ((iD+1 < Results.Count AndAlso RawValues.Item(iR).
-                Timestamp.LocalTime <= Results.Item(iD+1).Timestamp) OrElse
-                RawValues.Item(iR).Timestamp.LocalTime >=
-                Results.Item(Results.Count-1).Timestamp)
-                If RawValues.Item(iR).IsGood Then ' Only include good values
+              Do While iR < rawValues.Count AndAlso
+                rawValues.Item(iR).Timestamp.LocalTime <= rawSnapshot AndAlso
+                ((iD+1 < results.Count AndAlso rawValues.Item(iR).
+                Timestamp.LocalTime <= results.Item(iD+1).Timestamp) OrElse
+                rawValues.Item(iR).Timestamp.LocalTime >=
+                results.Item(results.Count-1).Timestamp)
+                If rawValues.Item(iR).IsGood Then ' Only include good values
                   ' Create a copy of the value, so that it's attribute is not
                   ' linked to an attribute that might not support annotations.
                   GetValues.Add(New AFValue(
-                    RawValues.Item(iR).Value, RawValues.Item(iR).Timestamp))
+                    rawValues.Item(iR).Value, rawValues.Item(iR).Timestamp))
                   ' Mark events (exceeding Minimum and Maximum control limits)
                   ' as questionable.
                   GetValues.Item(GetValues.Count-1).Questionable =
@@ -913,7 +920,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
         iD += 1 ' Move iterator to next DBM result.
 
-      Next Result
+      Next result
 
       ' If there are no calculation results, return a NoData state.
       ' Definition: 'Data-retrieval functions use this state for time periods
@@ -934,11 +941,11 @@ Namespace Vitens.DynamicBandwidthMonitor
         If GetValues.Count > 1 Then
           GetValues.Item(0).Value =
             LinearInterpolation(timeRange.StartTime.LocalTime,
-            GetValues.Item(0).Timestamp.LocalTime,
-            Convert.ToDouble(GetValues.Item(0).Value),
-            GetValues.Item(1).Timestamp.LocalTime,
-            Convert.ToDouble(GetValues.Item(1).Value),
-            [Step])
+              GetValues.Item(0).Timestamp.LocalTime,
+              Convert.ToDouble(GetValues.Item(0).Value),
+              GetValues.Item(1).Timestamp.LocalTime,
+              Convert.ToDouble(GetValues.Item(1).Value),
+              Me.Step)
         End If
         GetValues.Item(0).Timestamp = timeRange.StartTime
       End If
@@ -946,11 +953,11 @@ Namespace Vitens.DynamicBandwidthMonitor
         If GetValues.Count > 1 Then
           GetValues.Item(GetValues.Count-1).Value =
             LinearInterpolation(timeRange.EndTime.LocalTime,
-            GetValues.Item(GetValues.Count-2).Timestamp.LocalTime,
-            Convert.ToDouble(GetValues.Item(GetValues.Count-2).Value),
-            GetValues.Item(GetValues.Count-1).Timestamp.LocalTime,
-            Convert.ToDouble(GetValues.Item(GetValues.Count-1).Value),
-            [Step])
+              GetValues.Item(GetValues.Count-2).Timestamp.LocalTime,
+              Convert.ToDouble(GetValues.Item(GetValues.Count-2).Value),
+              GetValues.Item(GetValues.Count-1).Timestamp.LocalTime,
+              Convert.ToDouble(GetValues.Item(GetValues.Count-1).Value),
+              Me.Step)
         End If
         GetValues.Item(GetValues.Count-1).Timestamp = timeRange.EndTime
       End If
@@ -958,9 +965,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' For the Target values, if there are more than two results, check for and
       ' remove flatlines, and annotate the first value with model calibration
       ' metrics.
-      If Attribute.Trait Is LimitTarget And Results.Count > 2 Then
-        GetValues = Deflatline(GetValues, Results, [Step])
-        Annotate(GetValues.Item(0), Statistics(Results).Brief)
+      If Attribute.Trait Is LimitTarget And results.Count > 2 Then
+        GetValues = Deflatline(GetValues, results, Me.Step)
+        Annotate(GetValues.Item(0), Statistics(results).Brief)
       End If
 
       ' Returns the collection of values for the attribute sorted in increasing
@@ -1022,11 +1029,13 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Retrieves interpolated values over the specified time range evenly
       ' spaced using the numberOfValues.
 
-      Dim Interval As AFTimeSpan
+      Dim interval As AFTimeSpan
 
       DBM.Logger.LogDebug(
-        "StartTime " & timeRange.StartTime.LocalTime.ToString("s") & "; " &
-        "EndTime " & timeRange.EndTime.LocalTime.ToString("s") & "; " &
+        "timeRange.StartTime " &
+        timeRange.StartTime.LocalTime.ToString("s") & "; " &
+        "timeRange.EndTime " &
+        timeRange.EndTime.LocalTime.ToString("s") & "; " &
         "numberOfValues " & numberOfValues.ToString, Attribute.GetPath)
 
       InterpolatedValuesByCount = New AFValues
@@ -1036,12 +1045,12 @@ Namespace Vitens.DynamicBandwidthMonitor
           GetValue(Nothing, timeRange.StartTime, Nothing, Nothing))
       Else
         ' Return multiple values.
-        Interval = New AFTimeSpan(0, 0, 0, 0, 0,
+        interval = New AFTimeSpan(0, 0, 0, 0, 0,
           (timeRange.EndTime.UtcSeconds-timeRange.StartTime.UtcSeconds)/
           (numberOfValues-1), 0)
         InterpolatedValuesByCount = Summaries(
-          New AFTimeRange(timeRange.StartTime, timeRange.EndTime+Interval),
-          Interval,
+          New AFTimeRange(timeRange.StartTime, timeRange.EndTime+interval),
+          interval,
           AFSummaryTypes.Average,
           AFCalculationBasis.TimeWeighted,
           AFTimestampCalculation.EarliestTime)(AFSummaryTypes.Average)

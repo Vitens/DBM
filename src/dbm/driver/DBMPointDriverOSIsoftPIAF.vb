@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -43,9 +43,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Identifier (Point): OSIsoft.AF.Asset.AFAttribute (PI AF attribute)
 
 
-    Public Sub New(Point As Object)
+    Public Sub New(point As Object)
 
-      MyBase.New(Point)
+      MyBase.New(point)
 
     End Sub
 
@@ -66,30 +66,30 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Overrides Sub PrepareData(StartTimestamp As DateTime,
-      EndTimestamp As DateTime)
+    Public Overrides Sub PrepareData(startTimestamp As DateTime,
+      endTimestamp As DateTime)
 
       ' Retrieves a value for each interval in the time range from OSIsoft PI AF
       ' and stores this in memory. The (aligned) end time itself is excluded.
 
-      Dim Values As AFValues
-      Dim Value As AFValue
+      Dim values As AFValues
+      Dim value As AFValue
 
       DBM.Logger.LogDebug(
-        "StartTimestamp " & StartTimestamp.ToString("s") & "; " &
-        "EndTimestamp " & EndTimestamp.ToString("s"), Me.ToString)
+        "startTimestamp " & startTimestamp.ToString("s") & "; " &
+        "endTimestamp " & endTimestamp.ToString("s"), Me.ToString)
 
-      Values = DirectCast(Point, AFAttribute).Data.InterpolatedValues(
-        New AFTimeRange(New AFTime(StartTimestamp),
-        New AFTime(EndTimestamp.AddSeconds(-CalculationInterval))),
+      values = DirectCast(Point, AFAttribute).Data.InterpolatedValues(
+        New AFTimeRange(New AFTime(startTimestamp),
+        New AFTime(endTimestamp.AddSeconds(-CalculationInterval))),
         New AFTimeSpan(0, 0, 0, 0, 0, CalculationInterval, 0),
         Nothing, Nothing, True) ' Get interpolated values for time range.
 
       DBM.Logger.LogTrace(
-        "Retrieved " & Values.Count.ToString & " values", Me.ToString)
+        "Retrieved " & values.Count.ToString & " values", Me.ToString)
 
-      For Each Value In Values
-        DataStore.AddData(Value.Timestamp.LocalTime, Value.Value)
+      For Each value In values
+        DataStore.AddData(value.Timestamp.LocalTime, value.Value)
       Next
 
     End Sub

@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -39,7 +39,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Hourly time-weighted averages for FRL-07-01 Leeuwarden-stad in 2016; 8736
     ' values, 364 days, 52 weeks. First value at Friday, January 1st 2016 00:00.
     ' DST ends on day 86 (index 2066) and starts on day 303 (index 7274).
-    Private HourlyTimeSeriesData() As Integer = {510, 592, 531, 439, 347, 349,
+    Private _hourlyTimeSeriesData() As Integer = {510, 592, 531, 439, 347, 349,
       329, 345, 471, 758, 1035, 1173, 1218, 1157, 1053, 905, 794, 800, 848, 853,
       693, 633, 681, 599, 440, 338, 280, 276, 261, 293, 303, 430, 748, 1106,
       1207, 1260, 1249, 1122, 999, 900, 871, 852, 931, 892, 747, 672, 639, 602,
@@ -679,9 +679,9 @@ Namespace Vitens.DynamicBandwidthMonitor
       1013, 988, 813, 735, 741, 677}
 
 
-    Public Sub New(Point As Object)
+    Public Sub New(point As Object)
 
-      MyBase.New(Point)
+      MyBase.New(point)
 
     End Sub
 
@@ -700,38 +700,38 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Overrides Sub PrepareData(StartTimestamp As DateTime,
-      EndTimestamp As DateTime)
+    Public Overrides Sub PrepareData(startTimestamp As DateTime,
+      endTimestamp As DateTime)
 
-      Dim OffsetHours As Integer
-      Dim Index, Weight as Double
-      Dim DataPoint as Integer
+      Dim offsetHours As Integer
+      Dim index, weight as Double
+      Dim dataPoint as Integer
 
-      If TypeOf Point Is Integer Then OffsetHours = DirectCast(Point, Integer)
+      If TypeOf Point Is Integer Then offsetHours = DirectCast(Point, Integer)
 
-      Do While EndTimestamp > StartTimestamp
+      Do While endTimestamp > startTimestamp
 
         ' Determine index. Shift day of week, add offset in hours, and add array
         ' length to avoid modulus with negative numbers.
-        Index = (New DateTime(StartTimestamp.Year, 1, 1).
+        index = (New DateTime(startTimestamp.Year, 1, 1).
           DayOfWeek-System.DayOfWeek.Friday)*24+
-          StartTimestamp.Subtract(New DateTime(
-          StartTimestamp.Year, 1, 1)).TotalHours+
-          OffsetHours+HourlyTimeSeriesData.Length
-        Weight = Index Mod 1 ' Inv. weight distribution between 1st and 2nd pt.
-        DataPoint =
-          Convert.ToInt32(Index-Weight) Mod HourlyTimeSeriesData.Length ' 1st pt
-        If DataPoint >= 2066 And
-          DataPoint < 7274 Then DataPoint -= 1 ' DST compensation.
+          startTimestamp.Subtract(New DateTime(
+          startTimestamp.Year, 1, 1)).TotalHours+
+          offsetHours+_hourlyTimeSeriesData.Length
+        weight = index Mod 1 ' Inv. weight distribution between 1st and 2nd pt.
+        dataPoint =
+          Convert.ToInt32(index-weight) Mod _hourlyTimeSeriesData.Length
+        If dataPoint >= 2066 And
+          dataPoint < 7274 Then dataPoint -= 1 ' DST compensation.
 
         ' Interpolate between two data points using weight.
-        DataStore.AddData(StartTimestamp,
-          Lerp(HourlyTimeSeriesData(DataPoint),
-          HourlyTimeSeriesData((DataPoint+1) Mod HourlyTimeSeriesData.Length),
-          Weight))
+        DataStore.AddData(startTimestamp,
+          Lerp(_hourlyTimeSeriesData(dataPoint),
+          _hourlyTimeSeriesData((dataPoint+1) Mod _hourlyTimeSeriesData.Length),
+          weight))
 
-        StartTimestamp =
-          StartTimestamp.AddSeconds(CalculationInterval) ' Next interval.
+        startTimestamp =
+          startTimestamp.AddSeconds(CalculationInterval) ' Next interval.
 
       Loop
 

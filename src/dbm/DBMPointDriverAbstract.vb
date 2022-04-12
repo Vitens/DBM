@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -35,24 +35,44 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     ' DBM drivers should inherit from this base class. In Sub New,
-    ' MyBase.New(Point) should be called. RetrieveData is used to retrieve and
+    ' MyBase.New(point) should be called. RetrieveData is used to retrieve and
     ' store data in bulk from a source using the DataStore.AddData method. Use
     ' DataStore.GetData to fetch results from memory.
 
 
-    Public Point As Object
-    Public DataStore As New DBMDataStore ' In-memory data
+    Private _point As Object
+    Private _dataStore As New DBMDataStore ' In-memory data
     Private _lock As New Object ' Object for exclusive lock on critical section.
-    Private PreviousStartTimestamp As DateTime = DateTime.MaxValue
-    Private PreviousEndTimestamp As DateTime
+    Private _previousStartTimestamp As DateTime = DateTime.MaxValue
+    Private _previousEndTimestamp As DateTime
 
 
-    Public Sub New(Point As Object)
+    Public Property Point As Object
+      Get
+        Return _point
+      End Get
+      Set(value As Object)
+        _point = value
+      End Set
+    End Property
+
+
+    Public Property DataStore As DBMDataStore
+      Get
+        Return _dataStore
+      End Get
+      Set(value As DBMDataStore)
+        _dataStore = value
+      End Set
+    End Property
+
+
+    Public Sub New(point As Object)
 
       ' When inheriting from this base class, call MyBase.New(Point) from Sub
       ' New to store the unique identifier in the Point object.
 
-      Me.Point = Point
+      Me.Point = point
 
     End Sub
 
@@ -83,30 +103,30 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public MustOverride Sub PrepareData(StartTimestamp As DateTime,
-      EndTimestamp As DateTime)
+    Public MustOverride Sub PrepareData(startTimestamp As DateTime,
+      endTimestamp As DateTime)
       ' Must retrieve and store data in bulk for the passed time range from a
       ' source of data, to be used in the DataStore.GetData method. Use
       ' DataStore.AddData to store data in memory.
 
 
-    Public Sub RetrieveData(StartTimestamp As DateTime,
-      EndTimestamp As DateTime)
+    Public Sub RetrieveData(startTimestamp As DateTime,
+      endTimestamp As DateTime)
 
-      Dim Snapshot As DateTime = SnapshotTimestamp
+      Dim snapshot As DateTime = SnapshotTimestamp
 
       ' Data preparation timestamps
-      StartTimestamp = DataPreparationTimestamp(StartTimestamp)
-      EndTimestamp = PreviousInterval(EndTimestamp)
+      startTimestamp = DataPreparationTimestamp(startTimestamp)
+      endTimestamp = PreviousInterval(endTimestamp)
 
       ' If set, never retrieve values beyond the snapshot time aligned to the
       ' next interval.
-      If StartTimestamp > Snapshot Then StartTimestamp = NextInterval(Snapshot)
-      If EndTimestamp > Snapshot Then EndTimestamp = NextInterval(Snapshot)
+      If startTimestamp > snapshot Then startTimestamp = NextInterval(snapshot)
+      If endTimestamp > snapshot Then endTimestamp = NextInterval(snapshot)
 
       ' Exit this sub if there is no data to retrieve or when the start
       ' timestamp is not before the end timestamp.
-      If Not StartTimestamp < EndTimestamp Then Exit Sub
+      If Not startTimestamp < endTimestamp Then Exit Sub
 
       Monitor.Enter(_lock) ' Block
       Try
@@ -127,36 +147,36 @@ Namespace Vitens.DynamicBandwidthMonitor
         '   Case 8:  S++|==========|++E   <      >    Clear all
         '   Case 9:     ---S=======|++E   >      >    Remove backward, add forwd
         '   Case 10: S==E a) or b) S==E   E<=PS S>=PE Clear all
-        If (StartTimestamp < PreviousStartTimestamp And
-          EndTimestamp > PreviousEndTimestamp) Or
-          EndTimestamp <= PreviousStartTimestamp Or
-          StartTimestamp >= PreviousEndTimestamp Then ' Cases 8, 10a), 10b)
-          DataStore.ClearData ' Clear all
-          PreviousStartTimestamp = StartTimestamp
-          PreviousEndTimestamp = EndTimestamp
-        Else If StartTimestamp >= PreviousStartTimestamp And
-          EndTimestamp <= PreviousEndTimestamp Then ' Cases 1, 3, 4, 6
+        If (startTimestamp < _previousStartTimestamp And
+          endTimestamp > _previousEndTimestamp) Or
+          endTimestamp <= _previousStartTimestamp Or
+          startTimestamp >= _previousEndTimestamp Then ' Cases 8, 10a), 10b)
+          Me.DataStore.ClearData ' Clear all
+          _previousStartTimestamp = startTimestamp
+          _previousEndTimestamp = endTimestamp
+        Else If startTimestamp >= _previousStartTimestamp And
+          endTimestamp <= _previousEndTimestamp Then ' Cases 1, 3, 4, 6
           Exit Sub ' Do nothing
-        Else If StartTimestamp < PreviousStartTimestamp Then ' Cases 2, 5
-          If EndTimestamp < PreviousEndTimestamp Then ' Case 5
-            Do While EndTimestamp < PreviousEndTimestamp ' Remove forward
-              PreviousEndTimestamp = PreviousEndTimestamp.
+        Else If startTimestamp < _previousStartTimestamp Then ' Cases 2, 5
+          If endTimestamp < _previousEndTimestamp Then ' Case 5
+            Do While endTimestamp < _previousEndTimestamp ' Remove forward
+              _previousEndTimestamp = _previousEndTimestamp.
                 AddSeconds(-CalculationInterval)
-              DataStore.RemoveData(PreviousEndTimestamp)
+              Me.DataStore.RemoveData(_previousEndTimestamp)
             Loop
           End If
-          EndTimestamp = PreviousStartTimestamp ' Add backward
-          PreviousStartTimestamp = StartTimestamp
-        Else If EndTimestamp > PreviousEndTimestamp Then ' Cases 7, 9
-          If StartTimestamp > PreviousStartTimestamp Then ' Case 9
-            Do While PreviousStartTimestamp < StartTimestamp ' Remove backward
-              DataStore.RemoveData(PreviousStartTimestamp)
-              PreviousStartTimestamp = PreviousStartTimestamp.
+          endTimestamp = _previousStartTimestamp ' Add backward
+          _previousStartTimestamp = startTimestamp
+        Else If endTimestamp > _previousEndTimestamp Then ' Cases 7, 9
+          If startTimestamp > _previousStartTimestamp Then ' Case 9
+            Do While _previousStartTimestamp < startTimestamp ' Remove backward
+              Me.DataStore.RemoveData(_previousStartTimestamp)
+              _previousStartTimestamp = _previousStartTimestamp.
                 AddSeconds(CalculationInterval)
             Loop
           End If
-          StartTimestamp = PreviousEndTimestamp ' Add forward
-          PreviousEndTimestamp = EndTimestamp
+          startTimestamp = _previousEndTimestamp ' Add forward
+          _previousEndTimestamp = endTimestamp
         End If
 
         Try
@@ -164,7 +184,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' timestamps. The driver can then prepare the dataset for which
           ' calculations are required in the next step. The (aligned) end time
           ' itself is excluded.
-          PrepareData(StartTimestamp, EndTimestamp)
+          PrepareData(startTimestamp, endTimestamp)
         Catch ex As Exception
           DBM.Logger.LogWarning(ex.ToString, Me.ToString)
         End Try

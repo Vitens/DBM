@@ -4,7 +4,7 @@ Option Strict
 
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -33,28 +33,28 @@ Namespace Vitens.DynamicBandwidthMonitor
     Inherits DBMLoggerAbstract
 
 
-    Public Overrides Sub Log(Level As Level, Message As String)
+    Public Overrides Sub Log(level As Level, message As String)
 
-      Select Case Level
+      Select Case level
         Case Level.Error
           If AFTrace.IsTraced(AFTraceSwitchLevel.Error) Then
-            AFTrace.TraceError(Message)
+            AFTrace.TraceError(message)
           End If
         Case Level.Warning
           If AFTrace.IsTraced(AFTraceSwitchLevel.Warning) Then
-            AFTrace.TraceWarning(Message)
+            AFTrace.TraceWarning(message)
           End If
         Case Level.Information
           If AFTrace.IsTraced(AFTraceSwitchLevel.Information) Then
-            AFTrace.TraceInformation(Message)
+            AFTrace.TraceInformation(message)
           End If
         Case Level.Debug
           If AFTrace.IsTraced(AFTraceSwitchLevel.Detail) Then
-            AFTrace.TraceDetail(Message)
+            AFTrace.TraceDetail(message)
           End If
         Case Level.Trace
           If AFTrace.IsTraced(AFTraceSwitchLevel.Data) Then
-            AFTrace.TraceData(Message)
+            AFTrace.TraceData(message)
           End If
       End Select
 
