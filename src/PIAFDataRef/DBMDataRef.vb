@@ -945,7 +945,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               Convert.ToDouble(GetValues.Item(0).Value),
               GetValues.Item(1).Timestamp.LocalTime,
               Convert.ToDouble(GetValues.Item(1).Value),
-              [Step])
+              Me.Step)
         End If
         GetValues.Item(0).Timestamp = timeRange.StartTime
       End If
@@ -957,7 +957,7 @@ Namespace Vitens.DynamicBandwidthMonitor
               Convert.ToDouble(GetValues.Item(GetValues.Count-2).Value),
               GetValues.Item(GetValues.Count-1).Timestamp.LocalTime,
               Convert.ToDouble(GetValues.Item(GetValues.Count-1).Value),
-              [Step])
+              Me.Step)
         End If
         GetValues.Item(GetValues.Count-1).Timestamp = timeRange.EndTime
       End If
@@ -966,7 +966,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' remove flatlines, and annotate the first value with model calibration
       ' metrics.
       If Attribute.Trait Is LimitTarget And results.Count > 2 Then
-        GetValues = Deflatline(GetValues, results, [Step])
+        GetValues = Deflatline(GetValues, results, Me.Step)
         Annotate(GetValues.Item(0), Statistics(results).Brief)
       End If
 

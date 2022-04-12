@@ -78,7 +78,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     ' Number of previous intervals used to smooth the data.
     Private Shared _emaPreviousPeriods As Integer =
-      CInt(0.5*3600/CalculationInterval-1) ' 5 intervals, 30 minutes
+      CInt(0.5*3600/Me.CalculationInterval-1) ' 5 intervals, 30 minutes
 
     Public Shared Property EMAPreviousPeriods As Integer
       Get
@@ -119,7 +119,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' Number of previous intervals used to calculate forecast error correlation
     ' when an event is found.
     Private Shared _correlationPreviousPeriods As Integer =
-      CInt(2*3600/CalculationInterval-1) ' 23 intervals, 2 hours
+      CInt(2*3600/Me.CalculationInterval-1) ' 23 intervals, 2 hours
 
     Public Shared Property CorrelationPreviousPeriods As Integer
       Get
