@@ -1,0 +1,369 @@
+[1mdiff --git a/build.bat b/build.bat[m
+[1mindex 922a582..0069807 100644[m
+[1m--- a/build.bat[m
+[1m+++ b/build.bat[m
+[36m@@ -22,7 +22,7 @@[m [mrem along with DBM.  If not, see <http://www.gnu.org/licenses/>.[m
+ cd /d %~dp0[m
+ [m
+ rem Variables[m
+[31m-set vbc="%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\Vbc.exe" /win32icon:src\res\dbm.ico /warnaserror+ /optimize+ /nologo /novbruntimeref[m
+[32m+[m[32mset vbc="%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\Vbc.exe" /win32icon:src\res\dbm.ico /warnaserror+ /optimize+ /optionexplicit+ /optionstrict+ /nologo /novbruntimeref[m[41m[m
+ set PIAFRef=%PIHOME%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll[m
+ [m
+ rem Set up build directory[m
+[1mdiff --git a/src/PIAFDataRef/DBMDataRef.vb b/src/PIAFDataRef/DBMDataRef.vb[m
+[1mindex 8b8a4c5..163fbde 100644[m
+[1m--- a/src/PIAFDataRef/DBMDataRef.vb[m
+[1m+++ b/src/PIAFDataRef/DBMDataRef.vb[m
+[36m@@ -1,7 +1,3 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+ ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m
+[1mdiff --git a/src/PIAFDataRef/DBMEventSource.vb b/src/PIAFDataRef/DBMEventSource.vb[m
+[1mindex fc66ed0..85ca4e1 100644[m
+[1m--- a/src/PIAFDataRef/DBMEventSource.vb[m
+[1m+++ b/src/PIAFDataRef/DBMEventSource.vb[m
+[36m@@ -1,7 +1,3 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+ ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m
+[1mdiff --git a/src/PIAFDataRef/DBMLoggerAFTrace.vb b/src/PIAFDataRef/DBMLoggerAFTrace.vb[m
+[1mindex 0b95626..510ba11 100644[m
+[1m--- a/src/PIAFDataRef/DBMLoggerAFTrace.vb[m
+[1m+++ b/src/PIAFDataRef/DBMLoggerAFTrace.vb[m
+[36m@@ -1,7 +1,3 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+ ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m
+[1mdiff --git a/src/dbm/DBM.vb b/src/dbm/DBM.vb[m
+[1mindex 69ce373..63aa436 100644[m
+[1m--- a/src/dbm/DBM.vb[m
+[1m+++ b/src/dbm/DBM.vb[m
+[36m@@ -1,7 +1,3 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+ ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m
+[1mdiff --git a/src/dbm/DBMAssert.vb b/src/dbm/DBMAssert.vb[m
+[1mindex 1d88996..c678ae3 100644[m
+[1m--- a/src/dbm/DBMAssert.vb[m
+[1m+++ b/src/dbm/DBMAssert.vb[m
+[36m@@ -1,10 +1,6 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+[31m-' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.[m
+[32m+[m[32m' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m[41m[m
+ '[m
+ ' This file is part of DBM.[m
+ '[m
+[1mdiff --git a/src/dbm/DBMCorrelationPoint.vb b/src/dbm/DBMCorrelationPoint.vb[m
+[1mindex 08c2856..82d3920 100644[m
+[1m--- a/src/dbm/DBMCorrelationPoint.vb[m
+[1m+++ b/src/dbm/DBMCorrelationPoint.vb[m
+[36m@@ -1,7 +1,3 @@[m
+[31m-﻿Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+ ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m
+[1mdiff --git a/src/dbm/DBMDataStore.vb b/src/dbm/DBMDataStore.vb[m
+[1mindex 3715237..e5c985c 100644[m
+[1m--- a/src/dbm/DBMDataStore.vb[m
+[1m+++ b/src/dbm/DBMDataStore.vb[m
+[36m@@ -1,7 +1,3 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+ ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m
+[1mdiff --git a/src/dbm/DBMDate.vb b/src/dbm/DBMDate.vb[m
+[1mindex 341b691..e90e9c2 100644[m
+[1m--- a/src/dbm/DBMDate.vb[m
+[1m+++ b/src/dbm/DBMDate.vb[m
+[36m@@ -1,7 +1,3 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+ ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m
+[1mdiff --git a/src/dbm/DBMForecast.vb b/src/dbm/DBMForecast.vb[m
+[1mindex 287cdfb..3795b6a 100644[m
+[1m--- a/src/dbm/DBMForecast.vb[m
+[1m+++ b/src/dbm/DBMForecast.vb[m
+[36m@@ -1,7 +1,3 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+ ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m
+[1mdiff --git a/src/dbm/DBMForecastItem.vb b/src/dbm/DBMForecastItem.vb[m
+[1mindex cec53a6..b83cc61 100644[m
+[1m--- a/src/dbm/DBMForecastItem.vb[m
+[1m+++ b/src/dbm/DBMForecastItem.vb[m
+[36m@@ -1,7 +1,3 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+ ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m
+[1mdiff --git a/src/dbm/DBMInfo.vb b/src/dbm/DBMInfo.vb[m
+[1mindex 307fda2..2236ac5 100644[m
+[1m--- a/src/dbm/DBMInfo.vb[m
+[1m+++ b/src/dbm/DBMInfo.vb[m
+[36m@@ -1,7 +1,3 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+ ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m
+[1mdiff --git a/src/dbm/DBMLoggerAbstract.vb b/src/dbm/DBMLoggerAbstract.vb[m
+[1mindex 67266c1..e737a75 100644[m
+[1m--- a/src/dbm/DBMLoggerAbstract.vb[m
+[1m+++ b/src/dbm/DBMLoggerAbstract.vb[m
+[36m@@ -1,7 +1,3 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+ ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m
+[1mdiff --git a/src/dbm/DBMLoggerConsole.vb b/src/dbm/DBMLoggerConsole.vb[m
+[1mindex 1b91705..9f17144 100644[m
+[1m--- a/src/dbm/DBMLoggerConsole.vb[m
+[1m+++ b/src/dbm/DBMLoggerConsole.vb[m
+[36m@@ -1,7 +1,3 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+ ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m
+[1mdiff --git a/src/dbm/DBMManifest.vb b/src/dbm/DBMManifest.vb[m
+[1mindex ad9d2e8..8ffa030 100644[m
+[1m--- a/src/dbm/DBMManifest.vb[m
+[1m+++ b/src/dbm/DBMManifest.vb[m
+[36m@@ -1,7 +1,3 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+ ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m
+[1mdiff --git a/src/dbm/DBMMath.vb b/src/dbm/DBMMath.vb[m
+[1mindex 3778df4..933ddbb 100644[m
+[1m--- a/src/dbm/DBMMath.vb[m
+[1m+++ b/src/dbm/DBMMath.vb[m
+[36m@@ -1,7 +1,3 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+ ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m
+[1mdiff --git a/src/dbm/DBMParameters.vb b/src/dbm/DBMParameters.vb[m
+[1mindex 0eb1f42..9214fd9 100644[m
+[1m--- a/src/dbm/DBMParameters.vb[m
+[1m+++ b/src/dbm/DBMParameters.vb[m
+[36m@@ -1,7 +1,3 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+ ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m
+[1mdiff --git a/src/dbm/DBMPoint.vb b/src/dbm/DBMPoint.vb[m
+[1mindex 304ff1f..6b8e267 100644[m
+[1m--- a/src/dbm/DBMPoint.vb[m
+[1m+++ b/src/dbm/DBMPoint.vb[m
+[36m@@ -1,7 +1,3 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+ ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m
+[1mdiff --git a/src/dbm/DBMPointDriverAbstract.vb b/src/dbm/DBMPointDriverAbstract.vb[m
+[1mindex f72d7cd..f0adca1 100644[m
+[1m--- a/src/dbm/DBMPointDriverAbstract.vb[m
+[1m+++ b/src/dbm/DBMPointDriverAbstract.vb[m
+[36m@@ -1,7 +1,3 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+ ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m
+[1mdiff --git a/src/dbm/DBMPointDriverTestModel.vb b/src/dbm/DBMPointDriverTestModel.vb[m
+[1mindex 23147fb..d3a1ece 100644[m
+[1m--- a/src/dbm/DBMPointDriverTestModel.vb[m
+[1m+++ b/src/dbm/DBMPointDriverTestModel.vb[m
+[36m@@ -1,7 +1,3 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+ ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m
+[1mdiff --git a/src/dbm/DBMResult.vb b/src/dbm/DBMResult.vb[m
+[1mindex 5225e0c..97e0529 100644[m
+[1m--- a/src/dbm/DBMResult.vb[m
+[1m+++ b/src/dbm/DBMResult.vb[m
+[36m@@ -1,7 +1,3 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+ ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m
+[1mdiff --git a/src/dbm/DBMStatistics.vb b/src/dbm/DBMStatistics.vb[m
+[1mindex 581e376..ede9587 100644[m
+[1m--- a/src/dbm/DBMStatistics.vb[m
+[1m+++ b/src/dbm/DBMStatistics.vb[m
+[36m@@ -1,7 +1,3 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+ ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m
+[1mdiff --git a/src/dbm/DBMStatisticsItem.vb b/src/dbm/DBMStatisticsItem.vb[m
+[1mindex cd0feb1..979be1a 100644[m
+[1m--- a/src/dbm/DBMStatisticsItem.vb[m
+[1m+++ b/src/dbm/DBMStatisticsItem.vb[m
+[36m@@ -1,7 +1,3 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+ ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m
+[1mdiff --git a/src/dbm/DBMStrings.vb b/src/dbm/DBMStrings.vb[m
+[1mindex a1e6a5c..f22740a 100644[m
+[1m--- a/src/dbm/DBMStrings.vb[m
+[1m+++ b/src/dbm/DBMStrings.vb[m
+[36m@@ -1,7 +1,3 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+ ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m
+[1mdiff --git a/src/dbm/DBMTests.vb b/src/dbm/DBMTests.vb[m
+[1mindex 7f078bf..6e2812a 100644[m
+[1m--- a/src/dbm/DBMTests.vb[m
+[1m+++ b/src/dbm/DBMTests.vb[m
+[36m@@ -1,7 +1,3 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+ ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m
+[1mdiff --git a/src/dbm/DBMTimeSeries.vb b/src/dbm/DBMTimeSeries.vb[m
+[1mindex 8d60873..1bf3e31 100644[m
+[1m--- a/src/dbm/DBMTimeSeries.vb[m
+[1m+++ b/src/dbm/DBMTimeSeries.vb[m
+[36m@@ -1,7 +1,3 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+ ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m
+[1mdiff --git a/src/dbm/driver/DBMPointDriverCSV.vb b/src/dbm/driver/DBMPointDriverCSV.vb[m
+[1mindex 44f3ebb..6c1015d 100644[m
+[1m--- a/src/dbm/driver/DBMPointDriverCSV.vb[m
+[1m+++ b/src/dbm/driver/DBMPointDriverCSV.vb[m
+[36m@@ -1,7 +1,3 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+ ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m
+[1mdiff --git a/src/dbm/driver/DBMPointDriverOSIsoftPIAF.vb b/src/dbm/driver/DBMPointDriverOSIsoftPIAF.vb[m
+[1mindex 2ad95fd..10f4066 100644[m
+[1m--- a/src/dbm/driver/DBMPointDriverOSIsoftPIAF.vb[m
+[1m+++ b/src/dbm/driver/DBMPointDriverOSIsoftPIAF.vb[m
+[36m@@ -1,7 +1,3 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+ ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m
+[1mdiff --git a/src/dbmabout/DBMAbout.vb b/src/dbmabout/DBMAbout.vb[m
+[1mindex d38da4d..cfec4a9 100644[m
+[1m--- a/src/dbmabout/DBMAbout.vb[m
+[1m+++ b/src/dbmabout/DBMAbout.vb[m
+[36m@@ -1,10 +1,6 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+[31m-' Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.[m
+[32m+[m[32m' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m[41m[m
+ '[m
+ ' This file is part of DBM.[m
+ '[m
+[1mdiff --git a/src/dbmtester/DBMTester.vb b/src/dbmtester/DBMTester.vb[m
+[1mindex fb270fc..d4de3fe 100644[m
+[1m--- a/src/dbmtester/DBMTester.vb[m
+[1m+++ b/src/dbmtester/DBMTester.vb[m
+[36m@@ -1,7 +1,3 @@[m
+[31m-Option Explicit[m
+[31m-Option Strict[m
+[31m-[m
+[31m-[m
+ ' Dynamic Bandwidth Monitor[m
+ ' Leak detection method implemented in a real-time data historian[m
+ ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.[m
