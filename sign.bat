@@ -2,7 +2,7 @@
 
 rem Dynamic Bandwidth Monitor
 rem Leak detection method implemented in a real-time data historian
-rem Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
+rem Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 rem
 rem This file is part of DBM.
 rem
@@ -23,6 +23,6 @@ cd /d %~dp0
 
 rem Sign
 rem arguments: pfx file, password(, file)
-set files=%3
-if "%~3" == "" set files=build\*.dll build\*.exe
-for %%f in (%files%) do powershell -Command "Set-AuthenticodeSignature -Certificate (New-Object System.Security.Cryptography.X509Certificates.X509Certificate2('%1', '%2')) -TimestampServer http://timestamp.digicert.com -HashAlgorithm SHA256 -FilePath '%%~f'"
+set Files=%3
+if "%~3" == "" set Files=build\*.dll build\*.exe
+for %%f in (%Files%) do powershell -Command "Set-AuthenticodeSignature -Certificate (New-Object System.Security.Cryptography.X509Certificates.X509Certificate2('%1', '%2')) -TimestampServer http://timestamp.digicert.com -HashAlgorithm SHA256 -FilePath '%%~f'"
