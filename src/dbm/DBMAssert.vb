@@ -1,10 +1,6 @@
-Option Explicit
-Option Strict
-
-
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2020  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -47,16 +43,16 @@ Namespace Vitens.DynamicBandwidthMonitor
     ' deliberately crashes or throws an assertion failure exception.
 
 
-    Public Shared Function Hash(Values() As Double) As Double
+    Public Shared Function Hash(values() As Double) As Double
 
       ' Simple hash function for checking array contents.
 
-      Dim Value As Double
+      Dim value As Double
 
       Hash = 1
-      For Each Value In Values
-        If Not IsNaN(Value) Then
-          Hash = (Hash+Value+1)/3
+      For Each value In values
+        If Not IsNaN(value) Then
+          Hash = (Hash+value+1)/3
         End If
       Next
 
@@ -90,9 +86,9 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Shared Sub AssertAlmostEqual(a As Object, b As Object,
-      Optional Digits As Integer = 4)
+      Optional digits As Integer = 4)
 
-      AssertEqual(Round(ToDouble(a), Digits), Round(ToDouble(b), Digits))
+      AssertEqual(Round(ToDouble(a), digits), Round(ToDouble(b), digits))
 
     End Sub
 

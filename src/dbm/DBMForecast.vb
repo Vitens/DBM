@@ -1,7 +1,3 @@
-Option Explicit
-Option Strict
-
-
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
 ' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
@@ -42,8 +38,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' line by one interval.
       ' The result of the calculation is returned as a new object.
 
-      Dim StatisticsItem As New DBMStatisticsItem
-      Dim Range As Double
+      Dim statisticsItem As New DBMStatisticsItem
+      Dim range As Double
 
       Forecast = New DBMForecastItem
 
@@ -55,9 +51,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' last item in the array as this is the current measured value for
         ' which we need to calculate a forecast and control limits.
         Array.Resize(values, values.Length-1)
-        StatisticsItem = Statistics(RemoveOutliers(values))
+        statisticsItem = Statistics(RemoveOutliers(values))
 
-        If StatisticsItem.HasInsufficientData Then
+        If statisticsItem.HasInsufficientData Then
 
           ' Forecast and control limits cannot be calculated if there is
           ' insufficient data. Return Not a Number.
@@ -70,20 +66,20 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' Extrapolate regression by one interval and use this result as a
           ' forecast.
           .Forecast =
-            ComparePatterns*StatisticsItem.Slope+StatisticsItem.Intercept
+            ComparePatterns*statisticsItem.Slope+statisticsItem.Intercept
 
           ' Control limits are determined by using measures of process variation
           ' and are based on the concepts surrounding hypothesis testing and
           ' interval estimation. They are used to detect signals in process data
           ' that indicate that a process is not in control and, therefore, not
           ' operating predictably.
-          Range = ControlLimitRejectionCriterion(BandwidthCI,
-            StatisticsItem.Count-1)*StatisticsItem.StandardError
+          range = ControlLimitRejectionCriterion(BandwidthCI,
+            statisticsItem.Count-1)*statisticsItem.StandardError
 
           ' Set upper and lower control limits based on forecast, rejection
           ' criterion and standard error of the regression.
-          .LowerControlLimit = .Forecast-Range
-          .UpperControlLimit = .Forecast+Range
+          .LowerControlLimit = .Forecast-range
+          .UpperControlLimit = .Forecast+range
 
         End If
 
