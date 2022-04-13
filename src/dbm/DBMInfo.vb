@@ -155,26 +155,26 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' Run unit and integration tests and return test run duration. An
       ' exception occurs if one of the tests fail.
 
-      Dim Timer As DateTime
-      Dim UTDurationMs, ITDurationMs, QTDurationMs As Double
-      Dim QTResult As String
+      Dim timer As DateTime
+      Dim utDurationMs, itDurationMs, qtDurationMs As Double
+      Dim qtResult As String
 
-      Timer = Now
+      timer = Now
       RunUnitTests
-      UTDurationMs = (Now.Ticks-Timer.Ticks)/TicksPerMillisecond
+      utDurationMs = (Now.Ticks-timer.Ticks)/TicksPerMillisecond
 
-      Timer = Now
+      timer = Now
       RunIntegrationTests
-      ITDurationMs = (Now.Ticks-Timer.Ticks)/TicksPerMillisecond
+      itDurationMs = (Now.Ticks-timer.Ticks)/TicksPerMillisecond
 
-      Timer = Now
-      QTResult = RunQualityTests
-      QTDurationMs = (Now.Ticks-Timer.Ticks)/TicksPerMillisecond
+      timer = Now
+      qtResult = RunQualityTests
+      qtDurationMs = (Now.Ticks-timer.Ticks)/TicksPerMillisecond
 
       Return "Certificate: " & CertificateInfo & NewLine &
-        "Unit tests: " & Round(UTDurationMs).ToString & " ms" & NewLine &
-        "Integration tests: " & Round(ITDurationMs).ToString & " ms" & NewLine &
-        "Quality tests: " & Round(QTDurationMs).ToString & " ms; " & QTResult
+        "Unit tests: " & Round(utDurationMs).ToString & " ms" & NewLine &
+        "Integration tests: " & Round(itDurationMs).ToString & " ms" & NewLine &
+        "Quality tests: " & Round(qtDurationMs).ToString & " ms; " & qtResult
 
     End Function
 
