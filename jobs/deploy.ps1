@@ -17,37 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
-stages:
-  - build
-  - sign
-  - test
-  - deploy
-
-build:
-  stage: build
-  script:
-    - jobs\build.ps1
-
-sign:
-  stage: sign
-  before_script:
-    - jobs\build.ps1
-  script:
-    - jobs\sign.ps1
-
-test:
-  stage: test
-  before_script:
-    - jobs\build.ps1
-    - jobs\sign.ps1
-  script:
-    - jobs\test.ps1
-
-deploy:
-  stage: deploy
-  before_script:
-    - jobs\build.ps1
-    - jobs\sign.ps1
-    - jobs\test.ps1
-  script:
-    - jobs\deploy.ps1
+.\register.bat piaf-t
+.\register.bat piaf-a
+if ($Env:CI_COMMIT_REF_NAME -eq 'master') {.\register.bat piaf}
