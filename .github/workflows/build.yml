@@ -1,6 +1,6 @@
 # Dynamic Bandwidth Monitor
 # Leak detection method implemented in a real-time data historian
-# Copyright (C) 2014-2021  J.H. Fitié, Vitens N.V.
+# Copyright (C) 2014-2023  J.H. Fitié, Vitens N.V.
 #
 # This file is part of DBM.
 #
@@ -23,8 +23,6 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-      - name: before_build
-        run: (Get-Content src\dbm\DBMInfo.vb) -replace 'Const GITHASH As String = ".*?"', ('Const GITHASH As String = "' + $Env:GITHUB_SHA.SubString(0, 8) + '"') | Set-Content src\dbm\DBMInfo.vb
       - name: build
         run: .\build.bat
       - uses: actions/upload-artifact@v2

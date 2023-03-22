@@ -30,24 +30,15 @@ build:
 
 sign:
   stage: sign
-  before_script:
-    - jobs\build.ps1
   script:
     - jobs\sign.ps1
 
 test:
   stage: test
-  before_script:
-    - jobs\build.ps1
-    - jobs\sign.ps1
   script:
     - jobs\test.ps1
 
 deploy:
   stage: deploy
-  before_script:
-    - jobs\build.ps1
-    - jobs\sign.ps1
-    - jobs\test.ps1
   script:
     - jobs\deploy.ps1
