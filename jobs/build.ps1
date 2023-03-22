@@ -17,37 +17,4 @@
 # You should have received a copy of the GNU General Public License
 # along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
-stages:
-  - build
-  - sign
-  - test
-  - deploy
-
-build:
-  stage: build
-  script:
-    - .\build.bat
-
-sign:
-  stage: sign
-  before_script:
-    - .\build.bat
-  script:
-    - .\sign.bat
-
-test:
-  stage: test
-  before_script:
-    - .\build.bat
-    - .\sign.bat
-  script:
-    - .\test.bat
-
-deploy:
-  stage: deploy
-  before_script:
-    - .\build.bat
-    - .\sign.bat
-    - .\test.bat
-  script:
-    - .\deploy.bat
+.\build.bat
