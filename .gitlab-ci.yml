@@ -26,28 +26,28 @@ stages:
 build:
   stage: build
   script:
-    - .\build.bat
+    - jobs\build.ps1
 
 sign:
   stage: sign
   before_script:
-    - .\build.bat
+    - jobs\build.ps1
   script:
-    - .\sign.bat
+    - jobs\sign.ps1
 
 test:
   stage: test
   before_script:
-    - .\build.bat
-    - .\sign.bat
+    - jobs\build.ps1
+    - jobs\sign.ps1
   script:
-    - .\test.bat
+    - jobs\test.ps1
 
 deploy:
   stage: deploy
   before_script:
-    - .\build.bat
-    - .\sign.bat
-    - .\test.bat
+    - jobs\build.ps1
+    - jobs\sign.ps1
+    - jobs\test.ps1
   script:
-    - .\deploy.bat
+    - jobs\deploy.ps1
