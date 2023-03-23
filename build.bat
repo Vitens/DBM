@@ -2,7 +2,7 @@
 
 rem Dynamic Bandwidth Monitor
 rem Leak detection method implemented in a real-time data historian
-rem Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
+rem Copyright (C) 2014-2023  J.H. Fitié, Vitens N.V.
 rem
 rem This file is part of DBM.
 rem
@@ -22,7 +22,7 @@ rem along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 cd /d %~dp0
 
 rem Variables
-set VBC="%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\Vbc.exe" /win32icon:src\res\dbm.ico /warnaserror+ /optimize+ /optionexplicit+ /optionstrict+ /nologo /novbruntimeref
+set VBC="%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\Vbc.exe" /win32icon:src\res\dbm.ico /warnaserror+ /optimize+ /optionexplicit+ /optionstrict+ /novbruntimeref
 set PIAFRef=%PIHOME%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll
 
 rem Set up build directory

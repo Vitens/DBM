@@ -18,6 +18,10 @@
 # along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 & "$PSScriptRoot\test.ps1"
-.\register.bat piaf-t
-.\register.bat piaf-a
-if ($Env:CI_COMMIT_REF_NAME -eq 'master') {.\register.bat piaf}
+
+$DeployProduction = $Env:CI_COMMIT_REF_NAME -eq $Env:CI_DEFAULT_BRANCH
+$DeployAcceptance = $DeployProduction -Or $Env:CI_COMMIT_MESSAGE.Contains('[ACC]')
+$DeployTesting    = $true
+if ($DeployTesting)    {.\register.bat piaf-t}
+if ($DeployAcceptance) {.\register.bat piaf-a}
+if ($DeployProduction) {.\register.bat piaf}
