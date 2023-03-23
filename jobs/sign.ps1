@@ -18,6 +18,7 @@
 # along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 
 & "$PSScriptRoot\build.ps1"
+
 # Encrypt certificate file and password using:
 #   [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes((Get-Content -Raw certificate.pfx))) | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString
 #   Get-Content password.txt | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString
