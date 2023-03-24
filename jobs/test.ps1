@@ -19,4 +19,5 @@
 
 & "$PSScriptRoot\sign.ps1"
 
-build\DBMAbout.exe
+Add-Type -Path build\DBM.dll
+[Vitens.DynamicBandwidthMonitor.DBMInfo]::TestResults()
