@@ -1,6 +1,6 @@
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2023  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -133,8 +133,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function CertificateInfo
-      Optional required As Boolean = True) As String
+    Public Shared Function CertificateInfo As String
 
       ' Returns a string containing the certificate Subject and Issuer, if
       ' available. Else returns 'Unsigned assembly'.
@@ -144,12 +143,8 @@ Namespace Vitens.DynamicBandwidthMonitor
           Return .Subject & " (" & .Issuer & ")"
         End With
       Catch
-        If required Then
-          Throw New Exception(UnsignedAssembly & " " & AssemblyLocation)
-        Else
-          DBM.Logger.LogWarning(UnsignedAssembly & " " & AssemblyLocation)
-          Return UnsignedAssembly
-        End If
+        DBM.Logger.LogWarning(UnsignedAssembly & " " & AssemblyLocation)
+        Return UnsignedAssembly
       End Try
 
     End Function
