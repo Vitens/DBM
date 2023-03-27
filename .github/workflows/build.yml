@@ -29,4 +29,4 @@ jobs:
         with:
           path: build
       - name: test
-        run: build\DBMAbout.exe
+        run: powershell -Command "Add-Type -Path build\DBM.dll; [Vitens.DynamicBandwidthMonitor.DBMInfo]::TestResults()"
