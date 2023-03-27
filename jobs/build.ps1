@@ -20,6 +20,3 @@
 (Get-Content src\dbm\DBMInfo.vb) -replace 'Const GITHASH As String = ".*?"', ('Const GITHASH As String = "' + $Env:CI_COMMIT_SHA.SubString(0, 8) + '"') | Set-Content src\dbm\DBMInfo.vb
 
 .\build.bat
-
-Add-Type -Path build\DBM.dll
-[Vitens.DynamicBandwidthMonitor.DBMInfo]::LicenseNotice()
