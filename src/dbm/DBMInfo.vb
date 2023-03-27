@@ -133,7 +133,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function CertificateInfo(
+    Public Shared Function CertificateInfo
       Optional required As Boolean = True) As String
 
       ' Returns a string containing the certificate Subject and Issuer, if
