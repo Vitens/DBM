@@ -22,7 +22,7 @@
 ' returned using the DBM.Version function.
 
 
-<assembly:System.Reflection.AssemblyVersion("1.71.*")>
+<assembly:System.Reflection.AssemblyVersion("1.80.*")>
 
 <assembly:System.Reflection.AssemblyProduct("Dynamic Bandwidth Monitor")>
 
