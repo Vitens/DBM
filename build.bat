@@ -32,7 +32,6 @@ copy LICENSE build > NUL
 
 rem Build
 %VBC% /target:library /out:build\DBM.dll src\dbm\*.vb
-%VBC% /reference:build\DBM.dll /out:build\DBMAbout.exe src\dbm\DBMManifest.vb src\dbmabout\*.vb
 %VBC% /reference:build\DBM.dll /target:library /out:build\DBMPointDriverCSV.dll src\dbm\DBMManifest.vb src\dbm\driver\DBMPointDriverCSV.vb
 %VBC% /reference:build\DBM.dll,build\DBMPointDriverCSV.dll /out:build\DBMTester.exe src\dbm\DBMManifest.vb src\dbmtester\*.vb
 if exist "%PIAFRef%" (
