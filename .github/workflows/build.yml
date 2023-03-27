@@ -26,6 +26,6 @@ jobs:
       - name: build
         run: .\build.bat
       - name: test
-        run: >
+        run: |
           Add-Type -Path build\DBM.dll
           [Vitens.DynamicBandwidthMonitor.DBMInfo]::TestResults()
