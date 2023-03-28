@@ -1,6 +1,6 @@
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2023  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -238,14 +238,15 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private Function ConfigurationIsValid As Boolean
 
-      ' Check if this attribute is properly configured. The attribute and it's
-      ' parent (input source) need to be an instance of an object, and the data
-      ' type for both needs to be a double.
+      ' Check if this attribute is properly configured. The attribute, its
+      ' parent (input source), and its element need to be an instance of an
+      ' object, and the data type for both needs to be a double.
 
       Return Attribute IsNot Nothing AndAlso
         Attribute.Type Is GetType(Double) AndAlso
         Attribute.Parent IsNot Nothing AndAlso
-        Attribute.Parent.Type Is GetType(Double)
+        Attribute.Parent.Type Is GetType(Double) AndAlso
+        Attribute.Element IsNot Nothing
 
     End Function
 
