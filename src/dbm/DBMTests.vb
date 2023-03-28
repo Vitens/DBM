@@ -52,7 +52,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertEqual(1, 1)
       AssertEqual(-2.13, -2.13)
 
-      AssertArrayEqual({1}, {1})
+      AssertArrayEqual({1}, {2})
       AssertArrayEqual({-1.23, 4.56}, {-1.23, 4.56})
 
       AssertAlmostEqual(1.231, 1.232, 2)
