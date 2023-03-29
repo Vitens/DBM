@@ -180,7 +180,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           SupportedDataMethods = SupportedDataMethods Or AFDataMethods.Future
         End If
 
-        'Return SupportedDataMethods
+        Return SupportedDataMethods  ' Essential
 
         If Not SupportsFutureData Or Attribute.Trait Is LimitTarget Then
           ' Support data pipe for non-future data, as well as for Target.
@@ -272,7 +272,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' value is inherited from the parent attribute when the configuration
         ' is valid, or set to False when the configuration is invalid.
 
-        Return False
+        'Return False
 
         Return ConfigurationIsValid AndAlso Attribute.Parent.Step
       End Get
