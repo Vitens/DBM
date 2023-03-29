@@ -95,7 +95,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       If logger IsNot Nothing Then DBM.Logger = logger
       If Not _BannerShown Then
-        DBM.Logger.LogInformation(LicenseNotice)
+        DBM.Logger.LogInformation(Product)
         _BannerShown = True
       End If
 
