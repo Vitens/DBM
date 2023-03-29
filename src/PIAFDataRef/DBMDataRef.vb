@@ -134,6 +134,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' to use future data because the snapshot timestamp is seen as the last
       ' available timestamp.
 
+      Return False
+
       Return Attribute.Trait Is LimitTarget Or
         Attribute.Trait Is Forecast Or
         Attribute.Trait Is LimitMinimum Or
@@ -177,6 +179,9 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' Support future data if available.
           SupportedDataMethods = SupportedDataMethods Or AFDataMethods.Future
         End If
+
+        Return SupportedDataMethods
+
         If Not SupportsFutureData Or Attribute.Trait Is LimitTarget Then
           ' Support data pipe for non-future data, as well as for Target.
           SupportedDataMethods = SupportedDataMethods Or AFDataMethods.DataPipe
@@ -268,6 +273,9 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Returns True if the value for this AFDataReference is stepped. The
         ' value is inherited from the parent attribute when the configuration
         ' is valid, or set to False when the configuration is invalid.
+
+        Return False
+
         Return ConfigurationIsValid AndAlso Attribute.Parent.Step
       End Get
 
