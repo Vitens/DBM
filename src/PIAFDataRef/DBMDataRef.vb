@@ -180,8 +180,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         End If
         If Not SupportsFutureData Or Attribute.Trait Is LimitTarget Then
           ' Support data pipe for non-future data, as well as for Target.
-          SupportedDataMethods =
-            SupportedDataMethods Or AFDataMethods.DataPipe
+          SupportedDataMethods = SupportedDataMethods Or AFDataMethods.DataPipe
         End If
         Return SupportedDataMethods
       End Get
