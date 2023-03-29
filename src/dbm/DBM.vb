@@ -1,6 +1,6 @@
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2023  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -76,6 +76,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private Shared _logger As DBMLoggerAbstract = New DBMLoggerConsole
+    Private Shared _BannerShown As Boolean
     Private _lock As New Object ' Object for exclusive lock on critical section.
     Private _points As New Dictionary(Of Object, DBMPoint)
 
@@ -93,7 +94,10 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Sub New(Optional logger As DBMLoggerAbstract = Nothing)
 
       If logger IsNot Nothing Then DBM.Logger = logger
-      DBM.Logger.LogDebug(Product)
+      If Not _BannerShown Then
+        DBM.Logger.LogInformation(LicenseNotice)
+        _BannerShown = True
+      End If
 
     End Sub
 
