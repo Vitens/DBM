@@ -134,15 +134,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' to use future data because the snapshot timestamp is seen as the last
       ' available timestamp.
 
-      Return ConfigurationIsValid AndAlso
-        (Attribute.Trait Is LimitTarget Or
+      Return Attribute.Trait Is LimitTarget Or
         Attribute.Trait Is Forecast Or
         Attribute.Trait Is LimitMinimum Or
         Attribute.Trait Is LimitLoLo Or
         Attribute.Trait Is LimitLo Or
         Attribute.Trait Is LimitHi Or
         Attribute.Trait Is LimitHiHi Or
-        Attribute.Trait Is LimitMaximum)
+        Attribute.Trait Is LimitMaximum
 
     End Function
 
@@ -178,8 +177,8 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' Support future data if available.
           SupportedDataMethods = SupportedDataMethods Or AFDataMethods.Future
         End If
-        If Not SupportsFutureData OrElse
-          (ConfigurationIsValid AndAlso Attribute.Trait Is LimitTarget) Then
+        If ConfigurationIsValid AndAlso
+          (Not SupportsFutureData Or Attribute.Trait Is LimitTarget) Then
           ' Support data pipe for non-future data, as well as for Target.
           SupportedDataMethods = SupportedDataMethods Or AFDataMethods.DataPipe
         End If
