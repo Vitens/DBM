@@ -19,5 +19,6 @@
 
 & "$PSScriptRoot\sign.ps1"
 
+$ErrorActionPreference = 'Stop'
 Add-Type -Path build\DBM.dll
 [Vitens.DynamicBandwidthMonitor.DBMInfo]::TestResults()
