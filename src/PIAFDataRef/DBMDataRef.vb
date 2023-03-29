@@ -162,7 +162,8 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Specifies which of the data methods are supported by the data
         ' reference. Its value can be one or more of the AFDataMethods
         ' enumeration values logically ORed together. The default value is None.
-        SupportedDataMethods = AFDataMethods.InterpolatedValue Or
+        If Not ConfigurationIsValid Then Return Nothing ' Only for valid config
+	SupportedDataMethods = AFDataMethods.InterpolatedValue Or
           AFDataMethods.InterpolatedValues Or
           AFDataMethods.InterpolatedValuesAtTimes Or
           AFDataMethods.RecordedValue Or
@@ -177,8 +178,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           ' Support future data if available.
           SupportedDataMethods = SupportedDataMethods Or AFDataMethods.Future
         End If
-        If ConfigurationIsValid AndAlso
-          (Not SupportsFutureData Or Attribute.Trait Is LimitTarget) Then
+        If Not SupportsFutureData Or Attribute.Trait Is LimitTarget Then
           ' Support data pipe for non-future data, as well as for Target.
           SupportedDataMethods = SupportedDataMethods Or AFDataMethods.DataPipe
         End If
