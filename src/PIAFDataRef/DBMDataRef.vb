@@ -1,6 +1,6 @@
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2023  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -162,6 +162,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         ' Specifies which of the data methods are supported by the data
         ' reference. Its value can be one or more of the AFDataMethods
         ' enumeration values logically ORed together. The default value is None.
+        If Not ConfigurationIsValid Then Return Nothing
         SupportedDataMethods = AFDataMethods.InterpolatedValue Or
           AFDataMethods.InterpolatedValues Or
           AFDataMethods.InterpolatedValuesAtTimes Or
