@@ -49,7 +49,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       AssertEqual(True, True)
       AssertEqual(Today, Today)
       AssertEqual(NaN, NaN)
-      AssertEqual(1, 2)
+      AssertEqual(1, 1)
       AssertEqual(-2.13, -2.13)
 
       AssertArrayEqual({1}, {1})
