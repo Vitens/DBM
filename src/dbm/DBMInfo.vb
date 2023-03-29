@@ -144,8 +144,8 @@ Namespace Vitens.DynamicBandwidthMonitor
           Return .Subject & " (" & .Issuer & ")"
         End With
       Catch
-        If required Then Throw
         DBM.Logger.LogWarning(UnsignedAssembly & " " & AssemblyLocation)
+        If required Then Throw
         Return UnsignedAssembly
       End Try
 
