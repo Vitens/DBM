@@ -153,7 +153,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Public Shared Function TestResults(
-      Optional certificateRequired As Boolean = True) As String
+      Optional certificateRequired As Boolean = False) As String
 
       ' Run unit and integration tests and return test run duration. An
       ' exception occurs if one of the tests fail.

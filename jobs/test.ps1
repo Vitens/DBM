@@ -21,4 +21,4 @@
 
 $ErrorActionPreference = 'Stop'
 Add-Type -Path build\DBM.dll
-[Vitens.DynamicBandwidthMonitor.DBMInfo]::TestResults()
+[Vitens.DynamicBandwidthMonitor.DBMInfo]::TestResults($true)
