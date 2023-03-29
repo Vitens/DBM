@@ -242,6 +242,8 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' parent (input source), and its element need to be an instance of an
       ' object, and the data type for both needs to be a double.
 
+      Return False
+
       Return Attribute IsNot Nothing AndAlso
         Attribute.Type Is GetType(Double) AndAlso
         Attribute.Parent IsNot Nothing AndAlso
