@@ -1,6 +1,6 @@
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2023  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
