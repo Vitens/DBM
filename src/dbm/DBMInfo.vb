@@ -1,6 +1,6 @@
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2023  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -133,7 +133,8 @@ Namespace Vitens.DynamicBandwidthMonitor
     End Function
 
 
-    Public Shared Function CertificateInfo As String
+    Public Shared Function CertificateInfo(
+      Optional required As Boolean = False) As String
 
       ' Returns a string containing the certificate Subject and Issuer, if
       ' available. Else returns 'Unsigned assembly'.
@@ -144,13 +145,15 @@ Namespace Vitens.DynamicBandwidthMonitor
         End With
       Catch
         DBM.Logger.LogWarning(UnsignedAssembly & " " & AssemblyLocation)
+        If required Then Throw
         Return UnsignedAssembly
       End Try
 
     End Function
 
 
-    Public Shared Function TestResults As String
+    Public Shared Function TestResults(
+      Optional certificateRequired As Boolean = False) As String
 
       ' Run unit and integration tests and return test run duration. An
       ' exception occurs if one of the tests fail.
@@ -171,7 +174,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       qtResult = RunQualityTests
       qtDurationMs = (Now.Ticks-timer.Ticks)/TicksPerMillisecond
 
-      Return "Certificate: " & CertificateInfo & NewLine &
+      Return "Certificate: " & CertificateInfo(certificateRequired) & NewLine &
         "Unit tests: " & Round(utDurationMs).ToString & " ms" & NewLine &
         "Integration tests: " & Round(itDurationMs).ToString & " ms" & NewLine &
         "Quality tests: " & Round(qtDurationMs).ToString & " ms; " & qtResult
