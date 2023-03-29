@@ -76,7 +76,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private Shared _logger As DBMLoggerAbstract = New DBMLoggerConsole
-    Private Shared _BannerShown As Boolean
+    Private Shared _ProductShown As Boolean
     Private _lock As New Object ' Object for exclusive lock on critical section.
     Private _points As New Dictionary(Of Object, DBMPoint)
 
@@ -94,9 +94,9 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Sub New(Optional logger As DBMLoggerAbstract = Nothing)
 
       If logger IsNot Nothing Then DBM.Logger = logger
-      If Not _BannerShown Then
+      If Not _ProductShown Then
         DBM.Logger.LogInformation(Product)
-        _BannerShown = True
+        _ProductShown = True
       End If
 
     End Sub
