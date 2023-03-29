@@ -134,16 +134,15 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' to use future data because the snapshot timestamp is seen as the last
       ' available timestamp.
 
-      Return False  ' Essential
-
-      Return Attribute.Trait Is LimitTarget Or
+      Return ConfigurationIsValid AndAlso
+        (Attribute.Trait Is LimitTarget Or
         Attribute.Trait Is Forecast Or
         Attribute.Trait Is LimitMinimum Or
         Attribute.Trait Is LimitLoLo Or
         Attribute.Trait Is LimitLo Or
         Attribute.Trait Is LimitHi Or
         Attribute.Trait Is LimitHiHi Or
-        Attribute.Trait Is LimitMaximum
+        Attribute.Trait Is LimitMaximum)
 
     End Function
 
