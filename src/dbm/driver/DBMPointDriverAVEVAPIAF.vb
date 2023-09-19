@@ -1,6 +1,6 @@
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2023  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -25,7 +25,7 @@ Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
 ' Assembly title
-<assembly:System.Reflection.AssemblyTitle("DBMPointDriverOSIsoftPIAF")>
+<assembly:System.Reflection.AssemblyTitle("DBMPointDriverAVEVAPIAF")>
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -35,7 +35,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Inherits DBMPointDriverAbstract
 
 
-    ' Description: Driver for OSIsoft PI Asset Framework.
+    ' Description: Driver for AVEVA PI Asset Framework.
     ' Identifier (Point): OSIsoft.AF.Asset.AFAttribute (PI AF attribute)
 
 
@@ -48,14 +48,14 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Overrides Function ToString As String
 
-      Return "OSIsoft PI AF driver " & DirectCast(Point, AFAttribute).GetPath
+      Return "AVEVA PI AF driver " & DirectCast(Point, AFAttribute).GetPath
 
     End Function
 
 
     Public Overrides Function SnapshotTimestamp As DateTime
 
-      ' Returns the snapshot timestamp from OSIsoft PI AF.
+      ' Returns the snapshot timestamp from AVEVA PI AF.
 
       Return DirectCast(Point, AFAttribute).GetValue.Timestamp.LocalTime
 
@@ -65,7 +65,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Public Overrides Sub PrepareData(startTimestamp As DateTime,
       endTimestamp As DateTime)
 
-      ' Retrieves a value for each interval in the time range from OSIsoft PI AF
+      ' Retrieves a value for each interval in the time range from AVEVA PI AF
       ' and stores this in memory. The (aligned) end time itself is excluded.
 
       Dim values As AFValues
