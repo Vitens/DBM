@@ -42,18 +42,18 @@ In this example, an event causes the measured value (black) to cross the lower c
 ## Program information
 
 ### Requirements
-| Priority  | Requirement                                                     | Version    |
-| --------- | --------------------------------------------------------------- | ---------- |
-| Mandatory | Microsoft .NET Framework                                        | 4.0.30319  |
-| Optional  | OSIsoft PI Asset Framework Software Development Kit (PI AF SDK) | 2.10.7.283 |
+| Priority  | Requirement                                                   | Version    |
+| --------- | ------------------------------------------------------------- | ---------- |
+| Mandatory | Microsoft .NET Framework                                      | 4.0.30319  |
+| Optional  | AVEVA PI Asset Framework Software Development Kit (PI AF SDK) | 2.10.7.283 |
 
 ### Drivers
 DBM uses drivers to read information from a source of data. The following drivers are included:
 
-| Driver                         | Description                             | Identifier (`Point`)                             | Remarks                                                                |
-| ------------------------------ | --------------------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------- |
-| `DBMPointDriverCSV.vb`         | Driver for CSV files (timestamp,value). | `String` (CSV filename)                          | Data interval must be the same as the `CalculationInterval` parameter. |
-| `DBMPointDriverOSIsoftPIAF.vb` | Driver for OSIsoft PI Asset Framework.  | `OSIsoft.AF.Asset.AFAttribute` (PI AF attribute) | Used by PI AF Data Reference `DBMDataRef`.                             |
+| Driver                       | Description                             | Identifier (`Point`)                             | Remarks                                                                |
+| ---------------------------- | --------------------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------- |
+| `DBMPointDriverCSV.vb`       | Driver for CSV files (timestamp,value). | `String` (CSV filename)                          | Data interval must be the same as the `CalculationInterval` parameter. |
+| `DBMPointDriverAVEVAPIAF.vb` | Driver for AVEVA PI Asset Framework.    | `OSIsoft.AF.Asset.AFAttribute` (PI AF attribute) | Used by PI AF Data Reference `DBMDataRef`.                             |
 
 ### Parameters
 DBM can be configured using several parameters. The values for these parameters can be changed at runtime in the `Vitens.DynamicBandwidthMonitor.DBMParameters` class.
@@ -92,7 +92,7 @@ DBMTester is a command line utility that can be used to quickly calculate DBM re
 | `-f=`    | 0..1   | Output format. Default for local formatting, `intl` for international formatting. |
 
 ### DBMDataRef
-DBMDataRef is a custom OSIsoft PI Asset Framework data reference which integrates DBM with PI AF. The `register.bat` script automatically registers the data reference and support assemblies when run on the PI AF server. The data reference uses the parent attribute as input and automatically uses attributes from sibling and parent elements based on the same template containing good data for correlation calculations, unless the `NoCorrelation` category is applied to the output attribute. The value returned from the DBM calculation is determined by the applied property/trait:
+DBMDataRef is a custom AVEVA PI Asset Framework data reference which integrates DBM with PI AF. The `register.bat` script automatically registers the data reference and support assemblies when run on the PI AF server. The data reference uses the parent attribute as input and automatically uses attributes from sibling and parent elements based on the same template containing good data for correlation calculations, unless the `NoCorrelation` category is applied to the output attribute. The value returned from the DBM calculation is determined by the applied property/trait:
 
 | Property/trait | Return value                              | Description                                                                                                   |
 | -------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
@@ -111,7 +111,7 @@ The `Target` trait returns the original, valid raw measurements, augmented with 
 
 For the `Target` trait, DBM also detects and removes incorrect flatlines in the data and replaces them with forecast values, which are then weight adjusted to the original time range total. Data quality is marked as `Substituted` for this data.
 
-Beginning with PI AF 2018 SP3 Patch 2, all AF plugins must be signed with a valid certificate. Users must ensure any 3rd party or custom plugins are signed with a valid certificate. Digitally signing plugins increases the users' confidence that it is from a trusted entity. AF data references that are not signed could have been tampered with and are potentially dangerous. Therefore, in order to protect its users, OSIsoft software enforces that all AF 2.x data reference plugins be signed. Use `sign.bat` to sign the data reference and support assemblies with your pfx certificate file before registering the data reference with PI AF.
+Beginning with PI AF 2018 SP3 Patch 2, all AF plugins must be signed with a valid certificate. Users must ensure any 3rd party or custom plugins are signed with a valid certificate. Digitally signing plugins increases the users' confidence that it is from a trusted entity. AF data references that are not signed could have been tampered with and are potentially dangerous. Therefore, in order to protect its users, AVEVA software enforces that all AF 2.x data reference plugins be signed. Use `sign.bat` to sign the data reference and support assemblies with your pfx certificate file before registering the data reference with PI AF.
 
 ### Model calibration metrics: systematic error, random error, and fit
 DBM can calculate model calibration metrics. This information is exposed in the DBMTester utility and the DBMDataRef data reference. The model is considered to be calibrated if all of the following conditions are met:
@@ -142,3 +142,10 @@ One of our main focus points is using advanced water quality, quantity and hydra
 ![Vitens](img/vitens.png)
 
 https://www.vitens.nl/
+
+## About AVEVA
+AVEVA, the AVEVA logo and logotype, OSIsoft, the OSIsoft logo and logotype, Managed PI, OSIsoft Advanced Services, OSIsoft Cloud Services, OSIsoft Connected Services, OSIsoft EDS, PI ACE, PI Advanced Computing Engine, PI AF SDK, PI API, PI Asset Framework, PI Audit Viewer, PI Builder, PI Cloud Connect, PI Connectors, PI Data Archive, PI DataLink, PI DataLink Server, PI Developers Club, PI Integrator for Business Analytics, PI Interfaces, PI JDBC Driver, PI Manual Logger, PI Notifications, PI ODBC Driver, PI OLEDB Enterprise, PI OLEDB Provider, PI OPC DA Server, PI OPC HDA Server, PI ProcessBook, PI SDK, PI Server, PI Square, PI System, PI System Access, PI Vision, PI Visualization Suite, PI Web API, PI WebParts, PI Web Services, RLINK, and RtReports are all trademarks of AVEVA Group plc or its subsidiaries.
+
+![AVEVA](img/aveva.png)
+
+https://www.aveva.com/

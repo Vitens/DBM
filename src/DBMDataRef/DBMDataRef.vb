@@ -50,7 +50,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Inherits AFDataReference
 
 
-    ' DBMDataRef is a custom OSIsoft PI Asset Framework data reference which
+    ' DBMDataRef is a custom AVEVA PI Asset Framework data reference which
     ' integrates DBM with PI AF. The build script automatically registers the
     ' data reference and support assemblies when run on the PI AF server.
     ' The data reference uses the parent attribute as input and automatically
@@ -303,7 +303,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       ' Gets the annotation associated with a single historical event.
 
-      ' OSIsoft Tech Support: "[...] the reason you can't see it in Processbook,
+      ' AVEVA Tech Support: "[...] the reason you can't see it in Processbook,
       '   is because of an old known issue related to annotations with AF2
       '   attributes"
 
