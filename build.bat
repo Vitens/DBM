@@ -22,7 +22,7 @@ rem along with DBM.  If not, see <http://www.gnu.org/licenses/>.
 cd /d %~dp0
 
 rem Variables
-set VBC="%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\Vbc.exe" /win32icon:src\res\dbm.ico /warnaserror+ /optimize+ /optionexplicit+ /optionstrict+ /novbruntimeref
+set VBC="%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\Vbc.exe" /win32icon:res\dbm.ico /warnaserror+ /optimize+ /optionexplicit+ /optionstrict+ /novbruntimeref
 set PIAFRef=%PIHOME%\AF\PublicAssemblies\4.0\OSIsoft.AFSDK.dll
 
 rem Set up build directory
