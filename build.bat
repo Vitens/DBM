@@ -36,5 +36,5 @@ rem Build
 %VBC% /reference:build\DBM.dll,build\DBMPointDriverCSV.dll /out:build\DBMTester.exe src\dbm\DBMManifest.vb src\dbmtester\*.vb
 if exist "%PIAFRef%" (
  %VBC% /reference:"%PIAFRef%",build\DBM.dll /target:library /out:build\DBMPointDriverAVEVAPIAF.dll src\dbm\DBMManifest.vb src\dbm\driver\DBMPointDriverAVEVAPIAF.vb
- %VBC% /reference:"%PIAFRef%",build\DBM.dll,build\DBMPointDriverAVEVAPIAF.dll /target:library /out:build\DBMDataRef.dll src\dbm\DBMManifest.vb src\PIAFDataRef\*.vb
+ %VBC% /reference:"%PIAFRef%",build\DBM.dll,build\DBMPointDriverAVEVAPIAF.dll /target:library /out:build\DBMDataRef.dll src\dbm\DBMManifest.vb src\DBMDataRef\*.vb
 )
