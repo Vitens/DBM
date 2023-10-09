@@ -20,8 +20,9 @@
 & "$PSScriptRoot\test.ps1"
 
 $DeployProduction = $Env:CI_COMMIT_REF_NAME -eq $Env:CI_DEFAULT_BRANCH
-$DeployAcceptance = $DeployProduction -Or $Env:CI_COMMIT_MESSAGE.Contains('[ACC]')
+$DeployAcceptance = $DeployProduction -Or $Env:CI_COMMIT_REF_NAME -eq 'staging'
 $DeployTesting    = $true
+
 if ($DeployTesting)    {.\register.bat piaf-t}
 if ($DeployAcceptance) {.\register.bat piaf-a}
 if ($DeployProduction) {.\register.bat piaf}
