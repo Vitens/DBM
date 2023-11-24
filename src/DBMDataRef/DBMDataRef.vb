@@ -240,13 +240,13 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private Function ConfigurationIsValid As Boolean
 
       ' Check if this attribute is properly configured. The attribute and it's
-      ' parent (input source) need to be an instance of an object, and the data
-      ' type for both needs to be a double.
+      ' parent (input source) need to be an instance of an object, and the base
+      ' data type for both needs to be a value type.
 
       Return Attribute IsNot Nothing AndAlso
-        Attribute.Type Is GetType(Double) AndAlso
+        Attribute.Type.BaseType Is GetType(ValueType) AndAlso
         Attribute.Parent IsNot Nothing AndAlso
-        Attribute.Parent.Type Is GetType(Double)
+        Attribute.Parent.Type.BaseType Is GetType(ValueType)
 
     End Function
 
