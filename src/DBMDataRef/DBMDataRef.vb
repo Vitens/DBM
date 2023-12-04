@@ -1045,6 +1045,7 @@ Namespace Vitens.DynamicBandwidthMonitor
         interval = New AFTimeSpan(0, 0, 0, 0, 0,
           (timeRange.EndTime.UtcSeconds-timeRange.StartTime.UtcSeconds)/
           (numberOfValues-1), 0)
+        ' Use a shrinking window so that cached data can be used optimally.
         Do While timeRange.StartTime <= timeRange.EndTime
           InterpolatedValuesByCount.Add(
             GetValues(Nothing, timeRange, 0, Nothing, Nothing)(0))
