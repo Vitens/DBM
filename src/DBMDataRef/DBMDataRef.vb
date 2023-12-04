@@ -1046,7 +1046,7 @@ Namespace Vitens.DynamicBandwidthMonitor
           (timeRange.EndTime.UtcSeconds-timeRange.StartTime.UtcSeconds)/
           (numberOfValues-1), 0)
         Do While timeRange.StartTime <= timeRange.EndTime
-          InterpolatedValuesByCount.Add(i
+          InterpolatedValuesByCount.Add(
             GetValues(Nothing, timeRange, 0, Nothing, Nothing)(0))
           timeRange.StartTime += interval
         Loop
