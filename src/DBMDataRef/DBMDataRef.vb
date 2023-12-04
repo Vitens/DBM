@@ -1045,12 +1045,11 @@ Namespace Vitens.DynamicBandwidthMonitor
         interval = New AFTimeSpan(0, 0, 0, 0, 0,
           (timeRange.EndTime.UtcSeconds-timeRange.StartTime.UtcSeconds)/
           (numberOfValues-1), 0)
-        InterpolatedValuesByCount = Summaries(
-          New AFTimeRange(timeRange.StartTime, timeRange.EndTime+interval),
-          interval,
-          AFSummaryTypes.Average,
-          AFCalculationBasis.TimeWeighted,
-          AFTimestampCalculation.EarliestTime)(AFSummaryTypes.Average)
+        Do While timeRange.StartTime <= timeRange.EndTime
+          InterpolatedValuesByCount.Add(
+            GetValue(Nothing, timeRange.StartTime, Nothing, Nothing))
+          timeRange.StartTime += interval
+        Loop
       End If
 
       DBM.Logger.LogTrace(
