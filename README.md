@@ -3,7 +3,7 @@
 # DBM
 Dynamic Bandwidth Monitor\
 Leak detection method implemented in a real-time data historian\
-Copyright (C) 2014-2023  J.H. Fitié, Vitens N.V.
+Copyright (C) 2014-2024  J.H. Fitié, Vitens N.V.
 
 ## Description
 Water company Vitens has created a demonstration site called the Vitens Innovation Playground (VIP), in which new technologies and methodologies are developed, tested, and demonstrated. The projects conducted in the demonstration site can be categorized into one of four themes: energy optimization, real-time leak detection, online water quality monitoring, and customer interaction. In the real-time leak detection theme, a method for leak detection based on statistical demand forecasting was developed.
@@ -109,7 +109,7 @@ DBMDataRef is a custom AVEVA PI Asset Framework data reference which integrates 
 The `Target` trait returns the original, valid raw measurements, augmented with forecast data for invalid and future data. Data quality is marked as `Substituted` for invalid data replaced by forecast values and for future forecast values, or as `Questionable` for data exceeding `Minimum` and `Maximum` control limits.
 ![Augmented](img/augmented.png)
 
-For the `Target` trait, DBM also detects and removes incorrect flatlines in the data and replaces them with forecast values, which are then weight adjusted to the original time range total. Data quality is marked as `Substituted` for this data.
+For the `Target` trait, DBM also detects and removes incorrect flatlines in the data and, if a reliable forecast can be made, replaces them with forecast values, which are then weight adjusted to the original time range total. Data quality is marked as `Substituted` for this data.
 
 Beginning with PI AF 2018 SP3 Patch 2, all AF plugins must be signed with a valid certificate. Users must ensure any 3rd party or custom plugins are signed with a valid certificate. Digitally signing plugins increases the users' confidence that it is from a trusted entity. AF data references that are not signed could have been tampered with and are potentially dangerous. Therefore, in order to protect its users, AVEVA software enforces that all AF 2.x data reference plugins be signed. Use `sign.bat` to sign the data reference and support assemblies with your pfx certificate file before registering the data reference with PI AF.
 
