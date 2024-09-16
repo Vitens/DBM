@@ -961,12 +961,14 @@ Namespace Vitens.DynamicBandwidthMonitor
       End If
 
       ' For the Target values, if there are more than two results and a
-      ' reliable forecast can be made, check for and remove flatlines, and
-      ' annotate the first value with model calibration metrics.
+      ' reliable forecast can be made, check for and remove flatlines.
       If Attribute.Trait Is LimitTarget And results.Count > 2 Then
         stats = Statistics(results)
-        If Statistics(results).Calibrated Then GetValues = Deflatline(GetValues, results, Me.Step)
-        Annotate(GetValues.Item(0), Statistics(results).Brief)
+        If stats.Calibrated Then
+          GetValues = Deflatline(GetValues, results, Me.Step)
+        End If
+        ' Annotate the first value with model calibration metrics.
+        Annotate(GetValues.Item(0), stats.Brief)
       End If
 
       ' Returns the collection of values for the attribute sorted in increasing
