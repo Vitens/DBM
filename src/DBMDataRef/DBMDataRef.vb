@@ -687,7 +687,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim rawValues As AFValues = Nothing
       Dim result As DBMResult
       Dim iR, iD As Integer ' Iterators for raw values and DBM results.
-      Dim statistics As New DBMStatisticsItem
+      Dim stats As DBMStatisticsItem
 
       GetValues = New AFValues
 
@@ -964,7 +964,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       ' reliable forecast can be made, check for and remove flatlines, and
       ' annotate the first value with model calibration metrics.
       If Attribute.Trait Is LimitTarget And results.Count > 2 Then
-        statistics = Statistics(results)
+        stats = Statistics(results)
         If Statistics(results).Calibrated Then GetValues = Deflatline(GetValues, results, Me.Step)
         Annotate(GetValues.Item(0), Statistics(results).Brief)
       End If
