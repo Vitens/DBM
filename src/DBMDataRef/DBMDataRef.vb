@@ -1,6 +1,6 @@
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2023  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2024  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -687,6 +687,7 @@ Namespace Vitens.DynamicBandwidthMonitor
       Dim rawValues As AFValues = Nothing
       Dim result As DBMResult
       Dim iR, iD As Integer ' Iterators for raw values and DBM results.
+      Dim statistics As DBMStatisticsItem
 
       GetValues = New AFValues
 
@@ -959,12 +960,13 @@ Namespace Vitens.DynamicBandwidthMonitor
         GetValues.Item(GetValues.Count-1).Timestamp = timeRange.EndTime
       End If
 
-      ' For the Target values, if there are more than two results, check for and
-      ' remove flatlines, and annotate the first value with model calibration
-      ' metrics.
+      ' For the Target values, if there are more than two results and a
+      ' reliable forecast can be made, check for and remove flatlines, and
+      ' annotate the first value with model calibration metrics.
       If Attribute.Trait Is LimitTarget And results.Count > 2 Then
-        GetValues = Deflatline(GetValues, results, Me.Step)
-        Annotate(GetValues.Item(0), Statistics(results).Brief)
+        statistics = Statistics(results)
+        If statistics.Calibrated Then GetValues = Deflatline(GetValues, results, Me.Step)
+        Annotate(GetValues.Item(0), statistics.Brief)
       End If
 
       ' Returns the collection of values for the attribute sorted in increasing
