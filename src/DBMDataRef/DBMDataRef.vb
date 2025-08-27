@@ -84,6 +84,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     '             process output.
 
 
+    Const MaxAnnotationsSize As Integer = 10000 ' Maximum number of annotations
     Const StaleDataMinutes As Integer = 10 ' Minutes until snapshot is stale
     Const CategoryNoCorrelation As String = "NoCorrelation"
     Const pValueLoHi As Double = 0.95 ' Confidence interval for Lo and Hi
@@ -290,7 +291,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
           If annotation IsNot Nothing Then ' Value
 
-            While _annotations.Count >= 10000 ' Limit dictionary size
+            While _annotations.Count >= MaxAnnotationsSize ' Limit dictionary size
               _annotations.Remove(_annotations.Keys.ElementAt(_rand.Next(_annotations.Count)))
             End While
 
