@@ -25,6 +25,7 @@ Imports System.DateTime
 Imports System.Double
 Imports System.Math
 Imports System.Runtime.InteropServices
+Imports System.Threading
 Imports OSIsoft.AF.Asset
 Imports OSIsoft.AF.Asset.AFAttributeTrait
 Imports OSIsoft.AF.Data
@@ -89,6 +90,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     Const pValueMinMax As Double = 0.9999 ' CI for Minimum and Maximum
 
 
+    Private _lock As New Object ' Object for exclusive lock on critical section.
     Private _annotations As New Dictionary(Of AFTime, Object)
     Private Shared _dbm As New DBM(New DBMLoggerAFTrace)
 
@@ -279,20 +281,27 @@ Namespace Vitens.DynamicBandwidthMonitor
 
       If value IsNot Nothing Then ' Key
 
-        _annotations.Remove(value.Timestamp) ' Remove existing
-        value.Annotated = False
+        Monitor.Enter(_lock) ' Block
+        Try
 
-        If annotation IsNot Nothing Then ' Value
+          _annotations.Remove(value.Timestamp) ' Remove existing
+          value.Annotated = False
 
-          DBM.Logger.LogDebug(
-            "value.Timestamp " &
-            value.Timestamp.LocalTime.ToString("s") & "; " &
-            "annotation " & DirectCast(annotation, String), Attribute.GetPath)
+          If annotation IsNot Nothing Then ' Value
 
-          _annotations.Add(value.Timestamp, annotation) ' Add
-          value.Annotated = True
+            DBM.Logger.LogDebug(
+              "value.Timestamp " &
+              value.Timestamp.LocalTime.ToString("s") & "; " &
+              "annotation " & DirectCast(annotation, String), Attribute.GetPath)
 
-        End If
+            _annotations.Add(value.Timestamp, annotation) ' Add
+            value.Annotated = True
+
+          End If
+
+        Finally
+          Monitor.Exit(_lock) ' Unblock
+        End Try
 
       End If
 
@@ -308,12 +317,22 @@ Namespace Vitens.DynamicBandwidthMonitor
       '   attributes"
 
       GetAnnotation = Nothing
-      If value IsNot Nothing AndAlso
-        _annotations.TryGetValue(value.Timestamp, GetAnnotation) Then
-        _annotations.Remove(value.Timestamp) ' Remove after get
-        Return GetAnnotation
-      Else
-        Return String.Empty ' Default
+      If value IsNot Nothing Then ' Key
+
+        Monitor.Enter(_lock) ' Block
+        Try
+
+          If _annotations.TryGetValue(value.Timestamp, GetAnnotation) Then
+            _annotations.Remove(value.Timestamp) ' Remove after get
+            Return GetAnnotation
+          Else
+            Return String.Empty ' Default
+          End If
+
+        Finally
+          Monitor.Exit(_lock) ' Unblock
+        End Try
+
       End If
 
     End Function
