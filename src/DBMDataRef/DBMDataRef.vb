@@ -290,8 +290,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
           If annotation IsNot Nothing Then ' Value
 
-            While _annotations.Count >= MaxAnnotationsSize ' Limit dictionary size by removing oldest
-              _annotations.Remove(_annotations.Keys.First())
+            While _annotations.Count >= MaxAnnotationsSize ' Limit size
+              _annotations.Remove(_annotations.Keys.First()) ' Remove oldest
             End While
 
             DBM.Logger.LogDebug(
