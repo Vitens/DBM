@@ -92,8 +92,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private _lock As New Object ' Object for exclusive lock on critical section.
-    Private _annotations As New Dictionary(Of AFTime, Object)
-    Private Shared _rand As New Random()
+    Private _annotations As New SortedDictionary(Of AFTime, Object)
     Private Shared _dbm As New DBM(New DBMLoggerAFTrace)
 
 
@@ -291,8 +290,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
           If annotation IsNot Nothing Then ' Value
 
-            While _annotations.Count >= MaxAnnotationsSize ' Limit dictionary size
-              _annotations.Remove(_annotations.Keys.ElementAt(_rand.Next(_annotations.Count)))
+            While _annotations.Count >= MaxAnnotationsSize ' Limit dictionary size by removing oldest
+              _annotations.Remove(_annotations.Keys.First())
             End While
 
             DBM.Logger.LogDebug(
