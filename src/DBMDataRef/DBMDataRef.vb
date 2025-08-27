@@ -1,6 +1,6 @@
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2024  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2025  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -84,7 +84,7 @@ Namespace Vitens.DynamicBandwidthMonitor
     '             process output.
 
 
-    Const MaxAnnotationsSize As Integer = 10000 ' Maximum number of annotations
+    Const MaxAnnotationsSize As Integer = 1000 ' Maximum number of annotations
     Const StaleDataMinutes As Integer = 10 ' Minutes until snapshot is stale
     Const CategoryNoCorrelation As String = "NoCorrelation"
     Const pValueLoHi As Double = 0.95 ' Confidence interval for Lo and Hi
