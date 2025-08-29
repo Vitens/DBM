@@ -1,6 +1,6 @@
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2022  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2025  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -22,6 +22,7 @@ Imports System
 Imports System.Collections.Generic
 Imports System.Double
 Imports System.Threading
+Imports Vitens.DynamicBandwidthMonitor.DBMParameters
 
 
 Namespace Vitens.DynamicBandwidthMonitor
@@ -30,8 +31,12 @@ Namespace Vitens.DynamicBandwidthMonitor
   Public Class DBMDataStore
 
 
+    Private Shared ReadOnly MaxDataStoreSize As Integer =
+      (365+ComparePatterns*7)*24*60*60\CalculationInterval+EMAPreviousPeriods
+
+
     Private _lock As New Object ' Object for exclusive lock on critical section.
-    Private _dataStore As New Dictionary(Of DateTime, Double) ' In-memory data
+    Private _dataStore As New SortedDictionary(Of DateTime, Double) ' In-mem
 
 
     Public Sub AddData(timestamp As DateTime, data As Object)
@@ -46,7 +51,13 @@ Namespace Vitens.DynamicBandwidthMonitor
         Try
 
           If Not _dataStore.ContainsKey(timestamp) Then
+
+            While _dataStore.Count >= MaxDataStoreSize ' Limit size
+              _dataStore.Remove(_dataStore.Keys.First()) ' Remove oldest
+            End While
+
             _dataStore.Add(timestamp, DirectCast(data, Double))
+
           End If
 
         Finally
