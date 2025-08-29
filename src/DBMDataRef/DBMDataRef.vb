@@ -93,7 +93,7 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Private _lock As New Object ' Object for exclusive lock on critical section.
     Private _annotations As New SortedDictionary(Of AFTime, Object)
-    Private Shared _dbm As New DBM(New DBMLoggerAFTrace)
+    Private _dbm As New DBM(New DBMLoggerAFTrace)
 
 
     Public Shared Function CreateDataPipe As Object
