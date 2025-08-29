@@ -36,7 +36,8 @@ Namespace Vitens.DynamicBandwidthMonitor
 
 
     Private _lock As New Object ' Object for exclusive lock on critical section.
-    Private _dataStore As New SortedDictionary(Of DateTime, Double) ' In-mem
+    Private _dataStore As New Dictionary(Of DateTime, Double)
+    Private _rand As New Random()
 
 
     Public Sub AddData(timestamp As DateTime, data As Object)
@@ -53,7 +54,8 @@ Namespace Vitens.DynamicBandwidthMonitor
           If Not _dataStore.ContainsKey(timestamp) Then
 
             While _dataStore.Count >= MaxDataStoreSize ' Limit size
-              _dataStore.Remove(_dataStore.Keys.First()) ' Remove oldest
+              _dataStore.Remove(
+                _dataStore.Keys.ElementAt(_rand.Next(_dataStore.Count)))
             End While
 
             _dataStore.Add(timestamp, DirectCast(data, Double))
