@@ -1,6 +1,6 @@
 ' Dynamic Bandwidth Monitor
 ' Leak detection method implemented in a real-time data historian
-' Copyright (C) 2014-2025  J.H. Fitié, Vitens N.V.
+' Copyright (C) 2014-2024  J.H. Fitié, Vitens N.V.
 '
 ' This file is part of DBM.
 '
@@ -93,6 +93,17 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private Shared _dbm As New DBM(New DBMLoggerAFTrace)
 
 
+    Public Shared Function CreateDataPipe As Object
+
+      ' This Data Reference is a System of Record, so expose the CreateDataPipe
+      ' method and return a new instance of the event source class derived from
+      ' AFEventSource.
+
+      Return New DBMEventSource
+
+    End Function
+
+
     Public Overrides Readonly Property SupportedContexts _
       As AFDataReferenceContext
 
@@ -118,7 +129,10 @@ Namespace Vitens.DynamicBandwidthMonitor
     Private Function SupportsFutureData As Boolean
 
       ' Returns a boolean indicating if this attribute supports future data,
-      ' f.ex. when it returns a forecast.
+      ' f.ex. when it returns a forecast. We should not enable the data pipe for
+      ' these attributes as services like the Analyses Service will not be able
+      ' to use future data because the snapshot timestamp is seen as the last
+      ' available timestamp.
 
       Return Attribute.Trait Is LimitTarget Or
         Attribute.Trait Is Forecast Or
@@ -163,6 +177,10 @@ Namespace Vitens.DynamicBandwidthMonitor
         If SupportsFutureData Then
           ' Support future data if available.
           SupportedDataMethods = SupportedDataMethods Or AFDataMethods.Future
+        End If
+        If Not SupportsFutureData Or Attribute.Trait Is LimitTarget Then
+          ' Support data pipe for non-future data, as well as for Target.
+          SupportedDataMethods = SupportedDataMethods Or AFDataMethods.DataPipe
         End If
         Return SupportedDataMethods
       End Get
