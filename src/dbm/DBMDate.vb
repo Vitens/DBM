@@ -183,13 +183,49 @@ Namespace Vitens.DynamicBandwidthMonitor
 
     Public Shared Function EMATimeOffset(count As Integer) As Integer
 
-      ' The use of an exponential moving average (EMA) time shifts the resulting
-      ' calculated data. To compensate for this, an offset should be applied
-      ' based on exponentially increasing weighting factors. The returned value
-      ' is in seconds and is only shifted in whole intervals.
+      ' Returns the timestamp offset for a finite Exponential Moving Average.
+      '
+      ' A finite EMA of length N uses exponentially decaying weights:
+      '   w(k) ∝ r^k
+      '
+      ' where k = 0 is the newest sample and:
+      '   r = 1 - α = (N - 1)/(N + 1)
+      '
+      ' for the standard EMA definition α = 2/(N+1).
+      '
+      ' The effective timestamp of the EMA is the center of mass of the
+      ' normalized weights:
+      '   μ(N) = Σ(k·w(k)) / Σ(w(k))
+      '
+      ' As N → ∞ (for the finite-length EMA family), this converges to:
+      '   lim[N→∞] μ(N)/N
+      '     = 1/2 − 1/(e² − 1)
+      '     = 0.3434823572503343...
+      '
+      ' Therefore the EMA effectively represents data approximately 34.35% of
+      ' the sample count back from the newest sample.
+      '
+      ' The returned value is negative because the effective observation time
+      ' lies in the past relative to the most recent sample.
+      '
+      ' Proof (sketch):
+      '   μ(N) = Σ(k·r^k) / Σ(r^k)
+      '
+      ' with:
+      '   r = (N - 1)/(N + 1)
+      '
+      ' Using closed-form sums:
+      '   Σ(r^k) = (1 - r^N)/(1 - r)
+      '   Σ(k·r^k) = [r - N·r^N + (N-1)·r^(N+1)]/(1-r)^2
+      '
+      ' Taking the limit N → ∞ gives:
+      '   r^N = (1 - 2/(N+1))^N → e^-2
+      '
+      ' and therefore:
+      '   μ(N)/N → 1/2 − 1/(e² − 1)
 
-      ' Floor(n/2.91136) is a fast approximation of Round(n-EMA(1..n)).
-      Return CInt(-Floor(count/2.91136)*CalculationInterval)
+      Const EMACenterOfMassFraction As Double = 0.343482
+      Return CInt(-Floor(count * EMACenterOfMassFraction) * CalculationInterval)
 
     End Function
 
